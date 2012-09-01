@@ -123,6 +123,10 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 				panic(err)
 			}
 
+			// 增加Node.TopicCount
+			c = db.C("nodes")
+			c.Update(bson.M{"_id": node.Id_}, bson.M{"$inc": bson.M{"topiccount": 1}})
+
 			c = db.C("status")
 			var status Status
 			c.Find(nil).One(&status)
