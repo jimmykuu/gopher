@@ -1,0 +1,28 @@
+{{define "Title"}}所有节点{{end}}
+
+{{define "Content"}}
+<ul class="breadcrumb">
+  <li>
+    <a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span>
+  </li>
+  <li class="active">所有节点</li>
+</ul>
+<div class="content">
+	<dl id="nodes">
+		{{range .nodes}}
+		<dt>
+			{{if .TopicCount}}
+	  		<a class="badge pull-right" href="/go/{{.Id}}">{{.TopicCount}}</a>
+	  		{{end}}
+			<a href="/go/{{.Id}}" class="btn">{{.Name}}</a>
+		</dt>
+		<dd>{{.Description}}</dd>
+		{{end}}
+	</dl>
+</div>
+{{end}}
+
+{{define "LeftSide"}}{{end}}
+
+{{define "RightSide"}}
+{{end}}

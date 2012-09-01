@@ -1,0 +1,31 @@
+{{define "Title"}}FAQ{{end}}
+{{define "Content"}}
+<ul class="breadcrumb">
+  <li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
+  <li class="active">FAQ</li>
+</ul>
+<div class="content">
+  <dl class="faq">
+  <dd>
+    <p><span class="label label-info">Q</span> 网站是用什么开发的?</p>
+    <p><span class="label label-success">A</span> golang.tc使用Go语言开发,既然是Go语言社区,用其他语言开发实在说不过去.</p>
+  </dd>
+  <dd>
+    <p><span class="label label-info">Q</span> 网站开发是否使用了Web框架?</p>
+    <p><span class="label label-success">A</span> 由于Go语言的内置模块提供了http Server,模板,没有使用第三方Web框架,url分发使用了mux.</p>
+  </dd>
+  <dd>
+    <p><span class="label label-info">Q</span> 网站代码是否开源?</p>
+    <p><span class="label label-success">A</span> 代码再整理下,一周内开源.</p>
+  </dd>
+  <dd>
+    <p><span class="label label-info">Q</span> 网站为何用.tc域名?</p>
+    <p><span class="label label-success">A</span> .cn域名目前虽然开放了个人注册,但指不定哪天又...,况且golang-china等域名已经被使用,作者只能另辟蹊径,至于tc代表什么,你懂的.</p>
+  </dd>
+  </dl>
+</div>
+{{end}}
+
+{{define "LeftSide"}}{{end}}
+
+{{define "RightSide"}}{{end}}

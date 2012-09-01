@@ -1,0 +1,28 @@
+{{define "Title"}}{{.user.Username}}{{end}}
+{{define "Content"}}
+{{$utils := .utils}}
+<ul class="breadcrumb">
+  <li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
+  <li><a href="/member/{{.user.Username}}">{{.user.Username}}</a> <span class="divider">/</span></li>
+  <li class="active">全部回复</li>
+</ul>
+<div class="content">
+  <dl class="replies">
+    {{range .replies}}
+    <dd>
+      <span>
+        回复了 <a href="/member/{{.Topic.User.Username}}">{{.Topic.User.Username}}</a> 创建的主题: <a href="/t/{{.Topic.Id_.Hex}}">{{.Topic.Title}}</a>
+	    <span class="pull-right">{{$utils.FormatTime .CreatedAt}}</span>
+      </span>
+      <div>
+        {{.Html}}
+      </div>
+    </dd>
+    {{end}}
+    </dl>
+</div>
+{{end}}
+
+{{define "LeftSide"}}{{end}}
+
+{{define "RightSide"}}{{end}}

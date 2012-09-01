@@ -1,0 +1,29 @@
+{{define "Title"}}修改头像{{end}}
+{{define "Content"}}
+<ul class="breadcrumb">
+	<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
+	<li><a href="/profile">设置</a> <span class="divider">/</span></li>
+	<li class="active">上传头像</li>
+</ul>
+<div class="content">
+<form action="http://v0.api.upyun.com/gopher/" method="post" enctype="multipart/form-data" class="form-horizontal">
+	<input type="hidden" name="policy" value="{{.policy}}">
+	<input type="hidden" name="signature" value="{{.sign}}">
+	<div class="control-group">
+		<label class="control-label" for="file">选择图片文件</label>
+		<div class="controls">
+			<input type="file" name="file" id="file">
+			<span class="help-block">支持500K以内的gif/jpg/png文件</span>
+		</div>
+	</div>
+	<div class="control-group">
+		<div class="controls">
+			<button type="submit" class="btn">开始上传</button>
+		</div>
+	</div>
+</form>
+{{end}}
+
+{{define "LeftSide"}}{{end}}
+
+{{define "RightSide"}}{{end}}

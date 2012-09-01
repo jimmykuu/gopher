@@ -1,0 +1,48 @@
+{{define "Title"}}注册{{end}}
+{{define "Content"}}
+<script type="text/javascript">
+var ajax_proc_func=function(var1) {
+    $("#result").empty();
+    if(var1==1) {
+        $("#result").append('<img src="/static/img/accept.png">');
+        $("#submit").attr("disabled", false);
+    } else {
+        $("#result").append('<img src="/static/img/exclamation.png">');
+        $("#submit").attr("disabled", true);
+    }
+};
+</script>
+<ul class="breadcrumb">
+  <li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
+  <li class="active">注册</li>
+</ul>
+<div class="content">
+  <form action="/signup" method="post" class="form-horizontal">
+    <fieldset>
+	  {{.form.Render "username" `class="span3"`}}
+	  {{.form.Render "password" `class="span3"`}}
+	  {{.form.Render "email" `class="span3"`}}
+	  <div id="show"></div>
+      <div class="control-group">
+        <label class="control-label" for="captcha">验证码</label>
+        <div class="controls">
+          <input type="text" name="captcha" id="captcha" class="span3" placeholder="鼠标点击显示验证码" onkeyup="Yucmedia_ajax_verify('captcha','ajax_proc_func');">
+          <span class="help-inline" id="result"></span>
+        </div>
+      </div>
+      <script src="http://api.yucmedia.com/script/script.js?key=40wlb285yl5xrmkb869ag59tr&inputid=captcha&offtop=0&offleft=0&zbkey=zgo"></script>
+	  <div class="form-actions">
+        <input id="submit" type="submit" class="btn btn-primary" value="注册" disabled>
+        
+        <p>
+          <br><br>
+          已有帐号？<a href="/signin" class="btn btn-info">登录</a></p>
+      </div>
+    </fieldset>
+  </form>
+</div>
+{{end}}
+
+{{define "LeftSide"}}{{end}}
+
+{{define "RightSide"}}{{end}}
