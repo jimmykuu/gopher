@@ -12,9 +12,9 @@ Golang中国([www.golang.tc](http://www.golang.tc))源代码.
 
 ##Install
 
-    go get code.google.com/p/gorilla/mux
-    go get code.google.com/p/gorilla/sessions
-    go get labix.org/v2/mgo
+    go get -u code.google.com/p/gorilla/mux
+    go get -u code.google.com/p/gorilla/sessions
+    go get -u labix.org/v2/mgo
     git clone git://github.com/jimmykuu/gopher.git
 	
 创建配置文件config.json文件,内容如下:

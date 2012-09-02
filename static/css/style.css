@@ -118,7 +118,6 @@ header {
 
 header .container {
 	height: 110px;
-	overflow: hidden;
 	position: relative;
 }
 
