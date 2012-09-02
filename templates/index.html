@@ -38,11 +38,11 @@
 
 {{define "RightSide"}}
 <div class="span3">
-  {{if .username}}
-  <div class="well sidebar-nav">
-    {{.utils.UserInfo .username}}
-  </div>
-  {{end}}
+	{{if .username}}
+	<div class="well sidebar-nav">
+		{{.utils.UserInfo .username}}
+	</div>
+	{{end}}
 
 	<div class="well sidebar-nav">
 		<h4><small>最热节点</small></h4>
@@ -51,27 +51,29 @@
 			<a href="/go/{{.Id}}" class="btn">{{.Name}}</a>
 		{{end}}
 		<div class="clearfix"></div>
-		<a href="/nodes" class="pull-right">所有节点<a>
+		<a href="/nodes" class="pull-right">所有节点</a>
 		<div class="clearfix"></div>
 	</div>
 
-  <div class="well sidebar-nav">
-    <h4><small>社区状态</small></h4>
-    <hr>
-    <table width="100%" class="status">
-      <tr>
-        <td class="status-label">注册会员</td>
-        <td class="value">{{.status.UserCount}}</td>
-      </tr>
-      <tr>
-        <td class="status-label">主题</td>
-        <td class="value">{{.status.TopicCount}}</td>
-      </tr>
-      <tr>
-        <td class="status-label">回复</td>
-        <td class="value">{{.status.ReplyCount}}</td>
-      </tr>
-    </table>
-  </div>
+	<div class="well sidebar-nav">
+		<h4><small>社区状态</small></h4>
+		<hr>
+		<table width="100%" class="status">
+			<tbody>
+			<tr>
+				<td class="status-label">注册会员</td>
+				<td class="value">{{.status.UserCount}}</td>
+			</tr>
+			<tr>
+				<td class="status-label">主题</td>
+				<td class="value">{{.status.TopicCount}}</td>
+			</tr>
+			<tr>
+				<td class="status-label">回复</td>
+				<td class="value">{{.status.ReplyCount}}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
 </div>
 {{end}}

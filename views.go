@@ -17,6 +17,7 @@ import (
 	"net/http"
 	"net/smtp"
 	"os"
+	"sort"
 	"strings"
 	"time"
 )
@@ -137,6 +138,24 @@ func sendMail(subject string, message string, to []string) {
 	}
 }
 
+// 检查一个string元素是否在数组里面
+func stringInArray(a []string, x string) bool {
+	sort.Strings(a)
+	index := sort.SearchStrings(a, x)
+
+	if index == 0 {
+		if a[0] == x {
+			return true
+		}
+
+		return false
+	} else if index > len(a)-1 {
+		return false
+	}
+
+	return true
+}
+
 func init() {
 	session, err := mgo.Dial("")
 	if err != nil {
@@ -166,6 +185,35 @@ func init() {
 			ReplyCount: 0,
 			UserIndex:  0,
 		})
+	}
+
+	// 检查是否有超级账户设置
+	var superusers []string
+	for _, username := range strings.Split(config["superusers"], ",") {
+		username = strings.TrimSpace(username)
+		if username != "" {
+			superusers = append(superusers, username)
+		}
+	}
+
+	if len(superusers) == 0 {
+		println("你没有设置超级账户,请在config.json中的superusers中设置,如有多个账户,用逗号分开")
+	}
+
+	c = db.C("users")
+	var users []User
+	c.Find(bson.M{"issuperuser": true}).All(&users)
+
+	// 如果mongodb中的超级用户不在配置文件中,取消超级用户
+	for _, user := range users {
+		if !stringInArray(superusers, user.Username) {
+			c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"issuperuser": false}})
+		}
+	}
+
+	// 设置超级用户
+	for _, username := range superusers {
+		c.Update(bson.M{"username": username, "issuperuser": false}, bson.M{"$set": bson.M{"issuperuser": true}})
 	}
 }
 

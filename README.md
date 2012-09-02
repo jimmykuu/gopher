@@ -17,7 +17,11 @@ Golang中国([www.golang.tc](http://www.golang.tc))源代码.
     go get -u labix.org/v2/mgo
     git clone git://github.com/jimmykuu/gopher.git
 	
-创建配置文件config.json文件,内容如下:
+创建配置文件config.json文件
+
+- superusers: 内容为用户名,如果没有管理员,内容为"",如果有多个,用空格隔开
+
+内容如下:
 
     {
         "host": "http://localhost:8888",
@@ -27,7 +31,8 @@ Golang中国([www.golang.tc](http://www.golang.tc))源代码.
         "smtp_password": "password",
         "smtp_host": "smtp.example.com",
         "smtp_addr": "smtp.example.com:25",
-        "from_email": "who@example.com"
+        "from_email": "who@example.com",
+		"superusers": "jimmykuu,another"
     }
 
 先启动MongoDB
