@@ -8,6 +8,7 @@
 	<h3><small>下面列出了基于Go语言开发的国内外网站或应用,以及和Go相关的网站,包括博客,开源项目等等.如发现不在此列的,请帮忙补充.</small></h3>
 	<a href="/site/new" class="btn btn-info">提交网站</a>
 </div>
+{{$username := .username}}
 {{range .categories}}
 	{{$sites := .Sites}}
 	{{if len $sites}}
@@ -17,7 +18,14 @@
 		</div>
 		<dl class="site">
 		{{range $sites}}
-			<dt><img src="http://www.google.com/s2/favicons?domain_url={{.Url}}"><a href="{{.Url}}">{{.Name}}</a></dt>
+			<dt id="site-{{.Id_.Hex}}">
+				<img src="http://www.google.com/s2/favicons?domain_url={{.Url}}"><a href="{{.Url}}">{{.Name}}</a>
+				{{if $username}}
+					{{if .CanEdit $username}}
+						<a href="/site/{{.Id_.Hex}}/edit" title="编辑"><i class="icon-pencil"></i></a>
+					{{end}}
+				{{end}}
+			</dt>
 			<dd>{{.Description}}</dd>
 		{{end}}
 		</dl>

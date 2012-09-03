@@ -208,3 +208,19 @@ type Site struct {
 	CategoryId  bson.ObjectId
 	UserId      bson.ObjectId
 }
+
+// 是否有权编辑站点
+func (s *Site) CanEdit(username string) bool {
+	var user User
+	c := db.C("users")
+	err := c.Find(bson.M{"username": username}).One(&user)
+	if err != nil {
+		return false
+	}
+
+	if user.IsSuperuser {
+		return true
+	}
+
+	return s.UserId == user.Id_
+}

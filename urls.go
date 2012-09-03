@@ -42,7 +42,8 @@ var (
 		"/follow/{username}":         followHandler,
 		"/unfollow/{username}":       unfollowHandler,
 
-		"/sites":    sitesHandler,
-		"/site/new": newSiteHandler,
+		"/sites":              sitesHandler,
+		"/site/new":           newSiteHandler,
+		"/site/{siteId}/edit": editSiteHandler,
 	}
 )
