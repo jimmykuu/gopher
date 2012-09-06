@@ -1,0 +1,11 @@
+{
+	"host": "http://localhost:8888",
+	"port": "8888",
+	"cookie_secret": "05e0ba2eca9411e18155109add4b8aac",
+	"smtp_username": "username@example.com",
+	"smtp_password": "password",
+	"smtp_host": "smtp.example.com",
+	"smtp_addr": "smtp.example.com:25",
+	"from_email": "who@example.com",
+	"superusers": "jimmykuu,another"
+}

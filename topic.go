@@ -64,8 +64,7 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	vars := mux.Vars(r)
-	nodeId := vars["node"]
+	nodeId := mux.Vars(r)["node"]
 
 	var nodes []Node
 	c := db.C("nodes")
@@ -74,7 +73,7 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 	var choices []wtforms.Choice
 
 	for _, node := range nodes {
-		choices = append(choices, wtforms.Choice{Value: node.Id, Label: node.Name})
+		choices = append(choices, wtforms.Choice{Value: node.Id_.Hex(), Label: node.Name})
 	}
 
 	form := wtforms.NewForm(
@@ -84,60 +83,137 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 		wtforms.NewTextArea("content", "内容", ""),
 	)
 
+	if r.Method == "POST" && form.Validate(r) {
+		nodeId = form.Value("node")
+
+		session, _ := store.Get(r, "user")
+		username, _ := session.Values["username"]
+		username = username.(string)
+
+		user := User{}
+		c = db.C("users")
+		c.Find(bson.M{"username": username}).One(&user)
+
+		c = db.C("topics")
+
+		Id_ := bson.NewObjectId()
+
+		now := time.Now()
+
+		html := form.Value("html")
+		html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
+
+		nodeId := bson.ObjectIdHex(form.Value("node"))
+		err := c.Insert(&Topic{
+			Id_:             Id_,
+			NodeId:          nodeId,
+			UserId:          user.Id_,
+			Title:           form.Value("title"),
+			Markdown:        form.Value("content"),
+			Html:            template.HTML(html),
+			CreatedAt:       now,
+			LatestRepliedAt: now,
+		})
+
+		if err != nil {
+			panic(err)
+		}
+
+		// 增加Node.TopicCount
+		c = db.C("nodes")
+		c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
+
+		c = db.C("status")
+		var status Status
+		c.Find(nil).One(&status)
+
+		c.Update(bson.M{"_id": status.Id_}, bson.M{"$inc": bson.M{"topiccount": 1}})
+
+		http.Redirect(w, r, "/t/"+Id_.Hex(), http.StatusFound)
+		return
+	}
+
+	renderTemplate(w, r, "topic/form.html", map[string]interface{}{"form": form, "title": "新建", "action": "/topic/new"})
+}
+
+// URL: /t{topicId}/edit
+// 编辑主题
+func editTopicHandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := currentUser(r)
+	if !ok {
+		http.Redirect(w, r, "/signin", http.StatusFound)
+		return
+	}
+
+	topicId := mux.Vars(r)["topicId"]
+
+	c := db.C("topics")
+	var topic Topic
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId)}).One(&topic)
+
+	if err != nil {
+		message(w, r, "没有该主题", "没有该主题,不能编辑", "error")
+		return
+	}
+
+	if !(user.IsSuperuser || topic.UserId == user.Id_) {
+		message(w, r, "没用过权限", "对不起,你没有权限编辑编辑该主题", "error")
+		return
+	}
+
+	var nodes []Node
+	c = db.C("nodes")
+	c.Find(nil).All(&nodes)
+
+	var choices []wtforms.Choice
+
+	for _, node := range nodes {
+		choices = append(choices, wtforms.Choice{Value: node.Id_.Hex(), Label: node.Name})
+	}
+
+	form := wtforms.NewForm(
+		wtforms.NewHiddenField("html", ""),
+		wtforms.NewSelectField("node", "节点", choices, topic.NodeId.Hex()),
+		wtforms.NewTextArea("title", "标题", topic.Title, &wtforms.Required{}),
+		wtforms.NewTextArea("content", "内容", topic.Markdown),
+	)
+
+	content := topic.Markdown
+	html := topic.Html
+
 	if r.Method == "POST" {
 		if form.Validate(r) {
-			nodeId = form.Value("node")
-
-			node := Node{}
-			c := db.C("nodes")
-			c.Find(bson.M{"id": nodeId}).One(&node)
-
-			session, _ := store.Get(r, "user")
-			username, _ := session.Values["username"]
-			username = username.(string)
-
-			user := User{}
-			c = db.C("users")
-			c.Find(bson.M{"username": username}).One(&user)
-
-			c = db.C("topics")
-
-			Id_ := bson.NewObjectId()
-
-			now := time.Now()
-
 			html := form.Value("html")
 			html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
 
-			err := c.Insert(&Topic{
-				Id_:             Id_,
-				NodeId:          node.Id_,
-				UserId:          user.Id_,
-				Title:           form.Value("title"),
-				Markdown:        form.Value("content"),
-				Html:            template.HTML(html),
-				CreatedAt:       now,
-				LatestRepliedAt: now})
+			nodeId := bson.ObjectIdHex(form.Value("node"))
+			c = db.C("topics")
+			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{
+				"nodeid":    nodeId,
+				"title":     form.Value("title"),
+				"markdown":  form.Value("content"),
+				"html":      template.HTML(html),
+				"updatedat": time.Now(),
+				"updatedby": user.Id_,
+			}})
 
-			if err != nil {
-				panic(err)
+			// 如果两次的节点不同,更新节点的主题数量
+
+			if topic.NodeId != nodeId {
+				c = db.C("nodes")
+				c.Update(bson.M{"_id": topic.NodeId}, bson.M{"$inc": bson.M{"topiccount": -1}})
+				c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
 			}
 
-			// 增加Node.TopicCount
-			c = db.C("nodes")
-			c.Update(bson.M{"_id": node.Id_}, bson.M{"$inc": bson.M{"topiccount": 1}})
-
-			c = db.C("status")
-			var status Status
-			c.Find(nil).One(&status)
-
-			c.Update(bson.M{"_id": status.Id_}, bson.M{"$inc": bson.M{"topiccount": 1}})
-
-			http.Redirect(w, r, "/t/"+Id_.Hex(), http.StatusFound)
+			http.Redirect(w, r, "/t/"+topic.Id_.Hex(), http.StatusFound)
+			return
 		}
+
+		content = form.Value("content")
+		html = template.HTML(form.Value("html"))
 	}
 
-	renderTemplate(w, r, "topic/new.html", map[string]interface{}{"form": form})
+	renderTemplate(w, r, "topic/form.html", map[string]interface{}{"form": form, "title": "编辑", "action": "/t/" + topicId + "/edit", "html": html, "content": content})
 }
 
 // URL: /t/{topicId}
