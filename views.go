@@ -157,7 +157,13 @@ func stringInArray(a []string, x string) bool {
 }
 
 func init() {
-	session, err := mgo.Dial("")
+
+	if config["db"] == "" {
+		println("数据库地址还没有配置,请到config.json内配置db字段.")
+		return;
+	}
+
+	session, err := mgo.Dial(config["db"])
 	if err != nil {
 		panic(err)
 	}
