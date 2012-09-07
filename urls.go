@@ -29,12 +29,14 @@ var (
 		"/profile":         profileHandler,
 		// "/profile/avatar":  changeAvatarHandler,
 
-		"/topic/new":       newTopicHandler,
-		"/nodes":           nodesHandler,
-		"/go/{node}":       topicInNodeHandler,
-		"/new/{node}":      newTopicHandler,
-		"/t/{topicId}":     showTopicHandler,
-		"/reply/{topicId}": replyHandler,
+		"/nodes":     nodesHandler,
+		"/go/{node}": topicInNodeHandler,
+
+		"/topic/new":        newTopicHandler,
+		"/new/{node}":       newTopicHandler,
+		"/t/{topicId}":      showTopicHandler,
+		"/t/{topicId}/edit": editTopicHandler,
+		"/reply/{topicId}":  replyHandler,
 
 		"/member/{username}":         memberInfoHandler,
 		"/member/{username}/topics":  memberTopicsHandler,

@@ -17,7 +17,7 @@ Golang中国([www.golang.tc](http://www.golang.tc))源代码.
     go get -u labix.org/v2/mgo
     git clone git://github.com/jimmykuu/gopher.git
 	
-创建配置文件config.json文件
+修改文件*config.json.default*为*config.json*作为配置文件
 
 - superusers: 内容为用户名,如果没有管理员,内容为"",如果有多个,用空格隔开
 

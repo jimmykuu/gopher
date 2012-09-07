@@ -175,6 +175,22 @@ func (t *Topic) Replies() *[]Reply {
 	return &replies
 }
 
+// 是否有权编辑主题
+func (t *Topic) CanEdit(username string) bool {
+	var user User
+	c := db.C("users")
+	err := c.Find(bson.M{"username": username}).One(&user)
+	if err != nil {
+		return false
+	}
+
+	if user.IsSuperuser {
+		return true
+	}
+
+	return t.UserId == user.Id_
+}
+
 // 状态,MongoDB中只存储一个状态
 type Status struct {
 	Id_        bson.ObjectId `bson:"_id"`
