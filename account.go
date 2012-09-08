@@ -307,7 +307,7 @@ func followHandler(w http.ResponseWriter, r *http.Request) {
 	println("follow")
 	vars := mux.Vars(r)
 	username := vars["username"]
-	c := db.C("users")
+	
 
 	// 检查当前用户是否存在
 	currUser, ok := currentUser(r)
@@ -317,7 +317,17 @@ func followHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+
+	//不能关注自己
+	if currUser.Username == username {
+		message(w, r, "提示", "不能关注自己", "error")
+		return;
+	}
+
+
+	
 	user := User{}
+	c := db.C("users")
 	err := c.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
@@ -338,7 +348,7 @@ func followHandler(w http.ResponseWriter, r *http.Request) {
 func unfollowHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["username"]
-	c := db.C("users")
+	
 
 	// 检查当前用户是否存在
 	currUser, ok := currentUser(r)
@@ -348,7 +358,15 @@ func unfollowHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+
+	//不能取消关注自己
+	if currUser.Username == username {
+		message(w, r, "提示", "不能对自己进行操作", "error")
+		return
+	}
+
 	user := User{}
+	c := db.C("users")
 	err := c.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {

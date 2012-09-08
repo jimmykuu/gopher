@@ -250,6 +250,7 @@ func renderTemplate(w http.ResponseWriter, r *http.Request, file string, data ma
 
 		if ok {
 			data["username"] = user.Username
+			data["isSuperUser"] = user.IsSuperuser
 			data["email"] = user.Email
 			data["fansCount"] = len(user.Fans)
 			data["followCount"] = len(user.Follow)
