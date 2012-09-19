@@ -98,12 +98,12 @@
 {{$topic := .utils.AssertTopic .topic}}
 <div class="span3">
 	<div class="well sidebar-nav">
-		<h6>作者</h6>
+		<h4><small>作者</small></h4>
 		<hr>
 		{{.utils.UserInfo $topic.User.Username}}
 	</div>
 	<div class="well sidebar-nav">
-		<h6>作者其它话题</h6>
+		<h4><small>作者其它话题</small></h4>
 		<hr>
 		<ul>
 			{{range $topic.User.LatestTopics}}

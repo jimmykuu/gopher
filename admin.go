@@ -16,6 +16,7 @@ const ADMIN_NAV = template.HTML(`<div class="span3">
 	<ul class="nav nav-list" id="admin-sidebar">
 		<li><a href="/admin/nodes"><i class="icon-chevron-right"></i>节点管理</a></li>
 		<li><a href="/admin/site_categories"><i class="icon-chevron-right"></i> 站点内容管理</a></li>
+		<li><a href="/admin/users"><i class="icon-chevron-right"></i> 用户管理</a></li>
 	</ul>
 </div>`)
 
@@ -24,12 +25,12 @@ const ADMIN_NAV = template.HTML(`<div class="span3">
 func adminHandler(w http.ResponseWriter, r *http.Request) {
 	user, ok := currentUser(r)
 	if !ok {
-		http.Redirect(w, r, "/signin?next=/node/new", http.StatusFound)
+		http.Redirect(w, r, "/signin?next=/admin", http.StatusFound)
 		return
 	}
 
 	if !user.IsSuperuser {
-		message(w, r, "没有权限", "对不起,你有没新建节点的权限,请联系管理员", "error")
+		message(w, r, "没有权限", "你没有后台管理权限", "error")
 		return
 	}
 
@@ -41,12 +42,12 @@ func adminHandler(w http.ResponseWriter, r *http.Request) {
 func adminListNodesHandler(w http.ResponseWriter, r *http.Request) {
 	user, ok := currentUser(r)
 	if !ok {
-		http.Redirect(w, r, "/signin?next=/node/new", http.StatusFound)
+		http.Redirect(w, r, "/signin?next=/admin/nodes", http.StatusFound)
 		return
 	}
 
 	if !user.IsSuperuser {
-		message(w, r, "没有权限", "对不起,你有没新建节点的权限,请联系管理员", "error")
+		message(w, r, "没有权限", "你没有列出查看节点的权限", "error")
 		return
 	}
 
@@ -61,12 +62,12 @@ func adminListNodesHandler(w http.ResponseWriter, r *http.Request) {
 func adminListSiteCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	user, ok := currentUser(r)
 	if !ok {
-		http.Redirect(w, r, "/signin?next=/node/new", http.StatusFound)
+		http.Redirect(w, r, "/signin?next=/admin/site_categories", http.StatusFound)
 		return
 	}
 
 	if !user.IsSuperuser {
-		message(w, r, "没有权限", "对不起,你有没新建节点的权限,请联系管理员", "error")
+		message(w, r, "没有权限", "你没有查看所有站点分类的权限", "error")
 		return
 	}
 
@@ -82,12 +83,12 @@ func adminListSiteCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 func adminNewSiteCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	user, ok := currentUser(r)
 	if !ok {
-		http.Redirect(w, r, "/signin?next=/node/new", http.StatusFound)
+		http.Redirect(w, r, "/signin?next=/admin/site_category/new", http.StatusFound)
 		return
 	}
 
 	if !user.IsSuperuser {
-		message(w, r, "没有权限", "对不起,你有没新建节点的权限,请联系管理员", "error")
+		message(w, r, "没有权限", "你没有新建站点分类的权限", "error")
 		return
 	}
 
@@ -136,7 +137,7 @@ func adminNewNodeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !user.IsSuperuser {
-		message(w, r, "没有权限", "对不起,你有没新建节点的权限,请联系管理员", "error")
+		message(w, r, "没有权限", "你没有新建节点的权限", "error")
 		return
 	}
 
@@ -185,4 +186,25 @@ func adminNewNodeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	renderTemplate(w, r, "node/new.html", map[string]interface{}{"form": form, "adminNav": ADMIN_NAV})
+}
+
+// URL: /admin/users
+// 列出所有用户
+func adminListUsersHandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := currentUser(r)
+	if !ok {
+		http.Redirect(w, r, "/signin?next=/admin/users", http.StatusFound)
+		return
+	}
+
+	if !user.IsSuperuser {
+		message(w, r, "没有权限", "你没有查看所有用户的权限", "error")
+		return
+	}
+
+	var users []User
+	c := db.C("users")
+	c.Find(nil).Sort("-createdat").All(&users)
+
+	renderTemplate(w, r, "admin/users.html", map[string]interface{}{"users": users, "adminNav": ADMIN_NAV})
 }

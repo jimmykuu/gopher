@@ -19,6 +19,7 @@ var (
 		"/admin/node/new":          adminNewNodeHandler,
 		"/admin/site_categories":   adminListSiteCategoriesHandler,
 		"/admin/site_category/new": adminNewSiteCategoryHandler,
+		"/admin/users":             adminListUsersHandler,
 
 		"/signup":          signupHandler,
 		"/signin":          signinHandler,
