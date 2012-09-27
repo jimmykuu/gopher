@@ -4,60 +4,59 @@
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<meta name="keywords" content="Golang, Golang中国, Golang China, Go语言, Golang 中国, Golang社区, Golang 社区" />
 	<title>{{template "Title" .}} - Golang中国</title>
-  <link rel="stylesheet" href="{{.utils.StaticUrl "css/bootstrap.min.css"}}" type="text/css">
-  <link rel="stylesheet" href="/static/css/wmd.css" type="text/css">
-  <link rel="stylesheet" href="{{.utils.StaticUrl "css/bootstrap-responsive.min.css"}}" type="text/css">
-  <link rel="stylesheet" href="{{.utils.StaticUrl "css/style.css"}}" type="text/css">
-  <link rel="stylesheet" href="{{.utils.StaticUrl "css/prettify.css"}}" type="text/css">
-  <script type="text/javascript" src="{{.utils.StaticUrl "js/jquery.js"}}"></script>
-  <script type="text/javascript" src="{{.utils.StaticUrl "js/bootstrap.min.js"}}"></script>
-  <script type="text/javascript" src="{{.utils.StaticUrl "js/prettify.js"}}"></script>
-  <script type="text/javascript" src="{{.utils.StaticUrl "js/modernizr.js"}}"></script>
-  <script type="text/javascript" src="{{.utils.StaticUrl "js/application.js"}}"></script>
+	<link rel="stylesheet" href="{{.utils.StaticUrl "css/bootstrap.min.css"}}" type="text/css">
+	<link rel="stylesheet" href="/static/css/wmd.css" type="text/css">
+	<link rel="stylesheet" href="{{.utils.StaticUrl "css/bootstrap-responsive.min.css"}}" type="text/css">
+	<link rel="stylesheet" href="{{.utils.StaticUrl "css/style.css"}}" type="text/css">
+	<link rel="stylesheet" href="{{.utils.StaticUrl "css/prettify.css"}}" type="text/css">
+	<script type="text/javascript" src="{{.utils.StaticUrl "js/jquery.js"}}"></script>
+	<script type="text/javascript" src="{{.utils.StaticUrl "js/bootstrap.min.js"}}"></script>
+	<script type="text/javascript" src="{{.utils.StaticUrl "js/prettify.js"}}"></script>
+	<script type="text/javascript" src="{{.utils.StaticUrl "js/modernizr.js"}}"></script>
+	<script type="text/javascript" src="{{.utils.StaticUrl "js/application.js"}}"></script>
 	<link rel="shortcut icon" href="/static/favicon.ico">
 </head>
 <body>
-  <header>
-    <div class="container">
-      {{if .username}}
-      <div class="btn-group pull-right">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-          <i class="icon-user"></i> {{.username}}
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="/profile"><i class="icon-cog"></i> 设置</a></li>
-          {{if .isSuperUser}}
-          <li><a href="/admin"><i class="icon-wrench"></i> 管理</a></li>
-          {{end}}
-          <li class="divider"></li>
-          <li><a href="/signout"><i class="icon-off"></i> 登出</a></li>
-        </ul>
-        </div>
-        {{else}}
-        <form action="/signin" method="post" class="form-inline pull-right login-form">
-          <input type="text" class="input-small" placeholder="用户名" name="username">
-          <input type="password" class="input-small" placeholder="密码" name="password">
-          <button type="submit" class="btn btn-primary">登录</button>
-          <p style="padding-top: 20px;">
-            <a href="/forgot_password">忘记密码</a> |
-            <a href="/signup">注册</a>
-          </p>
-        </form>
-        {{end}}
-      <div class="header-box">
-        <a class="brand" href="/"><img src="/static/img/golang-china.png"></a>
-        <nav class="pull-left">
-          <ul>
-           <li class="selected"><a href="/">社区</a></li>
-			<li><a href="/sites">酷站</a></li>
-           </ul>
-        </nav>
-      </div>
-        </div>
-      </div>
-    </div>
-  </header>
+	<header>
+	<div class="container">
+		{{if .username}}
+		<div class="btn-group pull-right">
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+				<i class="icon-user"></i> {{.username}}
+				<span class="caret"></span>
+			</a>
+			<ul class="dropdown-menu">
+				<li><a href="/profile"><i class="icon-cog"></i> 设置</a></li>
+					{{if .isSuperUser}}
+					<li><a href="/admin"><i class="icon-wrench"></i> 管理</a></li>
+					{{end}}
+					<li class="divider"></li>
+					<li><a href="/signout"><i class="icon-off"></i> 登出</a></li>
+			</ul>
+		</div>
+		{{else}}
+		<form action="/signin" method="post" class="form-inline pull-right login-form">
+			<input type="text" class="input-small" placeholder="用户名" name="username">
+			<input type="password" class="input-small" placeholder="密码" name="password">
+			<button type="submit" class="btn btn-primary">登录</button>
+			<p style="padding-top: 20px;">
+				<a href="/forgot_password">忘记密码</a> |
+				<a href="/signup">注册</a>
+			</p>
+		</form>
+		{{end}}
+		<div class="header-box">
+			<a class="brand" href="/"><img src="/static/img/golang-china.png"></a>
+			<nav class="pull-left">
+				<ul>
+					<li class="selected"><a href="/">社区</a></li>
+					<li><a href="/sites">酷站</a></li>
+					<li><a href="http://tour.golang.tc" target="_black">Go 指南</a></li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+	</header>
 	<div class="container">
 		<div class="row">
 			{{template "LeftSide" .}}

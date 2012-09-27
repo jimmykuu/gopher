@@ -4,6 +4,7 @@
 	<table class="table table-striped table-bordered table-hover">
 	<thead>
 		<tr>
+			<th>注册时间</th>
 			<th>用户名</th>
 			<th>邮箱</th>
 			<th>是否激活</th>
@@ -12,6 +13,7 @@
 	<tbody>
 	{{range .users}}
 		<tr>
+			<td>{{.JoinedAt}}</td>
 			<td>{{.Username}}</td>
 			<td>{{.Email}}</td>
 			<td>{{.IsActive}}</td>

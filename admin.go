@@ -204,7 +204,7 @@ func adminListUsersHandler(w http.ResponseWriter, r *http.Request) {
 
 	var users []User
 	c := db.C("users")
-	c.Find(nil).Sort("-createdat").All(&users)
+	c.Find(nil).Sort("-joinedat").All(&users)
 
 	renderTemplate(w, r, "admin/users.html", map[string]interface{}{"users": users, "adminNav": ADMIN_NAV})
 }
