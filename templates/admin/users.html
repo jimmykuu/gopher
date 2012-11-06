@@ -8,6 +8,7 @@
 			<th>用户名</th>
 			<th>邮箱</th>
 			<th>是否激活</th>
+			<th></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -16,7 +17,18 @@
 			<td>{{.JoinedAt}}</td>
 			<td>{{.Username}}</td>
 			<td>{{.Email}}</td>
-			<td>{{.IsActive}}</td>
+			<td>
+				{{if .IsActive }}
+					<span class="label label-success">已激活</span>
+				{{else}}
+					<span class="label label-important">未激活</span>
+				{{end}}
+			</td>
+			<td>
+				{{if not .IsActive}}
+					<a class="btn btn-mini btn-primary" href="/admin/user/{{.Id_.Hex}}/activate"><i class="icon icon-white icon-ok"></i> 激活</a>
+				{{end}}
+			</td>
 		</tr>
 	{{end}}
 	</tbody>

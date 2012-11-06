@@ -6,6 +6,7 @@ package main
 
 import (
 	"./wtforms"
+	"code.google.com/p/gorilla/mux"
 	"html/template"
 	"labix.org/v2/mgo/bson"
 	"net/http"
@@ -207,4 +208,25 @@ func adminListUsersHandler(w http.ResponseWriter, r *http.Request) {
 	c.Find(nil).Sort("-joinedat").All(&users)
 
 	renderTemplate(w, r, "admin/users.html", map[string]interface{}{"users": users, "adminNav": ADMIN_NAV})
+}
+
+// URL: /admin/user/{userId}/activate
+// 激活用户
+func adminActivateUserHandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := currentUser(r)
+	if !ok {
+		http.Redirect(w, r, "/signin?next=/admin/users", http.StatusFound)
+		return
+	}
+
+	if !user.IsSuperuser {
+		message(w, r, "没有权限", "你没有激活用户的权限", "error")
+		return
+	}
+
+	userId := mux.Vars(r)["userId"]
+
+	c := db.C("users")
+	c.Update(bson.M{"_id": bson.ObjectIdHex(userId)}, bson.M{"$set": bson.M{"isactive": true}})
+	http.Redirect(w, r, "/admin/users", http.StatusFound)
 }
