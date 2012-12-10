@@ -6,14 +6,14 @@ Golang中国([www.golang.tc](http://www.golang.tc))源代码.
 
 - Go1.0+
 - MongoDB
-- code.google.com/p/gorilla/mux
-- code.google.com/p/gorilla/sessions
+- github.com/gorilla/mux
+- github.com/gorilla/sessions
 - labix.org/v2/mgo
 
 ##Install
 
-    go get -u code.google.com/p/gorilla/mux
-    go get -u code.google.com/p/gorilla/sessions
+    go get -u github.com/gorilla/mux
+    go get -u github.com/gorilla/sessions
     go get -u labix.org/v2/mgo
     git clone git://github.com/jimmykuu/gopher.git
 	
