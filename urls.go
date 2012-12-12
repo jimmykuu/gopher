@@ -21,6 +21,8 @@ var (
 		"/admin/site_category/new":      adminNewSiteCategoryHandler,
 		"/admin/users":                  adminListUsersHandler,
 		"/admin/user/{userId}/activate": adminActivateUserHandler,
+		"/admin/article_categories":     adminListArticleCategoriesHandler,
+		"/admin/article_category/new":   adminNewArticleCategoryHandler,
 
 		"/signup":          signupHandler,
 		"/signin":          signinHandler,
@@ -49,5 +51,9 @@ var (
 		"/sites":              sitesHandler,
 		"/site/new":           newSiteHandler,
 		"/site/{siteId}/edit": editSiteHandler,
+
+		"/article/new":   newArticleHandler,
+		"/articles":      listArticlesHandler,
+		"/a/{articleId}": showArticleHandler,
 	}
 )

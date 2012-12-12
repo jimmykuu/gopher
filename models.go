@@ -240,3 +240,57 @@ func (s *Site) CanEdit(username string) bool {
 
 	return s.UserId == user.Id_
 }
+
+// 文章分类
+type ArticleCategory struct {
+	Id_  bson.ObjectId `bson:"_id"`
+	Name string
+}
+
+// 文章
+type Article struct {
+	Id_            bson.ObjectId `bson:"_id"`
+	CategoryId     bson.ObjectId
+	UserId         bson.ObjectId
+	Title          string
+	Markdown       string
+	Html           template.HTML
+	OriginalSource string
+	OriginalUrl    string
+	CreatedAt      time.Time
+	Hits           int32
+}
+
+// 是否有权编辑主题
+func (a *Article) CanEdit(username string) bool {
+	var user User
+	c := db.C("users")
+	err := c.Find(bson.M{"username": username}).One(&user)
+	if err != nil {
+		return false
+	}
+
+	if user.IsSuperuser {
+		return true
+	}
+
+	return a.UserId == user.Id_
+}
+
+// 文章的提交人
+func (a *Article) User() *User {
+	c := db.C("users")
+	user := User{}
+	c.Find(bson.M{"_id": a.UserId}).One(&user)
+
+	return &user
+}
+
+// 主题所属类型
+func (a *Article) Category() *ArticleCategory {
+	c := db.C("articlecategories")
+	category := ArticleCategory{}
+	c.Find(bson.M{"_id": a.CategoryId}).One(&category)
+
+	return &category
+}

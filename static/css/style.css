@@ -140,9 +140,8 @@ header nav {
 header nav li {
 	list-style-type: none;
 	float: left;
-	margin: 0;
+	margin: 0 5px;
 	padding: 0;
-	width: 121px;
 }
 
 header nav li a {
@@ -240,6 +239,25 @@ header nav li a:hover {
 .content div.page-header {
 	margin-top: 0;
 	margin-bottom: 0;
+}
+
+.content p {
+	line-height: 2em;
+	text-indent: 2em;
+}
+
+.content h1 {
+	font-size: 24px;
+}
+
+.content h2 {
+	font-size: 20px;
+	background: #E0EBF5;
+	padding: 2px 5px;
+}
+
+.content h3 {
+	font-size: 20px;
 }
 
 dl.site dd {

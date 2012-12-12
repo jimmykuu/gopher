@@ -16,7 +16,8 @@ import (
 const ADMIN_NAV = template.HTML(`<div class="span3">
 	<ul class="nav nav-list" id="admin-sidebar">
 		<li><a href="/admin/nodes"><i class="icon-chevron-right"></i>节点管理</a></li>
-		<li><a href="/admin/site_categories"><i class="icon-chevron-right"></i> 站点内容管理</a></li>
+		<li><a href="/admin/site_categories"><i class="icon-chevron-right"></i> 站点分类管理</a></li>
+		<li><a href="/admin/article_categories"><i class="icon-chevron-right"></i> 文章分类管理</a></li>
 		<li><a href="/admin/users"><i class="icon-chevron-right"></i> 用户管理</a></li>
 	</ul>
 </div>`)
@@ -229,4 +230,74 @@ func adminActivateUserHandler(w http.ResponseWriter, r *http.Request) {
 	c := db.C("users")
 	c.Update(bson.M{"_id": bson.ObjectIdHex(userId)}, bson.M{"$set": bson.M{"isactive": true}})
 	http.Redirect(w, r, "/admin/users", http.StatusFound)
+}
+
+// URL: /admin/article_categories
+// 列出所有的文章分类
+func adminListArticleCategoriesHandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := currentUser(r)
+	if !ok {
+		http.Redirect(w, r, "/signin?next=/admin/article_categories", http.StatusFound)
+		return
+	}
+
+	if !user.IsSuperuser {
+		message(w, r, "没有权限", "你没有查看所有文章分类的权限", "error")
+		return
+	}
+
+	var categories []SiteCategory
+	c := db.C("articlecategories")
+	c.Find(nil).All(&categories)
+
+	renderTemplate(w, r, "admin/article_categories.html", map[string]interface{}{"adminNav": ADMIN_NAV, "categories": categories})
+}
+
+// URL: /admin/article_category/new
+// 新建文章分类
+func adminNewArticleCategoryHandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := currentUser(r)
+	if !ok {
+		http.Redirect(w, r, "/signin?next=/admin/article_category/new", http.StatusFound)
+		return
+	}
+
+	if !user.IsSuperuser {
+		message(w, r, "没有权限", "你没有新建文章分类的权限", "error")
+		return
+	}
+
+	form := wtforms.NewForm(
+		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),
+	)
+
+	if r.Method == "POST" {
+		if !form.Validate(r) {
+			renderTemplate(w, r, "admin/new_article_category.html", map[string]interface{}{"adminNav": ADMIN_NAV, "form": form})
+			return
+		}
+
+		c := db.C("articlecategories")
+		var category ArticleCategory
+		err := c.Find(bson.M{"name": form.Value("name")}).One(&category)
+
+		if err == nil {
+			form.AddError("name", "该名称已经有了")
+			renderTemplate(w, r, "admin/new_article_category.html", map[string]interface{}{"adminNav": ADMIN_NAV, "form": form})
+			return
+		}
+
+		err = c.Insert(&ArticleCategory{
+			Id_:  bson.NewObjectId(),
+			Name: form.Value("name"),
+		})
+
+		if err != nil {
+			panic(err)
+		}
+
+		http.Redirect(w, r, "/admin/article_category/new", http.StatusFound)
+	}
+
+	renderTemplate(w, r, "admin/new_article_category.html", map[string]interface{}{"adminNav": ADMIN_NAV, "form": form})
 }

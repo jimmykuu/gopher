@@ -1,0 +1,35 @@
+{{define "Title"}}文章{{end}}
+{{define "Content"}}
+<ul class="breadcrumb">
+	<li>
+		<a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span>
+	</li>
+	<li class="active">xxxx</a></li>
+</ul>
+<div class="content">
+	<h3><small>收录关于Golang的中文文章.如果作者发现不可以引用,请联系站长删除.</small></h3>
+	<a href="/article/new" class="btn btn-info">转载文章</a>
+</div>
+{{$utils := .utils}}
+<div class="content">
+	<dl class="articles">
+	{{range .articles}}
+		<dd>
+			<a href="/a/{{.Id_.Hex}}" class="title">{{.Title}}</a>
+			<div class="clear"></div>
+		</dd>
+	{{end}}
+	</dl>
+	<hr>
+	{{.pagination.Html .page}}
+</div>
+{{end}}
+
+{{define "LeftSide"}}{{end}}
+
+{{define "RightSide"}}
+<div class="span3">
+	<div class="well sidebar-nav">
+	</div>
+</div>
+{{end}}

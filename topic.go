@@ -84,8 +84,6 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if r.Method == "POST" && form.Validate(r) {
-		nodeId = form.Value("node")
-
 		session, _ := store.Get(r, "user")
 		username, _ := session.Values["username"]
 		username = username.(string)

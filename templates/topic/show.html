@@ -7,17 +7,17 @@
     <li><a href="/go/{{$topic.Node.Id}}">{{$topic.Node.Name}}</a></li>
   </ul>
   <div class="content">
-    <h2>{{$topic.Title}}</h2>
+    <h1>{{$topic.Title}}</h1>
     <a href="/topic/new" class="btn btn-success pull-right">发表话题</a>
     {{if .username}}
  		{{if $topic.CanEdit .username}}
 			<a href="/t/{{$topic.Id_.Hex}}/edit" class="btn btn-info pull-right"><i class="icon-pencil icon-white"></i> 编辑</a>
 		{{end}}
 	{{end}}
-    <p>
+    <div>
        由 <a href="/member/{{$topic.User.Username}}">{{$topic.User.Username}}</a> 在 {{.utils.FormatTime $topic.CreatedAt }} 发布
        {{$topic.Hits}} 次点击
-    </p>
+    </div>
     <hr>
     {{$topic.Html}}
   </div>

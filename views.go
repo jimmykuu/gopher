@@ -120,6 +120,11 @@ func (u *Utils) AssertTopic(i interface{}) *Topic {
 	return &v
 }
 
+func (u *Utils) AssertArticle(i interface{}) *Article {
+	v, _ := i.(Article)
+	return &v
+}
+
 func message(w http.ResponseWriter, r *http.Request, title string, message string, class string) {
 	renderTemplate(w, r, "message.html", map[string]interface{}{"title": title, "message": template.HTML(message), "class": class})
 }
@@ -160,7 +165,7 @@ func init() {
 
 	if config["db"] == "" {
 		println("数据库地址还没有配置,请到config.json内配置db字段.")
-		return;
+		return
 	}
 
 	session, err := mgo.Dial(config["db"])
