@@ -16,7 +16,9 @@
 	<div>感谢 <a href="/member/{{$article.User.Username}}">{{$article.User.Username}}</a> 在 {{.utils.FormatTime $article.CreatedAt }} 投递 {{.article.Hits}} 次点击</div>
 	<h2><small>本文转载自: <a href="{{.article.OriginalUrl}}" target="_blank">{{.article.OriginalSource}}</a></small></h2>
 	<hr>
-	{{.article.Html}}
+	<div class="article">
+		{{.article.Html}}
+	</div>
 	<div class="alert alert-block">
 		<p>本文转载自: <a href="{{.article.OriginalUrl}}" target="_blank">{{.article.OriginalSource}}</a></p>
 		<p>(本站只作转载,不代表本站同意文中观点或证实文中信息)</p>

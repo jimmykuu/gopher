@@ -243,7 +243,14 @@ header nav li a:hover {
 
 .content p {
 	line-height: 2em;
+}
+
+.article p {
 	text-indent: 2em;
+}
+
+.articles dd {
+	margin-bottom: 10px;
 }
 
 .content h1 {

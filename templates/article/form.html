@@ -11,14 +11,16 @@
 	<form action="{{.action}}" method="post" class="form-vertical" id="article-form">
 		<fieldset>
 			{{.form.Render "html"}}
+			{{.form.Render "title" `rows="4"` `class="span8"`}}
+			{{.form.Render "category"}}
 			{{.form.Render "original_source" `class="span6"`}}
 			{{.form.Render "original_url" `class="span6"`}}
-			{{.form.Render "category"}}
-			{{.form.Render "title" `rows="4"` `class="span8"`}}
+			
 			<div class="wmd-panel">
 				<div id="wmd-button-bar"></div>
 				<textarea class="wmd-input span8" id="wmd-input" name="content" rows="20">{{.content}}</textarea>
 			</div>
+			<div>预览</div>
 			<div id="wmd-preview" class="wmd-panel wmd-preview">{{.html}}</div>
 			<div class="form-actions">
 				<input type="submit" class="btn btn-primary" value="{{.title}}">
