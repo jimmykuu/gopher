@@ -66,7 +66,7 @@ func newArticleHandler(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 
-		http.Redirect(w, r, "/article/"+Id_.Hex(), http.StatusFound)
+		http.Redirect(w, r, "/a/"+Id_.Hex(), http.StatusFound)
 		return
 	}
 
