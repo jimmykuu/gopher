@@ -6,7 +6,7 @@ package main
 
 import (
 	"./wtforms"
-	"code.google.com/p/gorilla/mux"
+	"github.com/gorilla/mux"
 	"labix.org/v2/mgo/bson"
 	"net/http"
 )

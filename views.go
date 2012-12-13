@@ -6,10 +6,10 @@ package main
 
 import (
 	"bytes"
-	"code.google.com/p/gorilla/sessions"
 	"crypto/md5"
 	"crypto/rand"
 	"fmt"
+	"github.com/gorilla/sessions"
 	"html/template"
 	"io"
 	"labix.org/v2/mgo"

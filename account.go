@@ -5,10 +5,10 @@ package main
 
 import (
 	"./wtforms"
-	"code.google.com/p/gorilla/mux"
-	"code.google.com/p/gorilla/sessions"
 	"crypto/md5"
 	"fmt"
+	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 	"io"
 	"labix.org/v2/mgo/bson"
 	"net/http"

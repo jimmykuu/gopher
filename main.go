@@ -5,8 +5,8 @@
 package main
 
 import (
-	"code.google.com/p/gorilla/mux"
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"net/http"
 	"os"
 )
