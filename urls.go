@@ -52,8 +52,9 @@ var (
 		"/site/new":           newSiteHandler,
 		"/site/{siteId}/edit": editSiteHandler,
 
-		"/article/new":   newArticleHandler,
-		"/articles":      listArticlesHandler,
-		"/a/{articleId}": showArticleHandler,
+		"/article/new":        newArticleHandler,
+		"/articles":           listArticlesHandler,
+		"/a/{articleId}":      showArticleHandler,
+		"/a/{articleId}/edit": editArticleHandler,
 	}
 )

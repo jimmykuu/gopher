@@ -282,3 +282,14 @@ div.header {
 	border-bottom: 1px solid #CCC;
 	line-height: 20px;
 }
+
+.footer-links {
+	margin: 10px 0;
+}
+.footer-links li {
+	display: inline;
+	padding: 0 2px;
+}
+.footer-links li:first-child {
+	padding-left: 0;
+}

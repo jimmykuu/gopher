@@ -134,7 +134,7 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, r, "topic/form.html", map[string]interface{}{"form": form, "title": "新建", "action": "/topic/new"})
 }
 
-// URL: /t{topicId}/edit
+// URL: /t/{topicId}/edit
 // 编辑主题
 func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 	user, ok := currentUser(r)
@@ -154,8 +154,8 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !(user.IsSuperuser || topic.UserId == user.Id_) {
-		message(w, r, "没用过权限", "对不起,你没有权限编辑编辑该主题", "error")
+	if !topic.CanEdit(user.Username) {
+		message(w, r, "没用该权限", "对不起,你没有权限编辑该主题", "error")
 		return
 	}
 

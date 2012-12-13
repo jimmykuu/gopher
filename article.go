@@ -139,3 +139,77 @@ func showArticleHandler(w http.ResponseWriter, r *http.Request) {
 
 	renderTemplate(w, r, "article/show.html", map[string]interface{}{"article": article})
 }
+
+// URL: /a/{articleId}/edit
+// 编辑主题
+func editArticleHandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := currentUser(r)
+	if !ok {
+		http.Redirect(w, r, "/signin", http.StatusFound)
+		return
+	}
+
+	articleId := mux.Vars(r)["articleId"]
+
+	c := db.C("articles")
+	var article Article
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(articleId)}).One(&article)
+
+	if err != nil {
+		message(w, r, "没有该文章", "没有该文章,不能编辑", "error")
+		return
+	}
+
+	if !article.CanEdit(user.Username) {
+		message(w, r, "没用该权限", "对不起,你没有权限编辑该文章", "error")
+		return
+	}
+
+	var categorys []ArticleCategory
+	c = db.C("articlecategories")
+	c.Find(nil).All(&categorys)
+
+	var choices []wtforms.Choice
+
+	for _, category := range categorys {
+		choices = append(choices, wtforms.Choice{Value: category.Id_.Hex(), Label: category.Name})
+	}
+
+	form := wtforms.NewForm(
+		wtforms.NewHiddenField("html", ""),
+		wtforms.NewTextField("title", "标题", article.Title, wtforms.Required{}),
+		wtforms.NewTextArea("content", "内容", article.Markdown, wtforms.Required{}),
+		wtforms.NewTextField("original_source", "原始出处", article.OriginalSource, wtforms.Required{}),
+		wtforms.NewTextField("original_url", "原始链接", article.OriginalUrl, wtforms.URL{}),
+		wtforms.NewSelectField("category", "分类", choices, article.CategoryId.Hex()),
+	)
+
+	content := article.Markdown
+	html := article.Html
+
+	if r.Method == "POST" {
+		if form.Validate(r) {
+			html := form.Value("html")
+			html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
+
+			categoryId := bson.ObjectIdHex(form.Value("category"))
+			c = db.C("articles")
+			c.Update(bson.M{"_id": article.Id_}, bson.M{"$set": bson.M{
+				"categoryid":     categoryId,
+				"title":          form.Value("title"),
+				"originalsource": form.Value("original_source"),
+				"originalurl":    form.Value("original_url"),
+				"markdown":       form.Value("content"),
+				"html":           template.HTML(html),
+			}})
+
+			http.Redirect(w, r, "/a/"+article.Id_.Hex(), http.StatusFound)
+			return
+		}
+
+		content = form.Value("content")
+		html = template.HTML(form.Value("html"))
+	}
+
+	renderTemplate(w, r, "article/form.html", map[string]interface{}{"form": form, "title": "编辑", "action": "/a/" + articleId + "/edit", "html": html, "content": content})
+}
