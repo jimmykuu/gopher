@@ -293,3 +293,7 @@ div.header {
 .footer-links li:first-child {
 	padding-left: 0;
 }
+
+a.remove {
+	margin-right: 10px;
+}

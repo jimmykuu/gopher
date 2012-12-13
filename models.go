@@ -114,6 +114,18 @@ func (r *Reply) Topic() *Topic {
 	return &r.topic
 }
 
+// 是否有权删除回复
+func (r *Reply) CanDelete(username string) bool {
+	var user User
+	c := db.C("users")
+	err := c.Find(bson.M{"username": username}).One(&user)
+	if err != nil {
+		return false
+	}
+
+	return user.IsSuperuser
+}
+
 // 主题
 type Topic struct {
 	Id_             bson.ObjectId `bson:"_id"`

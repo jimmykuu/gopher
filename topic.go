@@ -324,3 +324,47 @@ func topicInNodeHandler(w http.ResponseWriter, r *http.Request) {
 
 	renderTemplate(w, r, "/topic/list.html", map[string]interface{}{"topics": topics, "node": node})
 }
+
+// URL: /reply/{replyId}/delete
+// 删除回复，只有管理员可以删除
+func deleteReplyHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	replyId := vars["replyId"]
+
+	user, ok := currentUser(r)
+
+	if !ok {
+		http.Redirect(w, r, "/signin", http.StatusFound)
+		return
+	}
+
+	if !user.IsSuperuser {
+		message(w, r, "没用该权限", "对不起,你没有权限删除该回复", "error")
+		return
+	}
+
+	c := db.C("replies")
+	var reply Reply
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(replyId)}).One(&reply)
+	if err != nil {
+		message(w, r, "该回复不存在", "不存在该回复", "error")
+		return
+	}
+
+	err = c.Remove(bson.M{"_id": bson.ObjectIdHex(replyId)})
+
+	if err != nil {
+		message(w, r, "该回复不存在", "不存在该回复", "error")
+		return
+	}
+
+	c = db.C("topics")
+	c.Update(bson.M{"_id": reply.TopicId}, bson.M{"$inc": bson.M{"replycount": -1}})
+
+	c = db.C("status")
+	var status Status
+	c.Find(nil).One(&status)
+	c.Update(bson.M{"_id": status.Id_}, bson.M{"$inc": bson.M{"replycount": -1}})
+
+	http.Redirect(w, r, "/t/"+reply.TopicId.Hex(), http.StatusFound)
+}

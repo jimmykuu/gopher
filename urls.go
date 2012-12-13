@@ -36,11 +36,12 @@ var (
 		"/nodes":     nodesHandler,
 		"/go/{node}": topicInNodeHandler,
 
-		"/topic/new":        newTopicHandler,
-		"/new/{node}":       newTopicHandler,
-		"/t/{topicId}":      showTopicHandler,
-		"/t/{topicId}/edit": editTopicHandler,
-		"/reply/{topicId}":  replyHandler,
+		"/topic/new":              newTopicHandler,
+		"/new/{node}":             newTopicHandler,
+		"/t/{topicId}":            showTopicHandler,
+		"/t/{topicId}/edit":       editTopicHandler,
+		"/reply/{topicId}":        replyHandler,
+		"/reply/{replyId}/delete": deleteReplyHandler,
 
 		"/member/{username}":         memberInfoHandler,
 		"/member/{username}/topics":  memberTopicsHandler,
