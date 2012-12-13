@@ -89,14 +89,16 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 			id := bson.NewObjectId()
 
 			validateCode := uuid()
+			index := status.UserIndex + 1
 			err = c.Insert(&User{
 				Id_:          id,
 				Username:     form.Value("username"),
 				Password:     encryptPassword(form.Value("password")),
 				Email:        form.Value("email"),
 				ValidateCode: validateCode,
+				IsActive:     true,
 				JoinedAt:     time.Now(),
-				Index:        status.UserIndex + 1,
+				Index:        index,
 			})
 
 			if err != nil {
@@ -106,18 +108,21 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 			c2.Update(bson.M{"_id": status.Id_}, bson.M{"$inc": bson.M{"userindex": 1}})
 
 			// 发送邮件
-			subject := "欢迎加入Golang 中国"
-			message2 := `欢迎加入Golang 中国。请访问下面地址激活你的帐户。
+			/*
+							subject := "欢迎加入Golang 中国"
+							message2 := `欢迎加入Golang 中国。请访问下面地址激活你的帐户。
 
-<a href="%s/activate/%s">%s/activate/%s</a>
+				<a href="%s/activate/%s">%s/activate/%s</a>
 
-如果你没有注册，请忽略这封邮件。
+				如果你没有注册，请忽略这封邮件。
 
-©2012 Golang 中国`
-			message2 = fmt.Sprintf(message2, config["host"], validateCode, config["host"], validateCode)
-			sendMail(subject, message2, []string{form.Value("email")})
+				©2012 Golang 中国`
+							message2 = fmt.Sprintf(message2, config["host"], validateCode, config["host"], validateCode)
+							sendMail(subject, message2, []string{form.Value("email")})
 
-			message(w, r, "注册成功", "请查看你的邮箱进行验证，如果收件箱没有，请查看垃圾邮件，如果还没有，请给jimmykuu@126.com发邮件，告知你的用户名。", "success")
+							message(w, r, "注册成功", "请查看你的邮箱进行验证，如果收件箱没有，请查看垃圾邮件，如果还没有，请给jimmykuu@126.com发邮件，告知你的用户名。", "success")
+			*/
+			message(w, r, "注册成功", fmt.Sprintf(`感谢您的注册，您已经成为Golang中国第 <strong>%d</strong>位用户，<a href="/signin">登录</a>。`, index), "success")
 			return
 		}
 	}
@@ -307,7 +312,6 @@ func followHandler(w http.ResponseWriter, r *http.Request) {
 	println("follow")
 	vars := mux.Vars(r)
 	username := vars["username"]
-	
 
 	// 检查当前用户是否存在
 	currUser, ok := currentUser(r)
@@ -317,15 +321,12 @@ func followHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	//不能关注自己
 	if currUser.Username == username {
 		message(w, r, "提示", "不能关注自己", "error")
-		return;
+		return
 	}
 
-
-	
 	user := User{}
 	c := db.C("users")
 	err := c.Find(bson.M{"username": username}).One(&user)
@@ -348,7 +349,6 @@ func followHandler(w http.ResponseWriter, r *http.Request) {
 func unfollowHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["username"]
-	
 
 	// 检查当前用户是否存在
 	currUser, ok := currentUser(r)
@@ -357,7 +357,6 @@ func unfollowHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
-
 
 	//不能取消关注自己
 	if currUser.Username == username {
