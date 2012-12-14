@@ -273,3 +273,7 @@ func staticHandler(templateFile string) func(w http.ResponseWriter, r *http.Requ
 		renderTemplate(w, r, templateFile, map[string]interface{}{})
 	}
 }
+
+func yucVerifyFileHandler(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("7250eb93b3c18cc9daa29cf58af7a004"))
+}

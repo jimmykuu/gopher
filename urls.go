@@ -10,9 +10,10 @@ import (
 
 var (
 	handlers = map[string]func(http.ResponseWriter, *http.Request){
-		"/":      indexHandler,
-		"/about": staticHandler("about.html"),
-		"/faq":   staticHandler("faq.html"),
+		"/":                    indexHandler,
+		"/about":               staticHandler("about.html"),
+		"/faq":                 staticHandler("faq.html"),
+		"/yuc_verify_file.txt": yucVerifyFileHandler,
 
 		"/admin":                        adminHandler,
 		"/admin/nodes":                  adminListNodesHandler,
