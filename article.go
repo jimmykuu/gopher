@@ -213,3 +213,66 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 
 	renderTemplate(w, r, "article/form.html", map[string]interface{}{"form": form, "title": "编辑", "action": "/a/" + articleId + "/edit", "html": html, "content": content})
 }
+
+// URL: /a/{articleId}/comment
+// 评论文章
+func commentAnArticleHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		vars := mux.Vars(r)
+		articleId := vars["articleId"]
+
+		user, ok := currentUser(r)
+
+		if !ok {
+			http.Redirect(w, r, "/a/"+articleId, http.StatusFound)
+			return
+		}
+
+		content := r.FormValue("content")
+
+		html := r.FormValue("html")
+		html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
+
+		Id_ := bson.NewObjectId()
+		now := time.Now()
+		comment := Comment{
+			Id_:       Id_,
+			UserId:    user.Id_,
+			Markdown:  content,
+			Html:      template.HTML(html),
+			CreatedAt: now,
+		}
+
+		c := db.C("articles")
+		c.Update(bson.M{"_id": bson.ObjectIdHex(articleId)}, bson.M{"$addToSet": bson.M{"comments": comment}})
+
+		http.Redirect(w, r, "/a/"+articleId, http.StatusFound)
+	}
+}
+
+// URL: /a/{articleId}/comment/{commentId}/delete
+// 删除文章评论
+func deleteArticleCommentHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	articleId := vars["articleId"]
+
+	user, ok := currentUser(r)
+
+	if !ok {
+		http.Redirect(w, r, "/a/"+articleId, http.StatusFound)
+		return
+	}
+
+	if !user.IsSuperuser {
+		message(w, r, "没用该权限", "对不起,你没有权限删除该评论", "error")
+		return
+	}
+
+	var commentId string = vars["commentId"]
+
+	c := db.C("articles")
+	c.Update(bson.M{"_id": bson.ObjectIdHex(articleId)},
+		bson.M{"$pull": bson.M{"comments": bson.M{"_id": bson.ObjectIdHex(commentId)}}})
+
+	http.Redirect(w, r, "/a/"+articleId, http.StatusFound)
+}

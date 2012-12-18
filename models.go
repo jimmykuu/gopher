@@ -271,6 +271,7 @@ type Article struct {
 	OriginalUrl    string
 	CreatedAt      time.Time
 	Hits           int32
+	Comments       []Comment
 }
 
 // 是否有权编辑主题
@@ -305,4 +306,34 @@ func (a *Article) Category() *ArticleCategory {
 	c.Find(bson.M{"_id": a.CategoryId}).One(&category)
 
 	return &category
+}
+
+// 评论
+type Comment struct {
+	Id_       bson.ObjectId `bson:"_id"`
+	UserId    bson.ObjectId
+	Markdown  string
+	Html      template.HTML
+	CreatedAt time.Time
+}
+
+// 评论人
+func (c *Comment) User() *User {
+	c_ := db.C("users")
+	user := User{}
+	c_.Find(bson.M{"_id": c.UserId}).One(&user)
+
+	return &user
+}
+
+// 是否有权删除评论
+func (c *Comment) CanDelete(username string) bool {
+	var user User
+	c_ := db.C("users")
+	err := c_.Find(bson.M{"username": username}).One(&user)
+	if err != nil {
+		return false
+	}
+
+	return user.IsSuperuser
 }
