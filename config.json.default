@@ -8,5 +8,6 @@
 	"smtp_host": "smtp.example.com",
 	"smtp_addr": "smtp.example.com:25",
 	"from_email": "who@example.com",
-	"superusers": "jimmykuu,another"
+	"superusers": "jimmykuu,another",
+	"analytics_file": ""
 }

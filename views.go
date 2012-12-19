@@ -264,6 +264,8 @@ func renderTemplate(w http.ResponseWriter, r *http.Request, file string, data ma
 
 	data["utils"] = utils
 
+	data["analyticsCode"] = analyticsCode
+
 	page := parseTemplate(file, data)
 	w.Write(page)
 }

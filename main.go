@@ -7,11 +7,14 @@ package main
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
+	"html/template"
+	"io/ioutil"
 	"net/http"
 	"os"
 )
 
 var config map[string]string
+var analyticsCode template.HTML // 网站统计分析代码
 
 // 初始化,读取配置文件
 func init() {
@@ -33,6 +36,20 @@ func init() {
 		panic(err)
 		os.Exit(1)
 	}
+
+	analyticsFiel := config["analytics_file"]
+
+	if analyticsFiel != "" {
+		content, err := ioutil.ReadFile(analyticsFiel)
+
+		if err != nil {
+			println("统计分析文件没有找到")
+			panic(err)
+			os.Exit(1)
+		}
+
+		analyticsCode = template.HTML(string(content))
+	}
 }
 
 func main() {
@@ -45,7 +62,6 @@ func main() {
 	http.Handle("/", r)
 
 	port := config["port"]
-
 	println("Listen", port)
 	http.ListenAndServe(":"+port, nil)
 }
