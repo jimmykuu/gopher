@@ -96,10 +96,10 @@ type Reply struct {
 
 // 该回复所属于的用户
 func (r *Reply) User() *User {
+	println(r)
 	c := db.C("users")
-	user := User{}
+	var user User
 	c.Find(bson.M{"_id": r.UserId}).One(&user)
-
 	return &user
 }
 

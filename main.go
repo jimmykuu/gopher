@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"log"
 )
 
 var config map[string]string
@@ -63,5 +64,5 @@ func main() {
 
 	port := config["port"]
 	println("Listen", port)
-	http.ListenAndServe(":"+port, nil)
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }

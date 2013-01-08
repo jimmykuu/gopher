@@ -9,6 +9,8 @@
 .wmd-preview { 
 	padding: 10px;
 	border: 1px solid #375EAB;
+	background-color: white;
+	border-radius: 4px;
 }
 
 .wmd-button-row {

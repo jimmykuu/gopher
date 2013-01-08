@@ -359,7 +359,26 @@ func deleteReplyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c = db.C("topics")
+	// 减少该主题的回复数量
 	c.Update(bson.M{"_id": reply.TopicId}, bson.M{"$inc": bson.M{"replycount": -1}})
+
+	var topic Topic
+	c.Find(bson.M{"_id": reply.TopicId}).One(&topic)
+
+	if topic.LatestReplyId == replyId {
+		if topic.ReplyCount == 0 {
+			// 如果删除后没有回复，设置最后回复id为空，最后回复时间为创建时间
+			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{"latestreplyid": "", "latestrepliedat": reply.CreatedAt}})
+		} else {
+			// 如果删除的是该主题最后一个回复，设置主题的最新回复id，和时间
+			var latestReply Reply
+			c = db.C("replies")
+			c.Find(bson.M{"topicid": topic.Id_}).Sort("-createdat").Limit(1).One(&latestReply)
+
+			c = db.C("topics")
+			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{"latestreplyid": latestReply.Id_.Hex(), "latestrepliedat": latestReply.CreatedAt}})
+		}
+	}
 
 	c = db.C("status")
 	var status Status
