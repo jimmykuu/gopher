@@ -2,14 +2,14 @@
 后台管理
 */
 
-package main
+package gopher
 
 import (
-	"./wtforms"
 	"github.com/gorilla/mux"
 	"html/template"
 	"labix.org/v2/mgo/bson"
 	"net/http"
+	"wtforms"
 )
 
 // 管理页面的子菜单

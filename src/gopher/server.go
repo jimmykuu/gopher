@@ -2,16 +2,16 @@
 读取配置文件,设置URL,启动服务器
 */
 
-package main
+package gopher
 
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"html/template"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
-	"log"
 )
 
 var config map[string]string
@@ -19,7 +19,7 @@ var analyticsCode template.HTML // 网站统计分析代码
 
 // 初始化,读取配置文件
 func init() {
-	file, err := os.Open("config.json")
+	file, err := os.Open("etc/config.json")
 	if err != nil {
 		println("配置文件读取失败")
 		panic(err)
@@ -53,7 +53,7 @@ func init() {
 	}
 }
 
-func main() {
+func StartServer() {
 	http.Handle("/static/", http.FileServer(http.Dir(".")))
 	r := mux.NewRouter()
 	for url, handler := range handlers {

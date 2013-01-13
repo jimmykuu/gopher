@@ -2,7 +2,7 @@
 和MongoDB对应的struct
 */
 
-package main
+package gopher
 
 import (
 	"html/template"

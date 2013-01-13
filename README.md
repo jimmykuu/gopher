@@ -16,8 +16,8 @@ Golang中国([www.golang.tc](http://www.golang.tc))源代码.
     go get -u github.com/gorilla/sessions
     go get -u labix.org/v2/mgo
     git clone git://github.com/jimmykuu/gopher.git
-	
-修改文件 *config.json.default* 为 *config.json* 作为配置文件
+
+修改文件 *etc/config.json.default* 为 *etc/config.json* 作为配置文件
 
 - superusers: 内容为用户名,如果没有管理员,内容为"",如果有多个,用空格隔开
 - analytics_file: 内容为统计分析代码的文件名
@@ -40,14 +40,16 @@ Golang中国([www.golang.tc](http://www.golang.tc))源代码.
 
 先启动MongoDB
 
-然后运行命令
+Linux/Unix/Mac OS X:
+    
+    $ cd gopher
+    $ ./build.sh
+    $ ./bin/server
 
-	go run *.go
-
-或者
-
-    go build -o gopher *.go
-    ./gopher
+Windows:
+    > cd gopher
+    > build.bat
+    > bin\server.exe
 
 ##Contributors
 

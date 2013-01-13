@@ -21,5 +21,6 @@ _testmain.go
 
 *.exe
 
-config.json
-gopher
+etc/config.json
+bin
+pkg
