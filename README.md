@@ -47,6 +47,7 @@ Linux/Unix/Mac OS X:
     $ ./bin/server
 
 Windows:
+
     > cd gopher
     > build.bat
     > bin\server.exe
