@@ -6,6 +6,7 @@ package gopher
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gorilla/mux"
 	"html/template"
 	"io/ioutil"
@@ -21,8 +22,7 @@ var analyticsCode template.HTML // 网站统计分析代码
 func init() {
 	file, err := os.Open("etc/config.json")
 	if err != nil {
-		println("配置文件读取失败")
-		panic(err)
+		fmt.Println("配置文件读取失败:", err.Error())
 		os.Exit(1)
 	}
 
@@ -33,19 +33,17 @@ func init() {
 	err = dec.Decode(&config)
 
 	if err != nil {
-		println("配置文件读取失败")
-		panic(err)
+		fmt.Println("配置文件解析失败:", err.Error())
 		os.Exit(1)
 	}
 
-	analyticsFiel := config["analytics_file"]
+	analyticsFile := config["analytics_file"]
 
-	if analyticsFiel != "" {
-		content, err := ioutil.ReadFile(analyticsFiel)
+	if analyticsFile != "" {
+		content, err := ioutil.ReadFile(analyticsFile)
 
 		if err != nil {
-			println("统计分析文件没有找到")
-			panic(err)
+			fmt.Println("统计分析文件没有找到:", err.Error())
 			os.Exit(1)
 		}
 
@@ -63,6 +61,6 @@ func StartServer() {
 	http.Handle("/", r)
 
 	port := config["port"]
-	println("Listen", port)
+	fmt.Println("Server start on:", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
