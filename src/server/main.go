@@ -1,9 +1,9 @@
 package main
 
 import (
-    "gopher"
+	"gopher"
 )
 
 func main() {
-    gopher.StartServer()
+	gopher.StartServer()
 }

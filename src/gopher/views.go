@@ -125,6 +125,11 @@ func (u *Utils) AssertArticle(i interface{}) *Article {
 	return &v
 }
 
+func (u *Utils) AssertPackage(i interface{}) *Package {
+	v, _ := i.(Package)
+	return &v
+}
+
 func message(w http.ResponseWriter, r *http.Request, title string, message string, class string) {
 	renderTemplate(w, r, "message.html", map[string]interface{}{"title": title, "message": template.HTML(message), "class": class})
 }

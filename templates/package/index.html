@@ -1,0 +1,40 @@
+{{define "Title"}}第三方包{{end}}
+
+{{define "Content"}}
+<ul class="breadcrumb">
+	<li>
+		<a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span>
+	</li>
+	<li class="active">第三方包</li>
+</ul>
+<div class="content">
+	<h1>Go语言第三方包</h1>
+	<div class="alert alert-info">
+		该板块列举Go语言的第三方包，如果你发现了比较好的库，请提交上来，如果是你写的库，那么更需要列举上来。
+	</div>
+	<a href="/package/new" class="btn btn-primary">提交第三方包</a>
+	<h2>最新提交</h2>
+	<ul>
+		{{$utils := .utils}}
+		{{range .latestPackages}}
+		<li><a href="/p/{{.Id_.Hex}}"><strong>{{.Category.Name}}</strong> {{.Name}} <small  class="muted">{{$utils.FormatTime .CreatedAt}}</small></li>
+		{{end}}
+	</ul>
+</div>
+{{end}}
+
+{{define "LeftSide"}}
+{{end}}
+
+{{define "RightSide"}}
+<div class="span3">
+	<div class="well sidebar-nav">
+		<h4><small>分类</small></h4>
+		<ul class="nav">
+			{{range .categories}}
+			<li><a href="/packages/{{.Id}}">{{.Name}}<span class="badge pull-right">{{.PackageCount}}</span></a></li>
+			{{end}}
+		</ul>
+	</div>
+</div>
+{{end}}

@@ -1,0 +1,37 @@
+{{define "Title"}}第三方包{{end}}
+
+{{define "Content"}}
+<ul class="breadcrumb">
+	<li>
+		<a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span>
+	</li>
+	<li>
+		<a href="/packages">第三方包</a> <span class="divider">/</span>
+	</li>
+	<li class="active">{{.category.Name}}</li>
+</ul>
+<div class="content">
+	<h1>Go语言第三方包：{{.category.Name}}</h1>
+	<ul>
+		{{range .packages}}
+		<li><a href="/p/{{.Id_.Hex}}"><strong>{{.Category.Name}}</strong> {{.Name}}</a></li>
+		{{end}}
+	</ul>
+</div>
+{{end}}
+
+{{define "LeftSide"}}
+{{end}}
+
+{{define "RightSide"}}
+<div class="span3">
+	<div class="well sidebar-nav">
+		<h4><small>分类</small></h4>
+		<ul class="nav">
+			{{range .categories}}
+			<li><a href="/packages/{{.Id}}">{{.Name}}<span class="badge pull-right">{{.PackageCount}}</span></a></li>
+			{{end}}
+		</ul>
+	</div>
+</div>
+{{end}}

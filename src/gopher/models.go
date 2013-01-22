@@ -337,3 +337,30 @@ func (c *Comment) CanDelete(username string) bool {
 
 	return user.IsSuperuser
 }
+
+// 包分类
+type PackageCategory struct {
+	Id_          bson.ObjectId `bson:"_id"`
+	Id           string
+	Name         string
+	PackageCount int
+}
+
+type Package struct {
+	Id_        bson.ObjectId `bson:"_id"`
+	UserId     bson.ObjectId
+	CategoryId bson.ObjectId
+	Name       string
+	Url        string
+	Markdown   string
+	Html       template.HTML
+	CreatedAt  time.Time
+}
+
+func (p *Package) Category() *PackageCategory {
+	category := PackageCategory{}
+	c := db.C("packagecategories")
+	c.Find(bson.M{"_id": p.CategoryId}).One(&category)
+
+	return &category
+}

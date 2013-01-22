@@ -18,6 +18,7 @@ const ADMIN_NAV = template.HTML(`<div class="span3">
 		<li><a href="/admin/nodes"><i class="icon-chevron-right"></i>节点管理</a></li>
 		<li><a href="/admin/site_categories"><i class="icon-chevron-right"></i> 站点分类管理</a></li>
 		<li><a href="/admin/article_categories"><i class="icon-chevron-right"></i> 文章分类管理</a></li>
+		<li><a href="/admin/package_categories"><i class="icon-chevron-right"></i> 包分类管理</a></li>
 		<li><a href="/admin/users"><i class="icon-chevron-right"></i> 用户管理</a></li>
 	</ul>
 </div>`)
@@ -300,4 +301,76 @@ func adminNewArticleCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	renderTemplate(w, r, "admin/new_article_category.html", map[string]interface{}{"adminNav": ADMIN_NAV, "form": form})
+}
+
+// URL: /admin/package_categories
+// 列出所有的包分类
+func adminListPackageCategoriesHandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := currentUser(r)
+	if !ok {
+		http.Redirect(w, r, "/signin?next=/admin/package_categories", http.StatusFound)
+		return
+	}
+
+	if !user.IsSuperuser {
+		message(w, r, "没有权限", "你没有查看所有包分类的权限", "error")
+		return
+	}
+
+	var categories []PackageCategory
+	c := db.C("packagecategories")
+	c.Find(nil).All(&categories)
+
+	renderTemplate(w, r, "admin/package_categories.html", map[string]interface{}{"adminNav": ADMIN_NAV, "categories": categories})
+}
+
+// URL: /admin/package_category/new
+// 新建包分类
+func adminNewPackageCategoryHandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := currentUser(r)
+	if !ok {
+		http.Redirect(w, r, "/signin?next=/admin/site_category/new", http.StatusFound)
+		return
+	}
+
+	if !user.IsSuperuser {
+		message(w, r, "没有权限", "你没有新建包分类的权限", "error")
+		return
+	}
+
+	form := wtforms.NewForm(
+		wtforms.NewTextField("id", "ID", "", wtforms.Required{}),
+		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),
+	)
+
+	if r.Method == "POST" {
+		if !form.Validate(r) {
+			renderTemplate(w, r, "admin/new_package_category.html", map[string]interface{}{"adminNav": ADMIN_NAV, "form": form})
+			return
+		}
+
+		c := db.C("packagecategories")
+		var category PackageCategory
+		err := c.Find(bson.M{"name": form.Value("name")}).One(&category)
+
+		if err == nil {
+			form.AddError("name", "该名称已经有了")
+			renderTemplate(w, r, "admin/new_package_category.html", map[string]interface{}{"adminNav": ADMIN_NAV, "form": form})
+			return
+		}
+
+		err = c.Insert(&PackageCategory{
+			Id_:  bson.NewObjectId(),
+			Id:   form.Value("id"),
+			Name: form.Value("name"),
+		})
+
+		if err != nil {
+			panic(err)
+		}
+
+		http.Redirect(w, r, "/admin/package_category/new", http.StatusFound)
+	}
+
+	renderTemplate(w, r, "admin/new_package_category.html", map[string]interface{}{"adminNav": ADMIN_NAV, "form": form})
 }

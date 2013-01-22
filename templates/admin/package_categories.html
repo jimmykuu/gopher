@@ -1,0 +1,29 @@
+{{define "Title"}}包类别{{end}}
+
+{{define "Content"}}
+<div class="content">
+	<p><a href="/admin/package_category/new" class="btn btn-info">添加</a></p>
+	<table class="table table-striped table-bordered table-hover">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>名称</th>
+		</tr>
+	</thead>
+	<tbody>
+	{{range .categories}}
+		<tr>
+			<td>{{.Id}}</td>
+			<td>{{.Name}}</td>
+		</tr>
+	{{end}}
+	</tbody>
+	</table>
+</div>
+{{end}}
+
+{{define "LeftSide"}}
+{{.adminNav}}
+{{end}}
+
+{{define "RightSide"}}{{end}}
