@@ -19,7 +19,7 @@ Golang中国([www.golang.tc](http://www.golang.tc))源代码.
 
 修改文件 *etc/config.json.default* 为 *etc/config.json* 作为配置文件
 
-- superusers: 内容为用户名,如果没有管理员,内容为"",如果有多个,用空格隔开
+- superusers: 内容为用户名,如果没有管理员,内容为"",如果有多个,用英文逗号隔开
 - analytics_file: 内容为统计分析代码的文件名
 
 内容如下:
