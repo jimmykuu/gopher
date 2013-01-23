@@ -52,9 +52,10 @@ var (
 		"/follow/{username}":         followHandler,
 		"/unfollow/{username}":       unfollowHandler,
 
-		"/sites":              sitesHandler,
-		"/site/new":           newSiteHandler,
-		"/site/{siteId}/edit": editSiteHandler,
+		"/sites":                sitesHandler,
+		"/site/new":             newSiteHandler,
+		"/site/{siteId}/edit":   editSiteHandler,
+		"/site/{siteId}/delete": deleteSiteHandler,
 
 		"/article/new":                              newArticleHandler,
 		"/articles":                                 listArticlesHandler,

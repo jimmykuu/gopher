@@ -150,3 +150,34 @@ func editSiteHandler(w http.ResponseWriter, r *http.Request) {
 
 	renderTemplate(w, r, "site/form.html", map[string]interface{}{"form": form, "action": "/site/" + siteId + "/edit", "title": "编辑"})
 }
+
+// URL: /site/{siteId}/delete
+// 删除站点,提交者自己或者管理员可以删除
+func deleteSiteHandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := currentUser(r)
+	if !ok {
+		http.Redirect(w, r, "/signin", http.StatusFound)
+		return
+	}
+
+	siteId := mux.Vars(r)["siteId"]
+
+	var site Site
+	c := db.C("sites")
+
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(siteId)}).One(&site)
+
+	if err != nil {
+		message(w, r, "错误的连接", "错误的连接", "error")
+		return
+	}
+
+	if !site.CanEdit(user.Username) {
+		message(w, r, "没有权限", "你没有权限可以删除站点", "error")
+		return
+	}
+
+	c.Remove(bson.M{"_id": site.Id_})
+
+	http.Redirect(w, r, "/sites", http.StatusFound)
+}
