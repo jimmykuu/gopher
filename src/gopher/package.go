@@ -75,6 +75,9 @@ func newPackageHandler(w http.ResponseWriter, r *http.Request) {
 		c = db.C("packagecategories")
 		// 增加数量
 		c.Update(bson.M{"_id": categoryId}, bson.M{"$inc": bson.M{"packagecount": 1}})
+
+		http.Redirect(w, r, "/p/"+id.Hex(), http.StatusFound)
+		return
 	}
 	renderTemplate(w, r, "package/form.html", map[string]interface{}{"form": form, "title": "提交第三方包", "action": "/package/new"})
 }
