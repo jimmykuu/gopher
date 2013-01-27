@@ -82,6 +82,76 @@ func newPackageHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, r, "package/form.html", map[string]interface{}{"form": form, "title": "提交第三方包", "action": "/package/new"})
 }
 
+// URL: /package/{packageId}/edit
+// 编辑第三方包
+func editPackageHandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := currentUser(r)
+	if !ok {
+		http.Redirect(w, r, "/signin", http.StatusFound)
+		return
+	}
+
+	vars := mux.Vars(r)
+	packageId := vars["packageId"]
+
+	package_ := Package{}
+	c := db.C("packages")
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(packageId)}).One(&package_)
+
+	if err != nil {
+		message(w, r, "没有该包", "没有该包", "error")
+		return
+	}
+
+	if !package_.CanEdit(user.Username) {
+		message(w, r, "没有权限", "你没有权限编辑该包", "error")
+		return
+	}
+
+	var categories []PackageCategory
+
+	c = db.C("packagecategories")
+	c.Find(nil).All(&categories)
+
+	var choices []wtforms.Choice
+
+	for _, category := range categories {
+		choices = append(choices, wtforms.Choice{Value: category.Id_.Hex(), Label: category.Name})
+	}
+
+	form := wtforms.NewForm(
+		wtforms.NewHiddenField("html", string(package_.Html)),
+		wtforms.NewTextField("name", "名称", package_.Name, wtforms.Required{}),
+		wtforms.NewSelectField("category_id", "分类", choices, package_.CategoryId.Hex()),
+		wtforms.NewTextField("url", "网址", package_.Url, wtforms.Required{}, wtforms.URL{}),
+		wtforms.NewTextArea("description", "描述", package_.Markdown, wtforms.Required{}),
+	)
+
+	if r.Method == "POST" && form.Validate(r) {
+		c = db.C("packages")
+		categoryId := bson.ObjectIdHex(form.Value("category_id"))
+		c.Update(bson.M{"_id": package_.Id_}, bson.M{"$set": bson.M{
+			"categoryid": categoryId,
+			"name":       form.Value("name"),
+			"url":        form.Value("url"),
+			"markdown":   form.Value("description"),
+			"html":       template.HTML(form.Value("html")),
+		}})
+
+		c = db.C("packagecategories")
+		if categoryId != package_.CategoryId {
+			// 减少原来类别的包数量
+			c.Update(bson.M{"_id": package_.CategoryId}, bson.M{"$inc": bson.M{"packagecount": -1}})
+			// 增加新类别的包数量
+			c.Update(bson.M{"_id": categoryId}, bson.M{"$inc": bson.M{"packagecount": 1}})
+		}
+
+		http.Redirect(w, r, "/p/"+package_.Id_.Hex(), http.StatusFound)
+		return
+	}
+	renderTemplate(w, r, "package/form.html", map[string]interface{}{"form": form, "title": "编辑第三方包", "action": "/p/" + packageId + "/edit"})
+}
+
 // URL: /packages/{categoryId}
 // 根据类别列出包
 func listPackagesHandler(w http.ResponseWriter, r *http.Request) {

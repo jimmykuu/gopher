@@ -364,3 +364,19 @@ func (p *Package) Category() *PackageCategory {
 
 	return &category
 }
+
+// 是否有权编辑主题
+func (p *Package) CanEdit(username string) bool {
+	var user User
+	c := db.C("users")
+	err := c.Find(bson.M{"username": username}).One(&user)
+	if err != nil {
+		return false
+	}
+
+	if user.IsSuperuser {
+		return true
+	}
+
+	return p.UserId == user.Id_
+}

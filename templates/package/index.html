@@ -16,8 +16,17 @@
 	<h2>最新提交</h2>
 	<ul>
 		{{$utils := .utils}}
+		{{$username := .username}}
 		{{range .latestPackages}}
-		<li><a href="/p/{{.Id_.Hex}}"><strong>{{.Category.Name}}</strong> {{.Name}} <small  class="muted">{{$utils.FormatTime .CreatedAt}}</small></li>
+		<li>
+			<a href="/p/{{.Id_.Hex}}"><strong>{{.Category.Name}}</strong> {{.Name}} <small  class="muted">{{$utils.FormatTime .CreatedAt}}</small>
+			{{if $username}}
+				{{if .CanEdit $username}}
+					<a href="/p/{{.Id_.Hex}}/edit"><i class="icon-pencil"></i></a>
+					<a href="/p/{{.Id_.Hex}}/delete"><i class="icon-remove"></i></a>
+				{{end}}
+			{{end}}
+		</li>
 		{{end}}
 	</ul>
 </div>
