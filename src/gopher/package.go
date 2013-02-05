@@ -10,6 +10,7 @@ import (
 	"html/template"
 	"labix.org/v2/mgo/bson"
 	"net/http"
+	"strings"
 	"time"
 	"wtforms"
 )
@@ -61,13 +62,15 @@ func newPackageHandler(w http.ResponseWriter, r *http.Request) {
 		c = db.C("contents")
 		id := bson.NewObjectId()
 		categoryId := bson.ObjectIdHex(form.Value("category_id"))
+		html := form.Value("html")
+		html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
 		c.Insert(&Package{
 			Content: Content{
 				Id_:       id,
 				Type:      TypePackage,
 				Title:     form.Value("name"),
 				Markdown:  form.Value("description"),
-				Html:      template.HTML(form.Value("html")),
+				Html:      template.HTML(html),
 				CreatedBy: user.Id_,
 				CreatedAt: time.Now(),
 			},
@@ -134,12 +137,14 @@ func editPackageHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" && form.Validate(r) {
 		c = db.C("contents")
 		categoryId := bson.ObjectIdHex(form.Value("category_id"))
+		html := form.Value("html")
+		html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
 		c.Update(bson.M{"_id": package_.Id_}, bson.M{"$set": bson.M{
 			"categoryid":        categoryId,
 			"url":               form.Value("url"),
 			"content.title":     form.Value("name"),
 			"content.markdown":  form.Value("description"),
-			"content.html":      template.HTML(form.Value("html")),
+			"content.html":      template.HTML(html),
 			"content.updatedby": user.Id_.Hex(),
 			"content.updatedat": time.Now(),
 		}})
