@@ -16,7 +16,7 @@
 		{{$username := .username}}
 		{{range .packages}}
 		<li>
-			<a href="/p/{{.Id_.Hex}}"><strong>{{.Category.Name}}</strong> {{.Name}}</a>
+			<a href="/p/{{.Id_.Hex}}"><strong>{{.Category.Name}}</strong> {{.Title}}</a>
 			{{if $username}}
 				{{if .CanEdit $username}}
 					<a href="/p/{{.Id_.Hex}}/edit"><i class="icon-pencil"></i></a>

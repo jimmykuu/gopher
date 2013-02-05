@@ -175,8 +175,8 @@ func listPackagesHandler(w http.ResponseWriter, r *http.Request) {
 
 	var packages []Package
 
-	c = db.C("packages")
-	c.Find(bson.M{"categoryid": category.Id_}).Sort("name").All(&packages)
+	c = db.C("contents")
+	c.Find(bson.M{"categoryid": category.Id_, "content.type": TypePackage}).Sort("name").All(&packages)
 
 	var categories []PackageCategory
 
