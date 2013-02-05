@@ -16,27 +16,27 @@
 			{{end}}
 		{{end}}
 		<div>
-			由 <a href="/member/{{$topic.User.Username}}">{{$topic.User.Username}}</a> 在 {{.utils.FormatTime $topic.CreatedAt }} 发布 {{$topic.Hits}} 次点击
+			由 <a href="/member/{{$topic.Creater.Username}}">{{$topic.Creater.Username}}</a> 在 {{.utils.FormatTime $topic.CreatedAt }} 发布 {{$topic.Hits}} 次点击
 		</div>
 		<hr>
 		{{$topic.Html}}
 	</div>
 	{{$utils := .utils}}
 	<div id="replies" class="content">
-		<span>{{$topic.ReplyCount}} 回复</span>
+		<span>{{$topic.CommentCount}} 回复</span>
 		<hr>
 		<dl class="replies">
-		{{range $index, $reply := $topic.Replies}}
+		{{range $index, $reply := $topic.Comments}}
 		<dd id="{{.Id_.Hex}}">
 			<span class="label pull-right">#{{$utils.Index $index}}</span>
 			{{if $username}}
 				{{if $reply.CanDelete $username}}
-					<a href="/reply/{{.Id_.Hex}}/delete" class="remove label pull-right" title="删除"><i class="icon-white icon-remove"></i></a>
+					<a href="/comment/{{.Id_.Hex}}/delete" class="remove label pull-right" title="删除"><i class="icon-white icon-remove"></i></a>
 				{{end}}
 			{{end}}
-			<a href="/" class="pull-left" style="margin-right: 10px;"><img src="{{$utils.Gravatar .User.Email 48}}"></a>
+			<a href="/" class="pull-left" style="margin-right: 10px;"><img src="{{$utils.Gravatar .Creater.Email 48}}"></a>
 			<div class="info">
-				<a href="/member/{{.User.Username}}"><strong>{{.User.Username}}</strong></a> • 
+				<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
 				{{$utils.FormatTime .CreatedAt}}
 			</div>
 			<div class="space"></div>
@@ -48,7 +48,7 @@
 	</div>
 	{{if .username}}
 		<div id="reply">
-			<form action="/reply/{{$topic.Id_.Hex}}" method="post" class="form-vertical" id="reply-form">
+			<form action="/comment/{{$topic.Id_.Hex}}" method="post" class="form-vertical" id="reply-form">
 				<fieldset>
 					<input type="hidden" name="html" id="html">
 					<label for="wmd-input">新回复</label>
@@ -107,13 +107,13 @@
 		<div class="well sidebar-nav">
 			<h4><small>作者</small></h4>
 			<hr>
-			{{.utils.UserInfo $topic.User.Username}}
+			{{.utils.UserInfo $topic.Creater.Username}}
 		</div>
 		<div class="well sidebar-nav">
 			<h4><small>作者其它话题</small></h4>
 			<hr>
 			<ul>
-				{{range $topic.User.LatestTopics}}
+				{{range $topic.Creater.LatestTopics}}
 				<li><a href="/t/{{.Id_.Hex}}">{{.Title}}</a></li>
 				{{end}}
 			</ul>

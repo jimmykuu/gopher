@@ -14,7 +14,7 @@
 			<a href="/a/{{$article.Id_.Hex}}/edit" class="btn btn-info pull-right"><i class="icon-pencil icon-white"></i> 编辑</a>
 		{{end}}
 	{{end}}
-	<div>感谢 <a href="/member/{{$article.User.Username}}">{{$article.User.Username}}</a> 在 <time datetime="{{$article.CreatedAt}}">{{.utils.FormatTime $article.CreatedAt}}</time> 投递 {{.article.Hits}} 次点击</div>
+	<div>感谢 <a href="/member/{{$article.Creater.Username}}">{{$article.Creater.Username}}</a> 在 <time datetime="{{$article.CreatedAt}}">{{.utils.FormatTime $article.CreatedAt}}</time> 投递 {{.article.Hits}} 次点击</div>
 	<h2><small>本文转载自: <a href="{{.article.OriginalUrl}}" target="_blank">{{.article.OriginalSource}}</a></small></h2>
 	<hr>
 	<div class="article">
@@ -27,20 +27,20 @@
 </article>
 {{$utils := .utils}}
 <div id="replies" class="content">
-	<span>{{len .article.Comments}} 评论</span>
+	<span>{{$article.CommentCount}} 评论</span>
 	<hr>
 	<dl class="replies">
-	{{range $index, $comment := .article.Comments}}
+	{{range $index, $comment := $article.Comments}}
 	<dd id="{{.Id_.Hex}}">
 		<span class="label pull-right">#{{$utils.Index $index}}</span>
 		{{if $username}}
 			{{if $comment.CanDelete $username}}
-				<a href="/a/{{$article.Id_.Hex}}/comment/{{.Id_.Hex}}/delete" class="remove label pull-right" title="删除"><i class="icon-white icon-remove"></i></a>
+				<a href="/comment/{{.Id_.Hex}}/delete" class="remove label pull-right" title="删除"><i class="icon-white icon-remove"></i></a>
 			{{end}}
 		{{end}}
-		<a href="/" class="pull-left" style="margin-right: 10px;"><img src="{{$utils.Gravatar .User.Email 48}}"></a>
+		<a href="/" class="pull-left" style="margin-right: 10px;"><img src="{{$utils.Gravatar .Creater.Email 48}}"></a>
 		<div class="info">
-			<a href="/member/{{.User.Username}}"><strong>{{.User.Username}}</strong></a> • 
+			<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
 			{{$utils.FormatTime .CreatedAt}}
 		</div>
 		<div class="space"></div>
@@ -52,7 +52,7 @@
 </div>
 {{if .username}}
 	<div id="reply">
-		<form action="/a/{{$article.Id_.Hex}}/comment" method="post" class="form-vertical" id="reply-form">
+		<form action="/comment/{{$article.Id_.Hex}}" method="post" class="form-vertical" id="reply-form">
 			<fieldset>
 				<input type="hidden" name="html" id="html">
 				<label for="wmd-input">评论</label>

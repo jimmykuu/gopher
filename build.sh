@@ -5,6 +5,7 @@ OLDGOPATH="$GOPATH"
 export GOPATH="$CURDIR"
 
 go install server
+go install movetocontents
 
 export GOPATH="$OLDGOPATH"
 

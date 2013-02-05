@@ -5,6 +5,7 @@
 package gopher
 
 import (
+	"fmt"
 	"github.com/gorilla/mux"
 	"html/template"
 	"labix.org/v2/mgo/bson"
@@ -51,31 +52,36 @@ func newArticleHandler(w http.ResponseWriter, r *http.Request) {
 		c = db.C("users")
 		c.Find(bson.M{"username": username}).One(&user)
 
-		c = db.C("articles")
+		c = db.C("contents")
 
-		Id_ := bson.NewObjectId()
+		id_ := bson.NewObjectId()
 
 		html := form.Value("html")
 		html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
 
 		categoryId := bson.ObjectIdHex(form.Value("category"))
 		err := c.Insert(&Article{
-			Id_:            Id_,
+			Content: Content{
+				Id_:       id_,
+				Type:      TypeArticle,
+				Title:     form.Value("title"),
+				Markdown:  form.Value("content"),
+				Html:      template.HTML(html),
+				CreatedBy: user.Id_,
+				CreatedAt: time.Now(),
+			},
+			Id_:            id_,
 			CategoryId:     categoryId,
-			UserId:         user.Id_,
-			Title:          form.Value("title"),
-			Markdown:       form.Value("content"),
-			Html:           template.HTML(html),
 			OriginalSource: form.Value("original_source"),
 			OriginalUrl:    form.Value("original_url"),
-			CreatedAt:      time.Now(),
 		})
 
 		if err != nil {
-			panic(err)
+			fmt.Println("newArticleHandler:", err.Error())
+			return
 		}
 
-		http.Redirect(w, r, "/a/"+Id_.Hex(), http.StatusFound)
+		http.Redirect(w, r, "/a/"+id_.Hex(), http.StatusFound)
 		return
 	}
 
@@ -106,9 +112,9 @@ func listArticlesHandler(w http.ResponseWriter, r *http.Request) {
 	//	c = db.C("status")
 	//	c.Find(nil).One(&status)
 
-	c := db.C("articles")
+	c := db.C("contents")
 
-	pagination := NewPagination(c.Find(nil).Sort("-createdat"), "/", PerPage)
+	pagination := NewPagination(c.Find(bson.M{"content.type": TypeArticle}).Sort("-createdat"), "/articles", PerPage)
 
 	var articles []Article
 
@@ -128,18 +134,18 @@ func listArticlesHandler(w http.ResponseWriter, r *http.Request) {
 func showArticleHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	articleId := vars["articleId"]
-	c := db.C("articles")
+	c := db.C("contents")
 
 	article := Article{}
 
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(articleId)}).One(&article)
 
 	if err != nil {
-		println("err")
+		fmt.Println("showArticleHandler:", err.Error())
+		return
 	}
 
-	c = db.C("articles")
-	c.UpdateId(bson.ObjectIdHex(articleId), bson.M{"$inc": bson.M{"hits": 1}})
+	c.UpdateId(bson.ObjectIdHex(articleId), bson.M{"$inc": bson.M{"content.hits": 1}})
 
 	renderTemplate(w, r, "article/show.html", map[string]interface{}{"article": article})
 }
@@ -155,7 +161,7 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 
 	articleId := mux.Vars(r)["articleId"]
 
-	c := db.C("articles")
+	c := db.C("contents")
 	var article Article
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(articleId)}).One(&article)
 
@@ -197,15 +203,22 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 			html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
 
 			categoryId := bson.ObjectIdHex(form.Value("category"))
-			c = db.C("articles")
-			c.Update(bson.M{"_id": article.Id_}, bson.M{"$set": bson.M{
-				"categoryid":     categoryId,
-				"title":          form.Value("title"),
-				"originalsource": form.Value("original_source"),
-				"originalurl":    form.Value("original_url"),
-				"markdown":       form.Value("content"),
-				"html":           template.HTML(html),
+			c = db.C("contents")
+			err = c.Update(bson.M{"_id": article.Id_}, bson.M{"$set": bson.M{
+				"categoryid":        categoryId,
+				"originalsource":    form.Value("original_source"),
+				"originalurl":       form.Value("original_url"),
+				"content.title":     form.Value("title"),
+				"content.markdown":  form.Value("content"),
+				"content.html":      template.HTML(html),
+				"content.updatedby": user.Id_.Hex(),
+				"content.updatedat": time.Now(),
 			}})
+
+			if err != nil {
+				fmt.Println("update error:", err.Error())
+				return
+			}
 
 			http.Redirect(w, r, "/a/"+article.Id_.Hex(), http.StatusFound)
 			return
@@ -216,67 +229,4 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	renderTemplate(w, r, "article/form.html", map[string]interface{}{"form": form, "title": "编辑", "action": "/a/" + articleId + "/edit", "html": html, "content": content})
-}
-
-// URL: /a/{articleId}/comment
-// 评论文章
-func commentAnArticleHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
-		vars := mux.Vars(r)
-		articleId := vars["articleId"]
-
-		user, ok := currentUser(r)
-
-		if !ok {
-			http.Redirect(w, r, "/a/"+articleId, http.StatusFound)
-			return
-		}
-
-		content := r.FormValue("content")
-
-		html := r.FormValue("html")
-		html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
-
-		Id_ := bson.NewObjectId()
-		now := time.Now()
-		comment := Comment{
-			Id_:       Id_,
-			UserId:    user.Id_,
-			Markdown:  content,
-			Html:      template.HTML(html),
-			CreatedAt: now,
-		}
-
-		c := db.C("articles")
-		c.Update(bson.M{"_id": bson.ObjectIdHex(articleId)}, bson.M{"$addToSet": bson.M{"comments": comment}})
-
-		http.Redirect(w, r, "/a/"+articleId, http.StatusFound)
-	}
-}
-
-// URL: /a/{articleId}/comment/{commentId}/delete
-// 删除文章评论
-func deleteArticleCommentHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	articleId := vars["articleId"]
-
-	user, ok := currentUser(r)
-
-	if !ok {
-		http.Redirect(w, r, "/a/"+articleId, http.StatusFound)
-		return
-	}
-
-	if !user.IsSuperuser {
-		message(w, r, "没用该权限", "对不起,你没有权限删除该评论", "error")
-		return
-	}
-
-	var commentId string = vars["commentId"]
-
-	c := db.C("articles")
-	c.Update(bson.M{"_id": bson.ObjectIdHex(articleId)},
-		bson.M{"$pull": bson.M{"comments": bson.M{"_id": bson.ObjectIdHex(commentId)}}})
-
-	http.Redirect(w, r, "/a/"+articleId, http.StatusFound)
 }

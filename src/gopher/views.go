@@ -9,6 +9,7 @@ import (
 	"crypto/md5"
 	"crypto/rand"
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"html/template"
 	"io"
@@ -167,7 +168,6 @@ func stringInArray(a []string, x string) bool {
 }
 
 func init() {
-
 	if config["db"] == "" {
 		fmt.Println("数据库地址还没有配置,请到config.json内配置db字段.")
 		os.Exit(1)
@@ -283,4 +283,133 @@ func staticHandler(templateFile string) func(w http.ResponseWriter, r *http.Requ
 
 func yucVerifyFileHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("7250eb93b3c18cc9daa29cf58af7a004"))
+}
+
+// URL: /comment/{contentId}
+// 评论，不同内容共用一个评论方法
+func commentHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		return
+	}
+
+	user, ok := currentUser(r)
+
+	if !ok {
+		http.Redirect(w, r, "/signin", http.StatusFound)
+		return
+	}
+
+	vars := mux.Vars(r)
+	contentId := vars["contentId"]
+
+	var temp map[string]interface{}
+	c := db.C("contents")
+	c.Find(bson.M{"_id": bson.ObjectIdHex(contentId)}).One(&temp)
+
+	temp2 := temp["content"].(map[string]interface{})
+
+	type_ := temp2["type"].(int)
+
+	var url string
+	switch type_ {
+	case TypeArticle:
+		url = "/a/" + contentId
+	case TypeTopic:
+		url = "/t/" + contentId
+	case TypePackage:
+		url = "/p/" + contentId
+	}
+
+	c.Update(bson.M{"_id": bson.ObjectIdHex(contentId)}, bson.M{"$inc": bson.M{"content.commentcount": 1}})
+
+	content := r.FormValue("content")
+
+	html := r.FormValue("html")
+	html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
+
+	Id_ := bson.NewObjectId()
+	now := time.Now()
+
+	c = db.C("comments")
+	c.Insert(&Comment{
+		Id_:       Id_,
+		Type:      type_,
+		ContentId: bson.ObjectIdHex(contentId),
+		Markdown:  content,
+		Html:      template.HTML(html),
+		CreatedBy: user.Id_,
+		CreatedAt: now,
+	})
+
+	if type_ == TypeTopic {
+		// 修改最后回复用户Id和时间
+		c = db.C("contents")
+		c.Update(bson.M{"_id": bson.ObjectIdHex(contentId)}, bson.M{"$set": bson.M{"latestreplierid": user.Id_.Hex(), "latestrepliedat": now}})
+	}
+
+	http.Redirect(w, r, url, http.StatusFound)
+}
+
+// URL: /comment/{commentId}/delete
+// 删除评论
+func deleteCommentHandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := currentUser(r)
+
+	if !ok {
+		http.Redirect(w, r, "/signin", http.StatusFound)
+		return
+	}
+
+	if !user.IsSuperuser {
+		message(w, r, "没用该权限", "对不起,你没有权限删除该评论", "error")
+		return
+	}
+
+	vars := mux.Vars(r)
+	var commentId string = vars["commentId"]
+
+	c := db.C("comments")
+	var comment Comment
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(commentId)}).One(&comment)
+
+	if err != nil {
+		message(w, r, "评论不存在", "该评论不存在", "error")
+		return
+	}
+
+	c.Remove(bson.M{"_id": comment.Id_})
+
+	c = db.C("contents")
+	c.Update(bson.M{"_id": comment.ContentId}, bson.M{"$inc": bson.M{"content.commentcount": -1}})
+
+	if comment.Type == TypeTopic {
+		var topic Topic
+		c.Find(bson.M{"_id": comment.ContentId}).One(&topic)
+		if topic.LatestReplierId == comment.CreatedBy.Hex() {
+			if topic.CommentCount == 0 {
+				// 如果删除后没有回复，设置最后回复id为空，最后回复时间为创建时间
+				c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{"latestreplierid": "", "latestrepliedat": topic.CreatedAt}})
+			} else {
+				// 如果删除的是该主题最后一个回复，设置主题的最新回复id，和时间
+				var latestComment Comment
+				c = db.C("comments")
+				c.Find(bson.M{"contentid": topic.Id_}).Sort("-createdat").Limit(1).One(&latestComment)
+
+				c = db.C("contents")
+				c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{"latestreplierid": latestComment.CreatedBy.Hex(), "latestrepliedat": latestComment.CreatedAt}})
+			}
+		}
+	}
+
+	var url string
+	switch comment.Type {
+	case TypeArticle:
+		url = "/a/" + comment.ContentId.Hex()
+	case TypeTopic:
+		url = "/t/" + comment.ContentId.Hex()
+	case TypePackage:
+		url = "/p/" + comment.ContentId.Hex()
+	}
+
+	http.Redirect(w, r, url, http.StatusFound)
 }

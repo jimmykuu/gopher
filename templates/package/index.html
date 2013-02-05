@@ -19,7 +19,7 @@
 		{{$username := .username}}
 		{{range .latestPackages}}
 		<li>
-			<a href="/p/{{.Id_.Hex}}"><strong>{{.Category.Name}}</strong> {{.Name}} <small  class="muted">{{$utils.FormatTime .CreatedAt}}</small>
+			<a href="/p/{{.Id_.Hex}}"><strong>{{.Category.Name}}</strong> {{.Title}} <small  class="muted">{{$utils.FormatTime .CreatedAt}}</small>
 			{{if $username}}
 				{{if .CanEdit $username}}
 					<a href="/p/{{.Id_.Hex}}/edit"><i class="icon-pencil"></i></a>

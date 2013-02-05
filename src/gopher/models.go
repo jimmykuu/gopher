@@ -10,6 +10,13 @@ import (
 	"time"
 )
 
+const (
+	TypeTopic   = 'T'
+	TypeArticle = 'A'
+	TypeSite    = 'S'
+	TypePackage = 'P'
+)
+
 // 用户
 type User struct {
 	Id_          bson.ObjectId `bson:"_id"`
@@ -43,11 +50,11 @@ func (u *User) LatestTopics() *[]Topic {
 }
 
 // 用户的最近10个回复
-func (u *User) LatestReplies() *[]Reply {
-	c := db.C("replies")
-	var replies []Reply
+func (u *User) LatestReplies() *[]Comment {
+	c := db.C("comments")
+	var replies []Comment
 
-	c.Find(bson.M{"userid": u.Id_}).Sort("-createdat").Limit(10).All(&replies)
+	c.Find(bson.M{"createdby": u.Id_, "type": TypeTopic}).Sort("-createdat").Limit(10).All(&replies)
 
 	return &replies
 }
@@ -83,62 +90,61 @@ type Node struct {
 	TopicCount  int
 }
 
-// 回复
-type Reply struct {
-	Id_       bson.ObjectId `bson:"_id"`
-	UserId    bson.ObjectId
-	TopicId   bson.ObjectId
-	Markdown  string
-	Html      template.HTML
-	CreatedAt time.Time
-	topic     Topic
+// 通用的内容
+type Content struct {
+	Id_          bson.ObjectId // 同外层Id_
+	Type         int
+	Title        string
+	Markdown     string
+	Html         template.HTML
+	CommentCount int
+	Hits         int // 点击数量
+	CreatedAt    time.Time
+	CreatedBy    bson.ObjectId
+	UpdatedAt    time.Time
+	UpdatedBy    string
 }
 
-// 该回复所属于的用户
-func (r *Reply) User() *User {
-	println(r)
-	c := db.C("users")
-	var user User
-	c.Find(bson.M{"_id": r.UserId}).One(&user)
+func (c *Content) Creater() *User {
+	c_ := db.C("users")
+	user := User{}
+	c_.Find(bson.M{"_id": c.CreatedBy}).One(&user)
+
 	return &user
 }
 
-// 该回复的主题
-func (r *Reply) Topic() *Topic {
-	if r.topic.Title == "" {
-		c := db.C("topics")
-		r.topic = Topic{}
-		c.Find(bson.M{"_id": r.TopicId}).One(&r.topic)
-	}
+func (c *Content) Comments() *[]Comment {
+	c_ := db.C("comments")
+	var comments []Comment
 
-	return &r.topic
+	c_.Find(bson.M{"contentid": c.Id_}).All(&comments)
+
+	return &comments
 }
 
-// 是否有权删除回复
-func (r *Reply) CanDelete(username string) bool {
+// 是否有权编辑主题
+func (c *Content) CanEdit(username string) bool {
 	var user User
-	c := db.C("users")
-	err := c.Find(bson.M{"username": username}).One(&user)
+	c_ := db.C("users")
+	err := c_.Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		return false
 	}
 
-	return user.IsSuperuser
+	if user.IsSuperuser {
+		return true
+	}
+
+	return c.CreatedBy == user.Id_
 }
 
 // 主题
 type Topic struct {
+	Content
 	Id_             bson.ObjectId `bson:"_id"`
 	NodeId          bson.ObjectId
-	UserId          bson.ObjectId
-	Title           string
-	Markdown        string
-	Html            template.HTML
-	CreatedAt       time.Time
-	ReplyCount      int32
-	LatestReplyId   string
+	LatestReplierId string
 	LatestRepliedAt time.Time
-	Hits            int32
 }
 
 // 主题所属节点
@@ -151,56 +157,21 @@ func (t *Topic) Node() *Node {
 }
 
 // 主题的最近的一个回复
-func (t *Topic) LatestReply() *Reply {
-	if t.LatestReplyId == "" {
+func (t *Topic) LatestReplier() *User {
+	if t.LatestReplierId == "" {
 		return nil
 	}
 
-	c := db.C("replies")
-	reply := Reply{}
-
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(t.LatestReplyId)}).One(&reply)
-
-	if err != nil {
-		return nil
-	}
-
-	return &reply
-}
-
-// 主题的作者
-func (t *Topic) User() *User {
 	c := db.C("users")
 	user := User{}
-	c.Find(bson.M{"_id": t.UserId}).One(&user)
+
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(t.LatestReplierId)}).One(&user)
+
+	if err != nil {
+		return nil
+	}
 
 	return &user
-}
-
-// 主题下的所有回复
-func (t *Topic) Replies() *[]Reply {
-	c := db.C("replies")
-	var replies []Reply
-
-	c.Find(bson.M{"topicid": t.Id_}).All(&replies)
-
-	return &replies
-}
-
-// 是否有权编辑主题
-func (t *Topic) CanEdit(username string) bool {
-	var user User
-	c := db.C("users")
-	err := c.Find(bson.M{"username": username}).One(&user)
-	if err != nil {
-		return false
-	}
-
-	if user.IsSuperuser {
-		return true
-	}
-
-	return t.UserId == user.Id_
 }
 
 // 状态,MongoDB中只存储一个状态
@@ -221,36 +192,18 @@ type SiteCategory struct {
 // 分类下的所有站点
 func (sc *SiteCategory) Sites() *[]Site {
 	var sites []Site
-	c := db.C("sites")
-	c.Find(bson.M{"categoryid": sc.Id_}).All(&sites)
+	c := db.C("contents")
+	c.Find(bson.M{"categoryid": sc.Id_, "content.type": TypeSite}).All(&sites)
 
 	return &sites
 }
 
 // 站点
 type Site struct {
-	Id_         bson.ObjectId `bson:"_id"`
-	Name        string
-	Url         string
-	Description string
-	CategoryId  bson.ObjectId
-	UserId      bson.ObjectId
-}
-
-// 是否有权编辑站点
-func (s *Site) CanEdit(username string) bool {
-	var user User
-	c := db.C("users")
-	err := c.Find(bson.M{"username": username}).One(&user)
-	if err != nil {
-		return false
-	}
-
-	if user.IsSuperuser {
-		return true
-	}
-
-	return s.UserId == user.Id_
+	Content
+	Id_        bson.ObjectId `bson:"_id"`
+	Url        string
+	CategoryId bson.ObjectId
 }
 
 // 文章分类
@@ -261,42 +214,11 @@ type ArticleCategory struct {
 
 // 文章
 type Article struct {
+	Content
 	Id_            bson.ObjectId `bson:"_id"`
 	CategoryId     bson.ObjectId
-	UserId         bson.ObjectId
-	Title          string
-	Markdown       string
-	Html           template.HTML
 	OriginalSource string
 	OriginalUrl    string
-	CreatedAt      time.Time
-	Hits           int32
-	Comments       []Comment
-}
-
-// 是否有权编辑主题
-func (a *Article) CanEdit(username string) bool {
-	var user User
-	c := db.C("users")
-	err := c.Find(bson.M{"username": username}).One(&user)
-	if err != nil {
-		return false
-	}
-
-	if user.IsSuperuser {
-		return true
-	}
-
-	return a.UserId == user.Id_
-}
-
-// 文章的提交人
-func (a *Article) User() *User {
-	c := db.C("users")
-	user := User{}
-	c.Find(bson.M{"_id": a.UserId}).One(&user)
-
-	return &user
 }
 
 // 主题所属类型
@@ -311,22 +233,26 @@ func (a *Article) Category() *ArticleCategory {
 // 评论
 type Comment struct {
 	Id_       bson.ObjectId `bson:"_id"`
-	UserId    bson.ObjectId
+	Type      int
+	ContentId bson.ObjectId
 	Markdown  string
 	Html      template.HTML
+	CreatedBy bson.ObjectId
 	CreatedAt time.Time
+	UpdatedBy string
+	UpdatedAt time.Time
 }
 
 // 评论人
-func (c *Comment) User() *User {
+func (c *Comment) Creater() *User {
 	c_ := db.C("users")
 	user := User{}
-	c_.Find(bson.M{"_id": c.UserId}).One(&user)
+	c_.Find(bson.M{"_id": c.CreatedBy}).One(&user)
 
 	return &user
 }
 
-// 是否有权删除评论
+// 是否有权删除评论，只允许管理员删除
 func (c *Comment) CanDelete(username string) bool {
 	var user User
 	c_ := db.C("users")
@@ -347,14 +273,10 @@ type PackageCategory struct {
 }
 
 type Package struct {
+	Content
 	Id_        bson.ObjectId `bson:"_id"`
-	UserId     bson.ObjectId
 	CategoryId bson.ObjectId
-	Name       string
 	Url        string
-	Markdown   string
-	Html       template.HTML
-	CreatedAt  time.Time
 }
 
 func (p *Package) Category() *PackageCategory {
@@ -363,20 +285,4 @@ func (p *Package) Category() *PackageCategory {
 	c.Find(bson.M{"_id": p.CategoryId}).One(&category)
 
 	return &category
-}
-
-// 是否有权编辑主题
-func (p *Package) CanEdit(username string) bool {
-	var user User
-	c := db.C("users")
-	err := c.Find(bson.M{"username": username}).One(&user)
-	if err != nil {
-		return false
-	}
-
-	if user.IsSuperuser {
-		return true
-	}
-
-	return p.UserId == user.Id_
 }

@@ -1,4 +1,4 @@
-{{define "Title"}}{{.package.Name}}{{end}}
+{{define "Title"}}{{.package.Title}}{{end}}
 
 {{define "Content"}}
 {{$package := .utils.AssertPackage .package}}
@@ -13,7 +13,7 @@
 	<li>
 		<a href="/packages/{{$category.Id}}">{{$category.Name}}</a> <span class="divider">/</span>
 	</li>
-	<li class="active">{{.package.Name}}</li>
+	<li class="active">{{.package.Title}}</li>
 </ul>
 <div class="content">
 	{{if .username}}
@@ -23,7 +23,7 @@
 			<a href="/p/{{.package.Id_.Hex}}/edit" class="btn btn-info pull-right"><i class="icon-pencil icon-white"></i> 编辑</a>
 		{{end}}
 	{{end}}
-	<h1>{{.package.Name}}</h1>
+	<h1>{{.package.Title}}</h1>
 	{{.package.Html}}
 	<hr>
 	<ul>

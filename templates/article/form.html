@@ -18,7 +18,7 @@
 			
 			<div class="wmd-panel">
 				<div id="wmd-button-bar"></div>
-				<textarea class="wmd-input span8" id="wmd-input" name="content" rows="20">{{.content}}</textarea>
+				<textarea class="wmd-input span8" id="wmd-input" name="content" rows="20">{{.form.Value "content"}}</textarea>
 			</div>
 			<div>预览</div>
 			<div id="wmd-preview" class="wmd-panel wmd-preview">{{.html}}</div>

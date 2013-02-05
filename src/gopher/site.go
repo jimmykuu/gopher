@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"labix.org/v2/mgo/bson"
 	"net/http"
+	"time"
 	"wtforms"
 )
 
@@ -53,7 +54,7 @@ func newSiteHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var site Site
-		c = db.C("sites")
+		c = db.C("contents")
 		err := c.Find(bson.M{"url": form.Value("url")}).One(&site)
 		if err == nil {
 			form.AddError("url", "该站点已经有了")
@@ -61,20 +62,23 @@ func newSiteHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		Id_ := bson.NewObjectId()
-
-		c = db.C("sites")
+		id_ := bson.NewObjectId()
 
 		c.Insert(&Site{
-			Id_:         Id_,
-			Name:        form.Value("name"),
-			Url:         form.Value("url"),
-			Description: form.Value("description"),
-			CategoryId:  bson.ObjectIdHex(form.Value("category")),
-			UserId:      user.Id_,
+			Id_: id_,
+			Content: Content{
+				Id_:       id_,
+				Type:      TypeSite,
+				Title:     form.Value("name"),
+				Markdown:  form.Value("description"),
+				CreatedBy: user.Id_,
+				CreatedAt: time.Now(),
+			},
+			Url:        form.Value("url"),
+			CategoryId: bson.ObjectIdHex(form.Value("category")),
 		})
 
-		http.Redirect(w, r, "/sites#site-"+Id_.Hex(), http.StatusFound)
+		http.Redirect(w, r, "/sites#site-"+id_.Hex(), http.StatusFound)
 		return
 	}
 
@@ -93,9 +97,9 @@ func editSiteHandler(w http.ResponseWriter, r *http.Request) {
 	siteId := mux.Vars(r)["siteId"]
 
 	var site Site
-	c := db.C("sites")
+	c := db.C("contents")
 
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(siteId)}).One(&site)
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(siteId), "content.type": TypeSite}).One(&site)
 
 	if err != nil {
 		message(w, r, "错误的连接", "错误的连接", "error")
@@ -118,16 +122,16 @@ func editSiteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	form := wtforms.NewForm(
-		wtforms.NewTextField("name", "网站名称", site.Name, wtforms.Required{}),
+		wtforms.NewTextField("name", "网站名称", site.Title, wtforms.Required{}),
 		wtforms.NewTextField("url", "地址", site.Url, wtforms.Required{}, wtforms.URL{}),
-		wtforms.NewTextArea("description", "描述", site.Description),
+		wtforms.NewTextArea("description", "描述", site.Markdown),
 		wtforms.NewSelectField("category", "分类", choices, site.CategoryId.Hex(), wtforms.Required{}),
 	)
 
 	if r.Method == "POST" && form.Validate(r) {
 		// 检查是否用重复
 		var site2 Site
-		c = db.C("sites")
+		c = db.C("contents")
 		err := c.Find(bson.M{"url": form.Value("url"), "_id": bson.M{"$ne": site.Id_}}).One(&site2)
 		if err == nil {
 			form.AddError("url", "该站点已经有了")
@@ -137,10 +141,12 @@ func editSiteHandler(w http.ResponseWriter, r *http.Request) {
 
 		c.Update(bson.M{"_id": site.Id_},
 			bson.M{"$set": bson.M{
-				"name":        form.Value("name"),
-				"url":         form.Value("url"),
-				"description": form.Value("description"),
-				"categoryid":  bson.ObjectIdHex(form.Value("category")),
+				"content.title":     form.Value("name"),
+				"content.markdown":  form.Value("description"),
+				"content.updatedby": user.Id_.Hex(),
+				"content.updatedat": time.Now(),
+				"url":               form.Value("url"),
+				"categoryid":        bson.ObjectIdHex(form.Value("category")),
 			},
 			})
 

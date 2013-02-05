@@ -39,12 +39,13 @@ var (
 		"/nodes":     nodesHandler,
 		"/go/{node}": topicInNodeHandler,
 
-		"/topic/new":              newTopicHandler,
-		"/new/{node}":             newTopicHandler,
-		"/t/{topicId}":            showTopicHandler,
-		"/t/{topicId}/edit":       editTopicHandler,
-		"/reply/{topicId}":        replyHandler,
-		"/reply/{replyId}/delete": deleteReplyHandler,
+		"/comment/{contentId}":        commentHandler,
+		"/comment/{commentId}/delete": deleteCommentHandler,
+
+		"/topic/new":        newTopicHandler,
+		"/new/{node}":       newTopicHandler,
+		"/t/{topicId}":      showTopicHandler,
+		"/t/{topicId}/edit": editTopicHandler,
 
 		"/member/{username}":         memberInfoHandler,
 		"/member/{username}/topics":  memberTopicsHandler,
@@ -57,12 +58,10 @@ var (
 		"/site/{siteId}/edit":   editSiteHandler,
 		"/site/{siteId}/delete": deleteSiteHandler,
 
-		"/article/new":                              newArticleHandler,
-		"/articles":                                 listArticlesHandler,
-		"/a/{articleId}":                            showArticleHandler,
-		"/a/{articleId}/edit":                       editArticleHandler,
-		"/a/{articleId}/comment":                    commentAnArticleHandler,
-		"/a/{articleId}/comment/{commentId}/delete": deleteArticleCommentHandler,
+		"/article/new":        newArticleHandler,
+		"/articles":           listArticlesHandler,
+		"/a/{articleId}":      showArticleHandler,
+		"/a/{articleId}/edit": editArticleHandler,
 
 		"/packages":              packagesHandler,
 		"/package/new":           newPackageHandler,

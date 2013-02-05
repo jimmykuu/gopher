@@ -5,6 +5,7 @@
 package gopher
 
 import (
+	"fmt"
 	"github.com/gorilla/mux"
 	"html/template"
 	"labix.org/v2/mgo/bson"
@@ -39,9 +40,9 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	c = db.C("status")
 	c.Find(nil).One(&status)
 
-	c = db.C("topics")
+	c = db.C("contents")
 
-	pagination := NewPagination(c.Find(nil).Sort("-latestrepliedat"), "/", PerPage)
+	pagination := NewPagination(c.Find(bson.M{"content.type": TypeTopic}).Sort("-latestrepliedat"), "/", PerPage)
 
 	var topics []Topic
 
@@ -92,9 +93,9 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 		c = db.C("users")
 		c.Find(bson.M{"username": username}).One(&user)
 
-		c = db.C("topics")
+		c = db.C("contents")
 
-		Id_ := bson.NewObjectId()
+		id_ := bson.NewObjectId()
 
 		now := time.Now()
 
@@ -103,18 +104,23 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 
 		nodeId := bson.ObjectIdHex(form.Value("node"))
 		err := c.Insert(&Topic{
-			Id_:             Id_,
+			Content: Content{
+				Id_:       id_,
+				Type:      TypeTopic,
+				Title:     form.Value("title"),
+				Markdown:  form.Value("content"),
+				Html:      template.HTML(html),
+				CreatedBy: user.Id_,
+				CreatedAt: now,
+			},
+			Id_:             id_,
 			NodeId:          nodeId,
-			UserId:          user.Id_,
-			Title:           form.Value("title"),
-			Markdown:        form.Value("content"),
-			Html:            template.HTML(html),
-			CreatedAt:       now,
 			LatestRepliedAt: now,
 		})
 
 		if err != nil {
-			panic(err)
+			fmt.Println("newTopicHandler:", err.Error())
+			return
 		}
 
 		// 增加Node.TopicCount
@@ -127,7 +133,7 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 
 		c.Update(bson.M{"_id": status.Id_}, bson.M{"$inc": bson.M{"topiccount": 1}})
 
-		http.Redirect(w, r, "/t/"+Id_.Hex(), http.StatusFound)
+		http.Redirect(w, r, "/t/"+id_.Hex(), http.StatusFound)
 		return
 	}
 
@@ -145,9 +151,9 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 
 	topicId := mux.Vars(r)["topicId"]
 
-	c := db.C("topics")
+	c := db.C("contents")
 	var topic Topic
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId)}).One(&topic)
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": TypeTopic}).One(&topic)
 
 	if err != nil {
 		message(w, r, "没有该主题", "没有该主题,不能编辑", "error")
@@ -185,18 +191,17 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 			html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
 
 			nodeId := bson.ObjectIdHex(form.Value("node"))
-			c = db.C("topics")
+			c = db.C("contents")
 			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{
-				"nodeid":    nodeId,
-				"title":     form.Value("title"),
-				"markdown":  form.Value("content"),
-				"html":      template.HTML(html),
-				"updatedat": time.Now(),
-				"updatedby": user.Id_,
+				"nodeid":            nodeId,
+				"content.title":     form.Value("title"),
+				"content.markdown":  form.Value("content"),
+				"content.html":      template.HTML(html),
+				"content.updatedat": time.Now(),
+				"content.updatedby": user.Id_,
 			}})
 
 			// 如果两次的节点不同,更新节点的主题数量
-
 			if topic.NodeId != nodeId {
 				c = db.C("nodes")
 				c.Update(bson.M{"_id": topic.NodeId}, bson.M{"$inc": bson.M{"topiccount": -1}})
@@ -219,65 +224,20 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 func showTopicHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	topicId := vars["topicId"]
-	c := db.C("topics")
+	c := db.C("contents")
 
 	topic := Topic{}
 
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId)}).One(&topic)
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": TypeTopic}).One(&topic)
 
 	if err != nil {
-		println("err")
+		fmt.Println("showTopicHandler:", err.Error())
+		return
 	}
 
-	c = db.C("topics")
-	c.UpdateId(bson.ObjectIdHex(topicId), bson.M{"$inc": bson.M{"hits": 1}})
+	c.UpdateId(bson.ObjectIdHex(topicId), bson.M{"$inc": bson.M{"content.hits": 1}})
 
 	renderTemplate(w, r, "topic/show.html", map[string]interface{}{"topic": topic})
-}
-
-// URL: /reply/{topicId}
-// 回复主题
-func replyHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
-		vars := mux.Vars(r)
-		topicId := vars["topicId"]
-
-		user, ok := currentUser(r)
-
-		if !ok {
-			http.Redirect(w, r, "/t/"+topicId, http.StatusFound)
-			return
-		}
-
-		content := r.FormValue("content")
-
-		html := r.FormValue("html")
-		html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
-
-		Id_ := bson.NewObjectId()
-		now := time.Now()
-		reply := Reply{
-			Id_:       Id_,
-			UserId:    user.Id_,
-			TopicId:   bson.ObjectIdHex(topicId),
-			Markdown:  content,
-			Html:      template.HTML(html),
-			CreatedAt: now,
-		}
-		c := db.C("replies")
-		c.Insert(&reply)
-
-		c = db.C("topics")
-		c.Update(bson.M{"_id": bson.ObjectIdHex(topicId)}, bson.M{"$inc": bson.M{"replycount": 1}, "$set": bson.M{"latestreplyid": Id_.Hex(), "latestrepliedat": now}})
-
-		c = db.C("status")
-		var status Status
-		c.Find(nil).One(&status)
-
-		c.Update(bson.M{"_id": status.Id_}, bson.M{"$inc": bson.M{"replycount": 1}})
-
-		http.Redirect(w, r, "/t/"+topicId, http.StatusFound)
-	}
 }
 
 // URL: /go/{node}
@@ -308,9 +268,9 @@ func topicInNodeHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	c = db.C("topics")
+	c = db.C("contents")
 
-	pagination := NewPagination(c.Find(bson.M{"nodeid": node.Id_}).Sort("-latestrepliedat"), "/", 20)
+	pagination := NewPagination(c.Find(bson.M{"nodeid": node.Id_, "content.type": TypeTopic}).Sort("-latestrepliedat"), "/", 20)
 
 	var topics []Topic
 
@@ -323,67 +283,4 @@ func topicInNodeHandler(w http.ResponseWriter, r *http.Request) {
 	query.All(&topics)
 
 	renderTemplate(w, r, "/topic/list.html", map[string]interface{}{"topics": topics, "node": node})
-}
-
-// URL: /reply/{replyId}/delete
-// 删除回复，只有管理员可以删除
-func deleteReplyHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	replyId := vars["replyId"]
-
-	user, ok := currentUser(r)
-
-	if !ok {
-		http.Redirect(w, r, "/signin", http.StatusFound)
-		return
-	}
-
-	if !user.IsSuperuser {
-		message(w, r, "没用该权限", "对不起,你没有权限删除该回复", "error")
-		return
-	}
-
-	c := db.C("replies")
-	var reply Reply
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(replyId)}).One(&reply)
-	if err != nil {
-		message(w, r, "该回复不存在", "不存在该回复", "error")
-		return
-	}
-
-	err = c.Remove(bson.M{"_id": bson.ObjectIdHex(replyId)})
-
-	if err != nil {
-		message(w, r, "该回复不存在", "不存在该回复", "error")
-		return
-	}
-
-	c = db.C("topics")
-	// 减少该主题的回复数量
-	c.Update(bson.M{"_id": reply.TopicId}, bson.M{"$inc": bson.M{"replycount": -1}})
-
-	var topic Topic
-	c.Find(bson.M{"_id": reply.TopicId}).One(&topic)
-
-	if topic.LatestReplyId == replyId {
-		if topic.ReplyCount == 0 {
-			// 如果删除后没有回复，设置最后回复id为空，最后回复时间为创建时间
-			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{"latestreplyid": "", "latestrepliedat": reply.CreatedAt}})
-		} else {
-			// 如果删除的是该主题最后一个回复，设置主题的最新回复id，和时间
-			var latestReply Reply
-			c = db.C("replies")
-			c.Find(bson.M{"topicid": topic.Id_}).Sort("-createdat").Limit(1).One(&latestReply)
-
-			c = db.C("topics")
-			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{"latestreplyid": latestReply.Id_.Hex(), "latestrepliedat": latestReply.CreatedAt}})
-		}
-	}
-
-	c = db.C("status")
-	var status Status
-	c.Find(nil).One(&status)
-	c.Update(bson.M{"_id": status.Id_}, bson.M{"$inc": bson.M{"replycount": -1}})
-
-	http.Redirect(w, r, "/t/"+reply.TopicId.Hex(), http.StatusFound)
 }

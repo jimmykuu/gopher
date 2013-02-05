@@ -301,9 +301,9 @@ func memberRepliesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var replies []Reply
-	c = db.C("replies")
-	c.Find(bson.M{"userid": user.Id_}).Sort("-createdat").All(&replies)
+	var replies []Comment
+	c = db.C("comments")
+	c.Find(bson.M{"createdby": user.Id_, "type": TypeTopic}).Sort("-createdat").All(&replies)
 
 	renderTemplate(w, r, "account/replies.html", map[string]interface{}{"user": user, "replies": replies})
 }

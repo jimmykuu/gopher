@@ -23,8 +23,8 @@ func packagesHandler(w http.ResponseWriter, r *http.Request) {
 	c.Find(nil).All(&categories)
 
 	var latestPackages []Package
-	c = db.C("packages")
-	c.Find(nil).Sort("-createdat").Limit(10).All(&latestPackages)
+	c = db.C("contents")
+	c.Find(bson.M{"content.type": TypePackage}).Sort("-createdat").Limit(10).All(&latestPackages)
 
 	renderTemplate(w, r, "package/index.html", map[string]interface{}{"categories": categories, "latestPackages": latestPackages})
 }
@@ -58,18 +58,22 @@ func newPackageHandler(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if r.Method == "POST" && form.Validate(r) {
-		c = db.C("packages")
+		c = db.C("contents")
 		id := bson.NewObjectId()
 		categoryId := bson.ObjectIdHex(form.Value("category_id"))
 		c.Insert(&Package{
+			Content: Content{
+				Id_:       id,
+				Type:      TypePackage,
+				Title:     form.Value("name"),
+				Markdown:  form.Value("description"),
+				Html:      template.HTML(form.Value("html")),
+				CreatedBy: user.Id_,
+				CreatedAt: time.Now(),
+			},
 			Id_:        id,
-			UserId:     user.Id_,
 			CategoryId: categoryId,
-			Name:       form.Value("name"),
 			Url:        form.Value("url"),
-			Markdown:   form.Value("description"),
-			Html:       template.HTML(form.Value("html")),
-			CreatedAt:  time.Now(),
 		})
 
 		c = db.C("packagecategories")
@@ -95,8 +99,8 @@ func editPackageHandler(w http.ResponseWriter, r *http.Request) {
 	packageId := vars["packageId"]
 
 	package_ := Package{}
-	c := db.C("packages")
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(packageId)}).One(&package_)
+	c := db.C("contents")
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(packageId), "content.type": TypePackage}).One(&package_)
 
 	if err != nil {
 		message(w, r, "没有该包", "没有该包", "error")
@@ -121,7 +125,7 @@ func editPackageHandler(w http.ResponseWriter, r *http.Request) {
 
 	form := wtforms.NewForm(
 		wtforms.NewHiddenField("html", string(package_.Html)),
-		wtforms.NewTextField("name", "名称", package_.Name, wtforms.Required{}),
+		wtforms.NewTextField("name", "名称", package_.Title, wtforms.Required{}),
 		wtforms.NewSelectField("category_id", "分类", choices, package_.CategoryId.Hex()),
 		wtforms.NewTextField("url", "网址", package_.Url, wtforms.Required{}, wtforms.URL{}),
 		wtforms.NewTextArea("description", "描述", package_.Markdown, wtforms.Required{}),
@@ -131,11 +135,13 @@ func editPackageHandler(w http.ResponseWriter, r *http.Request) {
 		c = db.C("packages")
 		categoryId := bson.ObjectIdHex(form.Value("category_id"))
 		c.Update(bson.M{"_id": package_.Id_}, bson.M{"$set": bson.M{
-			"categoryid": categoryId,
-			"name":       form.Value("name"),
-			"url":        form.Value("url"),
-			"markdown":   form.Value("description"),
-			"html":       template.HTML(form.Value("html")),
+			"categoryid":        categoryId,
+			"url":               form.Value("url"),
+			"content.title":     form.Value("name"),
+			"content.markdown":  form.Value("description"),
+			"content.html":      template.HTML(form.Value("html")),
+			"content.updatedby": user.Id_.Hex(),
+			"content.updatedat": time.Now(),
 		}})
 
 		c = db.C("packagecategories")
@@ -186,10 +192,10 @@ func showPackageHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	packageId := vars["packageId"]
 
-	c := db.C("packages")
+	c := db.C("contents")
 
 	package_ := Package{}
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(packageId)}).One(&package_)
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(packageId), "content.type": TypePackage}).One(&package_)
 
 	if err != nil {
 		message(w, r, "没找到该包", "请检查链接是否正确", "error")
