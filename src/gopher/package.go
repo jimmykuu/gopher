@@ -124,7 +124,7 @@ func editPackageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	form := wtforms.NewForm(
-		wtforms.NewHiddenField("html", string(package_.Html)),
+		wtforms.NewHiddenField("html", ""),
 		wtforms.NewTextField("name", "名称", package_.Title, wtforms.Required{}),
 		wtforms.NewSelectField("category_id", "分类", choices, package_.CategoryId.Hex()),
 		wtforms.NewTextField("url", "网址", package_.Url, wtforms.Required{}, wtforms.URL{}),
@@ -132,7 +132,7 @@ func editPackageHandler(w http.ResponseWriter, r *http.Request) {
 	)
 
 	if r.Method == "POST" && form.Validate(r) {
-		c = db.C("packages")
+		c = db.C("contents")
 		categoryId := bson.ObjectIdHex(form.Value("category_id"))
 		c.Update(bson.M{"_id": package_.Id_}, bson.M{"$set": bson.M{
 			"categoryid":        categoryId,
@@ -155,6 +155,8 @@ func editPackageHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/p/"+package_.Id_.Hex(), http.StatusFound)
 		return
 	}
+
+	form.SetValue("html", "")
 	renderTemplate(w, r, "package/form.html", map[string]interface{}{"form": form, "title": "编辑第三方包", "action": "/p/" + packageId + "/edit"})
 }
 
