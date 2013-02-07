@@ -16,7 +16,7 @@ import (
 )
 
 // URL: /packages
-// 列出最新的一些第上方包
+// 列出最新的一些第三方包
 func packagesHandler(w http.ResponseWriter, r *http.Request) {
 	var categories []PackageCategory
 
@@ -25,7 +25,11 @@ func packagesHandler(w http.ResponseWriter, r *http.Request) {
 
 	var latestPackages []Package
 	c = db.C("contents")
-	c.Find(bson.M{"content.type": TypePackage}).Sort("-createdat").Limit(10).All(&latestPackages)
+	c.Find(bson.M{"content.type": TypePackage}).Sort("-content.createdat").Limit(10).All(&latestPackages)
+
+	for _, package_ := range latestPackages {
+		fmt.Println(package_.CreatedAt)
+	}
 
 	renderTemplate(w, r, "package/index.html", map[string]interface{}{"categories": categories, "latestPackages": latestPackages})
 }

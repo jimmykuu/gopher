@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
+	"github.com/jimmykuu/webhelpers"
 	"html/template"
 	"io"
 	"labix.org/v2/mgo"
@@ -33,6 +34,14 @@ var (
 	fileVersion map[string]string = make(map[string]string) // {path: version}
 	utils       *Utils
 )
+
+var funcMaps = template.FuncMap{
+	"gravatar": func(email string, size uint16) string {
+		h := md5.New()
+		io.WriteString(h, email)
+		return fmt.Sprintf("http://www.gravatar.com/avatar/%x?s=%d", h.Sum(nil), size)
+	},
+}
 
 func uuid() string {
 	buf := make([]byte, 16)
@@ -106,6 +115,11 @@ func (u *Utils) UserInfo(username string) template.HTML {
 	return template.HTML(fmt.Sprintf(format, username, u.Gravatar(user.Email, 50), username, username))
 }
 
+func (u *Utils) Truncate(html template.HTML, length int) string {
+	text := webhelpers.RemoveFormatting(string(html))
+	return webhelpers.Truncate(text, length, "...")
+}
+
 func (u *Utils) AssertUser(i interface{}) *User {
 	v, _ := i.(User)
 	return &v
@@ -176,6 +190,7 @@ func init() {
 	session, err := mgo.Dial(config["db"])
 	if err != nil {
 		fmt.Println("MongoDB连接失败:", err.Error())
+		os.Exit(1)
 	}
 
 	session.SetMode(mgo.Monotonic, true)
@@ -213,7 +228,7 @@ func init() {
 	}
 
 	if len(superusers) == 0 {
-		println("你没有设置超级账户,请在config.json中的superusers中设置,如有多个账户,用逗号分开")
+		fmt.Println("你没有设置超级账户,请在config.json中的superusers中设置,如有多个账户,用逗号分开")
 	}
 
 	c = db.C("users")
@@ -240,7 +255,7 @@ func parseTemplate(file string, data map[string]interface{}) []byte {
 	if err != nil {
 		panic(err)
 	}
-
+	t = t.Funcs(funcMaps)
 	err = t.Execute(&buf, data)
 
 	if err != nil {

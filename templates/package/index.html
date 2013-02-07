@@ -14,21 +14,30 @@
 	</div>
 	<a href="/package/new" class="btn btn-primary">提交第三方包</a>
 	<h2>最新提交</h2>
-	<ul>
-		{{$utils := .utils}}
-		{{$username := .username}}
-		{{range .latestPackages}}
-		<li>
-			<a href="/p/{{.Id_.Hex}}"><strong>{{.Category.Name}}</strong> {{.Title}} <small  class="muted">{{$utils.FormatTime .CreatedAt}}</small>
+	<dl class="topics">
+	{{$utils := .utils}}
+	{{$username := .username}}
+	{{range .latestPackages}}
+		<dd>
+			<a href="/p/{{.Id_.Hex}}" class="title">{{.Title}}</a>
 			{{if $username}}
 				{{if .CanEdit $username}}
 					<a href="/p/{{.Id_.Hex}}/edit"><i class="icon-pencil"></i></a>
 					<a href="/p/{{.Id_.Hex}}/delete"><i class="icon-remove"></i></a>
 				{{end}}
 			{{end}}
-		</li>
-		{{end}}
-	</ul>
+			<p class="muted">
+				{{$utils.Truncate .Html 200}}
+			</p>
+			<div class="info">
+				<a class="label" href="/packages/{{.Category.Id}}">{{.Category.Name}}</a> • 
+				<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
+				{{$utils.FormatTime .CreatedAt}} 提交
+			</div>
+			<div class="clear"></div>
+		</dd>
+	{{end}}
+	</dl>
 </div>
 {{end}}
 
