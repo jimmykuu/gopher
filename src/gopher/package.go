@@ -27,10 +27,6 @@ func packagesHandler(w http.ResponseWriter, r *http.Request) {
 	c = db.C("contents")
 	c.Find(bson.M{"content.type": TypePackage}).Sort("-content.createdat").Limit(10).All(&latestPackages)
 
-	for _, package_ := range latestPackages {
-		fmt.Println(package_.CreatedAt)
-	}
-
 	renderTemplate(w, r, "package/index.html", map[string]interface{}{"categories": categories, "latestPackages": latestPackages})
 }
 

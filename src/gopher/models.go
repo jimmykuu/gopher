@@ -41,10 +41,10 @@ type User struct {
 
 // 用户发表的最近10个主题
 func (u *User) LatestTopics() *[]Topic {
-	c := db.C("topics")
+	c := db.C("contents")
 	var topics []Topic
 
-	c.Find(bson.M{"userid": u.Id_}).Sort("-createdat").Limit(10).All(&topics)
+	c.Find(bson.M{"content.createdby": u.Id_, "content.type": TypeTopic}).Sort("-createdat").Limit(10).All(&topics)
 
 	return &topics
 }
