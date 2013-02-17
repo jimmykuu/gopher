@@ -114,7 +114,7 @@ func listArticlesHandler(w http.ResponseWriter, r *http.Request) {
 
 	c := db.C("contents")
 
-	pagination := NewPagination(c.Find(bson.M{"content.type": TypeArticle}).Sort("-createdat"), "/articles", PerPage)
+	pagination := NewPagination(c.Find(bson.M{"content.type": TypeArticle}).Sort("-content.createdat"), "/articles", PerPage)
 
 	var articles []Article
 

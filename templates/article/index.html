@@ -12,10 +12,26 @@
 </div>
 {{$utils := .utils}}
 <div class="content">
-	<dl class="articles">
+	<dl class="topics">
+	{{$utils := .utils}}
+	{{$username := .username}}
 	{{range .articles}}
 		<dd>
 			<a href="/a/{{.Id_.Hex}}" class="title">{{.Title}}</a>
+			{{if $username}}
+				{{if .CanEdit $username}}
+					<a href="/p/{{.Id_.Hex}}/edit"><i class="icon-pencil"></i></a>
+					<a href="/p/{{.Id_.Hex}}/delete"><i class="icon-remove"></i></a>
+				{{end}}
+			{{end}}
+			<p class="muted">
+				{{$utils.Truncate .Html 200}}
+			</p>
+			<div class="info">
+				<a class="label" href="/article/{{.Category.Id_.Hex}}">{{.Category.Name}}</a> • 
+				<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
+				{{$utils.FormatTime .CreatedAt}} 提交 • 来自 <a href="{{.OriginalUrl}}" target="_blank">{{.OriginalSource}}</a>
+			</div>
 			<div class="clear"></div>
 		</dd>
 	{{end}}
