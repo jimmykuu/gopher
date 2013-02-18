@@ -44,7 +44,7 @@ func (u *User) LatestTopics() *[]Topic {
 	c := db.C("contents")
 	var topics []Topic
 
-	c.Find(bson.M{"content.createdby": u.Id_, "content.type": TypeTopic}).Sort("-createdat").Limit(10).All(&topics)
+	c.Find(bson.M{"content.createdby": u.Id_, "content.type": TypeTopic}).Sort("-content.createdat").Limit(10).All(&topics)
 
 	return &topics
 }
@@ -262,6 +262,15 @@ func (c *Comment) CanDelete(username string) bool {
 	}
 
 	return user.IsSuperuser
+}
+
+// 主题
+func (c *Comment) Topic() *Topic {
+	// 内容
+	var topic Topic
+	c_ := db.C("contents")
+	c_.Find(bson.M{"_id": c.ContentId, "content.type": TypeTopic}).One(&topic)
+	return &topic
 }
 
 // 包分类
