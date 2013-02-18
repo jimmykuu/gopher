@@ -11,7 +11,7 @@
     {{range .replies}}
     <dd>
       <span>
-        回复了 <a href="/member/{{.Topic.User.Username}}">{{.Topic.User.Username}}</a> 创建的主题: <a href="/t/{{.Topic.Id_.Hex}}">{{.Topic.Title}}</a>
+        回复了 <a href="/member/{{.Topic.Creater.Username}}">{{.Topic.Creater.Username}}</a> 创建的主题: <a href="/t/{{.Topic.Id_.Hex}}">{{.Topic.Title}}</a>
 	    <span class="pull-right">{{$utils.FormatTime .CreatedAt}}</span>
       </span>
       <div>
@@ -20,6 +20,8 @@
     </dd>
     {{end}}
     </dl>
+	<hr>
+	{{.pagination.Html .page}}
 </div>
 {{end}}
 

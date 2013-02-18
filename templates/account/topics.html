@@ -4,22 +4,11 @@
 {{$utils := .utils}}
 <ul class="breadcrumb">
   <li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
-  <li><a href="/member/{{.user.Username}}">{{.user.Username}} <span class="divider">/</span></a>
+  <li><a href="/member/{{.user.Username}}">{{.user.Username}}</a> <span class="divider">/</span></li>
   <li class="active">全部主题</li>
 </ul>
 <div class="content">
   <img src="{{.utils.Gravatar .user.Email 80}}" class="pull-left">
-  <h3></h3>
-  {{if .username}}
-    {{if .user.IsFollowedBy .username | not}}
-    <a href="/follow/{{.user.Username}}" class="btn btn-success"><i class="icon-plus icon-white"></i> 关注</a>
-    {{else}}
-    <div class="btn-group">
-      <button class="btn disabled"><i class="icon-ok icon-white"></i> 已关注</button>
-      <a href="/unfollow/{{.user.Username}}" class="btn btn-danger"><i class="icon-remove icon-white"></i> 取消</a>
-    </div>
-    {{end}}
-  {{end}}
   <div class="clearfix"></div>
   <p></p>
   <dl>
@@ -30,7 +19,7 @@
       <div class="space"></div>
       <span>
         <a class="label" href="/go/{{.Node.Id}}">{{.Node.Name}}</a> • 
-        <a href="/member/{{.User.Username}}"><strong>{{.User.Username}}</strong></a> • 
+        <a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
         {{$utils.FormatTime .CreatedAt}}
       </span>
       <div class="clearfix"></div>

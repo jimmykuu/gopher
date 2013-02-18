@@ -268,9 +268,9 @@ func memberTopicsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c = db.C("topics")
+	c = db.C("contents")
 
-	pagination := NewPagination(c.Find(bson.M{"userid": user.Id_}).Sort("-latestrepliedat"), "/member/"+username+"/topics", PerPage)
+	pagination := NewPagination(c.Find(bson.M{"content.createdby": user.Id_, "content.type": TypeTopic}).Sort("-latestrepliedat"), "/member/"+username+"/topics", PerPage)
 
 	var topics []Topic
 
@@ -289,6 +289,19 @@ func memberTopicsHandler(w http.ResponseWriter, r *http.Request) {
 // /member/{username}/replies
 // 用户的所有回复
 func memberRepliesHandler(w http.ResponseWriter, r *http.Request) {
+	p := r.FormValue("p")
+	page := 1
+
+	if p != "" {
+		var err error
+		page, err = strconv.Atoi(p)
+
+		if err != nil {
+			message(w, r, "没有找到页面", "没有找到页面", "error")
+			return
+		}
+	}
+
 	vars := mux.Vars(r)
 	username := vars["username"]
 	c := db.C("users")
@@ -301,11 +314,22 @@ func memberRepliesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var replies []Comment
-	c = db.C("comments")
-	c.Find(bson.M{"createdby": user.Id_, "type": TypeTopic}).Sort("-createdat").All(&replies)
+	if err != nil {
+		message(w, r, "没有找到页面", "没有找到页面", "error")
+		return
+	}
 
-	renderTemplate(w, r, "account/replies.html", map[string]interface{}{"user": user, "replies": replies})
+	var replies []Comment
+
+	c = db.C("comments")
+
+	pagination := NewPagination(c.Find(bson.M{"createdby": user.Id_, "type": TypeTopic}).Sort("-createdat"), "/member/"+username+"/replies", PerPage)
+
+	query, err := pagination.Page(page)
+
+	query.All(&replies)
+
+	renderTemplate(w, r, "account/replies.html", map[string]interface{}{"user": user, "pagination": pagination, "page": page, "replies": replies})
 }
 
 func followHandler(w http.ResponseWriter, r *http.Request) {
