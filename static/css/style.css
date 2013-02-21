@@ -1,8 +1,13 @@
 body {
 	/*background-color: #E6E6E6;*/
-	background: url(../img/bg.png);
+	background: url(/static/img/bg.png);
 	padding-bottom: 40px;
 }
+
+header div.btn-group {
+	margin-top: 4px;
+}
+
 li.number {
 	color: #999;
 	font-weight: bold;
@@ -158,6 +163,7 @@ header nav li a {
 
 header nav li a:hover {
 	color: white;
+	text-decoration: none;
 }
 
 .login-form {
@@ -295,4 +301,8 @@ div.header {
 
 a.remove {
 	margin-right: 10px;
+}
+
+.sidebar-nav a.btn {
+	margin-bottom: 4px;
 }
