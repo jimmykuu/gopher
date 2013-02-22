@@ -12,32 +12,32 @@
 </ul>
 <div class="content">
 	<h1>Go语言第三方包：{{.category.Name}}</h1>
-	<ul>
-		{{$username := .username}}
-		{{$utils := .utils}}
-		<dl class="topics">
-			{{range .packages}}
-			<dd>
-				<a href="/p/{{.Id_.Hex}}" class="title">{{.Title}}</a>
-				{{if $username}}
-					{{if .CanEdit $username}}
-						<a href="/p/{{.Id_.Hex}}/edit"><i class="icon-pencil"></i></a>
-						<a href="/p/{{.Id_.Hex}}/delete"><i class="icon-remove"></i></a>
-					{{end}}
+	{{$username := .username}}
+	{{$utils := .utils}}
+	<dl class="topics">
+		{{range .packages}}
+		<dd>
+			<a href="/p/{{.Id_.Hex}}" class="title">{{.Title}}</a>
+			{{if $username}}
+				{{if .CanEdit $username}}
+					<a href="/p/{{.Id_.Hex}}/edit"><i class="icon-pencil"></i></a>
+					<a href="/p/{{.Id_.Hex}}/delete"><i class="icon-remove"></i></a>
 				{{end}}
-				<p class="muted">
-					{{$utils.Truncate .Html 200}}
-				</p>
-				<div class="info">
-					<a class="label" href="/packages/{{.Category.Id}}">{{.Category.Name}}</a> • 
-					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
-					{{$utils.FormatTime .CreatedAt}} 提交
-				</div>
-				<div class="clear"></div>
-			</dd>
 			{{end}}
-		</dl>
-	</ul>
+			<div class="space"></div>
+			<div class="info">
+				<a class="label" href="/packages/{{.Category.Id}}">{{.Category.Name}}</a> • 
+				<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
+				{{$utils.FormatTime .CreatedAt}} 提交
+			</div>
+			<div class="space"></div>
+			<p class="muted">
+				{{$utils.Truncate .Html 200}}
+			</p>
+			<div class="clear"></div>
+		</dd>
+		{{end}}
+	</dl>
 </div>
 {{end}}
 
