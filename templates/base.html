@@ -26,11 +26,12 @@
 				</a>
 				<ul class="dropdown-menu">
 					<li><a href="/profile"><i class="icon-cog"></i> 设置</a></li>
-						{{if .isSuperUser}}
+					<li><a href="/change_password"><i class="icon-edit"></i> 修改密码</a></li>
+					{{if .isSuperUser}}
 						<li><a href="/admin"><i class="icon-wrench"></i> 管理</a></li>
-						{{end}}
-						<li class="divider"></li>
-						<li><a href="/signout"><i class="icon-off"></i> 登出</a></li>
+					{{end}}
+					<li class="divider"></li>
+					<li><a href="/signout"><i class="icon-off"></i> 登出</a></li>
 				</ul>
 			</div>
 			{{else}}

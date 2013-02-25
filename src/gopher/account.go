@@ -439,13 +439,7 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	changePasswordForm := wtforms.NewForm(
-		wtforms.NewPasswordField("current_password", "当前密码"),
-		wtforms.NewPasswordField("new_password", "新密码"),
-		wtforms.NewPasswordField("confirm_password", "新密码确认"),
-	)
-
-	renderTemplate(w, r, "account/profile.html", map[string]interface{}{"user": user, "profileForm": profileForm, "changePasswordForm": changePasswordForm})
+	renderTemplate(w, r, "account/profile.html", map[string]interface{}{"user": user, "profileForm": profileForm})
 }
 
 // URL: /forgot_password
@@ -542,3 +536,38 @@ func resetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 //	signStr := sign(policyStr)
 //	renderTemplate(w, r, "account/avatar.html", map[string]interface{}{"user": user, "policy": policyStr, "sign": signStr})
 //}
+
+// URL: /change_password
+// 修改密码
+func changePasswordHandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := currentUser(r)
+
+	if !ok {
+		http.Redirect(w, r, "/signin?next=/change_password", http.StatusFound)
+		return
+	}
+
+	form := wtforms.NewForm(
+		wtforms.NewPasswordField("current_password", "当前密码", wtforms.Required{}),
+		wtforms.NewPasswordField("new_password", "新密码", wtforms.Required{}),
+		wtforms.NewPasswordField("confirm_password", "新密码确认", wtforms.Required{}),
+	)
+
+	if r.Method == "POST" && form.Validate(r) {
+		if form.Value("new_password") == form.Value("confirm_password") {
+			currentPassword := encryptPassword(form.Value("current_password"))
+			if currentPassword == user.Password {
+				c := db.C("users")
+				c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"password": encryptPassword(form.Value("new_password"))}})
+				message(w, r, "密码修改成功", `密码修改成功`, "success")
+				return
+			} else {
+				form.AddError("current_password", "当前密码错误")
+			}
+		} else {
+			form.AddError("confirm_password", "密码不匹配")
+		}
+	}
+
+	renderTemplate(w, r, "account/change_password.html", map[string]interface{}{"form": form})
+}
