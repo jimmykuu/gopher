@@ -6,10 +6,10 @@ package gopher
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/jimmykuu/wtforms"
 	"labix.org/v2/mgo/bson"
 	"net/http"
 	"time"
-	"wtforms"
 )
 
 // URL: /sites

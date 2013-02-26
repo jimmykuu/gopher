@@ -8,12 +8,12 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
+	"github.com/jimmykuu/wtforms"
 	"io"
 	"labix.org/v2/mgo/bson"
 	"net/http"
 	"strconv"
 	"time"
-	"wtforms"
 )
 
 // 加密密码,转成md5

@@ -6,10 +6,10 @@ package gopher
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/jimmykuu/wtforms"
 	"html/template"
 	"labix.org/v2/mgo/bson"
 	"net/http"
-	"wtforms"
 )
 
 // 管理页面的子菜单
