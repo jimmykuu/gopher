@@ -6,9 +6,7 @@
 	<li class="active">上传头像</li>
 </ul>
 <div class="content">
-<form action="http://v0.api.upyun.com/gopher/" method="post" enctype="multipart/form-data" class="form-horizontal">
-	<input type="hidden" name="policy" value="{{.policy}}">
-	<input type="hidden" name="signature" value="{{.sign}}">
+<form action="/profile/avatar" method="post" enctype="multipart/form-data" class="form-horizontal">
 	<div class="control-group">
 		<label class="control-label" for="file">选择图片文件</label>
 		<div class="controls">

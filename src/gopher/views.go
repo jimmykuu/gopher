@@ -7,7 +7,6 @@ package gopher
 import (
 	"bytes"
 	"crypto/md5"
-	"crypto/rand"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -41,12 +40,6 @@ var funcMaps = template.FuncMap{
 		io.WriteString(h, email)
 		return fmt.Sprintf("http://www.gravatar.com/avatar/%x?s=%d", h.Sum(nil), size)
 	},
-}
-
-func uuid() string {
-	buf := make([]byte, 16)
-	io.ReadFull(rand.Reader, buf)
-	return fmt.Sprintf("%x", buf)
 }
 
 type Utils struct {

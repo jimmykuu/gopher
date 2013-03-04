@@ -9,6 +9,7 @@ Golang中国([www.golang.tc](http://www.golang.tc))源代码.
 - github.com/gorilla/mux
 - github.com/gorilla/sessions
 - labix.org/v2/mgo
+- code.google.com/p/go-uuid/uuid
 - github.com/jimmykuu/webhelpers
 - github.com/jimmykuu/wtforms
 
@@ -17,6 +18,7 @@ Golang中国([www.golang.tc](http://www.golang.tc))源代码.
     go get -u github.com/gorilla/mux
     go get -u github.com/gorilla/sessions
     go get -u labix.org/v2/mgo
+	go get -u code.google.com/p/go-uuid/uuid
 	go get -u github.com/jimmykuu/webhelpers
 	go get -u github.com/jimmykuu/wtforms
     git clone git://github.com/jimmykuu/gopher.git

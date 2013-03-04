@@ -35,7 +35,7 @@ var (
 		"/reset/{code}":    resetPasswordHandler,
 		"/profile":         profileHandler,
 		"/change_password": changePasswordHandler,
-		// "/profile/avatar":  changeAvatarHandler,
+		"/profile/avatar":  changeAvatarHandler,
 
 		"/nodes":     nodesHandler,
 		"/go/{node}": topicInNodeHandler,

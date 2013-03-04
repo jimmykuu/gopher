@@ -4,6 +4,7 @@
 package gopher
 
 import (
+	"code.google.com/p/go-uuid/uuid"
 	"crypto/md5"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -12,7 +13,9 @@ import (
 	"io"
 	"labix.org/v2/mgo/bson"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -88,7 +91,7 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 
 			id := bson.NewObjectId()
 
-			validateCode := uuid()
+			validateCode := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 			index := status.UserIndex + 1
 			err = c.Insert(&User{
 				Id_:          id,
@@ -468,7 +471,7 @@ func forgotPasswordHandler(w http.ResponseWriter, r *http.Request) {
 如果这个请求不是由你发起的，那没问题，你不用担心，你可以安全地忽略这封邮件。
 
 如果你有任何疑问，可以回复这封邮件向我提问。`
-				code := uuid()
+				code := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 				c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"resetcode": code}})
 				message2 = fmt.Sprintf(message2, user.Username, config["host"], code)
 				sendMail("[Golang中国]重设密码", message2, []string{user.Email})
@@ -523,19 +526,35 @@ func resetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // URL: /profile/avatar
-// 修改头像,头像使用又拍云存储,直接使用从页面提交到又拍云,然后回调
-//func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
-//	user, ok := getCurrentUser(r)
+// 修改头像,提交到七牛云存储
+func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := currentUser(r)
 
-//	if !ok {
-//		http.Redirect(w, r, "/signin?next=/profile/avatar", http.StatusFound)
-//		return
-//	}
+	if !ok {
+		http.Redirect(w, r, "/signin?next=/profile/avatar", http.StatusFound)
+		return
+	}
 
-//	policyStr := policy()
-//	signStr := sign(policyStr)
-//	renderTemplate(w, r, "account/avatar.html", map[string]interface{}{"user": user, "policy": policyStr, "sign": signStr})
-//}
+	if r.Method == "POST" {
+		formFile, formHeader, err := r.FormFile("file")
+		if err != nil {
+			fmt.Println("changeAvatarHandler:", err.Error())
+			return
+		}
+
+		defer formFile.Close()
+
+		fmt.Println(formFile)
+
+		fmt.Println(formHeader.Header["Content-Type"][0])
+		filename := strings.Replace(uuid.NewUUID().String(), "-", "", -1) + ".png"
+		f, err := os.Create(filename)
+		defer f.Close()
+		io.Copy(f, formFile)
+	}
+
+	renderTemplate(w, r, "account/avatar.html", map[string]interface{}{"user": user})
+}
 
 // URL: /change_password
 // 修改密码
