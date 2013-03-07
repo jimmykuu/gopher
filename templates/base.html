@@ -18,10 +18,13 @@
 <body>
 	<header>
 		<div class="container">
-			{{if .username}}
-			<div class="btn-group pull-right">
+			<a class="brand" href="/"><img src="/static/img/golang-china.png"></a>
+			<div class="pull-right">
+				{{if .username}}
+					{{.username}}，你好
+					<div class="btn-group">
 				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-					<i class="icon-user"></i> {{.username}}
+					我的空间
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu">
@@ -34,31 +37,26 @@
 					<li><a href="/signout"><i class="icon-off"></i> 登出</a></li>
 				</ul>
 			</div>
-			{{else}}
-			<form action="/signin" method="post" class="form-inline pull-right login-form">
-				<input type="text" class="input-small" placeholder="用户名" name="username">
-				<input type="password" class="input-small" placeholder="密码" name="password">
-				<button type="submit" class="btn btn-primary">登录</button>
-				<p style="padding-top: 20px;">
-					<a href="/forgot_password">忘记密码</a> |
+				{{else}}
+					<a href="/signin">登录</a> <span class="divider">|</span>
 					<a href="/signup">注册</a>
-				</p>
-			</form>
-			{{end}}
-			<div class="header-box">
-				<a class="brand" href="/"><img src="/static/img/golang-china.png"></a>
-				<nav class="pull-left">
-					<ul>
-						<li><a href="/">社区</a></li>
-						<li><a href="/articles">文章</a></li>
-						<li><a href="/sites">酷站</a></li>
-						<li><a href="/packages">第三方包</a></li>
-						<li><a href="http://tour.golang.tc" target="_blank">Go 指南</a></li>
-					</ul>
-				</nav>
+				{{end}}
 			</div>
 		</div>
 	</header>
+	<div class="container">
+		<div class="navbar">
+			<div class="navbar-inner">
+				<ul class="nav">
+					<li><a href="/">社区</a></li>
+					<li><a href="/articles">文章</a></li>
+					<li><a href="/sites">酷站</a></li>
+					<li><a href="/packages">第三方包</a></li>
+					<li><a href="http://tour.golang.tc" target="_blank">Go 指南</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
 	<div class="container">
 		<div class="row">
 			{{template "LeftSide" .}}

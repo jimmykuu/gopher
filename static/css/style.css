@@ -117,18 +117,12 @@ footer {
 }
 
 header {
-	background-color: #E0EBF5;
 	margin-bottom: 20px;
-}
-
-header .container {
-	height: 110px;
-	position: relative;
 }
 
 .brand {
 	float: left;
-	margin-top: 40px;
+	margin-top: 10px;
 }
 
 header h1 {
