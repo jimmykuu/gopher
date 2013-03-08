@@ -19,6 +19,7 @@ import (
 	"net/smtp"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -140,6 +141,23 @@ func (u *Utils) AssertPackage(i interface{}) *Package {
 
 func message(w http.ResponseWriter, r *http.Request, title string, message string, class string) {
 	renderTemplate(w, r, "message.html", map[string]interface{}{"title": title, "message": template.HTML(message), "class": class})
+}
+
+// 获取链接的页码，默认"?p=1"这种类型
+func Page(r *http.Request) (int, error) {
+	p := r.FormValue("p")
+	page := 1
+
+	if p != "" {
+		var err error
+		page, err = strconv.Atoi(p)
+
+		if err != nil {
+			return 0, err
+		}
+	}
+
+	return page, nil
 }
 
 func sendMail(subject string, message string, to []string) {

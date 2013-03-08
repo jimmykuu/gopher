@@ -62,6 +62,11 @@ func (p *Pagination) Page(number int) (*mgo.Query, error) {
 	return query.Limit(p.prePage), nil
 }
 
+// 内容总数
+func (p *Pagination) Count() int {
+	return p.count
+}
+
 // 创建一个分页结构体
 func NewPagination(query *mgo.Query, url string, prePage int) *Pagination {
 	p := Pagination{}

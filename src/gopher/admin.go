@@ -205,11 +205,26 @@ func adminListUsersHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	page, err := Page(r)
+	if err != nil {
+		message(w, r, "页码错误", "页码错误", "error")
+		return
+	}
+
 	var users []User
 	c := db.C("users")
-	c.Find(nil).Sort("-joinedat").All(&users)
 
-	renderTemplate(w, r, "admin/users.html", map[string]interface{}{"users": users, "adminNav": ADMIN_NAV})
+	pagination := NewPagination(c.Find(nil).Sort("-joinedat"), "/admin/users", PerPage)
+
+	query, err := pagination.Page(page)
+	if err != nil {
+		message(w, r, "页码错误", "页码错误", "error")
+		return
+	}
+
+	query.All(&users)
+
+	renderTemplate(w, r, "admin/users.html", map[string]interface{}{"users": users, "adminNav": ADMIN_NAV, "pagination": pagination, "total": pagination.Count(), "page": page})
 }
 
 // URL: /admin/user/{userId}/activate
