@@ -54,7 +54,14 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	query.All(&topics)
 
-	renderTemplate(w, r, "index.html", map[string]interface{}{"nodes": hotNodes, "status": status, "topics": topics, "pagination": pagination, "page": page})
+	renderTemplate(w, r, "index.html", map[string]interface{}{
+		"nodes":      hotNodes,
+		"status":     status,
+		"topics":     topics,
+		"pagination": pagination,
+		"page":       page,
+		"active":     "topic",
+	})
 }
 
 // URL: /topic/new
@@ -137,7 +144,12 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderTemplate(w, r, "topic/form.html", map[string]interface{}{"form": form, "title": "新建", "action": "/topic/new"})
+	renderTemplate(w, r, "topic/form.html", map[string]interface{}{
+		"form":   form,
+		"title":  "新建",
+		"action": "/topic/new",
+		"active": "topic",
+	})
 }
 
 // URL: /t/{topicId}/edit
@@ -216,7 +228,14 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 		html = template.HTML(form.Value("html"))
 	}
 
-	renderTemplate(w, r, "topic/form.html", map[string]interface{}{"form": form, "title": "编辑", "action": "/t/" + topicId + "/edit", "html": html, "content": content})
+	renderTemplate(w, r, "topic/form.html", map[string]interface{}{
+		"form":    form,
+		"title":   "编辑",
+		"action":  "/t/" + topicId + "/edit",
+		"html":    html,
+		"content": content,
+		"active":  "topic",
+	})
 }
 
 // URL: /t/{topicId}
@@ -237,7 +256,10 @@ func showTopicHandler(w http.ResponseWriter, r *http.Request) {
 
 	c.UpdateId(bson.ObjectIdHex(topicId), bson.M{"$inc": bson.M{"content.hits": 1}})
 
-	renderTemplate(w, r, "topic/show.html", map[string]interface{}{"topic": topic})
+	renderTemplate(w, r, "topic/show.html", map[string]interface{}{
+		"topic":  topic,
+		"active": "topic",
+	})
 }
 
 // URL: /go/{node}
@@ -282,5 +304,9 @@ func topicInNodeHandler(w http.ResponseWriter, r *http.Request) {
 
 	query.All(&topics)
 
-	renderTemplate(w, r, "/topic/list.html", map[string]interface{}{"topics": topics, "node": node})
+	renderTemplate(w, r, "/topic/list.html", map[string]interface{}{
+		"topics": topics,
+		"node":   node,
+		"active": "topic",
+	})
 }

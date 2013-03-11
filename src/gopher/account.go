@@ -14,6 +14,8 @@ import (
 	"labix.org/v2/mgo/bson"
 	"net/http"
 	"os"
+	//"qbox/api/conf"
+	//"qbox/api/rs"
 	"strconv"
 	"strings"
 	"time"
@@ -551,6 +553,18 @@ func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
 		f, err := os.Create(filename)
 		defer f.Close()
 		io.Copy(f, formFile)
+
+		//service := rs.New(http.DefaultTransport)
+		//fmt.Println(service)
+		//fmt.Println(filename)
+		//ret, code, err := service.Put("gopher:avatar/"+filename, "", formFile, 340719)
+		//if err != nil {
+		//	fmt.Println("upload error:", err.Error())
+		//	return
+		//}
+
+		//fmt.Println(ret)
+		//fmt.Println("code:", code)
 	}
 
 	renderTemplate(w, r, "account/avatar.html", map[string]interface{}{"user": user})

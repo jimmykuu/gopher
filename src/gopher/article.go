@@ -85,7 +85,12 @@ func newArticleHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderTemplate(w, r, "article/form.html", map[string]interface{}{"form": form, "title": "新建", "action": "/article/new"})
+	renderTemplate(w, r, "article/form.html", map[string]interface{}{
+		"form":   form,
+		"title":  "新建",
+		"action": "/article/new",
+		"active": "article",
+	})
 }
 
 // URL: /articles
@@ -126,7 +131,12 @@ func listArticlesHandler(w http.ResponseWriter, r *http.Request) {
 
 	query.All(&articles)
 
-	renderTemplate(w, r, "article/index.html", map[string]interface{}{"articles": articles, "pagination": pagination, "page": page})
+	renderTemplate(w, r, "article/index.html", map[string]interface{}{
+		"articles":   articles,
+		"pagination": pagination,
+		"page":       page,
+		"active":     "article",
+	})
 }
 
 // URL: /a/{articl_id}
@@ -147,7 +157,10 @@ func showArticleHandler(w http.ResponseWriter, r *http.Request) {
 
 	c.UpdateId(bson.ObjectIdHex(articleId), bson.M{"$inc": bson.M{"content.hits": 1}})
 
-	renderTemplate(w, r, "article/show.html", map[string]interface{}{"article": article})
+	renderTemplate(w, r, "article/show.html", map[string]interface{}{
+		"article": article,
+		"active":  "article",
+	})
 }
 
 // URL: /a/{articleId}/edit
@@ -228,5 +241,12 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 		html = template.HTML(form.Value("html"))
 	}
 
-	renderTemplate(w, r, "article/form.html", map[string]interface{}{"form": form, "title": "编辑", "action": "/a/" + articleId + "/edit", "html": html, "content": content})
+	renderTemplate(w, r, "article/form.html", map[string]interface{}{
+		"form":    form,
+		"title":   "编辑",
+		"action":  "/a/" + articleId + "/edit",
+		"html":    html,
+		"content": content,
+		"active":  "article",
+	})
 }

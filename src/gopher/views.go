@@ -79,6 +79,10 @@ func (u *Utils) Index(index int) int {
 	return index + 1
 }
 
+func (u *Utils) Equal(src, dest string) bool {
+	return src == dest
+}
+
 func (u *Utils) FormatTime(t time.Time) string {
 	now := time.Now()
 	duration := now.Sub(t)
@@ -296,6 +300,11 @@ func renderTemplate(w http.ResponseWriter, r *http.Request, file string, data ma
 	data["utils"] = utils
 
 	data["analyticsCode"] = analyticsCode
+
+	_, ok := data["active"]
+	if !ok {
+		data["active"] = ""
+	}
 
 	page := parseTemplate(file, data)
 	w.Write(page)

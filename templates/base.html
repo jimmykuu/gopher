@@ -48,10 +48,10 @@
 		<div class="navbar">
 			<div class="navbar-inner">
 				<ul class="nav">
-					<li><a href="/">社区</a></li>
-					<li><a href="/articles">文章</a></li>
-					<li><a href="/sites">酷站</a></li>
-					<li><a href="/packages">第三方包</a></li>
+					<li{{if .utils.Equal .active "topic"}} class="active"{{end}}><a href="/">社区</a></li>
+					<li{{if .utils.Equal .active "article"}} class="active"{{end}}><a href="/articles">文章</a></li>
+					<li{{if .utils.Equal .active "site"}} class="active"{{end}}><a href="/sites">酷站</a></li>
+					<li{{if .utils.Equal .active "package"}} class="active"{{end}}><a href="/packages">第三方包</a></li>
 					<li><a href="http://tour.golang.tc" target="_blank">Go 指南</a></li>
 				</ul>
 			</div>

@@ -27,7 +27,11 @@ func packagesHandler(w http.ResponseWriter, r *http.Request) {
 	c = db.C("contents")
 	c.Find(bson.M{"content.type": TypePackage}).Sort("-content.createdat").Limit(10).All(&latestPackages)
 
-	renderTemplate(w, r, "package/index.html", map[string]interface{}{"categories": categories, "latestPackages": latestPackages})
+	renderTemplate(w, r, "package/index.html", map[string]interface{}{
+		"categories":     categories,
+		"latestPackages": latestPackages,
+		"active":         "package",
+	})
 }
 
 // URL: /package/new
@@ -86,7 +90,12 @@ func newPackageHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/p/"+id.Hex(), http.StatusFound)
 		return
 	}
-	renderTemplate(w, r, "package/form.html", map[string]interface{}{"form": form, "title": "提交第三方包", "action": "/package/new"})
+	renderTemplate(w, r, "package/form.html", map[string]interface{}{
+		"form":   form,
+		"title":  "提交第三方包",
+		"action": "/package/new",
+		"active": "package",
+	})
 }
 
 // URL: /package/{packageId}/edit
@@ -162,7 +171,12 @@ func editPackageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	form.SetValue("html", "")
-	renderTemplate(w, r, "package/form.html", map[string]interface{}{"form": form, "title": "编辑第三方包", "action": "/p/" + packageId + "/edit"})
+	renderTemplate(w, r, "package/form.html", map[string]interface{}{
+		"form":   form,
+		"title":  "编辑第三方包",
+		"action": "/p/" + packageId + "/edit",
+		"active": "package",
+	})
 }
 
 // URL: /packages/{categoryId}
@@ -190,7 +204,12 @@ func listPackagesHandler(w http.ResponseWriter, r *http.Request) {
 	c = db.C("packagecategories")
 	c.Find(nil).All(&categories)
 
-	renderTemplate(w, r, "package/list.html", map[string]interface{}{"categories": categories, "packages": packages, "category": category})
+	renderTemplate(w, r, "package/list.html", map[string]interface{}{
+		"categories": categories,
+		"packages":   packages,
+		"category":   category,
+		"active":     "package",
+	})
 }
 
 // URL: /p/{packageId}
@@ -215,5 +234,9 @@ func showPackageHandler(w http.ResponseWriter, r *http.Request) {
 	c = db.C("packagecategories")
 	c.Find(nil).All(&categories)
 
-	renderTemplate(w, r, "package/show.html", map[string]interface{}{"package": package_, "categories": categories})
+	renderTemplate(w, r, "package/show.html", map[string]interface{}{
+		"package":    package_,
+		"categories": categories,
+		"active":     "package",
+	})
 }

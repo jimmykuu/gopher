@@ -18,7 +18,10 @@ func sitesHandler(w http.ResponseWriter, r *http.Request) {
 	var categories []SiteCategory
 	c := db.C("sitecategories")
 	c.Find(nil).All(&categories)
-	renderTemplate(w, r, "site/index.html", map[string]interface{}{"categories": categories})
+	renderTemplate(w, r, "site/index.html", map[string]interface{}{
+		"categories": categories,
+		"active":     "site",
+	})
 }
 
 // URL: /site/new
@@ -82,7 +85,12 @@ func newSiteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderTemplate(w, r, "site/form.html", map[string]interface{}{"form": form, "action": "/site/new", "title": "新建"})
+	renderTemplate(w, r, "site/form.html", map[string]interface{}{
+		"form":   form,
+		"action": "/site/new",
+		"title":  "新建",
+		"active": "site",
+	})
 }
 
 // URL: /site/{siteId}/edit
@@ -154,7 +162,12 @@ func editSiteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderTemplate(w, r, "site/form.html", map[string]interface{}{"form": form, "action": "/site/" + siteId + "/edit", "title": "编辑"})
+	renderTemplate(w, r, "site/form.html", map[string]interface{}{
+		"form":   form,
+		"action": "/site/" + siteId + "/edit",
+		"title":  "编辑",
+		"active": "site",
+	})
 }
 
 // URL: /site/{siteId}/delete
