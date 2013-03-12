@@ -69,5 +69,6 @@ var (
 		"/packages/{categoryId}": listPackagesHandler,
 		"/p/{packageId}":         showPackageHandler,
 		"/p/{packageId}/edit":    editPackageHandler,
+		"/p/{packageId}/delete":  deletePackageHandler,
 	}
 )

@@ -240,3 +240,36 @@ func showPackageHandler(w http.ResponseWriter, r *http.Request) {
 		"active":     "package",
 	})
 }
+
+// URL: /p/{packageId}/delete
+// 删除第三方包
+func deletePackageHandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := currentUser(r)
+	if !ok {
+		return
+	}
+
+	if !user.IsSuperuser {
+		return
+	}
+
+	vars := mux.Vars(r)
+	packageId := vars["packageId"]
+
+	c := db.C("contents")
+
+	package_ := Package{}
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(packageId), "content.type": TypePackage}).One(&package_)
+
+	if err != nil {
+		return
+	}
+
+	c.Remove(bson.M{"_id": bson.ObjectIdHex(packageId)})
+
+	// 修改分类下的数量
+	c = db.C("packagecategories")
+	c.Update(bson.M{"_id": package_.CategoryId}, bson.M{"$inc": bson.M{"packagecount": -1}})
+
+	http.Redirect(w, r, "/packages", http.StatusFound)
+}

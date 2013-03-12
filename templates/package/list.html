@@ -21,13 +21,13 @@
 			{{if $username}}
 				{{if .CanEdit $username}}
 					<a href="/p/{{.Id_.Hex}}/edit"><i class="icon-pencil"></i></a>
-					<a href="/p/{{.Id_.Hex}}/delete"><i class="icon-remove"></i></a>
+					<a href="/p/{{.Id_.Hex}}/delete" onclick="javascript:return confirm('确定要删除吗？');"><i class="icon-remove"></i></a>
 				{{end}}
 			{{end}}
 			<div class="space"></div>
 			<div class="info">
-				<a class="label" href="/packages/{{.Category.Id}}">{{.Category.Name}}</a> • 
-				<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
+				<a class="label" href="/packages/{{.Category.Id}}">{{.Category.Name}}</a> •
+				<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> •
 				{{$utils.FormatTime .CreatedAt}} 提交
 			</div>
 			<div class="space"></div>
