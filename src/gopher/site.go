@@ -182,7 +182,7 @@ func deleteSiteHandler(w http.ResponseWriter, r *http.Request) {
 	siteId := mux.Vars(r)["siteId"]
 
 	var site Site
-	c := db.C("sites")
+	c := db.C("contents")
 
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(siteId)}).One(&site)
 
