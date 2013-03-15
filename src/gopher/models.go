@@ -113,6 +113,18 @@ func (c *Content) Creater() *User {
 	return &user
 }
 
+func (c *Content) Updater() *User {
+	if c.UpdatedBy == "" {
+		return nil
+	}
+
+	c_ := db.C("users")
+	user := User{}
+	c_.Find(bson.M{"_id": bson.ObjectIdHex(c.UpdatedBy)}).One(&user)
+
+	return &user
+}
+
 func (c *Content) Comments() *[]Comment {
 	c_ := db.C("comments")
 	var comments []Comment

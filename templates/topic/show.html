@@ -20,6 +20,12 @@
 		</div>
 		<hr>
 		{{$topic.Html}}
+		{{if $topic.Updater}}
+			<hr>
+			<div class="alert alert-success">
+				{{$topic.Updater.Username}} 于 {{.utils.FormatTime $topic.CreatedAt }} 修改	
+			</div>
+		{{end}}
 	</div>
 	{{$utils := .utils}}
 	<div id="replies" class="content">

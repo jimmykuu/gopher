@@ -210,7 +210,7 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 				"content.markdown":  form.Value("content"),
 				"content.html":      template.HTML(html),
 				"content.updatedat": time.Now(),
-				"content.updatedby": user.Id_,
+				"content.updatedby": user.Id_.Hex(),
 			}})
 
 			// 如果两次的节点不同,更新节点的主题数量
