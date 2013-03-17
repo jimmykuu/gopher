@@ -32,7 +32,7 @@ Golang中国([www.golang.tc](http://www.golang.tc))源代码.
 
     {
         "host": "http://localhost:8888",
-        "port": "8888",
+        "port": 8888,
         "db": "localhost:27017",
         "cookie_secret": "05e0ba2eca9411e18155109add4b8aac",
         "smtp_username": "username@example.com",
@@ -47,7 +47,7 @@ Golang中国([www.golang.tc](http://www.golang.tc))源代码.
 先启动MongoDB
 
 Linux/Unix/Mac OS X:
-    
+
     $ cd gopher
     $ ./build.sh
     $ ./bin/server
