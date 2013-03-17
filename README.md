@@ -41,7 +41,8 @@ Golang中国([www.golang.tc](http://www.golang.tc))源代码.
         "smtp_addr": "smtp.example.com:25",
         "from_email": "who@example.com",
         "superusers": "jimmykuu,another",
-        "analytics_file": ""
+        "analytics_file": "",
+        "static_file_version": 1
     }
 
 先启动MongoDB

@@ -9,17 +9,18 @@ import (
 )
 
 type ConfigStruct struct {
-	Host          string `json:"host"`
-	Port          int    `json:"port"`
-	DB            string `json:"db"`
-	CookieSecret  string `json:"cookie_secret"`
-	SmtpUsername  string `json:"smtp_username"`
-	SmtpPassword  string `json:"smtp_password"`
-	SmtpHost      string `json:"smtp_host"`
-	SmtpAddr      string `json:"smtp_addr"`
-	FromEmail     string `json:"from_email"`
-	Superusers    string `json:"superusers"`
-	AnalyticsFile string `json:"analytics_file"`
+	Host              string `json:"host"`
+	Port              int    `json:"port"`
+	DB                string `json:"db"`
+	CookieSecret      string `json:"cookie_secret"`
+	SmtpUsername      string `json:"smtp_username"`
+	SmtpPassword      string `json:"smtp_password"`
+	SmtpHost          string `json:"smtp_host"`
+	SmtpAddr          string `json:"smtp_addr"`
+	FromEmail         string `json:"from_email"`
+	Superusers        string `json:"superusers"`
+	AnalyticsFile     string `json:"analytics_file"`
+	StaticFileVersion int    `json:"static_file_version"`
 }
 
 var Config ConfigStruct

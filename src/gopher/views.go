@@ -298,6 +298,7 @@ func renderTemplate(w http.ResponseWriter, r *http.Request, file string, data ma
 	data["utils"] = utils
 
 	data["analyticsCode"] = analyticsCode
+	data["staticFileVersion"] = Config.StaticFileVersion
 
 	_, ok := data["active"]
 	if !ok {
