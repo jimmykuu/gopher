@@ -5,19 +5,10 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"gopher"
 	"html/template"
-	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
-	"os"
 	"time"
-)
-
-var (
-	config map[string]string
-	db     *mgo.Database
 )
 
 // 站点
@@ -90,45 +81,12 @@ type OldReply struct {
 	CreatedAt time.Time
 }
 
-func init() {
-	file, err := os.Open("etc/config.json")
-	if err != nil {
-		fmt.Println("配置文件读取失败:", err.Error())
-		os.Exit(1)
-	}
-
-	defer file.Close()
-
-	dec := json.NewDecoder(file)
-
-	err = dec.Decode(&config)
-
-	if err != nil {
-		fmt.Println("配置文件解析失败:", err.Error())
-		os.Exit(1)
-	}
-
-	if config["db"] == "" {
-		fmt.Println("数据库地址还没有配置,请到config.json内配置db字段.")
-		os.Exit(1)
-	}
-
-	session, err := mgo.Dial(config["db"])
-	if err != nil {
-		fmt.Println("MongoDB连接失败:", err.Error())
-	}
-
-	session.SetMode(mgo.Monotonic, true)
-
-	db = session.DB("gopher")
-}
-
 func moveSites() {
 	var sites []OldSite
-	c := db.C("sites")
+	c := gopher.DB.C("sites")
 	c.Find(nil).All(&sites)
 
-	c = db.C("contents")
+	c = gopher.DB.C("contents")
 	for _, site := range sites {
 		c.Insert(&gopher.Site{
 			Id_: site.Id_,
@@ -148,11 +106,11 @@ func moveSites() {
 
 func moveArticles() {
 	var articles []OldArticle
-	c := db.C("articles")
+	c := gopher.DB.C("articles")
 	c.Find(nil).All(&articles)
 
-	c1 := db.C("contents")
-	c2 := db.C("comments")
+	c1 := gopher.DB.C("contents")
+	c2 := gopher.DB.C("comments")
 	for _, article := range articles {
 		c1.Insert(&gopher.Article{
 			Content: gopher.Content{
@@ -188,10 +146,10 @@ func moveArticles() {
 
 func movePackages() {
 	var packages []OldPackage
-	c := db.C("packages")
+	c := gopher.DB.C("packages")
 	c.Find(nil).All(&packages)
 
-	c = db.C("contents")
+	c = gopher.DB.C("contents")
 	for _, package_ := range packages {
 		c.Insert(&gopher.Package{
 			Content: gopher.Content{
@@ -212,16 +170,16 @@ func movePackages() {
 
 func moveTopics() {
 	var topics []OldTopic
-	c := db.C("topics")
+	c := gopher.DB.C("topics")
 	c.Find(nil).All(&topics)
 
 	replyIdAndReplierId := make(map[string]string)
 
 	var replies []OldReply
-	c = db.C("replies")
+	c = gopher.DB.C("replies")
 	c.Find(nil).All(&replies)
 
-	c = db.C("comments")
+	c = gopher.DB.C("comments")
 	for _, reply := range replies {
 		replyIdAndReplierId[reply.Id_.Hex()] = reply.UserId.Hex()
 
@@ -236,7 +194,7 @@ func moveTopics() {
 		})
 	}
 
-	c = db.C("contents")
+	c = gopher.DB.C("contents")
 	for _, topic := range topics {
 		latestReplierId := ""
 		if topic.LatestReplyId != "" {

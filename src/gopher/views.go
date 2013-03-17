@@ -29,7 +29,7 @@ const (
 )
 
 var (
-	db          *mgo.Database
+	DB          *mgo.Database
 	store       *sessions.CookieStore
 	fileVersion map[string]string = make(map[string]string) // {path: version}
 	utils       *Utils
@@ -98,7 +98,7 @@ func (u *Utils) FormatTime(t time.Time) string {
 }
 
 func (u *Utils) UserInfo(username string) template.HTML {
-	c := db.C("users")
+	c := DB.C("users")
 
 	user := User{}
 	// 检查用户名
@@ -167,12 +167,12 @@ func Page(r *http.Request) (int, error) {
 func sendMail(subject string, message string, to []string) {
 	auth := smtp.PlainAuth(
 		"",
-		config["smtp_username"],
-		config["smtp_password"],
-		config["smtp_host"],
+		Config.SmtpUsername,
+		Config.SmtpPassword,
+		Config.SmtpHost,
 	)
 	msg := fmt.Sprintf("To: %s\r\nFrom: jimmykuu@126.com\r\nSubject: %s\r\nContent-Type: text/html\r\n\r\n%s", strings.Join(to, ";"), subject, message)
-	err := smtp.SendMail(config["smtp_addr"], auth, config["from_email"], to, []byte(msg))
+	err := smtp.SendMail(Config.SmtpAddr, auth, Config.FromEmail, to, []byte(msg))
 	if err != nil {
 		panic(err)
 	}
@@ -197,12 +197,12 @@ func stringInArray(a []string, x string) bool {
 }
 
 func init() {
-	if config["db"] == "" {
+	if Config.DB == "" {
 		fmt.Println("数据库地址还没有配置,请到config.json内配置db字段.")
 		os.Exit(1)
 	}
 
-	session, err := mgo.Dial(config["db"])
+	session, err := mgo.Dial(Config.DB)
 	if err != nil {
 		fmt.Println("MongoDB连接失败:", err.Error())
 		os.Exit(1)
@@ -210,17 +210,15 @@ func init() {
 
 	session.SetMode(mgo.Monotonic, true)
 
-	db = session.DB("gopher")
+	DB = session.DB("gopher")
 
-	cookie_secret := config["cookie_secret"]
-
-	store = sessions.NewCookieStore([]byte(cookie_secret))
+	store = sessions.NewCookieStore([]byte(Config.CookieSecret))
 
 	utils = &Utils{}
 
 	// 如果没有status,创建
 	var status Status
-	c := db.C("status")
+	c := DB.C("status")
 	err = c.Find(nil).One(&status)
 
 	if err != nil {
@@ -235,7 +233,7 @@ func init() {
 
 	// 检查是否有超级账户设置
 	var superusers []string
-	for _, username := range strings.Split(config["superusers"], ",") {
+	for _, username := range strings.Split(Config.Superusers, ",") {
 		username = strings.TrimSpace(username)
 		if username != "" {
 			superusers = append(superusers, username)
@@ -246,7 +244,7 @@ func init() {
 		fmt.Println("你没有设置超级账户,请在config.json中的superusers中设置,如有多个账户,用逗号分开")
 	}
 
-	c = db.C("users")
+	c = DB.C("users")
 	var users []User
 	c.Find(bson.M{"issuperuser": true}).All(&users)
 
@@ -338,7 +336,7 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 	contentId := vars["contentId"]
 
 	var temp map[string]interface{}
-	c := db.C("contents")
+	c := DB.C("contents")
 	c.Find(bson.M{"_id": bson.ObjectIdHex(contentId)}).One(&temp)
 
 	temp2 := temp["content"].(map[string]interface{})
@@ -365,7 +363,7 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 	Id_ := bson.NewObjectId()
 	now := time.Now()
 
-	c = db.C("comments")
+	c = DB.C("comments")
 	c.Insert(&Comment{
 		Id_:       Id_,
 		Type:      type_,
@@ -378,7 +376,7 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 
 	if type_ == TypeTopic {
 		// 修改最后回复用户Id和时间
-		c = db.C("contents")
+		c = DB.C("contents")
 		c.Update(bson.M{"_id": bson.ObjectIdHex(contentId)}, bson.M{"$set": bson.M{"latestreplierid": user.Id_.Hex(), "latestrepliedat": now}})
 	}
 
@@ -403,7 +401,7 @@ func deleteCommentHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	var commentId string = vars["commentId"]
 
-	c := db.C("comments")
+	c := DB.C("comments")
 	var comment Comment
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(commentId)}).One(&comment)
 
@@ -414,7 +412,7 @@ func deleteCommentHandler(w http.ResponseWriter, r *http.Request) {
 
 	c.Remove(bson.M{"_id": comment.Id_})
 
-	c = db.C("contents")
+	c = DB.C("contents")
 	c.Update(bson.M{"_id": comment.ContentId}, bson.M{"$inc": bson.M{"content.commentcount": -1}})
 
 	if comment.Type == TypeTopic {
@@ -427,10 +425,10 @@ func deleteCommentHandler(w http.ResponseWriter, r *http.Request) {
 			} else {
 				// 如果删除的是该主题最后一个回复，设置主题的最新回复id，和时间
 				var latestComment Comment
-				c = db.C("comments")
+				c = DB.C("comments")
 				c.Find(bson.M{"contentid": topic.Id_}).Sort("-createdat").Limit(1).One(&latestComment)
 
-				c = db.C("contents")
+				c = DB.C("contents")
 				c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{"latestreplierid": latestComment.CreatedBy.Hex(), "latestrepliedat": latestComment.CreatedAt}})
 			}
 		}

@@ -33,14 +33,14 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var hotNodes []Node
-	c := db.C("nodes")
+	c := DB.C("nodes")
 	c.Find(bson.M{"topiccount": bson.M{"$gt": 0}}).Sort("-topiccount").Limit(10).All(&hotNodes)
 
 	var status Status
-	c = db.C("status")
+	c = DB.C("status")
 	c.Find(nil).One(&status)
 
-	c = db.C("contents")
+	c = DB.C("contents")
 
 	pagination := NewPagination(c.Find(bson.M{"content.type": TypeTopic}).Sort("-latestrepliedat"), "/", PerPage)
 
@@ -75,7 +75,7 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 	nodeId := mux.Vars(r)["node"]
 
 	var nodes []Node
-	c := db.C("nodes")
+	c := DB.C("nodes")
 	c.Find(nil).All(&nodes)
 
 	var choices []wtforms.Choice
@@ -97,10 +97,10 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 		username = username.(string)
 
 		user := User{}
-		c = db.C("users")
+		c = DB.C("users")
 		c.Find(bson.M{"username": username}).One(&user)
 
-		c = db.C("contents")
+		c = DB.C("contents")
 
 		id_ := bson.NewObjectId()
 
@@ -131,10 +131,10 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// 增加Node.TopicCount
-		c = db.C("nodes")
+		c = DB.C("nodes")
 		c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
 
-		c = db.C("status")
+		c = DB.C("status")
 		var status Status
 		c.Find(nil).One(&status)
 
@@ -163,7 +163,7 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 
 	topicId := mux.Vars(r)["topicId"]
 
-	c := db.C("contents")
+	c := DB.C("contents")
 	var topic Topic
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": TypeTopic}).One(&topic)
 
@@ -178,7 +178,7 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var nodes []Node
-	c = db.C("nodes")
+	c = DB.C("nodes")
 	c.Find(nil).All(&nodes)
 
 	var choices []wtforms.Choice
@@ -203,7 +203,7 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 			html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
 
 			nodeId := bson.ObjectIdHex(form.Value("node"))
-			c = db.C("contents")
+			c = DB.C("contents")
 			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{
 				"nodeid":            nodeId,
 				"content.title":     form.Value("title"),
@@ -215,7 +215,7 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 
 			// 如果两次的节点不同,更新节点的主题数量
 			if topic.NodeId != nodeId {
-				c = db.C("nodes")
+				c = DB.C("nodes")
 				c.Update(bson.M{"_id": topic.NodeId}, bson.M{"$inc": bson.M{"topiccount": -1}})
 				c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
 			}
@@ -243,7 +243,7 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 func showTopicHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	topicId := vars["topicId"]
-	c := db.C("contents")
+	c := DB.C("contents")
 
 	topic := Topic{}
 
@@ -267,7 +267,7 @@ func showTopicHandler(w http.ResponseWriter, r *http.Request) {
 func topicInNodeHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	nodeId := vars["node"]
-	c := db.C("nodes")
+	c := DB.C("nodes")
 
 	node := Node{}
 	err := c.Find(bson.M{"id": nodeId}).One(&node)
@@ -290,7 +290,7 @@ func topicInNodeHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	c = db.C("contents")
+	c = DB.C("contents")
 
 	pagination := NewPagination(c.Find(bson.M{"nodeid": node.Id_, "content.type": TypeTopic}).Sort("-latestrepliedat"), "/", 20)
 

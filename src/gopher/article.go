@@ -25,7 +25,7 @@ func newArticleHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var categories []ArticleCategory
-	c := db.C("articlecategories")
+	c := DB.C("articlecategories")
 	c.Find(nil).All(&categories)
 
 	var choices []wtforms.Choice
@@ -49,10 +49,10 @@ func newArticleHandler(w http.ResponseWriter, r *http.Request) {
 		username = username.(string)
 
 		user := User{}
-		c = db.C("users")
+		c = DB.C("users")
 		c.Find(bson.M{"username": username}).One(&user)
 
-		c = db.C("contents")
+		c = DB.C("contents")
 
 		id_ := bson.NewObjectId()
 
@@ -117,7 +117,7 @@ func listArticlesHandler(w http.ResponseWriter, r *http.Request) {
 	//	c = db.C("status")
 	//	c.Find(nil).One(&status)
 
-	c := db.C("contents")
+	c := DB.C("contents")
 
 	pagination := NewPagination(c.Find(bson.M{"content.type": TypeArticle}).Sort("-content.createdat"), "/articles", PerPage)
 
@@ -144,7 +144,7 @@ func listArticlesHandler(w http.ResponseWriter, r *http.Request) {
 func showArticleHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	articleId := vars["articleId"]
-	c := db.C("contents")
+	c := DB.C("contents")
 
 	article := Article{}
 
@@ -174,7 +174,7 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 
 	articleId := mux.Vars(r)["articleId"]
 
-	c := db.C("contents")
+	c := DB.C("contents")
 	var article Article
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(articleId)}).One(&article)
 
@@ -189,7 +189,7 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var categorys []ArticleCategory
-	c = db.C("articlecategories")
+	c = DB.C("articlecategories")
 	c.Find(nil).All(&categorys)
 
 	var choices []wtforms.Choice
@@ -216,7 +216,7 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 			html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
 
 			categoryId := bson.ObjectIdHex(form.Value("category"))
-			c = db.C("contents")
+			c = DB.C("contents")
 			err = c.Update(bson.M{"_id": article.Id_}, bson.M{"$set": bson.M{
 				"categoryid":        categoryId,
 				"originalsource":    form.Value("original_source"),

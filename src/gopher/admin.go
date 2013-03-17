@@ -55,7 +55,7 @@ func adminListNodesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var nodes []Node
-	c := db.C("nodes")
+	c := DB.C("nodes")
 	c.Find(nil).All(&nodes)
 	renderTemplate(w, r, "admin/nodes.html", map[string]interface{}{"adminNav": ADMIN_NAV, "nodes": nodes})
 }
@@ -75,7 +75,7 @@ func adminListSiteCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var categories []SiteCategory
-	c := db.C("sitecategories")
+	c := DB.C("sitecategories")
 	c.Find(nil).All(&categories)
 
 	renderTemplate(w, r, "admin/site_categories.html", map[string]interface{}{"adminNav": ADMIN_NAV, "categories": categories})
@@ -105,7 +105,7 @@ func adminNewSiteCategoryHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		c := db.C("sitecategories")
+		c := DB.C("sitecategories")
 		var category SiteCategory
 		err := c.Find(bson.M{"name": form.Value("name")}).One(&category)
 
@@ -152,7 +152,7 @@ func adminNewNodeHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		if form.Validate(r) {
-			c := db.C("nodes")
+			c := DB.C("nodes")
 			node := Node{}
 
 			err := c.Find(bson.M{"id": form.Value("id")}).One(&node)
@@ -212,7 +212,7 @@ func adminListUsersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var users []User
-	c := db.C("users")
+	c := DB.C("users")
 
 	pagination := NewPagination(c.Find(nil).Sort("-joinedat"), "/admin/users", PerPage)
 
@@ -243,7 +243,7 @@ func adminActivateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	userId := mux.Vars(r)["userId"]
 
-	c := db.C("users")
+	c := DB.C("users")
 	c.Update(bson.M{"_id": bson.ObjectIdHex(userId)}, bson.M{"$set": bson.M{"isactive": true}})
 	http.Redirect(w, r, "/admin/users", http.StatusFound)
 }
@@ -263,7 +263,7 @@ func adminListArticleCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var categories []SiteCategory
-	c := db.C("articlecategories")
+	c := DB.C("articlecategories")
 	c.Find(nil).All(&categories)
 
 	renderTemplate(w, r, "admin/article_categories.html", map[string]interface{}{"adminNav": ADMIN_NAV, "categories": categories})
@@ -293,7 +293,7 @@ func adminNewArticleCategoryHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		c := db.C("articlecategories")
+		c := DB.C("articlecategories")
 		var category ArticleCategory
 		err := c.Find(bson.M{"name": form.Value("name")}).One(&category)
 
@@ -333,7 +333,7 @@ func adminListPackageCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var categories []PackageCategory
-	c := db.C("packagecategories")
+	c := DB.C("packagecategories")
 	c.Find(nil).All(&categories)
 
 	renderTemplate(w, r, "admin/package_categories.html", map[string]interface{}{"adminNav": ADMIN_NAV, "categories": categories})
@@ -364,7 +364,7 @@ func adminNewPackageCategoryHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		c := db.C("packagecategories")
+		c := DB.C("packagecategories")
 		var category PackageCategory
 		err := c.Find(bson.M{"name": form.Value("name")}).One(&category)
 

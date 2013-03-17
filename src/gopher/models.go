@@ -41,7 +41,7 @@ type User struct {
 
 // 用户发表的最近10个主题
 func (u *User) LatestTopics() *[]Topic {
-	c := db.C("contents")
+	c := DB.C("contents")
 	var topics []Topic
 
 	c.Find(bson.M{"content.createdby": u.Id_, "content.type": TypeTopic}).Sort("-content.createdat").Limit(10).All(&topics)
@@ -51,7 +51,7 @@ func (u *User) LatestTopics() *[]Topic {
 
 // 用户的最近10个回复
 func (u *User) LatestReplies() *[]Comment {
-	c := db.C("comments")
+	c := DB.C("comments")
 	var replies []Comment
 
 	c.Find(bson.M{"createdby": u.Id_, "type": TypeTopic}).Sort("-createdat").Limit(10).All(&replies)
@@ -106,7 +106,7 @@ type Content struct {
 }
 
 func (c *Content) Creater() *User {
-	c_ := db.C("users")
+	c_ := DB.C("users")
 	user := User{}
 	c_.Find(bson.M{"_id": c.CreatedBy}).One(&user)
 
@@ -118,7 +118,7 @@ func (c *Content) Updater() *User {
 		return nil
 	}
 
-	c_ := db.C("users")
+	c_ := DB.C("users")
 	user := User{}
 	c_.Find(bson.M{"_id": bson.ObjectIdHex(c.UpdatedBy)}).One(&user)
 
@@ -126,7 +126,7 @@ func (c *Content) Updater() *User {
 }
 
 func (c *Content) Comments() *[]Comment {
-	c_ := db.C("comments")
+	c_ := DB.C("comments")
 	var comments []Comment
 
 	c_.Find(bson.M{"contentid": c.Id_}).All(&comments)
@@ -137,7 +137,7 @@ func (c *Content) Comments() *[]Comment {
 // 是否有权编辑主题
 func (c *Content) CanEdit(username string) bool {
 	var user User
-	c_ := db.C("users")
+	c_ := DB.C("users")
 	err := c_.Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		return false
@@ -161,7 +161,7 @@ type Topic struct {
 
 // 主题所属节点
 func (t *Topic) Node() *Node {
-	c := db.C("nodes")
+	c := DB.C("nodes")
 	node := Node{}
 	c.Find(bson.M{"_id": t.NodeId}).One(&node)
 
@@ -174,7 +174,7 @@ func (t *Topic) LatestReplier() *User {
 		return nil
 	}
 
-	c := db.C("users")
+	c := DB.C("users")
 	user := User{}
 
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(t.LatestReplierId)}).One(&user)
@@ -204,7 +204,7 @@ type SiteCategory struct {
 // 分类下的所有站点
 func (sc *SiteCategory) Sites() *[]Site {
 	var sites []Site
-	c := db.C("contents")
+	c := DB.C("contents")
 	c.Find(bson.M{"categoryid": sc.Id_, "content.type": TypeSite}).All(&sites)
 
 	return &sites
@@ -235,7 +235,7 @@ type Article struct {
 
 // 主题所属类型
 func (a *Article) Category() *ArticleCategory {
-	c := db.C("articlecategories")
+	c := DB.C("articlecategories")
 	category := ArticleCategory{}
 	c.Find(bson.M{"_id": a.CategoryId}).One(&category)
 
@@ -257,7 +257,7 @@ type Comment struct {
 
 // 评论人
 func (c *Comment) Creater() *User {
-	c_ := db.C("users")
+	c_ := DB.C("users")
 	user := User{}
 	c_.Find(bson.M{"_id": c.CreatedBy}).One(&user)
 
@@ -267,7 +267,7 @@ func (c *Comment) Creater() *User {
 // 是否有权删除评论，只允许管理员删除
 func (c *Comment) CanDelete(username string) bool {
 	var user User
-	c_ := db.C("users")
+	c_ := DB.C("users")
 	err := c_.Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		return false
@@ -280,7 +280,7 @@ func (c *Comment) CanDelete(username string) bool {
 func (c *Comment) Topic() *Topic {
 	// 内容
 	var topic Topic
-	c_ := db.C("contents")
+	c_ := DB.C("contents")
 	c_.Find(bson.M{"_id": c.ContentId, "content.type": TypeTopic}).One(&topic)
 	return &topic
 }
@@ -302,7 +302,7 @@ type Package struct {
 
 func (p *Package) Category() *PackageCategory {
 	category := PackageCategory{}
-	c := db.C("packagecategories")
+	c := DB.C("packagecategories")
 	c.Find(bson.M{"_id": p.CategoryId}).One(&category)
 
 	return &category
