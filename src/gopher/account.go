@@ -429,15 +429,20 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 		wtforms.NewTextField("location", "所在地", user.Location),
 		wtforms.NewTextField("tagline", "签名", user.Tagline),
 		wtforms.NewTextArea("bio", "个人简介", user.Bio),
+		wtforms.NewTextField("github_username", "GitHub用户名", user.GitHubUsername),
+		wtforms.NewTextField("weibo", "新浪微博", user.Weibo),
 	)
 
 	if r.Method == "POST" {
 		if profileForm.Validate(r) {
 			c := DB.C("users")
-			c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"website": profileForm.Value("website"),
-				"location": profileForm.Value("location"),
-				"tagline":  profileForm.Value("tagline"),
-				"bio":      profileForm.Value("bio"),
+			c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{
+				"website":        profileForm.Value("website"),
+				"location":       profileForm.Value("location"),
+				"tagline":        profileForm.Value("tagline"),
+				"bio":            profileForm.Value("bio"),
+				"githubusername": profileForm.Value("github_username"),
+				"weibo":          profileForm.Value("weibo"),
 			}})
 			http.Redirect(w, r, "/profile", http.StatusFound)
 			return

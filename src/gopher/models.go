@@ -19,24 +19,25 @@ const (
 
 // 用户
 type User struct {
-	Id_          bson.ObjectId `bson:"_id"`
-	Username     string
-	Password     string
-	Email        string
-	Website      string
-	Location     string
-	Tagline      string
-	Bio          string
-	Twitter      string
-	Weibo        string
-	JoinedAt     time.Time
-	Follow       []string
-	Fans         []string
-	IsSuperuser  bool
-	IsActive     bool
-	ValidateCode string
-	ResetCode    string
-	Index        int
+	Id_            bson.ObjectId `bson:"_id"`
+	Username       string
+	Password       string
+	Email          string
+	Website        string
+	Location       string
+	Tagline        string
+	Bio            string
+	Twitter        string
+	Weibo          string
+	GitHubUsername string
+	JoinedAt       time.Time
+	Follow         []string
+	Fans           []string
+	IsSuperuser    bool
+	IsActive       bool
+	ValidateCode   string
+	ResetCode      string
+	Index          int
 }
 
 // 用户发表的最近10个主题
