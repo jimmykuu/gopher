@@ -53,6 +53,7 @@ var (
 		"/member/{username}/replies": memberRepliesHandler,
 		"/follow/{username}":         followHandler,
 		"/unfollow/{username}":       unfollowHandler,
+		"/members":                   membersHandler,
 
 		"/sites":                sitesHandler,
 		"/site/new":             newSiteHandler,
