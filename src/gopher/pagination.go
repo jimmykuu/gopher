@@ -10,6 +10,7 @@ import (
 	"html/template"
 	"labix.org/v2/mgo"
 	"math"
+	"strings"
 )
 
 // 分页结构体
@@ -28,15 +29,21 @@ func (p *Pagination) Html(number int) template.HTML {
 		return template.HTML("")
 	}
 
+	linkFlag := "?"
+
+	if strings.Index(p.url, "?") > -1 {
+		linkFlag = "&"
+	}
+
 	html := `<ul class="pager">`
 	if number > 1 {
-		html += fmt.Sprintf(`<li class="previous"><a href="%s?p=%d">&larr; 上一页</a></li>`, p.url, number-1)
+		html += fmt.Sprintf(`<li class="previous"><a href="%s%sp=%d">&larr; 上一页</a></li>`, p.url, linkFlag, number-1)
 	}
 
 	html += fmt.Sprintf(`<li class="number">%d/%d</li>`, number, pageCount)
 
 	if number < pageCount {
-		html += fmt.Sprintf(`<li class="next"><a href="%s?p=%d">下一页 &rarr;</a></li>`, p.url, number+1)
+		html += fmt.Sprintf(`<li class="next"><a href="%s%sp=%d">下一页 &rarr;</a></li>`, p.url, linkFlag, number+1)
 	}
 
 	return template.HTML(html)

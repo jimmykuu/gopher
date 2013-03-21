@@ -447,3 +447,71 @@ func deleteCommentHandler(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, url, http.StatusFound)
 }
+
+func searchHandler(w http.ResponseWriter, r *http.Request) {
+	p := r.FormValue("p")
+	page := 1
+
+	if p != "" {
+		var err error
+		page, err = strconv.Atoi(p)
+
+		if err != nil {
+			message(w, r, "页码错误", "页码错误", "error")
+			return
+		}
+	}
+
+	q := r.FormValue("q")
+
+	keywords := strings.Split(q, " ")
+
+	var noSpaceKeywords []string
+
+	for _, keyword := range keywords {
+		temp := strings.TrimSpace(keyword)
+		if temp != "" {
+			noSpaceKeywords = append(noSpaceKeywords, temp)
+		}
+	}
+
+	fmt.Println(noSpaceKeywords, len(noSpaceKeywords))
+
+	conditions := []bson.M{bson.M{"content.type": TypeTopic}}
+
+	for _, keyword := range noSpaceKeywords {
+		conditions = append(conditions, bson.M{"content.markdown": bson.M{"$regex": bson.RegEx{keyword, "i"}}})
+	}
+
+	c := DB.C("contents")
+
+	var pagination *Pagination
+
+	if len(noSpaceKeywords) == 0 {
+		pagination = NewPagination(c.Find(bson.M{"content.type": TypeTopic}), "/search?"+q, PerPage)
+	} else {
+		pagination = NewPagination(c.Find(bson.M{"$and": conditions}), "/search?q="+q, PerPage)
+	}
+
+	var topics []Topic
+
+	query, err := pagination.Page(page)
+	if err != nil {
+		message(w, r, "页码错误", "页码错误", "error")
+		return
+	}
+
+	query.All(&topics)
+
+	if err != nil {
+		println(err.Error())
+	}
+
+	renderTemplate(w, r, "search.html", map[string]interface{}{
+		"q":          q,
+		"topics":     topics,
+		"pagination": pagination,
+		"page":       page,
+		"active":     "topic",
+	})
+}

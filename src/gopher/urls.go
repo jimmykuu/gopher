@@ -14,6 +14,7 @@ var (
 		"/about":               staticHandler("about.html"),
 		"/faq":                 staticHandler("faq.html"),
 		"/yuc_verify_file.txt": yucVerifyFileHandler,
+		"/search":              searchHandler,
 
 		"/admin":                        adminHandler,
 		"/admin/nodes":                  adminListNodesHandler,

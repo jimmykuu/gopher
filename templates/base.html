@@ -55,6 +55,9 @@
 					<li{{if .utils.Equal .active "members"}} class="active"{{end}}><a href="/members">会员</a></li>
 					<li><a href="http://tour.golang.tc" target="_blank">Go 指南</a></li>
 				</ul>
+				<form action="/search" class="navbar-search pull-right" method="get">
+					<input name="q" type="text" class="search-query" placeholder="搜索">
+				</form>
 			</div>
 		</div>
 	</div>
