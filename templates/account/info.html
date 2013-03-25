@@ -8,9 +8,9 @@
 {{$user := $utils.AssertUser .user}}
 <div class="content">
 	<img src="{{.utils.Gravatar $user.Email 80}}" class="pull-left" style="margin-right: 20px;">
-	<h3 style="line-height: 10px;">{{$user.Username}}</h3>
+	<h3>{{$user.Username}}</h3>
 	{{if $user.Tagline}}
-		<h3 style="line-height: 20px;"><small>{{$user.Tagline}}</small></h3>
+		<h3><small>{{$user.Tagline}}</small></h3>
 	{{end}}
 	<h4><small>Golang China 第 {{$user.Index}} 号会员，加入于 {{$user.JoinedAt.Format "2006-01-02 15:04"}}</small></h4>
 	<!--
@@ -25,6 +25,7 @@
 		{{end}}
 	{{end}}
 	-->
+	<div class="clearfix"></div>
 	<hr>
 	<ul class="unstyled">
 		{{if $user.Location}}
