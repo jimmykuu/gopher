@@ -11,7 +11,6 @@ import (
 	"html/template"
 	"labix.org/v2/mgo/bson"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -96,17 +95,11 @@ func newArticleHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /articles
 // 列出所有文章
 func listArticlesHandler(w http.ResponseWriter, r *http.Request) {
-	p := r.FormValue("p")
-	page := 1
+	page, err := getPage(r)
 
-	if p != "" {
-		var err error
-		page, err = strconv.Atoi(p)
-
-		if err != nil {
-			message(w, r, "页码错误", "页码错误", "error")
-			return
-		}
+	if err != nil {
+		message(w, r, "页码错误", "页码错误", "error")
+		return
 	}
 
 	//	var hotNodes []Node

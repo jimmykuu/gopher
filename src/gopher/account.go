@@ -16,7 +16,6 @@ import (
 	"os"
 	//"qbox/api/conf"
 	//"qbox/api/rs"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -226,119 +225,7 @@ func signoutHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, r, "account/signout.html", map[string]interface{}{"signout": true})
 }
 
-// URL: /member/{username}
-// 显示用户信息
-func memberInfoHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	username := vars["username"]
-	c := DB.C("users")
-
-	user := User{}
-
-	err := c.Find(bson.M{"username": username}).One(&user)
-
-	if err != nil {
-		message(w, r, "会员未找到", "会员未找到", "error")
-		return
-	}
-
-	renderTemplate(w, r, "account/info.html", map[string]interface{}{"user": user})
-}
-
-// URL: /member/{username}/topics
-// 用户发表的所有主题
-func memberTopicsHandler(w http.ResponseWriter, r *http.Request) {
-	p := r.FormValue("p")
-	page := 1
-
-	if p != "" {
-		var err error
-		page, err = strconv.Atoi(p)
-
-		if err != nil {
-			message(w, r, "没有找到页面", "没有找到页面", "error")
-			return
-		}
-	}
-
-	vars := mux.Vars(r)
-	username := vars["username"]
-	c := DB.C("users")
-
-	user := User{}
-	err := c.Find(bson.M{"username": username}).One(&user)
-
-	if err != nil {
-		message(w, r, "会员未找到", "会员未找到", "error")
-		return
-	}
-
-	c = DB.C("contents")
-
-	pagination := NewPagination(c.Find(bson.M{"content.createdby": user.Id_, "content.type": TypeTopic}).Sort("-latestrepliedat"), "/member/"+username+"/topics", PerPage)
-
-	var topics []Topic
-
-	query, err := pagination.Page(page)
-
-	if err != nil {
-		message(w, r, "没有找到页面", "没有找到页面", "error")
-		return
-	}
-
-	query.All(&topics)
-
-	renderTemplate(w, r, "account/topics.html", map[string]interface{}{"user": user, "topics": topics, "pagination": pagination, "page": page})
-}
-
-// /member/{username}/replies
-// 用户的所有回复
-func memberRepliesHandler(w http.ResponseWriter, r *http.Request) {
-	p := r.FormValue("p")
-	page := 1
-
-	if p != "" {
-		var err error
-		page, err = strconv.Atoi(p)
-
-		if err != nil {
-			message(w, r, "没有找到页面", "没有找到页面", "error")
-			return
-		}
-	}
-
-	vars := mux.Vars(r)
-	username := vars["username"]
-	c := DB.C("users")
-
-	user := User{}
-	err := c.Find(bson.M{"username": username}).One(&user)
-
-	if err != nil {
-		message(w, r, "会员未找到", "会员未找到", "error")
-		return
-	}
-
-	if err != nil {
-		message(w, r, "没有找到页面", "没有找到页面", "error")
-		return
-	}
-
-	var replies []Comment
-
-	c = DB.C("comments")
-
-	pagination := NewPagination(c.Find(bson.M{"createdby": user.Id_, "type": TypeTopic}).Sort("-createdat"), "/member/"+username+"/replies", PerPage)
-
-	query, err := pagination.Page(page)
-
-	query.All(&replies)
-
-	renderTemplate(w, r, "account/replies.html", map[string]interface{}{"user": user, "pagination": pagination, "page": page, "replies": replies})
-}
-
 func followHandler(w http.ResponseWriter, r *http.Request) {
-	println("follow")
 	vars := mux.Vars(r)
 	username := vars["username"]
 

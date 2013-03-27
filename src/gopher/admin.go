@@ -205,7 +205,8 @@ func adminListUsersHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	page, err := Page(r)
+	page, err := getPage(r)
+
 	if err != nil {
 		message(w, r, "页码错误", "页码错误", "error")
 		return

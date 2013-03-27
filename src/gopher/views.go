@@ -315,8 +315,19 @@ func staticHandler(templateFile string) func(w http.ResponseWriter, r *http.Requ
 	}
 }
 
-func yucVerifyFileHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("7250eb93b3c18cc9daa29cf58af7a004"))
+func getPage(r *http.Request) (page int, err error) {
+	p := r.FormValue("p")
+	page = 1
+
+	if p != "" {
+		page, err = strconv.Atoi(p)
+
+		if err != nil {
+			return
+		}
+	}
+
+	return
 }
 
 // URL: /comment/{contentId}

@@ -11,7 +11,6 @@ import (
 	"html/template"
 	"labix.org/v2/mgo/bson"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -19,17 +18,11 @@ import (
 // URL: /
 // 网站首页,列出按回帖时间倒序排列的第一页
 func indexHandler(w http.ResponseWriter, r *http.Request) {
-	p := r.FormValue("p")
-	page := 1
+	page, err := getPage(r)
 
-	if p != "" {
-		var err error
-		page, err = strconv.Atoi(p)
-
-		if err != nil {
-			message(w, r, "页码错误", "页码错误", "error")
-			return
-		}
+	if err != nil {
+		message(w, r, "页码错误", "页码错误", "error")
+		return
 	}
 
 	var hotNodes []Node
@@ -277,17 +270,11 @@ func topicInNodeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	p := r.FormValue("p")
-	page := 1
+	page, err := getPage(r)
 
-	if p != "" {
-		var err error
-		page, err = strconv.Atoi(p)
-
-		if err != nil {
-			message(w, r, "页码错误", "页码错误", "error")
-			return
-		}
+	if err != nil {
+		message(w, r, "页码错误", "页码错误", "error")
+		return
 	}
 
 	c = DB.C("contents")

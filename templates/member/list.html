@@ -6,22 +6,19 @@
 	</li>
 	<li class="active">所有会员</li>
 </ul>
-<div class="alert alert-info" align="right">
-	已有 {{.membersCount}} 位会员加入 Golang China。
-</div>
 <div class="content">
-	<h3><small>新加入会员</small></h3>
+	<h3><small>所有会员</small></h3>
 	{{$utils := .utils}}
 	<ul class="members clearfix">
-		{{range .newestMembers}}
+		{{range .members}}
 		<li>
 			<a href="/member/{{.Username}}"><img src="{{$utils.Gravatar .Email 48}}" class="img-rounded"></a>
 			<a href="/members/{{.Username}}">{{.Username}}</a>
 		</li>
 		{{end}}
 	</ul>
-	<a href="/members/all" class="pull-right">所有会员</a>
 	<div class="clearfix"></div>
+	{{.pagination.Html .page}}
 </div>
 {{end}}
 
