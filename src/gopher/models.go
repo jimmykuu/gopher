@@ -23,6 +23,7 @@ type User struct {
 	Username       string
 	Password       string
 	Email          string
+	Avatar         string
 	Website        string
 	Location       string
 	Tagline        string
@@ -38,6 +39,17 @@ type User struct {
 	ValidateCode   string
 	ResetCode      string
 	Index          int
+}
+
+// 头像的图片地址
+func (u *User) AvatarImgSrc() string {
+	// 如果没有设置头像，用默认头像
+	filename := u.Avatar
+	if filename == "" {
+		filename = "gopher.jpg"
+	}
+
+	return "http://gopher.qiniudn.com/avatar/" + filename
 }
 
 // 用户发表的最近10个主题

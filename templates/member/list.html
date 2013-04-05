@@ -12,7 +12,7 @@
 	<ul class="members clearfix">
 		{{range .members}}
 		<li>
-			<a href="/member/{{.Username}}"><img src="{{$utils.Gravatar .Email 48}}" class="img-rounded"></a>
+			<a href="/member/{{.Username}}"><img src="{{.AvatarImgSrc}}-middle" class="img-rounded"></a>
 			<a href="/members/{{.Username}}">{{.Username}}</a>
 		</li>
 		{{end}}

@@ -5,7 +5,7 @@ OLDGOPATH="$GOPATH"
 export GOPATH="$CURDIR"
 
 go install server
-go install movetocontents
+go install gravatar2qiniu
 
 export GOPATH="$OLDGOPATH"
 

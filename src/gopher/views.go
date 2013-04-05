@@ -47,9 +47,7 @@ type Utils struct {
 }
 
 func (u *Utils) Gravatar(email string, size uint16) string {
-	h := md5.New()
-	io.WriteString(h, email)
-	return fmt.Sprintf("http://www.gravatar.com/avatar/%x?s=%d", h.Sum(nil), size)
+	return webhelpers.Gravatar(email, size)
 }
 
 func (u *Utils) StaticUrl(path string) string {
@@ -105,12 +103,12 @@ func (u *Utils) UserInfo(username string) template.HTML {
 	c.Find(bson.M{"username": username}).One(&user)
 
 	format := `<div>
-      <a href="/member/%s"><img class="gravatar" src="%s" style="float:left;"></a>
+      <a href="/member/%s"><img class="gravatar" src="%s-middle" style="float:left;"></a>
       <h3><a href="/member/%s">%s</a></h3>
       <div class="clearfix"></div>
     </div>`
 
-	return template.HTML(fmt.Sprintf(format, username, u.Gravatar(user.Email, 50), username, username))
+	return template.HTML(fmt.Sprintf(format, username, user.AvatarImgSrc(), username, username))
 }
 
 func (u *Utils) Truncate(html template.HTML, length int) string {
@@ -299,6 +297,8 @@ func renderTemplate(w http.ResponseWriter, r *http.Request, file string, data ma
 
 	data["analyticsCode"] = analyticsCode
 	data["staticFileVersion"] = Config.StaticFileVersion
+	flash, _ := store.Get(r, "flash")
+	data["flash"] = flash
 
 	_, ok := data["active"]
 	if !ok {

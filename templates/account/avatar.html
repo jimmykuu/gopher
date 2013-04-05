@@ -5,21 +5,34 @@
 	<li><a href="/profile">设置</a> <span class="divider">/</span></li>
 	<li class="active">上传头像</li>
 </ul>
+{{if .error}}
+<div class="alert alert-error">
+	<a href="#" class="close" data-dismiss="alert">&times;</a>
+	<strong>{{.error}}</strong>
+</div>
+{{end}}
+{{if .success}}
+<div class="alert alert-success">
+	<a href="#" class="close" data-dismiss="alert">&times;</a>
+	<strong>{{.success}}</strong>
+</div>
+{{end}}
 <div class="content">
-<form action="/profile/avatar" method="post" enctype="multipart/form-data" class="form-horizontal">
-	<div class="control-group">
-		<label class="control-label" for="file">选择图片文件</label>
-		<div class="controls">
-			<input type="file" name="file" id="file">
-			<span class="help-block">支持500K以内的gif/jpg/png文件</span>
+	<form action="/profile/avatar" method="post" enctype="multipart/form-data" class="form-horizontal">
+		<div class="control-group">
+			<label class="control-label" for="file">选择图片文件</label>
+			<div class="controls">
+				<input type="file" name="file" id="file">
+				<span class="help-block">支持500K以内的jpg/png文件</span>
+			</div>
 		</div>
-	</div>
-	<div class="control-group">
-		<div class="controls">
-			<button type="submit" class="btn">开始上传</button>
+		<div class="control-group">
+			<div class="controls">
+				<button type="submit" class="btn">开始上传</button>
+			</div>
 		</div>
-	</div>
-</form>
+	</form>
+</div>
 {{end}}
 
 {{define "LeftSide"}}{{end}}

@@ -21,6 +21,8 @@ type ConfigStruct struct {
 	Superusers        string `json:"superusers"`
 	AnalyticsFile     string `json:"analytics_file"`
 	StaticFileVersion int    `json:"static_file_version"`
+	QiniuAccessKey    string `json:"qiniu_access_key"`
+	QiniuSecretKey    string `json:"qiniu_secret_key"`
 }
 
 var Config ConfigStruct

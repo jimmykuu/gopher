@@ -10,5 +10,7 @@
 	"from_email": "who@example.com",
 	"superusers": "jimmykuu,another",
 	"analytics_file": "",
+	"qiniu_access_key": "",
+	"qiniu_secret_key": "",
 	"static_file_version": 1
 }

@@ -10,12 +10,13 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/jimmykuu/wtforms"
+	. "github.com/qiniu/api/conf"
+	qiniu_io "github.com/qiniu/api/io"
+	"github.com/qiniu/api/rs"
 	"io"
 	"labix.org/v2/mgo/bson"
 	"net/http"
-	"os"
-	//"qbox/api/conf"
-	//"qbox/api/rs"
+	// "os"
 	"strings"
 	"time"
 )
@@ -91,12 +92,12 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 			c2.Find(nil).One(&status)
 
 			id := bson.NewObjectId()
-
+			username := form.Value("username")
 			validateCode := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 			index := status.UserIndex + 1
 			err = c.Insert(&User{
 				Id_:          id,
-				Username:     form.Value("username"),
+				Username:     username,
 				Password:     encryptPassword(form.Value("password")),
 				Email:        form.Value("email"),
 				ValidateCode: validateCode,
@@ -126,7 +127,13 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 
 							message(w, r, "注册成功", "请查看你的邮箱进行验证，如果收件箱没有，请查看垃圾邮件，如果还没有，请给jimmykuu@126.com发邮件，告知你的用户名。", "success")
 			*/
-			message(w, r, "注册成功", fmt.Sprintf(`感谢您的注册，您已经成为Golang中国第 <strong>%d</strong>位用户，<a href="/signin">登录</a>。`, index), "success")
+			// 注册成功后设成登录状态
+			session, _ := store.Get(r, "user")
+			session.Values["username"] = username
+			session.Save(r, w)
+
+			// 跳到修改用户信息页面
+			http.Redirect(w, r, "/profile", http.StatusFound)
 			return
 		}
 	}
@@ -419,6 +426,10 @@ func resetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, r, "account/reset_password.html", map[string]interface{}{"form": form, "code": code, "account": user.Username})
 }
 
+type Sizer interface {
+	Size() int64
+}
+
 // URL: /profile/avatar
 // 修改头像,提交到七牛云存储
 func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
@@ -438,25 +449,86 @@ func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
 
 		defer formFile.Close()
 
-		fmt.Println(formFile)
+		// 检查是否是jpg或png文件
+		uploadFileType := formHeader.Header["Content-Type"][0]
 
-		fmt.Println(formHeader.Header["Content-Type"][0])
-		filename := strings.Replace(uuid.NewUUID().String(), "-", "", -1) + ".png"
-		f, err := os.Create(filename)
-		defer f.Close()
-		io.Copy(f, formFile)
+		isValidateType := false
+		for _, imgType := range [3]string{"image/png", "image/jpeg"} {
+			if imgType == uploadFileType {
+				isValidateType = true
+				break
+			}
+		}
 
-		//service := rs.New(http.DefaultTransport)
-		//fmt.Println(service)
-		//fmt.Println(filename)
-		//ret, code, err := service.Put("gopher:avatar/"+filename, "", formFile, 340719)
-		//if err != nil {
-		//	fmt.Println("upload error:", err.Error())
-		//	return
-		//}
+		if !isValidateType {
+			fmt.Println("upload image type error:", uploadFileType)
+			// 提示错误
+			renderTemplate(w, r, "account/avatar.html", map[string]interface{}{
+				"user":  user,
+				"error": "文件类型错误，请选择jpg/png图片上传。",
+			})
+			return
+		}
 
-		//fmt.Println(ret)
-		//fmt.Println("code:", code)
+		// 检查文件尺寸是否在500K以内
+		fileSize := formFile.(Sizer).Size()
+
+		if fileSize > 500*1024 {
+			// > 500K
+			fmt.Printf("upload image size > 500K: %dK\n", fileSize/1024)
+			renderTemplate(w, r, "account/avatar.html", map[string]interface{}{
+				"user":  user,
+				"error": "图片大小大于500K，请选择500K以内图片上传。",
+			})
+			return
+		}
+
+		extra := &qiniu_io.PutExtra{
+			Bucket:         "gopher",
+			MimeType:       "",
+			CustomMeta:     "",
+			CallbackParams: "",
+		}
+
+		ACCESS_KEY = Config.QiniuAccessKey
+		SECRET_KEY = Config.QiniuSecretKey
+
+		filenameExtension := ".jpg"
+		if uploadFileType == "image/png" {
+			filenameExtension = ".png"
+		}
+
+		// 文件名：32位uuid，不带减号和后缀组成
+		filename := strings.Replace(uuid.NewUUID().String(), "-", "", -1) + filenameExtension
+
+		key := "avatar/" + filename
+
+		ret := new(qiniu_io.PutRet)
+
+		var policy = rs.PutPolicy{
+			Scope: "gopher",
+		}
+
+		err = qiniu_io.Put(nil, ret, policy.Token(), key, formFile, extra)
+
+		if err != nil {
+			fmt.Println("upload to qiniu failed:", err.Error())
+			renderTemplate(w, r, "account/avatar.html", map[string]interface{}{
+				"user":  user,
+				"error": "上传失败，请反馈错误",
+			})
+			return
+		}
+
+		// 存储远程文件名
+		c := DB.C("users")
+		c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"avatar": filename}})
+
+		renderTemplate(w, r, "account/avatar.html", map[string]interface{}{
+			"user":    user,
+			"success": "图片上传成功",
+		})
+		return
 	}
 
 	renderTemplate(w, r, "account/avatar.html", map[string]interface{}{"user": user})

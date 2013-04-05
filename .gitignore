@@ -24,6 +24,6 @@ _testmain.go
 etc/config.json
 bin
 pkg
-src/github.com/jimmykuu/webhelpers/
-
-src/github.com/jimmykuu/wtforms/
+src/github.com
+src/code.google.com
+src/labix.org

@@ -9,7 +9,7 @@
 	<dl class="topics">
 	{{range .topics}}
 		<dd>
-			<a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img src="{{$utils.Gravatar .Creater.Email 48}}"></a>
+			<a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img src="{{.Creater.AvatarImgSrc}}-middle"></a>
 			{{if .CommentCount}}
 				<a class="badge pull-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
 			{{end}}
