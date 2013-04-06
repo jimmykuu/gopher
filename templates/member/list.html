@@ -1,27 +1,28 @@
 {{define "Title"}}所有会员{{end}}
-{{define "Content"}}
-<ul class="breadcrumb">
-	<li>
-		<a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span>
-	</li>
-	<li class="active">所有会员</li>
-</ul>
-<div class="content">
-	<h3><small>所有会员</small></h3>
-	{{$utils := .utils}}
-	<ul class="members clearfix">
-		{{range .members}}
+{{define "Breadcrumb"}}
+	<ul class="breadcrumb">
 		<li>
-			<a href="/member/{{.Username}}"><img src="{{.AvatarImgSrc}}-middle" class="img-rounded"></a>
-			<a href="/members/{{.Username}}">{{.Username}}</a>
+			<a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span>
 		</li>
-		{{end}}
+		<li class="active">所有会员</li>
 	</ul>
-	<div class="clearfix"></div>
-	{{.pagination.Html .page}}
-</div>
+{{end}}
+{{define "Content"}}
+	<div class="content">
+		<h3><small>所有会员</small></h3>
+		{{$utils := .utils}}
+		<ul class="members clearfix">
+			{{range .members}}
+			<li>
+				<a href="/member/{{.Username}}"><img src="{{.AvatarImgSrc}}-middle" class="img-rounded"></a>
+				<a href="/members/{{.Username}}">{{.Username}}</a>
+			</li>
+			{{end}}
+		</ul>
+		<div class="clearfix"></div>
+		{{.pagination.Html .page}}
+	</div>
 {{end}}
 
 {{define "LeftSide"}}{{end}}
-
 {{define "RightSide"}}{{end}}

@@ -1,45 +1,46 @@
 {{define "Title"}}{{.title}}主题{{end}}
+{{define "Breadcrumb"}}
+	<ul class="breadcrumb">
+		<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
+		<li class="active">{{.title}}主题</li>
+	</ul>
+{{end}}
 {{define "Content"}}
-<ul class="breadcrumb">
-  <li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
-  <li class="active">{{.title}}主题</li>
-</ul>
-<div class="content">
-  <form action="{{.action}}" method="post" class="form-vertical" id="topic-form">
-    <fieldset>
-      {{.form.Render "html"}}
-      {{.form.Render "node"}}
-	  {{.form.Render "title" `rows="4"` `class="span8"`}}
-	  <div class="wmd-panel">
-        <div id="wmd-button-bar"></div>
-        <textarea class="wmd-input span8" id="wmd-input" name="content" rows="20">{{.content}}</textarea>
-      </div>
-      <div>预览</div>
-      <div id="wmd-preview" class="wmd-panel wmd-preview">{{.html}}</div>
-	  <div class="form-actions">
-        <input type="submit" class="btn btn-primary" value="{{.title}}">
-      </div>
-    </fieldset>
-  </form>
-</div>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Converter.js"></script>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Editor.js"></script>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Sanitizer.js"></script>
-<script>
-	(function () {
-		var converter1 = Markdown.getSanitizingConverter();
-		var editor1 = new Markdown.Editor(converter1);
-		editor1.run();
-	})();
-	
-	$('#topic-form').submit(function () {
-		$('#html').val($('#wmd-preview').html());
+	<div class="content">
+		<form action="{{.action}}" method="post" class="form-vertical" id="topic-form">
+			<fieldset>
+				{{.form.Render "html"}}
+				{{.form.Render "node"}}
+			{{.form.Render "title" `rows="4"` `class="span8"`}}
+			<div class="wmd-panel">
+					<div id="wmd-button-bar"></div>
+					<textarea class="wmd-input span8" id="wmd-input" name="content" rows="20">{{.content}}</textarea>
+				</div>
+				<div>预览</div>
+				<div id="wmd-preview" class="wmd-panel wmd-preview">{{.html}}</div>
+			<div class="form-actions">
+					<input type="submit" class="btn btn-primary" value="{{.title}}">
+				</div>
+			</fieldset>
+		</form>
+	</div>
+	<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Converter.js"></script>
+	<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Editor.js"></script>
+	<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Sanitizer.js"></script>
+	<script>
+		(function () {
+			var converter1 = Markdown.getSanitizingConverter();
+			var editor1 = new Markdown.Editor(converter1);
+			editor1.run();
+		})();
 		
-		return true;
-	});
-</script>
+		$('#topic-form').submit(function () {
+			$('#html').val($('#wmd-preview').html());
+			
+			return true;
+		});
+	</script>
 {{end}}
 
 {{define "LeftSide"}}{{end}}
-
 {{define "RightSide"}}{{end}}

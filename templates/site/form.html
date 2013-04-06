@@ -1,28 +1,27 @@
 {{define "Title"}}{{.title}}酷站{{end}}
+{{define "Breadcrumb"}}
+	<ul class="breadcrumb">
+		<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
+		<li><a href="/sites">酷站</a> <span class="divider">/</span></li>
+		<li class="active">{{.title}}</li>
+	</ul>
+{{end}}
 {{define "Content"}}
-<ul class="breadcrumb">
-	<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
-	<li><a href="/sites">酷站</a> <span class="divider">/</span></li>
-	<li class="active">{{.title}}</li>
-</ul>
-<div class="content">
-	<form action="{{.action}}" method="post" class="form-horizontal">
-		<fieldset>
-			{{.form.Render "name" `class="span3"`}}
-			{{.form.Render "url" `class="span6"` `placeholder="http://或https://"`}}
-			{{.form.Render "description" `class="span6"` `rows="4"`}}
-			{{.form.Render "category"}}
-			
-			<div class="form-actions">
-				<input type="submit" class="btn btn-primary" value="{{.title}}">
-			</div>
-		</fieldset>
-	</form>
-</div>
+	<div class="content">
+		<form action="{{.action}}" method="post" class="form-horizontal">
+			<fieldset>
+				{{.form.Render "name" `class="span3"`}}
+				{{.form.Render "url" `class="span6"` `placeholder="http://或https://"`}}
+				{{.form.Render "description" `class="span6"` `rows="4"`}}
+				{{.form.Render "category"}}
+				
+				<div class="form-actions">
+					<input type="submit" class="btn btn-primary" value="{{.title}}">
+				</div>
+			</fieldset>
+		</form>
+	</div>
 {{end}}
 
 {{define "LeftSide"}}{{end}}
-
-{{define "RightSide"}}
-
-{{end}}
+{{define "RightSide"}}{{end}}

@@ -1,4 +1,12 @@
 {{define "Title"}}{{.title}}{{end}}
+{{define "Breadcrumb"}}
+	<ul class="breadcrumb">
+		<li>
+			<a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span>
+		</li>
+		<li class="active">提交第三方包</li>
+	</ul>
+{{end}}
 {{define "Content"}}
 <div class="content">
 	<form action="{{.action}}" method="post" class="form-vertical" id="package-form">
@@ -40,5 +48,4 @@
 {{end}}
 
 {{define "LeftSide"}}{{end}}
-
 {{define "RightSide"}}{{end}}

@@ -1,115 +1,116 @@
 {{define "Title"}}{{.user.Username}}{{end}}
-{{define "Content"}}
-{{$utils := .utils}}
-<ul class="breadcrumb">
-	<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
-	<li class="active">{{.user.Username}}</li>
-</ul>
-{{$user := $utils.AssertUser .user}}
-<div class="content">
-	<img src="{{.utils.Gravatar $user.Email 80}}" class="pull-left" style="margin-right: 20px;">
-	<h3>{{$user.Username}}</h3>
-	{{if $user.Tagline}}
-		<h3><small>{{$user.Tagline}}</small></h3>
-	{{end}}
-	<h4><small>Golang China 第 {{$user.Index}} 号会员，加入于 {{$user.JoinedAt.Format "2006-01-02 15:04"}}</small></h4>
-	<!--
-	{{if .username}}
-		{{if $user.IsFollowedBy .username | not}}
-		<a href="/follow/{{$user.Username}}" class="btn btn-success"><i class="icon-plus icon-white"></i> 关注</a>
-		{{else}}
-		<div class="btn-group">
-			<button class="btn disabled"><i class="icon-ok icon-white"></i> 已关注</button>
-			<a href="/unfollow/{{$user.Username}}" class="btn btn-danger"><i class="icon-remove icon-white"></i> 取消</a>
-		</div>
-		{{end}}
-	{{end}}
-	-->
-	<div class="clearfix"></div>
-	<hr>
-	<ul class="unstyled">
-		{{if $user.Location}}
-		<li>
-			<img src="http://gopher.qiniudn.com/static/img/icon-location.png">
-			{{$user.Location}}
-		</li>
-		{{end}}
-		{{if $user.Website}}
-		<li>
-			<img src="http://gopher.qiniudn.com/static/img/icon-website.png">
-			<a href="{{$user.Website}}" target="_blank">{{$user.Website}}</a>
-		</li>
-		{{end}}
-		{{if $user.Weibo}}
-		<li>
-			<img src="http://gopher.qiniudn.com/static/img/icon-weibo.png">
-			<a href="http://weibo.com/{{$user.Weibo}}" target="_blank">http://weibo.com/{{$user.Weibo}}</a>
-		</li>
-		{{end}}
-		{{if $user.GitHubUsername}}
-		<li>
-			<img src="http://gopher.qiniudn.com/static/img/icon-github.png">
-			<a href="https://github.com/{{$user.GitHubUsername}}" target="_blank">https://github.com/{{$user.GitHubUsername}}</a>
-		</li>
-		{{end}}
+{{define "Breadcrumb"}}
+	<ul class="breadcrumb">
+		<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
+		<li class="active">{{.user.Username}}</li>
 	</ul>
-	{{if $user.Bio}}
-		<hr>
-		{{$user.Bio}}
-	{{end}}
-</div>
-
-<div class="content">
-	<h4>{{$user.Username}}最近创建的主题</h4>
-	<hr>
-	<dl class="topics">
-	{{range $user.LatestTopics}}
-		<dd>
-			<a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img src="{{$utils.Gravatar .Creater.Email 48}}"></a>
-		{{if .CommentCount}}
-		<a class="badge pull-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
+{{end}}
+{{define "Content"}}
+	{{$utils := .utils}}
+	{{$user := $utils.AssertUser .user}}
+	<div class="content">
+		<img src="{{.utils.Gravatar $user.Email 80}}" class="pull-left" style="margin-right: 20px;">
+		<h3>{{$user.Username}}</h3>
+		{{if $user.Tagline}}
+			<h3><small>{{$user.Tagline}}</small></h3>
 		{{end}}
-			<a href="/t/{{.Id_.Hex}}" class="title">{{.Title}}</a>
-			<div class="space"></div>
-			<div class="info">
-				<a class="label" href="/go/{{.Node.Id}}">{{.Node.Name}}</a> •
-				<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> •
-				{{if .CommentCount}}
-					{{$utils.FormatTime .LatestRepliedAt}} •
-					最后回复来自 <a href="/member/{{.LatestReplier.Username}}">{{.LatestReplier.Username}}</a>
-				{{else}}
-					{{$utils.FormatTime .CreatedAt}}
-				{{end}}
+		<h4><small>Golang China 第 {{$user.Index}} 号会员，加入于 {{$user.JoinedAt.Format "2006-01-02 15:04"}}</small></h4>
+		<!--
+		{{if .username}}
+			{{if $user.IsFollowedBy .username | not}}
+			<a href="/follow/{{$user.Username}}" class="btn btn-success"><i class="icon-plus icon-white"></i> 关注</a>
+			{{else}}
+			<div class="btn-group">
+				<button class="btn disabled"><i class="icon-ok icon-white"></i> 已关注</button>
+				<a href="/unfollow/{{$user.Username}}" class="btn btn-danger"><i class="icon-remove icon-white"></i> 取消</a>
 			</div>
-			<div class="clear"></div>
-		</dd>
+			{{end}}
 		{{end}}
-	</dl>
-	{{if len $user.LatestTopics}}
-	<a href="/member/{{$user.Username}}/topics">{{$user.Username}} 创建的更多主题</a>
-	{{end}}
-</div>
-<div class="content">
-	<h4>{{$user.Username}}最近回复了</h4>
-	<hr>
-	{{range $user.LatestReplies}}
-	<div class="reply">
-		<span>
-			回复了 <a href="/member/{{.Topic.Creater.Username}}">{{.Topic.Creater.Username}}</a> 创建的主题: <a href="/t/{{.Topic.Id_.Hex}}">{{.Topic.Title}}</a>
-		<span class="pull-right">{{$utils.FormatTime .CreatedAt}}</span>
-		</span>
-		<div>
-			{{.Html}}
-		</div>
+		-->
+		<div class="clearfix"></div>
+		<hr>
+		<ul class="unstyled">
+			{{if $user.Location}}
+			<li>
+				<img src="http://gopher.qiniudn.com/static/img/icon-location.png">
+				{{$user.Location}}
+			</li>
+			{{end}}
+			{{if $user.Website}}
+			<li>
+				<img src="http://gopher.qiniudn.com/static/img/icon-website.png">
+				<a href="{{$user.Website}}" target="_blank">{{$user.Website}}</a>
+			</li>
+			{{end}}
+			{{if $user.Weibo}}
+			<li>
+				<img src="http://gopher.qiniudn.com/static/img/icon-weibo.png">
+				<a href="http://weibo.com/{{$user.Weibo}}" target="_blank">http://weibo.com/{{$user.Weibo}}</a>
+			</li>
+			{{end}}
+			{{if $user.GitHubUsername}}
+			<li>
+				<img src="http://gopher.qiniudn.com/static/img/icon-github.png">
+				<a href="https://github.com/{{$user.GitHubUsername}}" target="_blank">https://github.com/{{$user.GitHubUsername}}</a>
+			</li>
+			{{end}}
+		</ul>
+		{{if $user.Bio}}
+			<hr>
+			{{$user.Bio}}
+		{{end}}
 	</div>
-	{{end}}
-	</dl>
-	{{if len $user.LatestReplies}}
-	<a href="/member/{{$user.Username}}/replies">{{$user.Username}} 创建的更多回复</a>
-	{{end}}
-</div>
+
+	<div class="content">
+		<h4>{{$user.Username}}最近创建的主题</h4>
+		<hr>
+		<dl class="topics">
+		{{range $user.LatestTopics}}
+			<dd>
+				<a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img src="{{.Creater.AvatarImgSrc}}-middle"></a>
+			{{if .CommentCount}}
+			<a class="badge pull-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
+			{{end}}
+				<a href="/t/{{.Id_.Hex}}" class="title">{{.Title}}</a>
+				<div class="space"></div>
+				<div class="info">
+					<a class="label" href="/go/{{.Node.Id}}">{{.Node.Name}}</a> •
+					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> •
+					{{if .CommentCount}}
+						{{$utils.FormatTime .LatestRepliedAt}} •
+						最后回复来自 <a href="/member/{{.LatestReplier.Username}}">{{.LatestReplier.Username}}</a>
+					{{else}}
+						{{$utils.FormatTime .CreatedAt}}
+					{{end}}
+				</div>
+				<div class="clear"></div>
+			</dd>
+			{{end}}
+		</dl>
+		{{if len $user.LatestTopics}}
+		<a href="/member/{{$user.Username}}/topics">{{$user.Username}} 创建的更多主题</a>
+		{{end}}
+	</div>
+	<div class="content">
+		<h4>{{$user.Username}}最近回复了</h4>
+		<hr>
+		{{range $user.LatestReplies}}
+		<div class="reply">
+			<span>
+				回复了 <a href="/member/{{.Topic.Creater.Username}}">{{.Topic.Creater.Username}}</a> 创建的主题: <a href="/t/{{.Topic.Id_.Hex}}">{{.Topic.Title}}</a>
+			<span class="pull-right">{{$utils.FormatTime .CreatedAt}}</span>
+			</span>
+			<div>
+				{{.Html}}
+			</div>
+		</div>
+		{{end}}
+		</dl>
+		{{if len $user.LatestReplies}}
+		<a href="/member/{{$user.Username}}/replies">{{$user.Username}} 创建的更多回复</a>
+		{{end}}
+	</div>
 {{end}}
 
 {{define "LeftSide"}}{{end}}
-
 {{define "RightSide"}}{{end}}

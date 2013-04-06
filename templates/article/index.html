@@ -1,53 +1,55 @@
 {{define "Title"}}文章{{end}}
+{{define "Breadcrumb"}}
+	<ul class="breadcrumb">
+		<li>
+			<a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span>
+		</li>
+		<li class="active">文章</a></li>
+	</ul>
+{{end}}
 {{define "Content"}}
-<ul class="breadcrumb">
-	<li>
-		<a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span>
-	</li>
-	<li class="active">文章</a></li>
-</ul>
-<div class="content">
-	<h3><small>收录关于Golang的中文文章.如果作者发现不可以引用,请联系站长删除.</small></h3>
-	<a href="/article/new" class="btn btn-info">转载文章</a>
-</div>
-{{$utils := .utils}}
-<div class="content">
-	<dl class="topics">
+	<div class="content">
+		<h3><small>收录关于Golang的中文文章.如果作者发现不可以引用,请联系站长删除.</small></h3>
+		<a href="/article/new" class="btn btn-info">转载文章</a>
+	</div>
 	{{$utils := .utils}}
-	{{$username := .username}}
-	{{range .articles}}
-		<dd>
-			<a href="/a/{{.Id_.Hex}}" class="title">{{.Title}}</a>
-			{{if $username}}
-				{{if .CanEdit $username}}
-					<a href="/a/{{.Id_.Hex}}/edit"><i class="icon-pencil"></i></a>
-					<a href="/a/{{.Id_.Hex}}/delete"><i class="icon-remove"></i></a>
+	<div class="content">
+		<dl class="topics">
+		{{$utils := .utils}}
+		{{$username := .username}}
+		{{range .articles}}
+			<dd>
+				<a href="/a/{{.Id_.Hex}}" class="title">{{.Title}}</a>
+				{{if $username}}
+					{{if .CanEdit $username}}
+						<a href="/a/{{.Id_.Hex}}/edit"><i class="icon-pencil"></i></a>
+						<a href="/a/{{.Id_.Hex}}/delete"><i class="icon-remove"></i></a>
+					{{end}}
 				{{end}}
-			{{end}}
-			<div class="space"></div>
-			<div class="info">
-				<a class="label" href="/article/{{.Category.Id_.Hex}}">{{.Category.Name}}</a> • 
-				<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
-				{{$utils.FormatTime .CreatedAt}} 提交 • 来自 <a href="{{.OriginalUrl}}" target="_blank">{{.OriginalSource}}</a>
-			</div>
-			<div class="space"></div>
-			<p class="muted">
-				{{$utils.Truncate .Html 200}}
-			</p>
-			<div class="clear"></div>
-		</dd>
-	{{end}}
-	</dl>
-	<hr>
-	{{.pagination.Html .page}}
-</div>
+				<div class="space"></div>
+				<div class="info">
+					<a class="label" href="/article/{{.Category.Id_.Hex}}">{{.Category.Name}}</a> • 
+					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
+					{{$utils.FormatTime .CreatedAt}} 提交 • 来自 <a href="{{.OriginalUrl}}" target="_blank">{{.OriginalSource}}</a>
+				</div>
+				<div class="space"></div>
+				<p class="muted">
+					{{$utils.Truncate .Html 200}}
+				</p>
+				<div class="clear"></div>
+			</dd>
+		{{end}}
+		</dl>
+		<hr>
+		{{.pagination.Html .page}}
+	</div>
 {{end}}
 
 {{define "LeftSide"}}{{end}}
 
 {{define "RightSide"}}
-<div class="span3">
-	<div class="well sidebar-nav">
+	<div class="span3">
+		<div class="well sidebar-nav">
+		</div>
 	</div>
-</div>
 {{end}}

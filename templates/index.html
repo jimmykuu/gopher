@@ -1,100 +1,101 @@
 {{define "Title"}}首页{{end}}
+{{define "Breadcrumb"}}{{end}}
 {{define "Content"}}
-<div class="content">
-	<h3>欢迎来到Golang中国社区</h3>
-	<a href="/topic/new" class="btn btn-success">发表话题</a>
+	<div class="content">
+		<h3>欢迎来到Golang中国社区</h3>
+		<a href="/topic/new" class="btn btn-success">发表话题</a>
 
-	{{$utils := .utils}}
+		{{$utils := .utils}}
 
-	<dl class="topics">
-	{{range .topics}}
-		<dd>
-			<a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img src="{{.Creater.AvatarImgSrc}}-middle"></a>
-			{{if .CommentCount}}
-				<a class="badge pull-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
-			{{end}}
-			<a href="/t/{{.Id_.Hex}}" class="title">{{.Title}}</a>
-			<div class="space"></div>
-			<div class="info">
-				<a class="label" href="/go/{{.Node.Id}}">{{.Node.Name}}</a> • 
-				<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
+		<dl class="topics">
+		{{range .topics}}
+			<dd>
+				<a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img src="{{.Creater.AvatarImgSrc}}-middle"></a>
 				{{if .CommentCount}}
-					{{$utils.FormatTime .LatestRepliedAt}} • 最后回复来自 <a href="/member/{{.LatestReplier.Username}}">{{.LatestReplier.Username}}</a>
-				{{else}}
-					{{$utils.FormatTime .CreatedAt}}
+					<a class="badge pull-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
 				{{end}}
-			</div>
-			<div class="clear"></div>
-		</dd>
-	{{end}}
-	</dl>
-	<hr>
-	{{.pagination.Html .page}}
-</div>
+				<a href="/t/{{.Id_.Hex}}" class="title">{{.Title}}</a>
+				<div class="space"></div>
+				<div class="info">
+					<a class="label" href="/go/{{.Node.Id}}">{{.Node.Name}}</a> • 
+					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
+					{{if .CommentCount}}
+						{{$utils.FormatTime .LatestRepliedAt}} • 最后回复来自 <a href="/member/{{.LatestReplier.Username}}">{{.LatestReplier.Username}}</a>
+					{{else}}
+						{{$utils.FormatTime .CreatedAt}}
+					{{end}}
+				</div>
+				<div class="clear"></div>
+			</dd>
+		{{end}}
+		</dl>
+		<hr>
+		{{.pagination.Html .page}}
+	</div>
 {{end}}
 
 {{define "LeftSide"}}{{end}}
 
 {{define "RightSide"}}
-<div class="span3">
-	{{if .username}}
-	<div class="well sidebar-nav">
-		{{.utils.UserInfo .username}}
-	</div>
-	{{end}}
-
-	<div class="well sidebar-nav">
-		<h4><small>最热节点</small></h4>
-		<hr>
-		{{range .nodes}}
-			<a href="/go/{{.Id}}" class="btn">{{.Name}}</a>
+	<div class="span3">
+		{{if .username}}
+		<div class="well sidebar-nav">
+			{{.utils.UserInfo .username}}
+		</div>
 		{{end}}
-		<div class="clearfix"></div>
-		<a href="/nodes" class="pull-right">所有节点</a>
-		<div class="clearfix"></div>
-	</div>
 
-	<div class="well sidebar-nav">
-		<div class="github-widget" data-repo="jimmykuu/gopher"></div>
-		<div class="clearfix"></div>
-		<style type="text/css">
-			.github-box .github-box-title .github-stats {
-				top: 40px;
-			}
-			.github-box .github-box-title h3 {
-				padding: 10px 10px 20px 30px;
-			}
-			.github-box .github-box-content .link {
-				display: none;
-			}
-			.github-box .github-box-download {
-				height: 45px;
-			}
-			.github-box .github-box-download .download {
-				top: 35px;
-			}
-		</style>
+		<div class="well sidebar-nav">
+			<h4><small>最热节点</small></h4>
+			<hr>
+			{{range .nodes}}
+				<a href="/go/{{.Id}}" class="btn">{{.Name}}</a>
+			{{end}}
+			<div class="clearfix"></div>
+			<a href="/nodes" class="pull-right">所有节点</a>
+			<div class="clearfix"></div>
+		</div>
+
+		<div class="well sidebar-nav">
+			<div class="github-widget" data-repo="jimmykuu/gopher"></div>
+			<div class="clearfix"></div>
+			<style type="text/css">
+				.github-box .github-box-title .github-stats {
+					top: 40px;
+				}
+				.github-box .github-box-title h3 {
+					padding: 10px 10px 20px 30px;
+				}
+				.github-box .github-box-content .link {
+					display: none;
+				}
+				.github-box .github-box-download {
+					height: 45px;
+				}
+				.github-box .github-box-download .download {
+					top: 35px;
+				}
+			</style>
+		</div>
+		<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/jquery.githubRepoWidget.min.js"></script>
+		<div class="well sidebar-nav">
+			<h4><small>社区状态</small></h4>
+			<hr>
+			<table width="100%" class="status">
+				<tbody>
+				<tr>
+					<td class="status-label">注册会员</td>
+					<td class="value">{{.status.UserCount}}</td>
+				</tr>
+				<tr>
+					<td class="status-label">主题</td>
+					<td class="value">{{.status.TopicCount}}</td>
+				</tr>
+				<tr>
+					<td class="status-label">回复</td>
+					<td class="value">{{.status.ReplyCount}}</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
 	</div>
-	<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/jquery.githubRepoWidget.min.js"></script>
-	<div class="well sidebar-nav">
-		<h4><small>社区状态</small></h4>
-		<hr>
-		<table width="100%" class="status">
-			<tbody>
-			<tr>
-				<td class="status-label">注册会员</td>
-				<td class="value">{{.status.UserCount}}</td>
-			</tr>
-			<tr>
-				<td class="status-label">主题</td>
-				<td class="value">{{.status.TopicCount}}</td>
-			</tr>
-			<tr>
-				<td class="status-label">回复</td>
-				<td class="value">{{.status.ReplyCount}}</td>
-			</tr>
-			</tbody>
-		</table>
-	</div>
-</div>
 {{end}}

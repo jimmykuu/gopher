@@ -1,16 +1,17 @@
 {{define "Title"}}{{.title}}{{end}}
+{{define "Breadcrumb"}}
+	<ul class="breadcrumb">
+		<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
+		<li class="active">{{.title}}</li>
+	</ul>
+{{end}}
 {{define "Content"}}
-<div class="row-fluid">
-  <ul class="breadcrumb">
-    <li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
-    <li class="active">{{.title}}</li>
-  </ul>
-  <div class="alert alert-{{.class}}">
-  	{{.message}}
-  </div>
-</div>
+	<div class="row-fluid">
+		<div class="alert alert-{{.class}}">
+			{{.message}}
+		</div>
+	</div>
 {{end}}
 
 {{define "LeftSide"}}{{end}}
-
 {{define "RightSide"}}{{end}}

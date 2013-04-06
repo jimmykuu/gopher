@@ -1,15 +1,16 @@
 {{define "Title"}}{{.title}}文章{{end}}
+{{define "Breadcrumb"}}
+	<ul class="breadcrumb">
+		<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
+		<li class="active">{{.title}}文章</li>
+	</ul>
+{{end}}
 {{define "Content"}}
-<ul class="breadcrumb">
-	<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
-	<li class="active">{{.title}}文章</li>
-</ul>
-<div class="content">
-	<div class="alert alert-info">
-		为了保持网站风格的一致,需要将文章使用<em>Markdown</em>语法进行编辑.
-	</div>
-	<form action="{{.action}}" method="post" class="form-vertical" id="article-form">
-		<fieldset>
+	<div class="content">
+		<div class="alert alert-info">
+			为了保持网站风格的一致,需要将文章使用<em>Markdown</em>语法进行编辑.
+		</div>
+		<form action="{{.action}}" method="post" class="form-vertical" id="article-form">
 			{{.form.Render "html"}}
 			{{.form.Render "title" `rows="4"` `class="span8"`}}
 			{{.form.Render "category"}}
@@ -25,27 +26,25 @@
 			<div class="form-actions">
 				<input type="submit" class="btn btn-primary" value="{{.title}}">
 			</div>
-		</fieldset>
-	</form>
-</div>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Converter.js"></script>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Editor.js"></script>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Sanitizer.js"></script>
-<script>
-	(function () {
-		var converter1 = Markdown.getSanitizingConverter();
-		var editor1 = new Markdown.Editor(converter1);
-		editor1.run();
-	})();
-	
-	$('#article-form').submit(function () {
-		$('#html').val($('#wmd-preview').html());
+		</form>
+	</div>
+	<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Converter.js"></script>
+	<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Editor.js"></script>
+	<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Sanitizer.js"></script>
+	<script>
+		(function () {
+			var converter1 = Markdown.getSanitizingConverter();
+			var editor1 = new Markdown.Editor(converter1);
+			editor1.run();
+		})();
 		
-		return true;
-	});
-</script>
+		$('#article-form').submit(function () {
+			$('#html').val($('#wmd-preview').html());
+			
+			return true;
+		});
+	</script>
 {{end}}
 
 {{define "LeftSide"}}{{end}}
-
 {{define "RightSide"}}{{end}}

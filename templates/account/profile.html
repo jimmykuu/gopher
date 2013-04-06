@@ -1,55 +1,55 @@
 {{define "Title"}}设置{{end}}
-
+{{define "Breadcrumb"}}
+	<ul class="breadcrumb">
+		<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
+		<li class="active">设置</li>
+	</ul>
+{{end}}
 {{define "Content"}}
-<ul class="breadcrumb">
-	<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
-	<li class="active">设置</li>
-</ul>
-<div class="content">
-	<form action="/profile" method="post" class="form-horizontal">
-		<div class="control-group">
-			<label class="control-label">用户名</label>
-			<div class="controls">
-				<span type="text" class="input-xlarge uneditable-input">{{.user.Username}}</span>
+	<div class="content">
+		<form action="/profile" method="post" class="form-horizontal">
+			<div class="control-group">
+				<label class="control-label">用户名</label>
+				<div class="controls">
+					<span type="text" class="input-xlarge uneditable-input">{{.user.Username}}</span>
+				</div>
 			</div>
-		</div>
-		{{.profileForm.Render "email" `class="input-xlarge"`}}
-		{{.profileForm.Render "website" `class="input-xlarge"`}}
-		{{.profileForm.Render "location" `class="input-xlarge"`}}
-		{{.profileForm.Render "tagline" `class="input-xxlarge"`}}
-		{{.profileForm.Render "bio" `class="input-xxlarge"` `rows="6"`}}
-		<hr>
-		{{.profileForm.Render "github_username"}}
-		<div class="control-group">
-			{{.profileForm.RenderLabel "weibo"}}
-			<div class="input-prepend" style="margin-left: 20px;">
-				<span class="add-on">http://weibo.com/</span>
-				{{.profileForm.RenderInput "weibo"}}
+			{{.profileForm.Render "email" `class="input-xlarge"`}}
+			{{.profileForm.Render "website" `class="input-xlarge"`}}
+			{{.profileForm.Render "location" `class="input-xlarge"`}}
+			{{.profileForm.Render "tagline" `class="span6"`}}
+			{{.profileForm.Render "bio" `class="span6"` `rows="6"`}}
+			<hr>
+			{{.profileForm.Render "github_username"}}
+			<div class="control-group">
+				{{.profileForm.RenderLabel "weibo"}}
+				<div class="input-prepend" style="margin-left: 20px;">
+					<span class="add-on">http://weibo.com/</span>
+					{{.profileForm.RenderInput "weibo"}}
+				</div>
 			</div>
-		</div>
-		<div class="form-actions">
-			<input type="submit" class="btn btn-primary" value="保存设置">
-		</div>
-	</form>
-</div>
+			<div class="form-actions">
+				<input type="submit" class="btn btn-primary" value="保存设置">
+			</div>
+		</form>
+	</div>
 
-<div class="content">
-  <h4><small>头像</small></h4>
-  <hr>
-  <p>golang.tc使用<a href="http://zh.wikipedia.org/wiki/Gravatar">Gravatar</a>来作为头像服务.</p>
-  <p>
-	当前头像
-	<img src="{{.utils.Gravatar .user.Email 50}}">
-	<img src="{{.utils.Gravatar .user.Email 40}}">
-	<img src="{{.utils.Gravatar .user.Email 20}}">
-  </p>
-  <p>
-	<br>
-	<!--<a href="/profile/avatar" class="btn btn-success">上传新头像</a>-->
-  </p>
-</div>
+	<div class="content">
+	  <h4><small>头像</small></h4>
+	  <hr>
+	  <p>golang.tc使用<a href="http://zh.wikipedia.org/wiki/Gravatar">Gravatar</a>来作为头像服务.</p>
+	  <p>
+		当前头像
+		<img src="{{.utils.Gravatar .user.Email 50}}">
+		<img src="{{.utils.Gravatar .user.Email 40}}">
+		<img src="{{.utils.Gravatar .user.Email 20}}">
+	  </p>
+	  <p>
+		<br>
+		<!--<a href="/profile/avatar" class="btn btn-success">上传新头像</a>-->
+	  </p>
+	</div>
 {{end}}
 
 {{define "LeftSide"}}{{end}}
-
 {{define "RightSide"}}{{end}}

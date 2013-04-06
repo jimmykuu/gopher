@@ -1,12 +1,14 @@
 {{define "Title"}}新建包分类{{end}}
-
-{{define "Content"}}
+{{define "Breadcrumb"}}
 <ul class="breadcrumb">
 	<li>
 		<a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span>
 	</li>
 	<li class="active">新建包分类</li>
 </ul>
+{{end}}
+
+{{define "Content"}}
 <div class="content">
 	<form action="/admin/package_category/new" method="post" class="form-horizontal">
 		<fieldset>
@@ -21,7 +23,7 @@
 {{end}}
 
 {{define "LeftSide"}}
-{{.adminNav}}
+	{{.adminNav}}
 {{end}}
 
 {{define "RightSide"}}{{end}}

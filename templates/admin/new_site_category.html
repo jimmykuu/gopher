@@ -1,26 +1,27 @@
 {{define "Title"}}新建站点分类{{end}}
-
+{{define "Breadcrumb"}}
+	<ul class="breadcrumb">
+		<li>
+			<a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span>
+		</li>
+		<li class="active">新建站点分类</li>
+	</ul>
+{{end}}
 {{define "Content"}}
-<ul class="breadcrumb">
-  <li>
-    <a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span>
-  </li>
-  <li class="active">新建站点分类</li>
-</ul>
-<div class="content">
-  <form action="/admin/site_category/new" method="post" class="form-horizontal">
-    <fieldset>
-	  {{.form.Render "name" `class="span4"`}}
-	  <div class="form-actions">
-        <input type="submit" class="btn btn-primary" value="新建">
-      </div>
-    </fieldset>
-  </form>
-</div>
+	<div class="content">
+		<form action="/admin/site_category/new" method="post" class="form-horizontal">
+			<fieldset>
+			{{.form.Render "name" `class="span4"`}}
+			<div class="form-actions">
+					<input type="submit" class="btn btn-primary" value="新建">
+				</div>
+			</fieldset>
+		</form>
+	</div>
 {{end}}
 
 {{define "LeftSide"}}
-{{.adminNav}}
+	{{.adminNav}}
 {{end}}
 
 {{define "RightSide"}}{{end}}

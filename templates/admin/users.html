@@ -1,47 +1,48 @@
 {{define "Title"}}用户{{end}}
+{{define "Breadcrumb"}}{{end}}
 {{define "Content"}}
-<div class="content">
-	<h2>用户总数：{{.total}}</h2>
-	<table class="table table-striped table-bordered table-hover">
-	<thead>
-		<tr>
-			<th>序号</th>
-			<th>注册时间</th>
-			<th>用户名</th>
-			<th>邮箱</th>
-			<th>是否激活</th>
-			<th></th>
-		</tr>
-	</thead>
-	<tbody>
-	{{range .users}}
-		<tr>
-			<td>{{.Index}}</td>
-			<td>{{.JoinedAt}}</td>
-			<td>{{.Username}}</td>
-			<td>{{.Email}}</td>
-			<td>
-				{{if .IsActive }}
-					<span class="label label-success">已激活</span>
-				{{else}}
-					<span class="label label-important">未激活</span>
-				{{end}}
-			</td>
-			<td>
-				{{if not .IsActive}}
-					<a class="btn btn-mini btn-primary" href="/admin/user/{{.Id_.Hex}}/activate"><i class="icon icon-white icon-ok"></i> 激活</a>
-				{{end}}
-			</td>
-		</tr>
-	{{end}}
-	</tbody>
-	</table>
-	{{.pagination.Html .page}}
-</div>
+	<div class="content">
+		<h2>用户总数：{{.total}}</h2>
+		<table class="table table-striped table-bordered table-hover">
+		<thead>
+			<tr>
+				<th>序号</th>
+				<th>注册时间</th>
+				<th>用户名</th>
+				<th>邮箱</th>
+				<th>是否激活</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+		{{range .users}}
+			<tr>
+				<td>{{.Index}}</td>
+				<td>{{.JoinedAt}}</td>
+				<td>{{.Username}}</td>
+				<td>{{.Email}}</td>
+				<td>
+					{{if .IsActive }}
+						<span class="label label-success">已激活</span>
+					{{else}}
+						<span class="label label-important">未激活</span>
+					{{end}}
+				</td>
+				<td>
+					{{if not .IsActive}}
+						<a class="btn btn-mini btn-primary" href="/admin/user/{{.Id_.Hex}}/activate"><i class="icon icon-white icon-ok"></i> 激活</a>
+					{{end}}
+				</td>
+			</tr>
+		{{end}}
+		</tbody>
+		</table>
+		{{.pagination.Html .page}}
+	</div>
 {{end}}
 
 {{define "LeftSide"}}
-{{.adminNav}}
+	{{.adminNav}}
 {{end}}
 
 {{define "RightSide"}}{{end}}

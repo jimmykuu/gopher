@@ -1,12 +1,15 @@
 {{define "Title"}}{{.topic.Title}}{{end}}
-
-{{define "Content"}}
+{{define "Breadcrumb"}}
 	{{$topic := .utils.AssertTopic .topic}}
-	{{$username := .username}}
 	<ul class="breadcrumb">
 		<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
 		<li><a href="/go/{{$topic.Node.Id}}">{{$topic.Node.Name}}</a></li>
 	</ul>
+{{end}}
+{{define "Content"}}
+	{{$topic := .utils.AssertTopic .topic}}
+	{{$username := .username}}
+	
 	<div class="content">
 		<h1>{{$topic.Title}}</h1>
 		<a href="/topic/new" class="btn btn-success pull-right">发表话题</a>
@@ -106,9 +109,8 @@
 {{end}}
 
 {{define "LeftSide"}}{{end}}
-
 {{define "RightSide"}}
-{{$topic := .utils.AssertTopic .topic}}
+	{{$topic := .utils.AssertTopic .topic}}
 	<div class="span3">
 		<div class="well sidebar-nav">
 			<h4><small>作者</small></h4>
