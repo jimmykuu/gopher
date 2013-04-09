@@ -171,3 +171,38 @@ func memberRepliesHandler(w http.ResponseWriter, r *http.Request) {
 		"active":     "members",
 	})
 }
+
+// URL: /members/city/{cityName}
+// 同城会员
+func membersInTheSameCityHandler(w http.ResponseWriter, r *http.Request) {
+	page, err := getPage(r)
+
+	if err != nil {
+		message(w, r, "页码错误", "页码错误", "error")
+		return
+	}
+
+	cityName := mux.Vars(r)["cityName"]
+
+	c := DB.C("users")
+
+	pagination := NewPagination(c.Find(bson.M{"location": cityName}).Sort("joinedat"), "/members/city/"+cityName, 40)
+
+	var members []User
+
+	query, err := pagination.Page(page)
+	if err != nil {
+		message(w, r, "页码错误", "页码错误", "error")
+		return
+	}
+
+	query.All(&members)
+
+	renderTemplate(w, r, "member/list.html", map[string]interface{}{
+		"members":    members,
+		"active":     "members",
+		"pagination": pagination,
+		"page":       page,
+		"city":       cityName,
+	})
+}

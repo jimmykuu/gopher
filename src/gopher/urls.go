@@ -56,6 +56,7 @@ var (
 		"/unfollow/{username}":       unfollowHandler,
 		"/members":                   membersHandler,
 		"/members/all":               allMembersHandler,
+		"/members/city/{cityName}":   membersInTheSameCityHandler,
 
 		"/sites":                sitesHandler,
 		"/site/new":             newSiteHandler,

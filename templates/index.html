@@ -38,12 +38,18 @@
 
 {{define "RightSide"}}
 	<div class="span3">
-		{{if .username}}
 		<div class="well sidebar-nav">
-			{{.utils.UserInfo .username}}
+			{{if .username}}
+				{{.utils.UserInfo .username}}
+			{{else}}
+				<h3><small>golang.tc</small></h3>
+				<h4><small>致力于打造一个国内Gophers交流和分享的地方</small></h4>
+				<hr>
+				<div align="center"><a href="/signup" class="btn">注册</a></div>
+				<div class="cleanfix"></div>
+				<div align="center">已注册用户：<a href="/signin">登录</a></div>
+			{{end}}
 		</div>
-		{{end}}
-
 		<div class="well sidebar-nav">
 			<h4><small>最热节点</small></h4>
 			<hr>
@@ -54,29 +60,6 @@
 			<a href="/nodes" class="pull-right">所有节点</a>
 			<div class="clearfix"></div>
 		</div>
-
-		<div class="well sidebar-nav">
-			<div class="github-widget" data-repo="jimmykuu/gopher"></div>
-			<div class="clearfix"></div>
-			<style type="text/css">
-				.github-box .github-box-title .github-stats {
-					top: 40px;
-				}
-				.github-box .github-box-title h3 {
-					padding: 10px 10px 20px 30px;
-				}
-				.github-box .github-box-content .link {
-					display: none;
-				}
-				.github-box .github-box-download {
-					height: 45px;
-				}
-				.github-box .github-box-download .download {
-					top: 35px;
-				}
-			</style>
-		</div>
-		<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/jquery.githubRepoWidget.min.js"></script>
 		<div class="well sidebar-nav">
 			<h4><small>社区状态</small></h4>
 			<hr>

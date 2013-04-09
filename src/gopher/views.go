@@ -46,10 +46,6 @@ var funcMaps = template.FuncMap{
 type Utils struct {
 }
 
-func (u *Utils) Gravatar(email string, size uint16) string {
-	return webhelpers.Gravatar(email, size)
-}
-
 func (u *Utils) StaticUrl(path string) string {
 	version, ok := fileVersion[path]
 	if ok {

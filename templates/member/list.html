@@ -1,15 +1,22 @@
-{{define "Title"}}所有会员{{end}}
+{{define "Title"}}{{if .city}}{{.city}}的{{end}}所有会员{{end}}
 {{define "Breadcrumb"}}
 	<ul class="breadcrumb">
 		<li>
 			<a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span>
 		</li>
-		<li class="active">所有会员</li>
+		{{if .city}}
+			<li>
+				<a href="/members/all">所有会员</a> <span class="divider">/</span>
+			</li>
+			<li class="active">{{.city}}</li>
+		{{else}}
+			<li class="active">所有会员</li>
+		{{end}}
 	</ul>
 {{end}}
 {{define "Content"}}
 	<div class="content">
-		<h3><small>所有会员</small></h3>
+		<h3><small>{{if .city}}{{.city}}的{{end}}所有会员</small></h3>
 		{{$utils := .utils}}
 		<ul class="members clearfix">
 			{{range .members}}

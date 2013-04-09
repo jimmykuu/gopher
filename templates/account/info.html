@@ -33,7 +33,7 @@
 			{{if $user.Location}}
 			<li>
 				<img src="http://gopher.qiniudn.com/static/img/icon-location.png">
-				{{$user.Location}}
+				<a href="/members/city/{{$user.Location}}">{{$user.Location}}</a>
 			</li>
 			{{end}}
 			{{if $user.Website}}
