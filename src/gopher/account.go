@@ -21,6 +21,17 @@ import (
 	"time"
 )
 
+var defaultAvatars = []string{
+	"gopher_aqua.jpg",
+	"gopher_boy.jpg",
+	"gopher_brown.jpg",
+	"gopher_gentlemen.jpg",
+	"gopher_girl.jpg",
+	"gopher_strawberry_bg.jpg",
+	"gopher_strawberry.jpg",
+	"gopher_teal.jpg",
+}
+
 // 加密密码,转成md5
 func encryptPassword(password string) string {
 	h := md5.New()
@@ -141,7 +152,7 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, r, "account/signup.html", map[string]interface{}{"form": form})
 }
 
-// URL: "/activate/{code}"
+// URL: /activate/{code}
 // 用户根据邮件中的链接进行验证,根据code找到是否有对应的用户,如果有,修改User.IsActive为true
 func activateHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -343,7 +354,11 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	renderTemplate(w, r, "account/profile.html", map[string]interface{}{"user": user, "profileForm": profileForm})
+	renderTemplate(w, r, "account/profile.html", map[string]interface{}{
+		"user":           user,
+		"profileForm":    profileForm,
+		"defaultAvatars": defaultAvatars,
+	})
 }
 
 // URL: /forgot_password
@@ -532,6 +547,31 @@ func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	renderTemplate(w, r, "account/avatar.html", map[string]interface{}{"user": user})
+}
+
+// URL: /profile/choose_default_avatar
+// 选择默认头像
+func chooseDefaultAvatar(w http.ResponseWriter, r *http.Request) {
+	user, ok := currentUser(r)
+
+	if !ok {
+		http.Redirect(w, r, "/signin?next=/avatar/choose_default_avatar", http.StatusFound)
+		return
+	}
+
+	if r.Method == "POST" {
+		fmt.Println(user)
+		fmt.Println(r.FormValue("defaultAvatars"))
+
+		avatar := r.FormValue("defaultAvatars")
+
+		if avatar != "" {
+			c := DB.C("users")
+			c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"avatar": avatar}})
+		}
+
+		http.Redirect(w, r, "/profile#avatar", http.StatusFound)
+	}
 }
 
 // URL: /change_password

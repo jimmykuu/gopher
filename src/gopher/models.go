@@ -11,10 +11,11 @@ import (
 )
 
 const (
-	TypeTopic   = 'T'
-	TypeArticle = 'A'
-	TypeSite    = 'S'
-	TypePackage = 'P'
+	TypeTopic     = 'T'
+	TypeArticle   = 'A'
+	TypeSite      = 'S'
+	TypePackage   = 'P'
+	DefaultAvatar = "gopher_teal.jpg"
 )
 
 // 用户
@@ -41,12 +42,22 @@ type User struct {
 	Index          int
 }
 
+// 是否是默认头像
+func (u *User) IsDefaultAvatar(avatar string) bool {
+	filename := u.Avatar
+	if filename == "" {
+		filename = DefaultAvatar
+	}
+
+	return filename == avatar
+}
+
 // 头像的图片地址
 func (u *User) AvatarImgSrc() string {
 	// 如果没有设置头像，用默认头像
 	filename := u.Avatar
 	if filename == "" {
-		filename = "gopher.jpg"
+		filename = DefaultAvatar
 	}
 
 	return "http://gopher.qiniudn.com/avatar/" + filename

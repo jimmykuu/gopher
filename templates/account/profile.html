@@ -35,20 +35,66 @@
 	</div>
 
 	<div class="content">
-	  <h4><small>头像</small></h4>
-	  <hr>
-	  <p>golang.tc使用<a href="http://zh.wikipedia.org/wiki/Gravatar">Gravatar</a>来作为头像服务.</p>
-	  <p>
-		当前头像
-		<img src="{{.utils.Gravatar .user.Email 50}}">
-		<img src="{{.utils.Gravatar .user.Email 40}}">
-		<img src="{{.utils.Gravatar .user.Email 20}}">
-	  </p>
-	  <p>
-		<br>
-		<!--<a href="/profile/avatar" class="btn btn-success">上传新头像</a>-->
-	  </p>
+		<h4 id="avatar"><small>头像</small></h4>
+		<hr>
+		<p>golang.tc使用<a href="http://www.qiniutek.com/" target="_blank">七牛云存储</a>来提供头像服务.</p>
+		<p>
+			当前头像
+			<img src="{{.user.AvatarImgSrc}}-large">
+			<img src="{{.user.AvatarImgSrc}}-middle">
+			<img src="{{.user.AvatarImgSrc}}-small">
+		</p>
+		<p><br><br></p>
+		<ul class="nav nav-tabs" id="avatar-tab">
+			<li class="active"><a href="#default">选择默认头像</a></li>
+			<li><a href="#upload">上传头像</a></li>
+		</ul>
+		<div class="tab-content">
+			<div id="default" class="tab-pane fade  active in row-fluid">
+				<form action="/profile/choose_default_avatar" method="post">
+					<ul class="thumbnails">
+					{{$user := .utils.AssertUser .user}}
+					{{range .defaultAvatars}}
+					<li>
+						<label>
+							<input type="radio" name="defaultAvatars" value="{{.}}"{{if $user.IsDefaultAvatar .}} checked{{end}}>
+							<img src="http://gopher.qiniudn.com/avatar/{{.}}-middle">
+						</label>
+					</li>
+					{{end}}
+					</ul>
+					<div class="control-group">
+						<div class="controls">
+							<button type="submit" class="btn btn-success">选择头像</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div id="upload" class="tab-pane fade">
+				<form action="/profile/avatar" method="post" enctype="multipart/form-data" class="form-horizontal">
+					<div class="control-group">
+						<label class="control-label" for="file">选择图片文件</label>
+						<div class="controls">
+							<input type="file" name="file" id="file">
+							<span class="help-block">支持500K以内的jpg/png文件</span>
+						</div>
+					</div>
+					<div class="control-group">
+						<div class="controls">
+							<button type="submit" class="btn btn-success">上传新头像</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
+
+	<script type="text/javascript">
+		$('#avatar-tab a').click(function (e) {
+			e.preventDefault();
+			$(this).tab('show');
+		});
+	</script>
 {{end}}
 
 {{define "LeftSide"}}{{end}}

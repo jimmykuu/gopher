@@ -9,7 +9,7 @@
 	{{$utils := .utils}}
 	{{$user := $utils.AssertUser .user}}
 	<div class="content">
-		<img src="{{.utils.Gravatar $user.Email 80}}" class="pull-left" style="margin-right: 20px;">
+		<img src="{{$user.AvatarImgSrc}}-large" class="pull-left" style="margin-right: 20px;">
 		<h3>{{$user.Username}}</h3>
 		{{if $user.Tagline}}
 			<h3><small>{{$user.Tagline}}</small></h3>
