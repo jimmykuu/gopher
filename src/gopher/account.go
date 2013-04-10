@@ -560,9 +560,6 @@ func chooseDefaultAvatar(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == "POST" {
-		fmt.Println(user)
-		fmt.Println(r.FormValue("defaultAvatars"))
-
 		avatar := r.FormValue("defaultAvatars")
 
 		if avatar != "" {

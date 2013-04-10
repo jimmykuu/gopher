@@ -50,10 +50,10 @@
 			<li><a href="#upload">上传头像</a></li>
 		</ul>
 		<div class="tab-content">
-			<div id="default" class="tab-pane fade  active in row-fluid">
+			<div id="default" class="tab-pane fade active in row-fluid">
 				<form action="/profile/choose_default_avatar" method="post">
 					<ul class="thumbnails">
-					{{$user := .utils.AssertUser .user}}
+					{{$user := .user}}
 					{{range .defaultAvatars}}
 					<li>
 						<label>
