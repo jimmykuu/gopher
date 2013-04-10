@@ -459,6 +459,10 @@ func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
 		formFile, formHeader, err := r.FormFile("file")
 		if err != nil {
 			fmt.Println("changeAvatarHandler:", err.Error())
+			renderTemplate(w, r, "account/avatar.html", map[string]interface{}{
+				"user":  user,
+				"error": "请选择图片上传",
+			})
 			return
 		}
 
@@ -468,7 +472,7 @@ func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
 		uploadFileType := formHeader.Header["Content-Type"][0]
 
 		isValidateType := false
-		for _, imgType := range [3]string{"image/png", "image/jpeg"} {
+		for _, imgType := range []string{"image/png", "image/jpeg"} {
 			if imgType == uploadFileType {
 				isValidateType = true
 				break
@@ -539,10 +543,7 @@ func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
 		c := DB.C("users")
 		c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"avatar": filename}})
 
-		renderTemplate(w, r, "account/avatar.html", map[string]interface{}{
-			"user":    user,
-			"success": "图片上传成功",
-		})
+		http.Redirect(w, r, "/profile#avatar", http.StatusFound)
 		return
 	}
 
