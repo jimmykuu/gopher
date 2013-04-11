@@ -10,7 +10,7 @@
 		<dl class="topics">
 		{{range .topics}}
 			<dd>
-				<a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img src="{{.Creater.AvatarImgSrc}}-middle"></a>
+				<a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img class="img-rounded" src="{{.Creater.AvatarImgSrc}}-middle"></a>
 				{{if .CommentCount}}
 					<a class="badge pull-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
 				{{end}}

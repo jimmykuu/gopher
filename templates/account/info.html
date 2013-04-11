@@ -9,7 +9,7 @@
 	{{$utils := .utils}}
 	{{$user := $utils.AssertUser .user}}
 	<div class="content">
-		<img src="{{$user.AvatarImgSrc}}-large" class="pull-left" style="margin-right: 20px;">
+		<img src="{{$user.AvatarImgSrc}}-large" class="pull-left img-rounded" style="margin-right: 20px;">
 		<h3>{{$user.Username}}</h3>
 		{{if $user.Tagline}}
 			<h3><small>{{$user.Tagline}}</small></h3>
@@ -67,7 +67,7 @@
 		<dl class="topics">
 		{{range $user.LatestTopics}}
 			<dd>
-				<a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img src="{{.Creater.AvatarImgSrc}}-middle"></a>
+				<a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img class="img-rounded" src="{{.Creater.AvatarImgSrc}}-middle"></a>
 			{{if .CommentCount}}
 			<a class="badge pull-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
 			{{end}}

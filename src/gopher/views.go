@@ -99,7 +99,7 @@ func (u *Utils) UserInfo(username string) template.HTML {
 	c.Find(bson.M{"username": username}).One(&user)
 
 	format := `<div>
-      <a href="/member/%s"><img class="gravatar" src="%s-middle" style="float:left;"></a>
+      <a href="/member/%s"><img class="gravatar img-rounded" src="%s-middle" style="float:left;"></a>
       <h3><a href="/member/%s">%s</a></h3>
       <div class="clearfix"></div>
     </div>`

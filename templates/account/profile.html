@@ -40,9 +40,9 @@
 		<p>golang.tc使用<a href="http://www.qiniutek.com/" target="_blank">七牛云存储</a>来提供头像服务.</p>
 		<p>
 			当前头像
-			<img src="{{.user.AvatarImgSrc}}-large">
-			<img src="{{.user.AvatarImgSrc}}-middle">
-			<img src="{{.user.AvatarImgSrc}}-small">
+			<img class="img-rounded" src="{{.user.AvatarImgSrc}}-large">
+			<img class="img-rounded" src="{{.user.AvatarImgSrc}}-middle">
+			<img class="img-rounded" src="{{.user.AvatarImgSrc}}-small">
 		</p>
 		<p><br><br></p>
 		<ul class="nav nav-tabs" id="avatar-tab">
@@ -58,7 +58,7 @@
 					<li>
 						<label>
 							<input type="radio" name="defaultAvatars" value="{{.}}"{{if $user.IsDefaultAvatar .}} checked{{end}}>
-							<img src="http://gopher.qiniudn.com/avatar/{{.}}-middle">
+							<img class="img-rounded" src="http://gopher.qiniudn.com/avatar/{{.}}-middle">
 						</label>
 					</li>
 					{{end}}
