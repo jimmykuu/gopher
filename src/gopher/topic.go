@@ -15,9 +15,7 @@ import (
 	"time"
 )
 
-// URL: /
-// 网站首页,列出按回帖时间倒序排列的第一页
-func indexHandler(w http.ResponseWriter, r *http.Request) {
+func topicsHandler(w http.ResponseWriter, r *http.Request, conditions bson.M, sort string, url string, subActive string) {
 	page, err := getPage(r)
 
 	if err != nil {
@@ -35,7 +33,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	c = DB.C("contents")
 
-	pagination := NewPagination(c.Find(bson.M{"content.type": TypeTopic}).Sort("-latestrepliedat"), "/", PerPage)
+	pagination := NewPagination(c.Find(conditions).Sort(sort), url, PerPage)
 
 	var topics []Topic
 
@@ -54,7 +52,26 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		"pagination": pagination,
 		"page":       page,
 		"active":     "topic",
+		"sub_active": subActive,
 	})
+}
+
+// URL: /
+// 网站首页,列出按回帖时间倒序排列的第一页
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	topicsHandler(w, r, bson.M{"content.type": TypeTopic}, "-latestrepliedat", "/", "latestReply")
+}
+
+// URL: /topics/latest
+// 最新发布的主题，按照发布时间倒序排列
+func latestTopicsHandler(w http.ResponseWriter, r *http.Request) {
+	topicsHandler(w, r, bson.M{"content.type": TypeTopic}, "-content.createdat", "/topics/latest", "latestCreate")
+}
+
+// URL: /topics/no_reply
+// 无人回复的主题，按照发布时间倒序排列
+func noReplyTopicsHandler(w http.ResponseWriter, r *http.Request) {
+	topicsHandler(w, r, bson.M{"content.type": TypeTopic, "content.commentcount": 0}, "-content.createdat", "/topics/no_reply", "noReply")
 }
 
 // URL: /topic/new

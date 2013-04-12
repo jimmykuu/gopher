@@ -2,11 +2,28 @@
 {{define "Breadcrumb"}}{{end}}
 {{define "Content"}}
 	<div class="content">
-		<h3>欢迎来到Golang中国社区</h3>
-		<a href="/topic/new" class="btn btn-success">发表话题</a>
-
 		{{$utils := .utils}}
-
+		<div>
+			<h3 class="pull-left">欢迎来到Golang中国社区</h3>
+		<ul class="nav nav-tabs pull-right">
+			{{if $utils.Equal .sub_active "latestReply"}}
+				<li class="active"><a href="script:;">最近回复</a></li>
+			{{else}}
+				<li><a href="/">最近回复</a></li>
+			{{end}}
+			{{if $utils.Equal .sub_active "latestCreate"}}
+				<li class="active"><a href="script:;">最近发布</a></li>
+			{{else}}
+				<li><a href="/topics/latest">最近发布</a></li>
+			{{end}}
+			{{if $utils.Equal .sub_active "noReply"}}
+				<li class="active"><a href="script:;">尚未回复</a></li>
+			{{else}}
+				<li><a href="/topics/no_reply">尚未回复</a></li>
+			{{end}}
+		</ul>
+		</div>
+		<div class="clearfix"></div>
 		<dl class="topics">
 		{{range .topics}}
 			<dd>
@@ -49,6 +66,9 @@
 				<div class="cleanfix"></div>
 				<div align="center">已注册用户：<a href="/signin">登录</a></div>
 			{{end}}
+		</div>
+		<div class="well sidebar-nav">
+			<a href="/topic/new" class="btn btn-success">发表话题</a>
 		</div>
 		<div class="well sidebar-nav">
 			<h4><small>最热节点</small></h4>

@@ -44,6 +44,8 @@ var (
 		"/comment/{contentId}":        commentHandler,
 		"/comment/{commentId}/delete": deleteCommentHandler,
 
+		"/topics/latest":    latestTopicsHandler,
+		"/topics/no_reply":  noReplyTopicsHandler,
 		"/topic/new":        newTopicHandler,
 		"/new/{node}":       newTopicHandler,
 		"/t/{topicId}":      showTopicHandler,
