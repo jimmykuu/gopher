@@ -20,6 +20,7 @@ type ConfigStruct struct {
 	SmtpAddr          string `json:"smtp_addr"`
 	FromEmail         string `json:"from_email"`
 	Superusers        string `json:"superusers"`
+	TimeZoneOffset    int64  `json:"time_zone_offset"`
 	AnalyticsFile     string `json:"analytics_file"`
 	StaticFileVersion int    `json:"static_file_version"`
 	QiniuAccessKey    string `json:"qiniu_access_key"`

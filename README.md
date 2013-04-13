@@ -33,6 +33,7 @@ Golang中国([www.golang.tc](http://www.golang.tc))源代码.
 
 - superusers: 内容为用户名,如果没有管理员,内容为"",如果有多个,用英文逗号隔开
 - analytics_file: 内容为统计分析代码的文件名
+- time_zone_offset: 时差，跟UTC的时间差，单位小时
 
 内容如下:
 

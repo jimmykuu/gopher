@@ -88,6 +88,7 @@ func (u *Utils) FormatTime(t time.Time) string {
 		return fmt.Sprintf("%.0f 小时前", duration.Hours())
 	}
 
+	t = t.Add(time.Hour * time.Duration(Config.TimeZoneOffset))
 	return t.Format("2006-01-02 15:04")
 }
 
