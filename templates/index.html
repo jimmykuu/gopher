@@ -6,17 +6,17 @@
 		<div>
 			<h3 class="pull-left">欢迎来到Golang中国社区</h3>
 		<ul class="nav nav-tabs pull-right">
-			{{if $utils.Equal .sub_active "latestReply"}}
+			{{if $utils.Equal .subActive "latestReply"}}
 				<li class="active"><a href="script:;">最近回复</a></li>
 			{{else}}
 				<li><a href="/">最近回复</a></li>
 			{{end}}
-			{{if $utils.Equal .sub_active "latestCreate"}}
+			{{if $utils.Equal .subActive "latestCreate"}}
 				<li class="active"><a href="script:;">最近发布</a></li>
 			{{else}}
 				<li><a href="/topics/latest">最近发布</a></li>
 			{{end}}
-			{{if $utils.Equal .sub_active "noReply"}}
+			{{if $utils.Equal .subActive "noReply"}}
 				<li class="active"><a href="script:;">尚未回复</a></li>
 			{{else}}
 				<li><a href="/topics/no_reply">尚未回复</a></li>

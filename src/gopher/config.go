@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"os"
+	"runtime"
 )
 
 type ConfigStruct struct {
@@ -27,6 +28,7 @@ type ConfigStruct struct {
 
 var Config ConfigStruct
 var analyticsCode template.HTML // 网站统计分析代码
+var goVersion = runtime.Version()
 
 func init() {
 	file, err := os.Open("etc/config.json")

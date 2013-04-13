@@ -52,7 +52,7 @@ func topicsHandler(w http.ResponseWriter, r *http.Request, conditions bson.M, so
 		"pagination": pagination,
 		"page":       page,
 		"active":     "topic",
-		"sub_active": subActive,
+		"subActive":  subActive,
 	})
 }
 
