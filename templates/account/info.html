@@ -39,7 +39,7 @@
 			{{if $user.Website}}
 			<li>
 				<img src="http://gopher.qiniudn.com/static/img/icon-website.png">
-				<a href="{{$user.Website}}" target="_blank">{{$user.Website}}</a>
+				<a href="{{$utils.Url $user.Website}}" target="_blank">{{$user.Website}}</a>
 			</li>
 			{{end}}
 			{{if $user.Weibo}}

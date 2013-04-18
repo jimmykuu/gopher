@@ -46,6 +46,15 @@ var funcMaps = template.FuncMap{
 type Utils struct {
 }
 
+// 没有http://开头的增加http://
+func (u *Utils) Url(url string) string {
+	if strings.HasPrefix(url, "http://") {
+		return url
+	}
+
+	return "http://" + url
+}
+
 func (u *Utils) StaticUrl(path string) string {
 	version, ok := fileVersion[path]
 	if ok {
