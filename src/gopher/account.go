@@ -16,7 +16,6 @@ import (
 	"io"
 	"labix.org/v2/mgo/bson"
 	"net/http"
-	// "os"
 	"strings"
 	"time"
 )

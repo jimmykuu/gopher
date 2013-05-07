@@ -41,7 +41,7 @@
 					<a href="/comment/{{.Id_.Hex}}/delete" class="remove label pull-right" title="删除"><i class="icon-white icon-remove"></i></a>
 				{{end}}
 			{{end}}
-			<a href="/" class="pull-left" style="margin-right: 10px;"><img src="{{$utils.Gravatar .Creater.Email 48}}"></a>
+			<a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img src="{{.Creater.AvatarImgSrc}}-middle"></a>
 			<div class="info">
 				<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
 				{{$utils.FormatTime .CreatedAt}}
