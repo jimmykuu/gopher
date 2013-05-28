@@ -49,6 +49,7 @@ Golang中国([www.golang.tc](http://www.golang.tc))源代码.
         "from_email": "who@example.com",
         "superusers": "jimmykuu,another",
         "analytics_file": "",
+        "time_zone_offset": 8,
         "static_file_version": 1
     }
 

@@ -22,21 +22,21 @@
 			<a class="brand" href="/"><img src="http://gopher.qiniudn.com/static/img/golang-china.png"></a>
 			{{if .username}}
 			<ul class="nav pull-right" style="margin-top: 1em;">
-			  <li class="dropdown">
-			    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-			      我的空间
-			      <b class="caret"></b>
-			    </a>
-			    <ul class="dropdown-menu">
-					<li><a href="/profile"><i class="icon-cog"></i> 设置</a></li>
-					<li><a href="/change_password"><i class="icon-edit"></i> 修改密码</a></li>
-					{{if .isSuperUser}}
-						<li><a href="/admin"><i class="icon-wrench"></i> 管理</a></li>
-					{{end}}
-					<li class="divider"></li>
-					<li><a href="/signout"><i class="icon-off"></i> 登出</a></li>
-			    </ul>
-			  </li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+						我的空间
+						<b class="caret"></b>
+					</a>
+					<ul class="dropdown-menu">
+						<li><a href="/profile"><i class="icon-cog"></i> 设置</a></li>
+						<li><a href="/change_password"><i class="icon-edit"></i> 修改密码</a></li>
+						{{if .isSuperUser}}
+							<li><a href="/admin"><i class="icon-wrench"></i> 管理</a></li>
+						{{end}}
+						<li class="divider"></li>
+						<li><a href="/signout"><i class="icon-off"></i> 登出</a></li>
+					</ul>
+				</li>
 			</ul>
 			{{end}}
 			<div class="pull-right" style="margin-top: 1em;">
@@ -90,9 +90,9 @@
 				</ul>
 			</p>
 			<p>&copy;2012-2013 golang.tc</p>
-	  		<p>Website built by <a href="https://github.com/jimmykuu/gopher" target="_blank">Gopher</a>, powered by <a href="http://golang.org/" target="_blank">Golang</a>, <a href="http://www.mongodb.org/" target="_blank">MongoDB</a>.</p>
-	  		<p>Build version {{.goVersion}}.</p>
-	  		<p>Based on <a target="_blank" href="http://twitter.github.com/bootstrap/">Bootstrap</a>. Icons from <a target="_blank" href="http://glyphicons.com/">Glyphicons</a>.</p>
+			<p>Website built by <a href="https://github.com/jimmykuu/gopher" target="_blank">Gopher</a>, powered by <a href="http://golang.org/" target="_blank">Golang</a>, <a href="http://www.mongodb.org/" target="_blank">MongoDB</a>.</p>
+			<p>Build version {{.goVersion}}.</p>
+			<p>Based on <a target="_blank" href="http://twitter.github.com/bootstrap/">Bootstrap</a>. Icons from <a target="_blank" href="http://glyphicons.com/">Glyphicons</a>.</p>
 			<p style="text-align: center; vertical-align: middle;">
 				<a href="http://www.golang.org" target="_blank"><img src="http://gopher.qiniudn.com/static/img/Golang.png" title="Golang"></a>
 				<a href="http://www.mongodb.org/" target="_blank"><img src="http://gopher.qiniudn.com/static/img/PoweredMongoDBbeige50.png" title="MongoDB"></a>
