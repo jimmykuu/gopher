@@ -8,9 +8,9 @@ Golang中国([www.golang.tc](http://www.golang.tc))源代码.
 - MongoDB
 - github.com/gorilla/mux
 - github.com/gorilla/sessions
-- github.com/qiniu/api
 - github.com/qiniu/bytes
 - github.com/qiniu/rpc
+- github.com/qiniu/api
 - labix.org/v2/mgo
 - code.google.com/p/go-uuid/uuid
 - github.com/jimmykuu/webhelpers
@@ -18,16 +18,15 @@ Golang中国([www.golang.tc](http://www.golang.tc))源代码.
 
 ##Install
 
-    go get -u github.com/gorilla/mux
-    go get -u github.com/gorilla/sessions
-    go get -u labix.org/v2/mgo
-    go get -u code.google.com/p/go-uuid/uuid
-    go get -u github.com/jimmykuu/webhelpers
-    go get -u github.com/jimmykuu/wtforms
-    go get -u github.com/qiniu/api
-    go get -u github.com/qiniu/bytes
-    go get -u github.com/qiniu/rpc
-    git clone git://github.com/jimmykuu/gopher.git
+    $ git clone git://github.com/jimmykuu/gopher.git
+    $ cd gopher
+
+Linux/Unix/OS X:
+
+    $ ./get_3rd_packages.sh
+
+Windows:
+    > ./get_3rd_packages.bat
 
 修改文件 *etc/config.json.default* 为 *etc/config.json* 作为配置文件
 
@@ -55,7 +54,7 @@ Golang中国([www.golang.tc](http://www.golang.tc))源代码.
 
 先启动MongoDB
 
-Linux/Unix/Mac OS X:
+Linux/Unix/OS X:
 
     $ cd gopher
     $ ./build.sh

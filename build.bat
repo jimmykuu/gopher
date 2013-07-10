@@ -1,5 +1,5 @@
-CURDIR=`pwd`
-OLDGOPATH=%$GOPATH%
+set CURDIR=`pwd`
+set OLDGOPATH=%$GOPATH%
 set GOPATH=%cd%
 
 go install server

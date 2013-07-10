@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/jimmykuu/wtforms"
+	"github.com/qiniu/api/auth/digest"
 	. "github.com/qiniu/api/conf"
 	qiniu_io "github.com/qiniu/api/io"
 	"github.com/qiniu/api/rs"
@@ -501,12 +502,7 @@ func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		extra := &qiniu_io.PutExtra{
-			Bucket:         "gopher",
-			MimeType:       "",
-			CustomMeta:     "",
-			CallbackParams: "",
-		}
+		extra := &qiniu_io.PutExtra{}
 
 		ACCESS_KEY = Config.QiniuAccessKey
 		SECRET_KEY = Config.QiniuSecretKey
@@ -527,7 +523,14 @@ func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
 			Scope: "gopher",
 		}
 
-		err = qiniu_io.Put(nil, ret, policy.Token(), key, formFile, extra)
+		err = qiniu_io.Put(
+			nil,
+			ret,
+			policy.Token(&digest.Mac{AccessKey: Config.QiniuAccessKey, SecretKey: []byte(Config.QiniuSecretKey)}),
+			key,
+			formFile,
+			extra,
+		)
 
 		if err != nil {
 			fmt.Println("upload to qiniu failed:", err.Error())
