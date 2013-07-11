@@ -20,12 +20,6 @@ import (
 	"time"
 )
 
-func init() {
-	//全局初始下即可，当mac为nil时候，会以此为默认
-	ACCESS_KEY = Config.QiniuAccessKey
-	SECRET_KEY = Config.QiniuSecretKey
-}
-
 var defaultAvatars = []string{
 	"gopher_aqua.jpg",
 	"gopher_boy.jpg",
@@ -514,6 +508,9 @@ func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
 
 		// 文件名：32位uuid，不带减号和后缀组成
 		filename := strings.Replace(uuid.NewUUID().String(), "-", "", -1) + filenameExtension
+
+		ACCESS_KEY = Config.QiniuAccessKey
+		SECRET_KEY = Config.QiniuSecretKey
 
 		key := "avatar/" + filename
 
