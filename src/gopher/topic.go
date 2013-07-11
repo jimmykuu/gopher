@@ -314,3 +314,56 @@ func topicInNodeHandler(w http.ResponseWriter, r *http.Request) {
 		"active": "topic",
 	})
 }
+
+// URL: /t/{topicId}/delete
+// 删除主题
+func deleteTopicHandler(w http.ResponseWriter, r *http.Request) {
+	user, ok := currentUser(r)
+
+	if !ok {
+		http.Redirect(w, r, "/signin", http.StatusFound)
+		return
+	}
+
+	if !user.IsSuperuser {
+		message(w, r, "没有该权限", "对不起,你没有权限删除该评论", "error")
+		return
+	}
+
+	vars := mux.Vars(r)
+	topicId := bson.ObjectIdHex(vars["topicId"])
+	c := DB.C("contents")
+
+	topic := Topic{}
+
+	err := c.Find(bson.M{"_id": topicId, "content.type": TypeTopic}).One(&topic)
+
+	if err != nil {
+		fmt.Println("deleteTopic:", err.Error())
+		return
+	}
+
+	// Node统计数减一
+	c = DB.C("nodes")
+	c.Update(bson.M{"_id": topic.NodeId}, bson.M{"$inc": bson.M{"topiccount": -1}})
+
+	c = DB.C("status")
+	var status Status
+	c.Find(nil).One(&status)
+	// 统计的主题数减一
+	c.Update(bson.M{"_id": status.Id_}, bson.M{"$inc": bson.M{"topiccount": -1}})
+	// 减去统计的回复数减去该主题的回复数
+	c.Update(bson.M{"_id": status.Id_}, bson.M{"$inc": bson.M{"replycount": -topic.CommentCount}})
+
+	//删除评论
+	c = DB.C("comments")
+	if topic.CommentCount > 0 {
+		c.Remove(bson.M{"contentid": topic.Id_})
+	}
+
+	// 删除Topic记录
+	c = DB.C("topics")
+	c.Remove(bson.M{"_id": topicId})
+
+	http.Redirect(w, r, "/", http.StatusFound)
+}

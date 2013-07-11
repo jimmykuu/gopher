@@ -413,7 +413,7 @@ func deleteCommentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !user.IsSuperuser {
-		message(w, r, "没用该权限", "对不起,你没有权限删除该评论", "error")
+		message(w, r, "没有该权限", "对不起,你没有权限删除该评论", "error")
 		return
 	}
 

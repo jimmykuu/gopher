@@ -174,6 +174,17 @@ func (c *Content) CanEdit(username string) bool {
 	return c.CreatedBy == user.Id_
 }
 
+func (c *Content) CanDelete(username string) bool {
+	var user User
+	c_ := DB.C("users")
+	err := c_.Find(bson.M{"username": username}).One(&user)
+	if err != nil {
+		return false
+	}
+
+	return user.IsSuperuser
+}
+
 // 主题
 type Topic struct {
 	Content

@@ -26,6 +26,7 @@ Linux/Unix/OS X:
     $ ./get_3rd_packages.sh
 
 Windows:
+
     > ./get_3rd_packages.bat
 
 修改文件 *etc/config.json.default* 为 *etc/config.json* 作为配置文件
