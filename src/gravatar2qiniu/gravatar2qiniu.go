@@ -24,13 +24,6 @@ func main() {
 	ACCESS_KEY = gopher.Config.QiniuAccessKey
 	SECRET_KEY = gopher.Config.QiniuSecretKey
 
-	extra := &qiniu_io.PutExtra{
-		Bucket:         "gopher",
-		MimeType:       "",
-		CustomMeta:     "",
-		CallbackParams: "",
-	}
-
 	var policy = rs.PutPolicy{
 		Scope: "gopher",
 	}
@@ -61,7 +54,7 @@ func main() {
 
 			buf := bytes.NewBuffer(body)
 
-			err = qiniu_io.Put(nil, ret, policy.Token(), key, buf, extra)
+			err = qiniu_io.Put(nil, ret, policy.Token(nil), key, buf, nil)
 			if err == nil {
 				c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"avatar": filename}})
 				fmt.Printf("upload %s's avatar success: %s\n", user.Email, filename)
