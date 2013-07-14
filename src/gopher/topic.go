@@ -88,7 +88,7 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 	c := DB.C("nodes")
 	c.Find(nil).All(&nodes)
 
-	var choices []wtforms.Choice
+	var choices = []wtforms.Choice{wtforms.Choice{}} // 第一个选项为空
 
 	for _, node := range nodes {
 		choices = append(choices, wtforms.Choice{Value: node.Id_.Hex(), Label: node.Name})
@@ -96,69 +96,80 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 
 	form := wtforms.NewForm(
 		wtforms.NewHiddenField("html", ""),
-		wtforms.NewSelectField("node", "节点", choices, nodeId),
+		wtforms.NewSelectField("node", "节点", choices, nodeId, &wtforms.Required{}),
 		wtforms.NewTextArea("title", "标题", "", &wtforms.Required{}),
 		wtforms.NewTextArea("content", "内容", ""),
 	)
 
-	if r.Method == "POST" && form.Validate(r) {
-		session, _ := store.Get(r, "user")
-		username, _ := session.Values["username"]
-		username = username.(string)
+	var content string
+	var html template.HTML
 
-		user := User{}
-		c = DB.C("users")
-		c.Find(bson.M{"username": username}).One(&user)
+	if r.Method == "POST" {
+		if form.Validate(r) {
+			session, _ := store.Get(r, "user")
+			username, _ := session.Values["username"]
+			username = username.(string)
 
-		c = DB.C("contents")
+			user := User{}
+			c = DB.C("users")
+			c.Find(bson.M{"username": username}).One(&user)
 
-		id_ := bson.NewObjectId()
+			c = DB.C("contents")
 
-		now := time.Now()
+			id_ := bson.NewObjectId()
 
-		html := form.Value("html")
-		html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
+			now := time.Now()
 
-		nodeId := bson.ObjectIdHex(form.Value("node"))
-		err := c.Insert(&Topic{
-			Content: Content{
-				Id_:       id_,
-				Type:      TypeTopic,
-				Title:     form.Value("title"),
-				Markdown:  form.Value("content"),
-				Html:      template.HTML(html),
-				CreatedBy: user.Id_,
-				CreatedAt: now,
-			},
-			Id_:             id_,
-			NodeId:          nodeId,
-			LatestRepliedAt: now,
-		})
+			html2 := form.Value("html")
+			html2 = strings.Replace(html2, "<pre>", `<pre class="prettyprint linenums">`, -1)
 
-		if err != nil {
-			fmt.Println("newTopicHandler:", err.Error())
+			nodeId := bson.ObjectIdHex(form.Value("node"))
+			err := c.Insert(&Topic{
+				Content: Content{
+					Id_:       id_,
+					Type:      TypeTopic,
+					Title:     form.Value("title"),
+					Markdown:  form.Value("content"),
+					Html:      template.HTML(html2),
+					CreatedBy: user.Id_,
+					CreatedAt: now,
+				},
+				Id_:             id_,
+				NodeId:          nodeId,
+				LatestRepliedAt: now,
+			})
+
+			if err != nil {
+				fmt.Println("newTopicHandler:", err.Error())
+				return
+			}
+
+			// 增加Node.TopicCount
+			c = DB.C("nodes")
+			c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
+
+			c = DB.C("status")
+			var status Status
+			c.Find(nil).One(&status)
+
+			c.Update(bson.M{"_id": status.Id_}, bson.M{"$inc": bson.M{"topiccount": 1}})
+
+			http.Redirect(w, r, "/t/"+id_.Hex(), http.StatusFound)
 			return
 		}
 
-		// 增加Node.TopicCount
-		c = DB.C("nodes")
-		c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
-
-		c = DB.C("status")
-		var status Status
-		c.Find(nil).One(&status)
-
-		c.Update(bson.M{"_id": status.Id_}, bson.M{"$inc": bson.M{"topiccount": 1}})
-
-		http.Redirect(w, r, "/t/"+id_.Hex(), http.StatusFound)
-		return
+		content = form.Value("content")
+		html = template.HTML(form.Value("html"))
+		form.SetValue("html", "")
 	}
 
 	renderTemplate(w, r, "topic/form.html", map[string]interface{}{
-		"form":   form,
-		"title":  "新建",
-		"action": "/topic/new",
-		"active": "topic",
+		"form":    form,
+		"title":   "新建",
+		"html":    html,
+		"content": content,
+		"action":  "/topic/new",
+		"active":  "topic",
 	})
 }
 
@@ -191,7 +202,7 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 	c = DB.C("nodes")
 	c.Find(nil).All(&nodes)
 
-	var choices []wtforms.Choice
+	var choices = []wtforms.Choice{wtforms.Choice{}} // 第一个选项为空
 
 	for _, node := range nodes {
 		choices = append(choices, wtforms.Choice{Value: node.Id_.Hex(), Label: node.Name})
@@ -199,7 +210,7 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 
 	form := wtforms.NewForm(
 		wtforms.NewHiddenField("html", ""),
-		wtforms.NewSelectField("node", "节点", choices, topic.NodeId.Hex()),
+		wtforms.NewSelectField("node", "节点", choices, topic.NodeId.Hex(), &wtforms.Required{}),
 		wtforms.NewTextArea("title", "标题", topic.Title, &wtforms.Required{}),
 		wtforms.NewTextArea("content", "内容", topic.Markdown),
 	)
@@ -209,8 +220,8 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		if form.Validate(r) {
-			html := form.Value("html")
-			html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
+			html2 := form.Value("html")
+			html2 = strings.Replace(html2, "<pre>", `<pre class="prettyprint linenums">`, -1)
 
 			nodeId := bson.ObjectIdHex(form.Value("node"))
 			c = DB.C("contents")
@@ -218,7 +229,7 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 				"nodeid":            nodeId,
 				"content.title":     form.Value("title"),
 				"content.markdown":  form.Value("content"),
-				"content.html":      template.HTML(html),
+				"content.html":      template.HTML(html2),
 				"content.updatedat": time.Now(),
 				"content.updatedby": user.Id_.Hex(),
 			}})
@@ -236,6 +247,7 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 
 		content = form.Value("content")
 		html = template.HTML(form.Value("html"))
+		form.SetValue("html", "")
 	}
 
 	renderTemplate(w, r, "topic/form.html", map[string]interface{}{
