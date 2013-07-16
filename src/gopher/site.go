@@ -27,11 +27,7 @@ func sitesHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /site/new
 // 提交站点
 func newSiteHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		http.Redirect(w, r, "/signin", http.StatusFound)
-		return
-	}
+	user, _ := currentUser(r)
 
 	var categories []SiteCategory
 	c := DB.C("sitecategories")
@@ -96,11 +92,7 @@ func newSiteHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /site/{siteId}/edit
 // 修改提交过的站点信息,提交者自己或者管理员可以修改
 func editSiteHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		http.Redirect(w, r, "/signin", http.StatusFound)
-		return
-	}
+	user, _ := currentUser(r)
 
 	siteId := mux.Vars(r)["siteId"]
 
@@ -173,11 +165,7 @@ func editSiteHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /site/{siteId}/delete
 // 删除站点,提交者自己或者管理员可以删除
 func deleteSiteHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		http.Redirect(w, r, "/signin", http.StatusFound)
-		return
-	}
+	user, _ := currentUser(r)
 
 	siteId := mux.Vars(r)["siteId"]
 

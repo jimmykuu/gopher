@@ -18,11 +18,6 @@ import (
 // URL: /article/new
 // 新建文章
 func newArticleHandler(w http.ResponseWriter, r *http.Request) {
-	if _, ok := currentUser(r); !ok {
-		http.Redirect(w, r, "/signin", http.StatusFound)
-		return
-	}
-
 	var categories []ArticleCategory
 	c := DB.C("articlecategories")
 	c.Find(nil).All(&categories)
@@ -159,11 +154,7 @@ func showArticleHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /a/{articleId}/edit
 // 编辑主题
 func editArticleHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		http.Redirect(w, r, "/signin", http.StatusFound)
-		return
-	}
+	user, _ := currentUser(r)
 
 	articleId := mux.Vars(r)["articleId"]
 

@@ -77,11 +77,6 @@ func noReplyTopicsHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /topic/new
 // 新建主题
 func newTopicHandler(w http.ResponseWriter, r *http.Request) {
-	if _, ok := currentUser(r); !ok {
-		http.Redirect(w, r, "/signin", http.StatusFound)
-		return
-	}
-
 	nodeId := mux.Vars(r)["node"]
 
 	var nodes []Node
@@ -176,11 +171,7 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /t/{topicId}/edit
 // 编辑主题
 func editTopicHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		http.Redirect(w, r, "/signin", http.StatusFound)
-		return
-	}
+	user, _ := currentUser(r)
 
 	topicId := mux.Vars(r)["topicId"]
 
@@ -194,7 +185,7 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !topic.CanEdit(user.Username) {
-		message(w, r, "没用该权限", "对不起,你没有权限编辑该主题", "error")
+		message(w, r, "没有该权限", "对不起,你没有权限编辑该主题", "error")
 		return
 	}
 
@@ -330,18 +321,6 @@ func topicInNodeHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /t/{topicId}/delete
 // 删除主题
 func deleteTopicHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-
-	if !ok {
-		http.Redirect(w, r, "/signin", http.StatusFound)
-		return
-	}
-
-	if !user.IsSuperuser {
-		message(w, r, "没有该权限", "对不起,你没有权限删除该评论", "error")
-		return
-	}
-
 	vars := mux.Vars(r)
 	topicId := bson.ObjectIdHex(vars["topicId"])
 	c := DB.C("contents")

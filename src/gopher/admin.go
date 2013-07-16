@@ -26,34 +26,12 @@ const ADMIN_NAV = template.HTML(`<div class="span3">
 // URL: /admin
 // 后台管理首页
 func adminHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		http.Redirect(w, r, "/signin?next=/admin", http.StatusFound)
-		return
-	}
-
-	if !user.IsSuperuser {
-		message(w, r, "没有权限", "你没有后台管理权限", "error")
-		return
-	}
-
 	renderTemplate(w, r, "admin/index.html", map[string]interface{}{"adminNav": ADMIN_NAV})
 }
 
 // URL: /admin/nodes
 // 列出所有的节点
 func adminListNodesHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		http.Redirect(w, r, "/signin?next=/admin/nodes", http.StatusFound)
-		return
-	}
-
-	if !user.IsSuperuser {
-		message(w, r, "没有权限", "你没有列出查看节点的权限", "error")
-		return
-	}
-
 	var nodes []Node
 	c := DB.C("nodes")
 	c.Find(nil).All(&nodes)
@@ -63,17 +41,6 @@ func adminListNodesHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /admin/site_categories
 // 列出所有的站点分类
 func adminListSiteCategoriesHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		http.Redirect(w, r, "/signin?next=/admin/site_categories", http.StatusFound)
-		return
-	}
-
-	if !user.IsSuperuser {
-		message(w, r, "没有权限", "你没有查看所有站点分类的权限", "error")
-		return
-	}
-
 	var categories []SiteCategory
 	c := DB.C("sitecategories")
 	c.Find(nil).All(&categories)
@@ -84,17 +51,6 @@ func adminListSiteCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /admin/site_category/new
 // 新建站点分类
 func adminNewSiteCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		http.Redirect(w, r, "/signin?next=/admin/site_category/new", http.StatusFound)
-		return
-	}
-
-	if !user.IsSuperuser {
-		message(w, r, "没有权限", "你没有新建站点分类的权限", "error")
-		return
-	}
-
 	form := wtforms.NewForm(
 		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),
 	)
@@ -133,17 +89,6 @@ func adminNewSiteCategoryHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /admin/node/new
 // 新建节点
 func adminNewNodeHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		http.Redirect(w, r, "/signin?next=/node/new", http.StatusFound)
-		return
-	}
-
-	if !user.IsSuperuser {
-		message(w, r, "没有权限", "你没有新建节点的权限", "error")
-		return
-	}
-
 	form := wtforms.NewForm(
 		wtforms.NewTextField("id", "ID", "", &wtforms.Required{}),
 		wtforms.NewTextField("name", "名称", "", &wtforms.Required{}),
@@ -194,17 +139,6 @@ func adminNewNodeHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /admin/users
 // 列出所有用户
 func adminListUsersHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		http.Redirect(w, r, "/signin?next=/admin/users", http.StatusFound)
-		return
-	}
-
-	if !user.IsSuperuser {
-		message(w, r, "没有权限", "你没有查看所有用户的权限", "error")
-		return
-	}
-
 	page, err := getPage(r)
 
 	if err != nil {
@@ -231,17 +165,6 @@ func adminListUsersHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /admin/user/{userId}/activate
 // 激活用户
 func adminActivateUserHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		http.Redirect(w, r, "/signin?next=/admin/users", http.StatusFound)
-		return
-	}
-
-	if !user.IsSuperuser {
-		message(w, r, "没有权限", "你没有激活用户的权限", "error")
-		return
-	}
-
 	userId := mux.Vars(r)["userId"]
 
 	c := DB.C("users")
@@ -252,17 +175,6 @@ func adminActivateUserHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /admin/article_categories
 // 列出所有的文章分类
 func adminListArticleCategoriesHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		http.Redirect(w, r, "/signin?next=/admin/article_categories", http.StatusFound)
-		return
-	}
-
-	if !user.IsSuperuser {
-		message(w, r, "没有权限", "你没有查看所有文章分类的权限", "error")
-		return
-	}
-
 	var categories []SiteCategory
 	c := DB.C("articlecategories")
 	c.Find(nil).All(&categories)
@@ -273,17 +185,6 @@ func adminListArticleCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /admin/article_category/new
 // 新建文章分类
 func adminNewArticleCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		http.Redirect(w, r, "/signin?next=/admin/article_category/new", http.StatusFound)
-		return
-	}
-
-	if !user.IsSuperuser {
-		message(w, r, "没有权限", "你没有新建文章分类的权限", "error")
-		return
-	}
-
 	form := wtforms.NewForm(
 		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),
 	)
@@ -322,17 +223,6 @@ func adminNewArticleCategoryHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /admin/package_categories
 // 列出所有的包分类
 func adminListPackageCategoriesHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		http.Redirect(w, r, "/signin?next=/admin/package_categories", http.StatusFound)
-		return
-	}
-
-	if !user.IsSuperuser {
-		message(w, r, "没有权限", "你没有查看所有包分类的权限", "error")
-		return
-	}
-
 	var categories []PackageCategory
 	c := DB.C("packagecategories")
 	c.Find(nil).All(&categories)
@@ -343,17 +233,6 @@ func adminListPackageCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /admin/package_category/new
 // 新建包分类
 func adminNewPackageCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		http.Redirect(w, r, "/signin?next=/admin/site_category/new", http.StatusFound)
-		return
-	}
-
-	if !user.IsSuperuser {
-		message(w, r, "没有权限", "你没有新建包分类的权限", "error")
-		return
-	}
-
 	form := wtforms.NewForm(
 		wtforms.NewTextField("id", "ID", "", wtforms.Required{}),
 		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),

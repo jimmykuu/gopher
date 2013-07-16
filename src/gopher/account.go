@@ -246,13 +246,7 @@ func followHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["username"]
 
-	// 检查当前用户是否存在
-	currUser, ok := currentUser(r)
-
-	if !ok {
-		http.Redirect(w, r, "/signin", http.StatusFound)
-		return
-	}
+	currUser, _ := currentUser(r)
 
 	//不能关注自己
 	if currUser.Username == username {
@@ -283,13 +277,7 @@ func unfollowHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["username"]
 
-	// 检查当前用户是否存在
-	currUser, ok := currentUser(r)
-
-	if !ok {
-		http.Redirect(w, r, "/", http.StatusFound)
-		return
-	}
+	currUser, _ := currentUser(r)
 
 	//不能取消关注自己
 	if currUser.Username == username {
@@ -320,12 +308,7 @@ func unfollowHandler(w http.ResponseWriter, r *http.Request) {
 // URL /profile
 // 用户设置页面,显示用户设置,用户头像,密码修改
 func profileHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-
-	if !ok {
-		http.Redirect(w, r, "/signin?next=/profile", http.StatusFound)
-		return
-	}
+	user, _ := currentUser(r)
 
 	profileForm := wtforms.NewForm(
 		wtforms.NewTextField("email", "电子邮件", user.Email, wtforms.Email{}),
@@ -447,12 +430,7 @@ type Sizer interface {
 // URL: /profile/avatar
 // 修改头像,提交到七牛云存储
 func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-
-	if !ok {
-		http.Redirect(w, r, "/signin?next=/profile/avatar", http.StatusFound)
-		return
-	}
+	user, _ := currentUser(r)
 
 	if r.Method == "POST" {
 		formFile, formHeader, err := r.FormFile("file")
@@ -552,12 +530,7 @@ func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /profile/choose_default_avatar
 // 选择默认头像
 func chooseDefaultAvatar(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-
-	if !ok {
-		http.Redirect(w, r, "/signin?next=/avatar/choose_default_avatar", http.StatusFound)
-		return
-	}
+	user, _ := currentUser(r)
 
 	if r.Method == "POST" {
 		avatar := r.FormValue("defaultAvatars")
@@ -574,12 +547,7 @@ func chooseDefaultAvatar(w http.ResponseWriter, r *http.Request) {
 // URL: /change_password
 // 修改密码
 func changePasswordHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-
-	if !ok {
-		http.Redirect(w, r, "/signin?next=/change_password", http.StatusFound)
-		return
-	}
+	user, _ := currentUser(r)
 
 	form := wtforms.NewForm(
 		wtforms.NewPasswordField("current_password", "当前密码", wtforms.Required{}),

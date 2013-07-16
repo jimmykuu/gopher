@@ -344,12 +344,7 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, ok := currentUser(r)
-
-	if !ok {
-		http.Redirect(w, r, "/signin", http.StatusFound)
-		return
-	}
+	user, _ := currentUser(r)
 
 	vars := mux.Vars(r)
 	contentId := vars["contentId"]
@@ -405,18 +400,6 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /comment/{commentId}/delete
 // 删除评论
 func deleteCommentHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-
-	if !ok {
-		http.Redirect(w, r, "/signin", http.StatusFound)
-		return
-	}
-
-	if !user.IsSuperuser {
-		message(w, r, "没有该权限", "对不起,你没有权限删除该评论", "error")
-		return
-	}
-
 	vars := mux.Vars(r)
 	var commentId string = vars["commentId"]
 

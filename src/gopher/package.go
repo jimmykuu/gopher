@@ -37,11 +37,7 @@ func packagesHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /package/new
 // 新建第三方包
 func newPackageHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		http.Redirect(w, r, "/signin", http.StatusFound)
-		return
-	}
+	user, _ := currentUser(r)
 
 	var categories []PackageCategory
 
@@ -101,11 +97,7 @@ func newPackageHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /package/{packageId}/edit
 // 编辑第三方包
 func editPackageHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		http.Redirect(w, r, "/signin", http.StatusFound)
-		return
-	}
+	user, _ := currentUser(r)
 
 	vars := mux.Vars(r)
 	packageId := vars["packageId"]
@@ -244,15 +236,6 @@ func showPackageHandler(w http.ResponseWriter, r *http.Request) {
 // URL: /p/{packageId}/delete
 // 删除第三方包
 func deletePackageHandler(w http.ResponseWriter, r *http.Request) {
-	user, ok := currentUser(r)
-	if !ok {
-		return
-	}
-
-	if !user.IsSuperuser {
-		return
-	}
-
 	vars := mux.Vars(r)
 	packageId := vars["packageId"]
 
