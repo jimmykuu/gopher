@@ -317,6 +317,7 @@ func adminNewLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		err = c.Insert(&LinkExchange{
+			Id_:         bson.NewObjectId(),
 			Name:        form.Value("name"),
 			URL:         form.Value("url"),
 			Description: form.Value("description"),
