@@ -10,12 +10,10 @@
 {{define "Content"}}
 	<div class="content">
 		<form action="/admin/article_category/new" method="post" class="form-horizontal">
-			<fieldset>
 			{{.form.Render "name" `class="span4"`}}
 			<div class="form-actions">
-					<input type="submit" class="btn btn-primary" value="新建">
-				</div>
-			</fieldset>
+				<input type="submit" class="btn btn-primary" value="新建">
+			</div>
 		</form>
 	</div>
 {{end}}

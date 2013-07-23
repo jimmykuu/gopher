@@ -342,3 +342,11 @@ func (p *Package) Category() *PackageCategory {
 
 	return &category
 }
+
+type LinkExchange struct {
+	Id_         bson.ObjectId `bon:"_id"`
+	Name        string        `bson:"name"`
+	URL         string        `bson:"url"`
+	Description string        `bson:"description"`
+	Logo        string        `bson:"logo"`
+}

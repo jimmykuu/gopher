@@ -45,14 +45,19 @@ func topicsHandler(w http.ResponseWriter, r *http.Request, conditions bson.M, so
 
 	query.All(&topics)
 
+	var linkExchanges []LinkExchange
+	c = DB.C("link_exchanges")
+	c.Find(nil).All(&linkExchanges)
+
 	renderTemplate(w, r, "index.html", map[string]interface{}{
-		"nodes":      hotNodes,
-		"status":     status,
-		"topics":     topics,
-		"pagination": pagination,
-		"page":       page,
-		"active":     "topic",
-		"subActive":  subActive,
+		"nodes":         hotNodes,
+		"status":        status,
+		"topics":        topics,
+		"linkExchanges": linkExchanges,
+		"pagination":    pagination,
+		"page":          page,
+		"active":        "topic",
+		"subActive":     subActive,
 	})
 }
 

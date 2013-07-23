@@ -20,6 +20,7 @@ const ADMIN_NAV = template.HTML(`<div class="span3">
 		<li><a href="/admin/article_categories"><i class="icon-chevron-right"></i> 文章分类管理</a></li>
 		<li><a href="/admin/package_categories"><i class="icon-chevron-right"></i> 包分类管理</a></li>
 		<li><a href="/admin/users"><i class="icon-chevron-right"></i> 用户管理</a></li>
+		<li><a href="/admin/link_exchanges"><i class="icon-chevron-right"></i> 友情链接</a></li>
 	</ul>
 </div>`)
 
@@ -268,4 +269,70 @@ func adminNewPackageCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	renderTemplate(w, r, "admin/new_package_category.html", map[string]interface{}{"adminNav": ADMIN_NAV, "form": form})
+}
+
+// URL: /admin/link_exchanges
+// 友情链接列表
+func adminListLinkExchangesHandler(w http.ResponseWriter, r *http.Request) {
+	c := DB.C("link_exchanges")
+	var linkExchanges []LinkExchange
+	c.Find(nil).All(&linkExchanges)
+
+	renderTemplate(w, r, "admin/link_exchanges.html", map[string]interface{}{
+		"adminNav":      ADMIN_NAV,
+		"linkExchanges": linkExchanges,
+	})
+}
+
+// ULR: /admin/link_exchange/new
+// 增加友链
+func adminNewLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
+	form := wtforms.NewForm(
+		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),
+		wtforms.NewTextField("url", "URL", "", wtforms.Required{}, wtforms.URL{}),
+		wtforms.NewTextField("description", "描述", "", wtforms.Required{}),
+		wtforms.NewTextField("logo", "Logo", ""),
+	)
+
+	if r.Method == "POST" {
+		if !form.Validate(r) {
+			renderTemplate(w, r, "admin/link_exchange_form.html", map[string]interface{}{
+				"adminNav": ADMIN_NAV,
+				"form":     form,
+			})
+			return
+		}
+
+		c := DB.C("link_exchanges")
+		var linkExchange LinkExchange
+		err := c.Find(bson.M{"url": form.Value("url")}).One(&linkExchange)
+
+		if err == nil {
+			form.AddError("url", "该URL已经有了")
+			renderTemplate(w, r, "admin/link_exchange_category.html", map[string]interface{}{
+				"adminNav": ADMIN_NAV,
+				"form":     form,
+			})
+			return
+		}
+
+		err = c.Insert(&LinkExchange{
+			Name:        form.Value("name"),
+			URL:         form.Value("url"),
+			Description: form.Value("description"),
+			Logo:        form.Value("logo"),
+		})
+
+		if err != nil {
+			panic(err)
+		}
+
+		http.Redirect(w, r, "/admin/link_exchanges", http.StatusFound)
+		return
+	}
+
+	renderTemplate(w, r, "admin/link_exchange_form.html", map[string]interface{}{
+		"adminNav": ADMIN_NAV,
+		"form":     form,
+	})
 }

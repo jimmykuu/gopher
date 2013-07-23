@@ -1,0 +1,34 @@
+{{define "Title"}}后台管理{{end}}
+{{define "Breadcrumb"}}
+	<ul class="breadcrumb">
+		<li>
+			<a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span>
+		</li>
+		<li>
+			<a href="/admin"><i class="icon-home"></i> 管理</a> <span class="divider">/</span>
+		</li>
+		<li>
+			<a href="/admin/link_exchanges"><i class="icon-home"></i> 友情链接</a> <span class="divider">/</span>
+		</li>
+		<li class="active">添加</li>
+	</ul>
+{{end}}
+{{define "Content"}}
+	<div class="content">
+		<form action="" method="post" class="form-horizontal">
+			{{.form.Render "name" `class="span4"`}}
+			{{.form.Render "url" `class="span6"`}}
+			{{.form.Render "description" `class="span6"`}}
+			{{.form.Render "logo" `class="span6"`}}
+			<div class="form-actions">
+				<input type="submit" class="btn btn-primary" value="新建">
+			</div>
+		</form>
+	</div>
+{{end}}
+
+{{define "LeftSide"}}
+	{{.adminNav}}
+{{end}}
+
+{{define "RightSide"}}{{end}}
