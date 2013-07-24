@@ -33,6 +33,8 @@ var (
 		Handler{"/admin/package_category/new", Administrator, adminNewPackageCategoryHandler},
 		Handler{"/admin/link_exchanges", Administrator, adminListLinkExchangesHandler},
 		Handler{"/admin/link_exchange/new", Administrator, adminNewLinkExchangeHandler},
+		Handler{"/admin/link_exchange/{linkExchangeId}/edit", Administrator, adminEditLinkExchangeHandler},
+		Handler{"/admin/link_exchange/{linkExchangeId}/delete", Administrator, adminDeleteLinkExchangeHandler},
 
 		Handler{"/signup", Everyone, signupHandler},
 		Handler{"/signin", Everyone, signinHandler},

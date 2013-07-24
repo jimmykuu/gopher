@@ -344,7 +344,7 @@ func (p *Package) Category() *PackageCategory {
 }
 
 type LinkExchange struct {
-	Id_         bson.ObjectId `bon:"_id"`
+	Id_         bson.ObjectId `bson:"_id"`
 	Name        string        `bson:"name"`
 	URL         string        `bson:"url"`
 	Description string        `bson:"description"`

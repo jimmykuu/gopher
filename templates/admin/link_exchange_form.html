@@ -1,4 +1,4 @@
-{{define "Title"}}后台管理{{end}}
+{{define "Title"}}后台管理：{{if .isNew}}添加{{else}}编辑{{end}}友情链接{{end}}
 {{define "Breadcrumb"}}
 	<ul class="breadcrumb">
 		<li>
@@ -10,7 +10,7 @@
 		<li>
 			<a href="/admin/link_exchanges"><i class="icon-home"></i> 友情链接</a> <span class="divider">/</span>
 		</li>
-		<li class="active">添加</li>
+		<li class="active">{{if .isNew}}添加{{else}}编辑{{end}}</li>
 	</ul>
 {{end}}
 {{define "Content"}}
@@ -21,7 +21,7 @@
 			{{.form.Render "description" `class="span6"`}}
 			{{.form.Render "logo" `class="span6"`}}
 			<div class="form-actions">
-				<input type="submit" class="btn btn-primary" value="新建">
+				<input type="submit" class="btn btn-primary" value="提交">
 			</div>
 		</form>
 	</div>

@@ -299,6 +299,7 @@ func adminNewLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
 			renderTemplate(w, r, "admin/link_exchange_form.html", map[string]interface{}{
 				"adminNav": ADMIN_NAV,
 				"form":     form,
+				"isNew":    true,
 			})
 			return
 		}
@@ -312,6 +313,7 @@ func adminNewLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
 			renderTemplate(w, r, "admin/link_exchange_category.html", map[string]interface{}{
 				"adminNav": ADMIN_NAV,
 				"form":     form,
+				"isNew":    true,
 			})
 			return
 		}
@@ -335,5 +337,65 @@ func adminNewLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, r, "admin/link_exchange_form.html", map[string]interface{}{
 		"adminNav": ADMIN_NAV,
 		"form":     form,
+		"isNew":    true,
 	})
+}
+
+// URL: /admin/link_exchange/{linkExchangeId}/edit
+// 编辑友情链接
+func adminEditLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
+	linkExchangeId := mux.Vars(r)["linkExchangeId"]
+
+	c := DB.C("link_exchanges")
+	var linkExchange LinkExchange
+	c.Find(bson.M{"_id": bson.ObjectIdHex(linkExchangeId)}).One(&linkExchange)
+
+	form := wtforms.NewForm(
+		wtforms.NewTextField("name", "名称", linkExchange.Name, wtforms.Required{}),
+		wtforms.NewTextField("url", "URL", linkExchange.URL, wtforms.Required{}, wtforms.URL{}),
+		wtforms.NewTextField("description", "描述", linkExchange.Description, wtforms.Required{}),
+		wtforms.NewTextField("logo", "Logo", linkExchange.Logo),
+	)
+
+	if r.Method == "POST" {
+		if !form.Validate(r) {
+			renderTemplate(w, r, "admin/link_exchange_form.html", map[string]interface{}{
+				"adminNav": ADMIN_NAV,
+				"form":     form,
+				"isNew":    false,
+			})
+			return
+		}
+
+		err := c.Update(bson.M{"_id": linkExchange.Id_}, bson.M{"$set": bson.M{
+			"name":        form.Value("name"),
+			"url":         form.Value("url"),
+			"description": form.Value("description"),
+			"logo":        form.Value("logo"),
+		}})
+
+		if err != nil {
+			panic(err)
+		}
+
+		http.Redirect(w, r, "/admin/link_exchanges", http.StatusFound)
+		return
+	}
+
+	renderTemplate(w, r, "admin/link_exchange_form.html", map[string]interface{}{
+		"adminNav": ADMIN_NAV,
+		"form":     form,
+		"isNew":    false,
+	})
+}
+
+// URL: /admin/link_exchange/{linkExchangeId}/delete
+// 删除友情链接
+func adminDeleteLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
+	linkExchangeId := mux.Vars(r)["linkExchangeId"]
+
+	c := DB.C("link_exchanges")
+	c.RemoveId(bson.ObjectIdHex(linkExchangeId))
+
+	w.Write([]byte("true"))
 }
