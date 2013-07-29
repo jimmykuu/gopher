@@ -31,6 +31,7 @@ var (
 		Handler{"/admin/article_category/new", Administrator, adminNewArticleCategoryHandler},
 		Handler{"/admin/package_categories", Administrator, adminListPackageCategoriesHandler},
 		Handler{"/admin/package_category/new", Administrator, adminNewPackageCategoryHandler},
+		Handler{"/admin/package_category/{id}/edit", Administrator, adminEditPackageCategoryHandler},
 		Handler{"/admin/link_exchanges", Administrator, adminListLinkExchangesHandler},
 		Handler{"/admin/link_exchange/new", Administrator, adminNewLinkExchangeHandler},
 		Handler{"/admin/link_exchange/{linkExchangeId}/edit", Administrator, adminEditLinkExchangeHandler},

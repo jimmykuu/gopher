@@ -8,6 +8,7 @@
 			<tr>
 				<th>ID</th>
 				<th>名称</th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -15,6 +16,9 @@
 			<tr>
 				<td>{{.Id}}</td>
 				<td>{{.Name}}</td>
+				<td>
+					<a href="/admin/package_category/{{.Id_.Hex}}/edit" class="btn btn-mini btn-info"><i class="icon icon-white icon-pencil"></i> 编辑</a>
+				</td>
 			</tr>
 		{{end}}
 		</tbody>

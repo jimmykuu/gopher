@@ -268,7 +268,45 @@ func adminNewPackageCategoryHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/admin/package_category/new", http.StatusFound)
 	}
 
-	renderTemplate(w, r, "admin/new_package_category.html", map[string]interface{}{"adminNav": ADMIN_NAV, "form": form})
+	renderTemplate(w, r, "admin/package_category_form.html", map[string]interface{}{
+		"adminNav": ADMIN_NAV,
+		"form":     form,
+		"isNew":    true,
+	})
+}
+
+// URL: /admin/package_category/{id}/edit
+// 修改包分类
+func adminEditPackageCategoryHandler(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	c := DB.C("packagecategories")
+	var category PackageCategory
+	c.Find(bson.M{"_id": bson.ObjectIdHex(id)}).One(&category)
+
+	form := wtforms.NewForm(
+		wtforms.NewTextField("id", "ID", category.Id, wtforms.Required{}),
+		wtforms.NewTextField("name", "名称", category.Name, wtforms.Required{}),
+	)
+
+	if r.Method == "POST" {
+		if !form.Validate(r) {
+			renderTemplate(w, r, "admin/new_package_category.html", map[string]interface{}{"adminNav": ADMIN_NAV, "form": form})
+			return
+		}
+
+		c.Update(bson.M{"_id": bson.ObjectIdHex(id)}, bson.M{"$set": bson.M{
+			"id":   form.Value("id"),
+			"name": form.Value("name"),
+		}})
+
+		http.Redirect(w, r, "/admin/package_categories", http.StatusFound)
+	}
+
+	renderTemplate(w, r, "admin/package_category_form.html", map[string]interface{}{
+		"adminNav": ADMIN_NAV,
+		"form":     form,
+		"isNew":    false,
+	})
 }
 
 // URL: /admin/link_exchanges

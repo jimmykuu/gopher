@@ -1,23 +1,24 @@
-{{define "Title"}}新建包分类{{end}}
+{{define "Title"}}{{if .isNew}}添加{{else}}编辑{{end}}包分类{{end}}
 {{define "Breadcrumb"}}
 <ul class="breadcrumb">
 	<li>
 		<a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span>
 	</li>
-	<li class="active">新建包分类</li>
+	<li>
+		<a href="/admin/package_categories"><i class="icon-home"></i> 包分类</a> <span class="divider">/</span>
+	</li>
+	<li class="active">{{if .isNew}}添加{{else}}编辑{{end}}</li>
 </ul>
 {{end}}
 
 {{define "Content"}}
 <div class="content">
-	<form action="/admin/package_category/new" method="post" class="form-horizontal">
-		<fieldset>
+	<form action="" method="post" class="form-horizontal">
 		{{.form.Render "id" `class="span4"`}}
 		{{.form.Render "name" `class="span4"`}}
 		<div class="form-actions">
-				<input type="submit" class="btn btn-primary" value="新建">
-			</div>
-		</fieldset>
+			<input type="submit" class="btn btn-primary" value="提交">
+		</div>
 	</form>
 </div>
 {{end}}
