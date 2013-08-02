@@ -350,3 +350,10 @@ type LinkExchange struct {
 	Description string        `bson:"description"`
 	Logo        string        `bson:"logo"`
 }
+
+type AD struct {
+	Id_      bson.ObjectId `bson:"_id"`
+	Position string        `bson:"position"`
+	Name     string        `bson:"name"`
+	Code     string        `bson:"code"`
+}

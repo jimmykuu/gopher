@@ -36,6 +36,10 @@ var (
 		Handler{"/admin/link_exchange/new", Administrator, adminNewLinkExchangeHandler},
 		Handler{"/admin/link_exchange/{linkExchangeId}/edit", Administrator, adminEditLinkExchangeHandler},
 		Handler{"/admin/link_exchange/{linkExchangeId}/delete", Administrator, adminDeleteLinkExchangeHandler},
+		Handler{"/admin/ads", Administrator, adminListAdsHandler},
+		Handler{"/admin/ad/new", Administrator, adminNewAdHandler},
+		Handler{"/admin/ad/{id}/delete", Administrator, adminDeleteAdHandler},
+		Handler{"/admin/ad/{id}/edit", Administrator, adminEditAdHandler},
 
 		Handler{"/signup", Everyone, signupHandler},
 		Handler{"/signin", Everyone, signinHandler},

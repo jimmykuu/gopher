@@ -122,6 +122,24 @@ func (u *Utils) Truncate(html template.HTML, length int) string {
 	return webhelpers.Truncate(text, length, "...")
 }
 
+func (u *Utils) HTML(str string) template.HTML {
+	return template.HTML(str)
+}
+
+func (u *Utils) HasAd(position string) bool {
+	c := DB.C("ads")
+	count, _ := c.Find(bson.M{"position": position}).Limit(1).Count()
+	return count == 1
+}
+
+func (u *Utils) AdCode(position string) template.HTML {
+	c := DB.C("ads")
+	var ad AD
+	c.Find(bson.M{"position": position}).Limit(1).One(&ad)
+
+	return template.HTML(ad.Code)
+}
+
 func (u *Utils) AssertUser(i interface{}) *User {
 	v, _ := i.(User)
 	return &v

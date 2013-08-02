@@ -70,18 +70,11 @@
 		<div class="well sidebar-nav">
 			<a href="/topic/new" class="btn btn-success">发表话题</a>
 		</div>
+		{{if .utils.HasAd "frongpage"}}
 		<div class="well sidebar-nav">
-			<script type="text/javascript"><!--
-				google_ad_client = "ca-pub-5190516409239915";
-				/* frontpage */
-				google_ad_slot = "4526465858";
-				google_ad_width = 250;
-				google_ad_height = 250;
-				//-->
-			</script>
-			<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-			</script>
+			{{.utils.AdCode "frongpage"}}
 		</div>
+		{{end}}
 		<div class="well sidebar-nav">
 			<h4><small>最热节点</small></h4>
 			<hr>
