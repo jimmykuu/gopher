@@ -91,5 +91,7 @@ var (
 		Handler{"/p/{packageId}", Everyone, showPackageHandler},
 		Handler{"/p/{packageId}/edit", Authenticated, editPackageHandler},
 		Handler{"/p/{packageId}/delete", Administrator, deletePackageHandler},
+
+		Handler{"/download", Everyone, downloadHandler},
 	}
 )
