@@ -1,0 +1,73 @@
+[
+	{
+		"version": "go1.1.2",
+		"files": [
+			{
+				"filename": "go1.1.2.darwin-386.pkg",
+				"summary": "go1.1.2 Mac OS X (x86 32-bit) PKG installer",
+				"size": "31.2 MB",
+				"sha1": "3f7b742ec762e91aa32059dc97489e0ea499c0b7"
+			}, {
+				"filename": "go1.1.2.darwin-386.tar.gz",
+				"summary": "go1.1.2.darwin-386.tar.gz",
+				"size": "31.0 MB",
+				"sha1": "5ea1f07354498dd5724f88afc474bf87bd9a5f6b"
+			}, {
+				"filename": "go1.1.2.darwin-amd64.pkg",
+				"summary": "go1.1.2 Mac OS X (x86 64-bit) PKG installer",
+				"size": "40.6 MB",
+				"sha1": "357236fb350a51865f2d27510df5fed8dae2baf5"
+			}, {
+				"filename": "go1.1.2.darwin-amd64.tar.gz",
+				"summary": "go1.1.2 Mac OS X (x86 64-bit) tarball",
+				"size": "40.4 MB",
+				"sha1": "038f5a94ec8c631a5a50ee94f6fc8c7a00c11aa9"
+			},
+			{
+				"filename": "go1.1.2.freebsd-386.tar.gz",
+				"summary": "go1.1.2 FreeBSD (x86 32-bit) tarball",
+				"size": "30.3 MB",
+				"sha1": "ad7642eadb744ba6088c388b17c68eca860a43f7"
+			}, {
+				"filename": "go1.1.2.freebsd-amd64.tar.gz",
+				"summary": "go1.1.2 FreeBSD (x86 64-bit) tarball",
+				"size": "30.8 MB",
+				"sha1": "8573ec318d1f7624233c51d69e94bc4d6bafb74c"
+			}, {
+				"filename": "go1.1.2.linux-386.tar.gz",
+				"summary": "go1.1.2 Linux (x86 32-bit) tarball",
+				"size": "30.3 MB",
+				"sha1": "42334112e5ba7fcd1a58de0a85ff2668e446cd0b"
+			}, {
+				"filename": "go1.1.2.linux-amd64.tar.gz",
+				"summary": "go1.1.2 Linux (x86 64-bit) tarball",
+				"size": "39.8 MB",
+				"sha1": "42634e25f98a5db1e8a2a8270c3604fcf8fed38d"
+			}, {
+				"filename": "go1.1.2.src.tar.gz",
+				"summary": "go1.1.2 (source only)",
+				"size": "8.6 MB",
+				"sha1": "f5ab02bbfb0281b6c19520f44f7bc26f9da563fb"
+			}, {
+				"filename": "go1.1.2.windows-386.msi",
+				"summary": "go1.1.2 Windows (x86 32-bit) MSI installer",
+				"size": "26.8 MB",
+				"sha1": "f3d208342a69642d8f327e7126f355172fc8ed8a"
+			}, {
+				"filename": "go1.1.2.windows-386.zip",
+				"summary": "go1.1.2 Windows (x86 32-bit) ZIP archive",
+				"size": "32.7 MB",
+				"sha1": "f98d0fb3d31beb6587c265d220da7b17e302de4c"
+			}, {
+				"filename": "go1.1.2.windows-amd64.msi",
+				"summary": "go1.1.2 Windows (x86 64-bit) MSI installer",
+				"size": "34.4 MB",
+				"sha1": "61a3853e9e20b1228c16267bca572ca96d2a0da8"
+			}, {
+				"filename": "go1.1.2.windows-amd64.zip",
+				"summary": "go1.1.2 Windows (x86 64-bit) ZIP archive",
+				"size": "43.4 MB"
+			}
+		]
+	}
+]
