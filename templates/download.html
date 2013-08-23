@@ -2,6 +2,12 @@
 {{define "Breadcrumb"}}{{end}}
 {{define "Content"}}
 	<div class="content">
+		<div class="page-header">
+			<h1>Golang下载</h1>
+		</div>
+		<div class="alert alert-info">
+			请使用右键“链接存储为...”
+		</div>
 		<div class="accordion" id="accordion2">
 			{{range $index, $version := .versions}}
 				<div class="accordion-group">
@@ -17,13 +23,18 @@
 							<th>Filename</th>
 							<th>Summary + Labels</th>
 							<th>Size</th>
+							<th>Download</th>
 						</thead>
 						<tbody>
 							{{range $file := $version.Files}}
 								<tr>
-									<td><a href="/static/go/{{$file.Filename}}"><i class="icon-download"></i> {{$file.Filename}}</a></td>
+									<td>{{$file.Filename}}</td>
 									<td>{{$file.Summary}}</td>
 									<td>{{$file.Size}}</td>
+									<td>
+										<a href="/static/go/{{$file.Filename}}" class="btn btn-info"><i class="icon-white icon-download"></i> 本地下载</a>
+										<a href="http://gopher.qiniudn.com/download/go/{{$file.Filename}}" class="btn btn-success"><i class="icon-white icon-download"></i> 七牛下载</a>
+									</td>
 								</tr>
 							{{end}}
 						</tbody>
