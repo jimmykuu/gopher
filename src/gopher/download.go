@@ -14,6 +14,7 @@ type File struct {
 	Summary  string `json:"summary"`
 	Size     string `json:"size"`
 	SHA1     string `json:"sha1"`
+	URL      string `json:"url"`
 }
 
 type Version struct {
