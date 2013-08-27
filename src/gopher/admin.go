@@ -13,7 +13,7 @@ import (
 )
 
 // 管理页面的子菜单
-const ADMIN_NAV = template.HTML(`<div class="span3">
+const ADMIN_NAV = template.HTML(`<div class="col-lg-3">
 	<ul class="nav nav-list" id="admin-sidebar">
 		<li><a href="/admin/nodes"><i class="icon-chevron-right"></i>节点管理</a></li>
 		<li><a href="/admin/site_categories"><i class="icon-chevron-right"></i> 站点分类管理</a></li>
@@ -242,7 +242,7 @@ func adminNewPackageCategoryHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		if !form.Validate(r) {
-			renderTemplate(w, r, "admin/new_package_category.html", map[string]interface{}{"adminNav": ADMIN_NAV, "form": form})
+			renderTemplate(w, r, "admin/package_category_form.html", map[string]interface{}{"adminNav": ADMIN_NAV, "form": form})
 			return
 		}
 
@@ -252,7 +252,7 @@ func adminNewPackageCategoryHandler(w http.ResponseWriter, r *http.Request) {
 
 		if err == nil {
 			form.AddError("name", "该名称已经有了")
-			renderTemplate(w, r, "admin/new_package_category.html", map[string]interface{}{"adminNav": ADMIN_NAV, "form": form})
+			renderTemplate(w, r, "admin/package_category_form.html", map[string]interface{}{"adminNav": ADMIN_NAV, "form": form})
 			return
 		}
 

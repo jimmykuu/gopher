@@ -1,26 +1,22 @@
 {{define "Title"}}后台管理：{{if .isNew}}添加{{else}}编辑{{end}}广告{{end}}
 {{define "Breadcrumb"}}
 	<ul class="breadcrumb">
-		<li>
-			<a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span>
-		</li>
-		<li>
-			<a href="/admin"><i class="icon-home"></i> 管理</a> <span class="divider">/</span>
-		</li>
-		<li>
-			<a href="/admin/ads"><i class="icon-home"></i> 广告</a> <span class="divider">/</span>
-		</li>
+		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
+		<li><a href="/admin">管理</a></li>
+		<li><a href="/admin/ads">广告</a></li>
 		<li class="active">{{if .isNew}}添加{{else}}编辑{{end}}</li>
 	</ul>
 {{end}}
 {{define "Content"}}
 	<div class="content">
-		<form action="" method="post" class="form-horizontal">
-			{{.form.Render "position" `class="span4"`}}
-			{{.form.Render "name" `class="span4"`}}
-			{{.form.Render "code" `class="span6"` `rows="8"`}}
-			<div class="form-actions">
-				<input type="submit" class="btn btn-primary" value="提交">
+		<form action="" method="post" class="form-horizontal" role="form">
+			{{.utils.RenderInputH .form "position" 2 6}}
+			{{.utils.RenderInputH .form "name" 2 6}}
+			{{.utils.RenderInputH .form "code" 2 10 `rows="8"`}}
+			<div class="form-group">
+				<div class="col-lg-offset-2 col-lg-10">
+					<input type="submit" class="btn btn-primary" value="提交">
+				</div>
 			</div>
 		</form>
 	</div>

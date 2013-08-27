@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/jimmykuu/webhelpers"
+	"github.com/jimmykuu/wtforms"
 	"html/template"
 	"io"
 	"labix.org/v2/mgo"
@@ -109,9 +110,9 @@ func (u *Utils) UserInfo(username string) template.HTML {
 	c.Find(bson.M{"username": username}).One(&user)
 
 	format := `<div>
-      <a href="/member/%s"><img class="gravatar img-rounded" src="%s-middle" style="float:left;"></a>
-      <h3><a href="/member/%s">%s</a></h3>
-      <div class="clearfix"></div>
+        <a href="/member/%s"><img class="gravatar img-rounded" src="%s-middle" style="float:left;"></a>
+        <h3><a href="/member/%s">%s</a></h3>
+        <div class="clearfix"></div>
     </div>`
 
 	return template.HTML(fmt.Sprintf(format, username, user.AvatarImgSrc(), username, username))
@@ -124,6 +125,67 @@ func (u *Utils) Truncate(html template.HTML, length int) string {
 
 func (u *Utils) HTML(str string) template.HTML {
 	return template.HTML(str)
+}
+
+func (u *Utils) RenderInput(form wtforms.Form, fieldStr string, inputAttrs ...string) template.HTML {
+	field, err := form.Field(fieldStr)
+	if err != nil {
+		panic(err)
+	}
+
+	errorClass := ""
+
+	if field.HasErrors() {
+		errorClass = " has-error"
+	}
+
+	format := `<div class="form-group%s">
+        %s
+        %s
+        %s
+    </div>`
+
+	var inputAttrs2 []string = []string{`class="form-control"`}
+	inputAttrs2 = append(inputAttrs2, inputAttrs...)
+
+	return template.HTML(
+		fmt.Sprintf(format,
+			errorClass,
+			field.RenderLabel(),
+			field.RenderInput(inputAttrs2...),
+			field.RenderErrors()))
+}
+
+func (u *Utils) RenderInputH(form wtforms.Form, fieldStr string, labelWidth, inputWidth int, inputAttrs ...string) template.HTML {
+	field, err := form.Field(fieldStr)
+	if err != nil {
+		panic(err)
+	}
+
+	errorClass := ""
+
+	if field.HasErrors() {
+		errorClass = " has-error"
+	}
+	format := `<div class="form-group%s">
+        %s
+        <div class="col-lg-%d">
+            %s%s
+        </div>
+    </div>`
+	labelClass := fmt.Sprintf(`class="col-lg-%d control-label"`, labelWidth)
+
+	var inputAttrs2 []string = []string{`class="form-control"`}
+	inputAttrs2 = append(inputAttrs2, inputAttrs...)
+
+	return template.HTML(
+		fmt.Sprintf(format,
+			errorClass,
+			field.RenderLabel(labelClass),
+			inputWidth,
+			field.RenderInput(inputAttrs2...),
+			field.RenderErrors(),
+		))
 }
 
 func (u *Utils) HasAd(position string) bool {
@@ -164,6 +226,38 @@ func (u *Utils) AssertPackage(i interface{}) *Package {
 	v, _ := i.(Package)
 	return &v
 }
+
+// 在模板中渲染成表单控件
+// func (u *Utils) Input(form wtforms.Form, fieldName string, attrs ...string) template.HTML {
+// 	field, err := form.Field(fieldName)
+
+// 	if err != nil {
+// 		panic(err)
+// 	}
+
+// 	errClass := ""
+// 	if field.HasErrors() {
+// 		errClass = " has-error"
+// 	}
+
+// 	return template.HTML(fmt.Sprintf(`<div class="form-group%s">%s%s%s</div>`, errClass, field.RenderLabel(), field.RenderInput(attrs), field.RenderErrors()))
+// }
+
+// 在模板中渲染成表单控件, 水平排列
+// func (u *Utils) InputH(form wtforms.Form, fieldName string, attrs ...string) template.HTML {
+// 	field, err := form.Field(fieldName)
+
+// 	if err != nil {
+// 		panic(err)
+// 	}
+
+// 	errClass := ""
+// 	if field.HasErrors() {
+// 		errClass = " has-error"
+// 	}
+
+// 	return template.HTML(fmt.Sprintf(`<div class="form-group%s">%s%s%s</div>`, errClass, field.RenderLabel(`class="control-label"`), field.RenderInput(attrs), field.RenderErrors()))
+// }
 
 func message(w http.ResponseWriter, r *http.Request, title string, message string, class string) {
 	renderTemplate(w, r, "message.html", map[string]interface{}{"title": title, "message": template.HTML(message), "class": class})

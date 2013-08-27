@@ -1,22 +1,23 @@
 {{define "Title"}}{{.title}}酷站{{end}}
 {{define "Breadcrumb"}}
 	<ul class="breadcrumb">
-		<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
-		<li><a href="/sites">酷站</a> <span class="divider">/</span></li>
+		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
+		<li><a href="/sites">酷站</a></li>
 		<li class="active">{{.title}}</li>
 	</ul>
 {{end}}
 {{define "Content"}}
 	<div class="content">
-		<form action="{{.action}}" method="post" class="form-horizontal">
+		<form action="{{.action}}" method="post" class="form-horizontal" role="form">
 			<fieldset>
-				{{.form.Render "name" `class="span3"`}}
-				{{.form.Render "url" `class="span6"` `placeholder="http://或https://"`}}
-				{{.form.Render "description" `class="span6"` `rows="4"`}}
-				{{.form.Render "category"}}
-				
-				<div class="form-actions">
-					<input type="submit" class="btn btn-primary" value="{{.title}}">
+				{{.utils.RenderInputH .form "name" 2 10}}
+				{{.utils.RenderInputH .form "url" 2 10 `placeholder="http://或https://"`}}
+				{{.utils.RenderInputH .form "description" 2 10 `rows="4"`}}
+				{{.utils.RenderInputH .form "category" 2 6}}
+				<div class="form-group">
+					<div class="col-lg-offset-2 col-lg-6">
+						<input type="submit" class="btn btn-primary" value="{{.title}}">
+					</div>
 				</div>
 			</fieldset>
 		</form>

@@ -33,8 +33,8 @@
 				{{end}}
 				<a href="/t/{{.Id_.Hex}}" class="title">{{.Title}}</a>
 				<div class="space"></div>
-				<div class="info">
-					<a class="label" href="/go/{{.Node.Id}}">{{.Node.Name}}</a> • 
+				<div class="info" style="margin-left:60px">
+					<a class="label label-info" href="/go/{{.Node.Id}}">{{.Node.Name}}</a> • 
 					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
 					{{if .CommentCount}}
 						{{$utils.FormatTime .LatestRepliedAt}} • 最后回复来自 <a href="/member/{{.LatestReplier.Username}}">{{.LatestReplier.Username}}</a>
@@ -54,7 +54,7 @@
 {{define "LeftSide"}}{{end}}
 
 {{define "RightSide"}}
-	<div class="span3">
+	<div class="col-lg-3">
 		<div class="well sidebar-nav">
 			{{if .username}}
 				{{.utils.UserInfo .username}}

@@ -5,13 +5,14 @@
 	<meta name="keywords" content="Golang, Golang中国, Golang China, Go语言, Golang 中国, Golang社区, Golang 社区" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>{{template "Title" .}} - Golang中国</title>
-	<link rel="stylesheet" href="http://libs.baidu.com/bootstrap/2.3.2/css/bootstrap.min.css" type="text/css">
-	<link rel="stylesheet" href="http://libs.baidu.com/bootstrap/2.3.2/css/bootstrap-responsive.min.css" type="text/css">
+	<!-- <link rel="stylesheet" href="http://cdn.staticfile.org/twitter-bootstrap/3.0.0-rc1/css/bootstrap.min.css" type="text/css"> -->
+	<!-- <link rel="stylesheet" href="http://libs.baidu.com/bootstrap/2.3.2/css/bootstrap-responsive.min.css" type="text/css"> -->
+	<link rel="stylesheet" href="http://cdn.staticfile.org/twitter-bootstrap/3.0.0/css/bootstrap.min.css">
 	<link rel="stylesheet" href="http://gopher.qiniudn.com/static/css/wmd.css" type="text/css">
-	<link rel="stylesheet" href="http://gopher.qiniudn.com/static/css/style.css?v={{.staticFileVersion}}" type="text/css">
+	<link rel="stylesheet" href="/static/css/style.css" type="text/css">
 	<link rel="stylesheet" href="http://gopher.qiniudn.com/static/css/prettify.css" type="text/css">
 	<script type="text/javascript" src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
-	<script type="text/javascript" src="http://libs.baidu.com/bootstrap/2.3.2/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="http://cdn.staticfile.org/twitter-bootstrap/3.0.0/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/prettify.js"></script>
 	<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/application.js?v={{.staticFileVersion}}"></script>
 	<link rel="shortcut icon" href="/static/favicon.ico">
@@ -21,25 +22,25 @@
 		<div class="container">
 			<a class="brand" href="/"><img src="http://gopher.qiniudn.com/static/img/golang-china.png"></a>
 			{{if .username}}
-			<ul class="nav pull-right" style="margin-top: 1em;">
+			<ul class="nav navbar-nav pull-right" style="margin-top: 1em;">
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
 						我的空间
 						<b class="caret"></b>
 					</a>
-					<ul class="dropdown-menu">
-						<li><a href="/profile"><i class="icon-cog"></i> 设置</a></li>
-						<li><a href="/change_password"><i class="icon-edit"></i> 修改密码</a></li>
+                    <ul class="dropdown-menu" role="menu">
+						<li><a href="/profile"><i class="glyphicon glyphicon-cog"></i> 设置</a></li>
+						<li><a href="/change_password"><i class="glyphicon glyphicon-edit"></i> 修改密码</a></li>
 						{{if .isSuperUser}}
-							<li><a href="/admin"><i class="icon-wrench"></i> 管理</a></li>
+							<li><a href="/admin"><i class="glyphicon glyphicon-wrench"></i> 管理</a></li>
 						{{end}}
 						<li class="divider"></li>
-						<li><a href="/signout"><i class="icon-off"></i> 登出</a></li>
+						<li><a href="/signout"><i class="glyphicon glyphicon-off"></i> 登出</a></li>
 					</ul>
 				</li>
 			</ul>
 			{{end}}
-			<div class="pull-right" style="margin-top: 1em;">
+			<div class="pull-right" style="margin-top: 2em;">
 				{{if .username}}
 					{{.username}}，你好 &nbsp;&nbsp;
 				{{else}}
@@ -50,9 +51,17 @@
 		</div>
 	</header>
 	<div class="container">
-		<div class="navbar">
-			<div class="navbar-inner">
-				<ul class="nav" id="menu">
+        <nav class="navbar navbar-default" role="navigation" style="z-index: 0;">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				</button>
+			</div>
+			<div class="collapse navbar-collapse navbar-ex1-collapse">
+				<ul class="nav navbar-nav" id="menu">
 					<li class="nav-community{{if .utils.Equal .active "topic"}} active{{end}}"><a href="/">社区</a></li>
 					<li class="nav-articles{{if .utils.Equal .active "article"}} active{{end}}"><a href="/articles">文章</a></li>
 					<li class="nav-sites{{if .utils.Equal .active "site"}} active{{end}}"><a href="/sites">酷站</a></li>
@@ -60,16 +69,18 @@
 					<li class="nav-members{{if .utils.Equal .active "members"}} active{{end}}"><a href="/members">会员</a></li>
 					<li class="nav-tour"><a href="http://tour.golang.tc" target="_blank">Go 指南</a></li>
 				</ul>
-				<form action="/search" class="navbar-search pull-right" method="get">
-					<input name="q" type="text" class="search-query" placeholder="搜索">
+				<form action="/search" class="navbar-form pull-right" method="get" role="search">
+					<div class="form-group">
+						<input name="q" type="text" class="form-control" placeholder="搜索">
+					</div>
 				</form>
 			</div>
-		</div>
+		</nav>
 	</div>
 	<div class="container">
 		<div class="row">
 			{{template "LeftSide" .}}
-			<div class="span9">
+			<div class="col-lg-9">
 			{{template "Breadcrumb" .}}
 			{{template "Content" .}}
 			</div>
@@ -97,7 +108,7 @@
 				<a href="http://www.golang.org" target="_blank"><img src="http://gopher.qiniudn.com/static/img/Golang.png" title="Golang"></a>
 				<a href="http://www.mongodb.org/" target="_blank"><img src="http://gopher.qiniudn.com/static/img/PoweredMongoDBbeige50.png" title="MongoDB"></a>
 				<a href="http://www.linode.com/?r=2bbf272ff1d5457dfcc269442534b20cae7b7fc4" target="_blank"><img src="http://gopher.qiniudn.com/static/img/linode.png" title="linode"></a>
-				<a href="http://www.qiniutek.com/" target="_blank"><img src="http://qiniutek.com/images/logo-2.png" title="七牛云存储"></a>
+				<a href="http://www.qiniu.com/" target="_blank"><img src="http://qiniutek.com/images/logo-2.png" title="七牛云存储"></a>
 			</p>
 		</div>
 	</footer>

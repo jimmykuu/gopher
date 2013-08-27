@@ -2,9 +2,9 @@
 {{define "Breadcrumb"}}
 	{{$article := .utils.AssertArticle .article}}
 	<ul class="breadcrumb">
-		<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
-		<li><a href="/articles">文章</a></li> <span class="divider">/</span></li>
-		<li><a href="#">{{$article.Category.Name}}</a>
+		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
+		<li><a href="/articles">文章</a></li></li>
+		<li>{{$article.Category.Name}}</li>
 	</ul>
 {{end}}
 {{define "Content"}}
@@ -55,17 +55,21 @@
 	</div>
 	{{if .username}}
 		<div id="reply">
-			<form action="/comment/{{$article.Id_.Hex}}" method="post" class="form-vertical" id="reply-form">
+			<form action="/comment/{{$article.Id_.Hex}}" method="post" id="reply-form" role="form">
 				<fieldset>
 					<input type="hidden" name="html" id="html">
 					<label for="wmd-input">评论</label>
-					<div class="wmd-panel">
-					<div id="wmd-button-bar"></div>
-						<textarea class="wmd-input span9" id="wmd-input" name="content" rows="6"></textarea>
+					<div class="form-group">
+						<div class="wmd-panel">
+						<div id="wmd-button-bar"></div>
+							<textarea class="wmd-input form-control" id="wmd-input" name="content" rows="6"></textarea>
+						</div>
 					</div>
-					<label>预览</label>
-					<div id="wmd-preview" class="wmd-panel wmd-preview"></div>
-					<div class="form-actions">
+					<div class="form-group">
+						<label>预览</label>
+						<div id="wmd-preview" class="wmd-panel wmd-preview"></div>
+					</div>
+					<div class="form-group">
 						<input type="submit" class="btn btn-primary" value="发表评论" id="submit" disabled>
 					</div>
 				</fieldset>
@@ -110,7 +114,7 @@
 
 {{define "RightSide"}}
 	{{$article := .utils.AssertArticle .article}}
-	<div class="span3">
+	<div class="col-lg-3">
 		<div class="well sidebar-nav">
 			
 		</div>

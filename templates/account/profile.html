@@ -1,36 +1,78 @@
 {{define "Title"}}设置{{end}}
 {{define "Breadcrumb"}}
 	<ul class="breadcrumb">
-		<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
+		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
 		<li class="active">设置</li>
 	</ul>
 {{end}}
 {{define "Content"}}
 	<div class="content">
-		<form action="/profile" method="post" class="form-horizontal">
-			<div class="control-group">
-				<label class="control-label">用户名</label>
-				<div class="controls">
-					<span type="text" class="input-xlarge uneditable-input">{{.user.Username}}</span>
+		<form action="/profile" method="post" class="form-horizontal" role="form">
+			<div class="form-group">
+				<label class="col-lg-2 control-label">用户名</label>
+				<div class="col-lg-6">
+                     <p class="form-control-static">{{.user.Username}}</p>
 				</div>
 			</div>
-			{{.profileForm.Render "email" `class="input-xlarge"`}}
-			{{.profileForm.Render "website" `class="input-xlarge"`}}
-			{{.profileForm.Render "location" `class="input-xlarge"`}}
-			{{.profileForm.Render "tagline" `class="span6"`}}
-			{{.profileForm.Render "bio" `class="span6"` `rows="6"`}}
+            {{$email := .profileForm.Field "email"}}
+            <div class="form-group">
+                {{$email.RenderLabel `class="col-lg-2 control-label"`}}
+                <div class="col-lg-10">
+                    {{$email.RenderInput `class="form-control"`}}
+                </div>
+            </div>
+            {{$website := .profileForm.Field "website"}}
+            <div class="form-group">
+                {{$website.RenderLabel `class="col-lg-2 control-label"`}}
+                <div class="col-lg-10">
+                    {{$website.RenderInput `class="form-control"`}}
+                </div>
+            </div>
+            {{$location := .profileForm.Field "location"}}
+            <div class="form-group">
+                {{$location.RenderLabel `class="col-lg-2 control-label"`}}
+                <div class="col-lg-10">
+                    {{$location.RenderInput `class="form-control"`}}
+                </div>
+            </div>
+            {{$tagline := .profileForm.Field "tagline"}}
+            <div class="form-group">
+                {{$tagline.RenderLabel `class="col-lg-2 control-label"`}}
+                <div class="col-lg-10">
+                    {{$tagline.RenderInput `class="form-control"`}}
+                </div>
+            </div>
+            {{$bio := .profileForm.Field "bio"}}
+            <div class="form-group">
+                {{$bio.RenderLabel `class="col-lg-2 control-label"`}}
+                <div class="col-lg-10">
+                    {{$bio.RenderInput `class="form-control"`}}
+                </div>
+            </div>
 			<hr>
-			{{.profileForm.Render "github_username"}}
-			<div class="control-group">
-				{{.profileForm.RenderLabel "weibo"}}
-				<div class="input-prepend" style="margin-left: 20px;">
-					<span class="add-on">http://weibo.com/</span>
-					{{.profileForm.RenderInput "weibo"}}
-				</div>
-			</div>
-			<div class="form-actions">
-				<input type="submit" class="btn btn-primary" value="保存设置">
-			</div>
+            {{$github_username := .profileForm.Field "github_username"}}
+            <div class="form-group">
+                {{$github_username.RenderLabel `class="col-lg-2 control-label"`}}
+                <div class="col-lg-10">
+                    {{$github_username.RenderInput `class="form-control"`}}
+                </div>
+            </div>
+            {{$weibo := .profileForm.Field "weibo"}}
+            <div class="form-group">
+                {{$weibo.RenderLabel `class="col-lg-2 control-label"`}}
+                <div class="col-lg-10">
+                    <div class="input-group">
+                        <span class="input-group-addon">http://weibo.com/</span>
+                        {{$weibo.RenderInput `class="form-control"`}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-lg-offset-2 col-lg-10">
+                    <input type="submit" class="btn btn-primary" value="保存设置">
+                </div>
+            </div>
 		</form>
 	</div>
 
@@ -45,14 +87,15 @@
 			<img class="img-rounded" src="{{.user.AvatarImgSrc}}-small">
 		</p>
 		<p><br><br></p>
-		<ul class="nav nav-tabs" id="avatar-tab">
+        <ul class="nav nav-tabs" id="avatar-tab" style="margin-bottom: 15px;">
 			<li class="active"><a href="#default">选择默认头像</a></li>
 			<li><a href="#upload">上传头像</a></li>
 		</ul>
 		<div class="tab-content">
 			<div id="default" class="tab-pane fade active in row-fluid">
 				<form action="/profile/choose_default_avatar" method="post">
-					<ul class="thumbnails">
+                <div class="form-group">
+					<ul class="list-inline">
 					{{$user := .user}}
 					{{range .defaultAvatars}}
 					<li>
@@ -68,22 +111,23 @@
 							<button type="submit" class="btn btn-success">选择头像</button>
 						</div>
 					</div>
+                </div>
 				</form>
 			</div>
 			<div id="upload" class="tab-pane fade">
 				<form action="/profile/avatar" method="post" enctype="multipart/form-data" class="form-horizontal">
-					<div class="control-group">
-						<label class="control-label" for="file">选择图片文件</label>
-						<div class="controls">
+					<div class="form-group">
+						<label class="control-label col-lg-2" for="file">选择图片文件</label>
+						<div class="col-lg-10">
 							<input type="file" name="file" id="file">
 							<span class="help-block">支持500K以内的jpg/png文件</span>
 						</div>
 					</div>
-					<div class="control-group">
-						<div class="controls">
-							<button type="submit" class="btn btn-success">上传新头像</button>
-						</div>
-					</div>
+                    <div class="form-group">
+                        <div class="col-lg-offset-2 col-lg-10">
+                            <button type="submit" class="btn btn-success">上传新头像</button>
+                        </div>
+                    </div>
 				</form>
 			</div>
 		</div>

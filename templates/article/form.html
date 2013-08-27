@@ -1,7 +1,7 @@
 {{define "Title"}}{{.title}}文章{{end}}
 {{define "Breadcrumb"}}
 	<ul class="breadcrumb">
-		<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
+		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
 		<li class="active">{{.title}}文章</li>
 	</ul>
 {{end}}
@@ -10,19 +10,24 @@
 		<div class="alert alert-info">
 			为了保持网站风格的一致,需要将文章使用<em>Markdown</em>语法进行编辑.
 		</div>
-		<form action="{{.action}}" method="post" class="form-vertical" id="article-form">
-			{{.form.Render "html"}}
-			{{.form.Render "title" `rows="4"` `class="span8"`}}
-			{{.form.Render "category"}}
-			{{.form.Render "original_source" `class="span6"`}}
-			{{.form.Render "original_url" `class="span6"`}}
+		<form action="{{.action}}" method="post" id="article-form" role="form">
+			{{$html := .form.Field "html"}}
+			{{$html.RenderInput}}
+			{{.utils.RenderInput .form "title"}}
+			{{.utils.RenderInput .form "category"}}
+			{{.utils.RenderInput .form "original_source"}}
+			{{.utils.RenderInput .form "original_url"}}
 			
-			<div class="wmd-panel">
-				<div id="wmd-button-bar"></div>
-				<textarea class="wmd-input span8" id="wmd-input" name="content" rows="20">{{.form.Value "content"}}</textarea>
+			<div class="form-group">
+				<div class="wmd-panel">
+					<div id="wmd-button-bar"></div>
+					<textarea class="wmd-input form-control" id="wmd-input" name="content" rows="20">{{.form.Value "content"}}</textarea>
+				</div>
 			</div>
-			<div>预览</div>
-			<div id="wmd-preview" class="wmd-panel wmd-preview">{{.html}}</div>
+			<div class="form-group">
+				<label>预览</label>
+				<div id="wmd-preview" class="wmd-panel wmd-preview">{{.html}}</div>
+			</div>
 			<div class="form-actions">
 				<input type="submit" class="btn btn-primary" value="{{.title}}">
 			</div>

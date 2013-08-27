@@ -1,0 +1,370 @@
+body {
+	background: url(/static/img/ricepaper.png);
+	padding-bottom: 40px;
+}
+
+header div.btn-group {
+	margin-top: 4px;
+}
+
+li.number {
+	color: #999;
+	font-weight: bold;
+}
+
+.navbar-fixed-top .brand {
+	padding: 0;
+	margin-right: 40px;
+	margin-left: 2px;
+}
+
+.sidebar-nav {
+	padding: 8px;
+}
+
+.gravatar {
+	float: left;
+	margin-right: 10px;
+}
+
+.content, #comments {
+	margin-bottom: 20px;
+	padding: 8px;
+	background-color: white;
+
+	border: 1px solid #DDD;
+
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-o-border-radius: 4px;
+	-khtml-border-radius: 4px;
+}
+
+dl.topics dd, dl.replies dd, dl#nodes dd {
+	margin-left: 0;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	border-bottom: 1px dashed #CCC;
+}
+
+.topic, .reply {
+	border-bottom: 1px dashed #CCC;
+	padding: 12px 0;
+}
+
+dl.topics .title {
+	font-size: 120%;
+}
+
+.reply-content {
+	padding-left: 60px;
+}
+
+dl#nodes dd {
+	margin-bottom: 10px;
+	color: #999;
+}
+
+.space {
+	height: 4px;
+}
+
+.social-contact {
+	border: 1px solid #0000FA;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+	border-radius: 4px;
+}
+
+dl.faq dd {
+	margin-bottom: 30px;
+}
+
+hr {
+	margin: 9px 0;
+}
+
+table.status td.status-label {
+	color: #999;
+	width: 60px;
+	text-align: right;
+}
+
+table.status td.value {
+	font-weight: bold;
+	padding-left: 10px;
+}
+
+footer {
+	background-color: white;
+	margin: 0;
+	padding-top: 20px;
+	padding-bottom: 10px;
+}
+
+header {
+	margin-bottom: 20px;
+}
+
+.brand {
+	float: left;
+	margin-top: 10px;
+}
+
+header h1 {
+	padding: 17px 0 0 44px;
+	font-size: 36px;
+	line-height: 1.2em;
+}
+
+header nav {
+	padding: 54px 24px 0 0;
+}
+
+header nav li {
+	list-style-type: none;
+	float: left;
+	margin: 0 5px;
+	padding: 0;
+}
+
+header nav li a {
+	color: white;
+	background: #375EAB;
+	margin-right: 5px;
+	margin-bottom: 10px;
+	padding: 10px 20px;
+	text-decoration: none;
+	font-size: 16px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+header nav li a:hover {
+	color: white;
+	text-decoration: none;
+}
+
+.login-form {
+	padding: 19px;
+	margin-bottom: 0px;
+}
+
+.well {
+	background: white;
+	border: 1px solid #DDD;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	-o-border-radius: 4px;
+	-khtml-border-radius: 4px;
+}
+
+#admin-sidebar {
+	width: 228px;
+	margin: 0;
+	padding: 0;
+	background-color: #fff;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	-webkit-box-shadow: 0 1px 4px rgba(0,0,0,.065);
+	-moz-box-shadow: 0 1px 4px rgba(0,0,0,.065);
+	box-shadow: 0 1px 4px rgba(0,0,0,.065);
+}
+#admin-sidebar > li > a {
+  display: block;
+  *width: 190px;
+  margin: 0 0 -1px;
+  padding: 8px 14px;
+  border: 1px solid #e5e5e5;
+}
+#admin-sidebar > li:first-child > a {
+  -webkit-border-radius: 6px 6px 0 0;
+     -moz-border-radius: 6px 6px 0 0;
+          border-radius: 6px 6px 0 0;
+}
+#admin-sidebar > li:last-child > a {
+  -webkit-border-radius: 0 0 6px 6px;
+     -moz-border-radius: 0 0 6px 6px;
+          border-radius: 0 0 6px 6px;
+}
+#admin-sidebar > .active > a {
+  position: relative;
+  z-index: 2;
+  padding: 9px 15px;
+  border: 0;
+  text-shadow: 0 1px 0 rgba(0,0,0,.15);
+  -webkit-box-shadow: inset 1px 0 0 rgba(0,0,0,.1), inset -1px 0 0 rgba(0,0,0,.1);
+     -moz-box-shadow: inset 1px 0 0 rgba(0,0,0,.1), inset -1px 0 0 rgba(0,0,0,.1);
+          box-shadow: inset 1px 0 0 rgba(0,0,0,.1), inset -1px 0 0 rgba(0,0,0,.1);
+}
+
+#admin-sidebar .icon-chevron-right {
+	float: right;
+	margin-top: 2px;
+	margin-right: -6px;
+	opacity: .25;
+}
+
+.content div.page-header {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.content p {
+	line-height: 2em;
+}
+
+.articles dd {
+	margin-bottom: 10px;
+}
+
+.content h2 {
+	font-size: 20px;
+	background: #E0EBF5;
+	padding: 2px 5px;
+}
+
+.content h3 {
+	font-size: 20px;
+}
+
+dl.site dd {
+	color: #999;
+	border-bottom: 1px dashed #CCC;
+	padding-bottom: 10px;
+}
+
+div.header {
+	background-color: #F1F1F1;
+	margin-top: -8px;
+	margin-left: -8px;
+	margin-right: -8px;
+	padding-left: 8px;
+	border-bottom: 1px solid #CCC;
+	line-height: 20px;
+}
+
+.footer-links {
+	margin: 10px 0;
+}
+.footer-links li {
+	display: inline;
+	padding: 0 2px;
+}
+.footer-links li:first-child {
+	padding-left: 0;
+}
+
+a.remove {
+	margin-right: 10px;
+}
+
+.sidebar-nav a.btn {
+	margin-bottom: 4px;
+}
+
+ul.members {
+	list-style: none;
+}
+
+ul.members li {
+	float: left;
+	width: 100px;
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+ul.members li a {
+	display: block;
+}
+
+ul#menu li {
+	border-bottom-style: solid;
+	border-bottom-width: 4px;
+}
+
+ul#menu li a {
+	padding: 10px 30px 10px;
+	position: relative;
+	display: block;
+	color: #999;
+	background: transparent;
+	text-align: center;
+}
+
+ul#menu li a:before {
+	position: absolute;
+	content: "";
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: .5em;
+	border-top-color: transparent;
+	border-right-color: transparent;
+	border-left-color: transparent;
+	bottom: 0;
+	left: 50%;
+	margin-left: -.5em;
+}
+
+ul#menu li a:before {
+	color: transparent;
+}
+
+ul#menu li.nav-community {
+	border-bottom-color: #3776ab;
+}
+
+ul#menu li.active.nav-community a:before {
+	color: #3776ab;
+	border-bottom-color: #3776ab;
+}
+
+ul#menu li.nav-articles {
+	border-bottom-color: #d62728;
+}
+
+ul#menu li.active.nav-articles a:before {
+	color: #d62728;
+	border-bottom-color: #d62728;
+}
+
+ul#menu li.nav-sites {
+	border-bottom-color: #82b043;
+}
+
+ul#menu li.active.nav-sites a:before {
+	color: #82b043;
+	border-bottom-color: #82b043;
+}
+
+ul#menu li.nav-packages {
+	border-bottom-color: #ff7f0e;
+}
+
+ul#menu li.active.nav-packages a:before {
+	color: #ff7f0e;
+	border-bottom-color: #ff7f0e;
+}
+
+ul#menu li.nav-members {
+	border-bottom-color: #17becf;
+}
+
+ul#menu li.active.nav-members a:before {
+	color: #17becf;
+	border-bottom-color: #17becf;
+}
+
+ul#menu li.nav-tour {
+	border-bottom-color: #78797a;
+}
+.img-rounded {
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}

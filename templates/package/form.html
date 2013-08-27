@@ -1,31 +1,30 @@
 {{define "Title"}}{{.title}}{{end}}
 {{define "Breadcrumb"}}
 	<ul class="breadcrumb">
-		<li>
-			<a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span>
-		</li>
+		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
 		<li class="active">提交第三方包</li>
 	</ul>
 {{end}}
 {{define "Content"}}
 <div class="content">
-	<form action="{{.action}}" method="post" class="form-vertical" id="package-form">
+	<form action="{{.action}}" method="post" id="package-form" role="form">
 		<fieldset>
-			{{.form.Render "html"}}
-			{{.form.Render "category_id"}}
-			{{.form.Render "name"}}
-			{{.form.Render "url" `class="span8"` `placeholder="http://或https://"`}}
-			<div class="control-group">
+			<input type="hidden" name="html" id="html">
+			{{.utils.RenderInput .form "category_id"}}
+			{{.utils.RenderInput .form "name"}}
+			{{.utils.RenderInput .form "url" `placeholder="http://或https://"`}}
+			<div class="form-group">
 				<div class="wmd-panel">
-					<label class="control-label" for="wmd-input">描述</label>
+					<label for="wmd-input">描述</label>
 					<div id="wmd-button-bar"></div>
-					<textarea class="wmd-input span8" id="wmd-input" name="description" rows="20">{{.form.Value "description"}}</textarea>
+					<textarea class="wmd-input form-control" id="wmd-input" name="description" rows="20">{{.form.Value "description"}}</textarea>
 				</div>
 			</div>
-			<div id="wmd-preview" class="wmd-panel wmd-preview"></div>
-			<div class="form-actions">
-				<input type="submit" class="btn btn-primary" value="{{.title}}">
+			<div class="form-group">
+				<label>预览</label>
+				<div id="wmd-preview" class="wmd-panel wmd-preview"></div>
 			</div>
+			<input type="submit" class="btn btn-primary" value="{{.title}}">
 		</fieldset>
 	</form>
 </div>
