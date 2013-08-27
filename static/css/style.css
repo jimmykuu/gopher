@@ -32,13 +32,33 @@ li.number {
 	padding: 8px;
 	background-color: white;
 
+<<<<<<< HEAD
 	border: 1px solid #DDD;
 
+=======
+	border-color: #E5E5E5 #DBDBDB #D2D2D2;
+	-webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+	-moz-box-shadow: rgba(0,0,0,0.3) 0 1px 3px;
+	box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+	
+>>>>>>> 8ca458ab618f42fd4b2165fbc3da33ed14a01c07
 	border-radius: 4px;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-o-border-radius: 4px;
 	-khtml-border-radius: 4px;
+<<<<<<< HEAD
+=======
+
+	-webkit-transition: opacity .3s;
+	-webkit-transition-delay: .2s;
+	-moz-transition: opacity .3s;
+	-moz-transition-delay: .2s;
+	-o-transition: opacity .3s;
+	-o-transition-delay: .2s;
+	transition: opacity .3s;
+	transition-delay: .2s;
+>>>>>>> 8ca458ab618f42fd4b2165fbc3da33ed14a01c07
 }
 
 dl.topics dd, dl.replies dd, dl#nodes dd {
@@ -154,12 +174,32 @@ header nav li a:hover {
 
 .well {
 	background: white;
+<<<<<<< HEAD
 	border: 1px solid #DDD;
+=======
+	border-color: #E5E5E5 #DBDBDB #D2D2D2;
+	-webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+	-moz-box-shadow: rgba(0,0,0,0.3) 0 1px 3px;
+	box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+	
+>>>>>>> 8ca458ab618f42fd4b2165fbc3da33ed14a01c07
 	border-radius: 4px;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-o-border-radius: 4px;
 	-khtml-border-radius: 4px;
+<<<<<<< HEAD
+=======
+
+	-webkit-transition: opacity .3s;
+	-webkit-transition-delay: .2s;
+	-moz-transition: opacity .3s;
+	-moz-transition-delay: .2s;
+	-o-transition: opacity .3s;
+	-o-transition-delay: .2s;
+	transition: opacity .3s;
+	transition-delay: .2s;
+>>>>>>> 8ca458ab618f42fd4b2165fbc3da33ed14a01c07
 }
 
 #admin-sidebar {
@@ -222,6 +262,13 @@ header nav li a:hover {
 	margin-bottom: 10px;
 }
 
+<<<<<<< HEAD
+=======
+.content h1 {
+	font-size: 24px;
+}
+
+>>>>>>> 8ca458ab618f42fd4b2165fbc3da33ed14a01c07
 .content h2 {
 	font-size: 20px;
 	background: #E0EBF5;
@@ -363,6 +410,19 @@ ul#menu li.active.nav-members a:before {
 ul#menu li.nav-tour {
 	border-bottom-color: #78797a;
 }
+<<<<<<< HEAD
+=======
+
+ul#menu li.active.nav-download a:before {
+	color: #ce6dbd;
+	border-bottom-color: #ce6dbd;
+}
+
+ul#menu li.nav-download {
+	border-bottom-color: #ce6dbd;
+}
+
+>>>>>>> 8ca458ab618f42fd4b2165fbc3da33ed14a01c07
 .img-rounded {
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;

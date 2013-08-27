@@ -1,0 +1,63 @@
+{{define "Title"}}下载{{end}}
+{{define "Breadcrumb"}}
+	<ul class="breadcrumb">
+		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
+		<li class="active">下载</li>
+	</ul>
+{{end}}
+{{define "Content"}}
+	<div class="content">
+		<div class="page-header">
+			<h1>Golang下载</h1>
+		</div>
+		<div class="alert alert-info">
+			请使用右键“链接存储为...”
+		</div>
+		<div class="panel-group" id="accordion">
+			{{range $index, $version := .versions}}
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{$index}}">
+							{{$version.Version}}
+							</a>
+						</h4>
+					</div>
+					<div id="collapse{{$index}}" class="accordion-body collapse{{if not $index}} in{{end}}">
+						<div class="accordion-inner">
+						<table class="table table-striped table-hover">
+						<thead>
+							<th>Filename</th>
+							<th>Summary + Labels</th>
+							<th>Size</th>
+							<th>Download</th>
+						</thead>
+						<tbody>
+							{{range $file := $version.Files}}
+								<tr>
+									<td>{{$file.Filename}}</td>
+									<td>{{$file.Summary}}</td>
+									<td>{{$file.Size}}</td>
+									<td>
+										<a href="{{$file.URL}}" class="btn btn-sm btn-primary">官方下载</a>
+										<a href="/static/go/{{$file.Filename}}" class="btn btn-sm btn-info">本地下载</a>
+										<a href="http://gopher.qiniudn.com/download/go/{{$file.Filename}}" class="btn btn-sm btn-success">七牛下载</a>
+									</td>
+								</tr>
+							{{end}}
+						</tbody>
+						</table>
+						</div>
+					</div>
+				</div>
+			{{end}}
+		</div>
+	</div>
+{{end}}
+
+{{define "LeftSide"}}{{end}}
+
+{{define "RightSide"}}
+	<div class="span3">
+	</div>
+{{end}}
