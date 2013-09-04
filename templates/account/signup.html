@@ -1,23 +1,25 @@
 {{define "Title"}}注册{{end}}
 {{define "Breadcrumb"}}
 	<ul class="breadcrumb">
-		<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
+        <li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
 		<li class="active">注册</li>
 	</ul>
 {{end}}
 {{define "Content"}}
 	<div class="content">
 		<form action="/signup" method="post" class="form-horizontal">
-			{{.form.Render "username" `class="span3"`}}
-			{{.form.Render "password" `class="span3"`}}
-			{{.form.Render "email" `class="span3"`}}
-			<div class="form-actions">
-				<input id="submit" type="submit" class="btn btn-primary" value="注册">
+            {{.utils.RenderInputH .form "username" 2 6}}
+            {{.utils.RenderInputH .form "password" 2 6}}
+            {{.utils.RenderInputH .form "email" 2 6}}
+			<div class="form-group">
+                <div class="col-lg-offset-2 col-lg-6">
+				    <input id="submit" type="submit" class="btn btn-primary" value="注册">
+			    	<p>
+				    	<br>
+				    	已有帐号？<a href="/signin" class="btn btn-info">登录</a>
+				    </p>
+                </div>
 			
-				<p>
-					<br>
-					已有帐号？<a href="/signin" class="btn btn-info">登录</a>
-				</p>
 			</div>
 		</form>
 	</div>

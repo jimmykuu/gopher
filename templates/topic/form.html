@@ -1,26 +1,36 @@
 {{define "Title"}}{{.title}}主题{{end}}
 {{define "Breadcrumb"}}
 	<ul class="breadcrumb">
-		<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
+		<li><a href="/"><i class="icon-home"></i> 首页</a></li>
 		<li class="active">{{.title}}主题</li>
 	</ul>
 {{end}}
 {{define "Content"}}
 	<div class="content">
-		<form action="{{.action}}" method="post" class="form-vertical" id="topic-form">
+		<form action="" method="post" id="topic-form">
 			<fieldset>
-				{{.form.Render "html"}}
-				{{.form.Render "node"}}
-				{{.form.Render "title" `rows="4"` `class="span8"`}}
-				<div class="wmd-panel">
-					<div id="wmd-button-bar"></div>
-					<textarea class="wmd-input span8" id="wmd-input" name="content" rows="20">{{.content}}</textarea>
+				{{.form.RenderInput "html"}}
+                {{$node := .form.Field "node"}}
+                <div class="form-group">
+                    {{$node.RenderLabel}}
+                    {{$node.RenderInput `class="form-control"`}}
+                </div>
+                {{$title := .form.Field "title"}}
+                <div class="form-group">
+                    {{$title.RenderLabel}}
+                    {{$title.RenderInput `class="form-control"` `rows="4"`}}
+                </div>
+				<div class="form-group">
+					<div class="wmd-panel">
+						<div id="wmd-button-bar"></div>
+						<textarea class="wmd-input col-lg-12" id="wmd-input" name="content" rows="20">{{.content}}</textarea>
+					</div>
 				</div>
-				<div>预览</div>
-				<div id="wmd-preview" class="wmd-panel wmd-preview">{{.html}}</div>
-				<div class="form-actions">
-					<input type="submit" class="btn btn-primary" value="{{.title}}">
+				<div class="form-group">
+					<label>预览</label>
+					<div id="wmd-preview" class="wmd-panel wmd-preview">{{.html}}</div>
 				</div>
+				<input type="submit" class="btn btn-primary" value="{{.title}}">
 			</fieldset>
 		</form>
 	</div>
@@ -33,10 +43,10 @@
 			var editor1 = new Markdown.Editor(converter1);
 			editor1.run();
 		})();
-		
+
 		$('#topic-form').submit(function () {
 			$('#html').val($('#wmd-preview').html());
-			
+
 			return true;
 		});
 	</script>

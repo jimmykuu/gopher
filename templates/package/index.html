@@ -1,9 +1,7 @@
 {{define "Title"}}第三方包{{end}}
 {{define "Breadcrumb"}}
 	<ul class="breadcrumb">
-		<li>
-			<a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span>
-		</li>
+		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
 		<li class="active">第三方包</li>
 	</ul>
 {{end}}
@@ -29,7 +27,7 @@
 				{{end}}
 				<div class="space"></div>
 				<div class="info">
-					<a class="label" href="/packages/{{.Category.Id}}">{{.Category.Name}}</a> •
+					<a class="label label-info" href="/packages/{{.Category.Id}}">{{.Category.Name}}</a> •
 					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> •
 					{{$utils.FormatTime .CreatedAt}} 提交
 				</div>
@@ -48,7 +46,7 @@
 {{end}}
 
 {{define "RightSide"}}
-	<div class="span3">
+	<div class="col-lg-3">
 		<div class="well sidebar-nav">
 			<h4><small>分类</small></h4>
 			<ul class="nav">

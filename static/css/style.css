@@ -1,6 +1,5 @@
 body {
-	/*background-color: #E6E6E6;*/
-	background: url(/static/img/bg.png);
+	background: url(/static/img/ricepaper.png);
 	padding-bottom: 40px;
 }
 
@@ -32,26 +31,12 @@ li.number {
 	margin-bottom: 20px;
 	padding: 8px;
 	background-color: white;
-
-	border-color: #E5E5E5 #DBDBDB #D2D2D2;
-	-webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
-	-moz-box-shadow: rgba(0,0,0,0.3) 0 1px 3px;
-	box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
-	
+	border: 1px solid #DDD;
 	border-radius: 4px;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-o-border-radius: 4px;
 	-khtml-border-radius: 4px;
-
-	-webkit-transition: opacity .3s;
-	-webkit-transition-delay: .2s;
-	-moz-transition: opacity .3s;
-	-moz-transition-delay: .2s;
-	-o-transition: opacity .3s;
-	-o-transition-delay: .2s;
-	transition: opacity .3s;
-	transition-delay: .2s;
 }
 
 dl.topics dd, dl.replies dd, dl#nodes dd {
@@ -167,25 +152,12 @@ header nav li a:hover {
 
 .well {
 	background: white;
-	border-color: #E5E5E5 #DBDBDB #D2D2D2;
-	-webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
-	-moz-box-shadow: rgba(0,0,0,0.3) 0 1px 3px;
-	box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
-	
+	border: 1px solid #DDD;
 	border-radius: 4px;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
 	-o-border-radius: 4px;
 	-khtml-border-radius: 4px;
-
-	-webkit-transition: opacity .3s;
-	-webkit-transition-delay: .2s;
-	-moz-transition: opacity .3s;
-	-moz-transition-delay: .2s;
-	-o-transition: opacity .3s;
-	-o-transition-delay: .2s;
-	transition: opacity .3s;
-	transition-delay: .2s;
 }
 
 #admin-sidebar {
@@ -246,10 +218,6 @@ header nav li a:hover {
 
 .articles dd {
 	margin-bottom: 10px;
-}
-
-.content h1 {
-	font-size: 24px;
 }
 
 .content h2 {

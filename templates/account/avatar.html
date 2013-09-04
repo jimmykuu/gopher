@@ -1,8 +1,8 @@
 {{define "Title"}}修改头像{{end}}
 {{define "Breadcrumb"}}
 	<ul class="breadcrumb">
-		<li><a href="/"><i class="icon-home"></i> 首页</a> <span class="divider">/</span></li>
-		<li><a href="/profile">设置</a> <span class="divider">/</span></li>
+		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
+		<li><a href="/profile">设置</a></li>
 		<li class="active">上传头像</li>
 	</ul>
 {{end}}
@@ -21,16 +21,16 @@
 	{{end}}
 	<div class="content">
 		<form action="/profile/avatar" method="post" enctype="multipart/form-data" class="form-horizontal">
-			<div class="control-group">
-				<label class="control-label" for="file">选择图片文件</label>
-				<div class="controls">
+			<div class="form-group">
+				<label class="col-lg-2 control-label" for="file">选择图片文件</label>
+				<div class="col-lg-10">
 					<input type="file" name="file" id="file">
 					<span class="help-block">支持500K以内的jpg/png文件</span>
 				</div>
 			</div>
-			<div class="control-group">
-				<div class="controls">
-					<button type="submit" class="btn">开始上传</button>
+			<div class="form-group">
+				<div class="col-lg-offset-2 col-lg-10">
+					<button type="submit" class="btn btn-primary">开始上传</button>
 				</div>
 			</div>
 		</form>
