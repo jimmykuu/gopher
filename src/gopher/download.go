@@ -20,6 +20,7 @@ type File struct {
 type Version struct {
 	Version string `json:"version"`
 	Files   []File `json:"files`
+	Date    string `json:"date"`
 }
 
 func downloadHandler(w http.ResponseWriter, r *http.Request) {
