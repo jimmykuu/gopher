@@ -15,21 +15,13 @@
 		</div>
 		<div class="panel-group" id="accordion">
 			{{range $index, $version := .versions}}
-<<<<<<< HEAD
-				<div class="accordion-group">
-					<div class="accordion-heading">
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse{{$index}}">
-						{{$version.Version}} ({{$version.Date}})
-						</a>
-=======
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<h4 class="panel-title">
 							<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{$index}}">
-							{{$version.Version}}
+							{{$version.Version}}({{$version.Date}})
 							</a>
 						</h4>
->>>>>>> 72e1ebe110f99405715861c53baf0ee9effc4cff
 					</div>
 					<div id="collapse{{$index}}" class="accordion-body collapse{{if not $index}} in{{end}}">
 						<div class="accordion-inner">
