@@ -601,7 +601,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	var pagination *Pagination
 
 	if len(noSpaceKeywords) == 0 {
-		pagination = NewPagination(c.Find(bson.M{"content.type": TypeTopic}), "/search?"+q, PerPage)
+		pagination = NewPagination(c.Find(bson.M{"content.type": TypeTopic}).Sort("-latestrepliedat"), "/search?"+q, PerPage)
 	} else {
 		pagination = NewPagination(c.Find(bson.M{"$and": []bson.M{
 			bson.M{"content.type": TypeTopic},
@@ -610,7 +610,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 				bson.M{"$and": markdownConditions},
 			},
 			},
-		}}), "/search?q="+q, PerPage)
+		}}).Sort("-latestrepliedat"), "/search?q="+q, PerPage)
 	}
 
 	var topics []Topic
