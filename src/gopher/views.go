@@ -588,12 +588,12 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	fmt.Println(noSpaceKeywords, len(noSpaceKeywords))
-
-	conditions := []bson.M{bson.M{"content.type": TypeTopic}}
+	var titleConditions []bson.M
+	var markdownConditions []bson.M
 
 	for _, keyword := range noSpaceKeywords {
-		conditions = append(conditions, bson.M{"content.markdown": bson.M{"$regex": bson.RegEx{keyword, "i"}}})
+		titleConditions = append(titleConditions, bson.M{"content.title": bson.M{"$regex": bson.RegEx{keyword, "i"}}})
+		markdownConditions = append(markdownConditions, bson.M{"content.markdown": bson.M{"$regex": bson.RegEx{keyword, "i"}}})
 	}
 
 	c := DB.C("contents")
@@ -603,7 +603,14 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	if len(noSpaceKeywords) == 0 {
 		pagination = NewPagination(c.Find(bson.M{"content.type": TypeTopic}), "/search?"+q, PerPage)
 	} else {
-		pagination = NewPagination(c.Find(bson.M{"$and": conditions}), "/search?q="+q, PerPage)
+		pagination = NewPagination(c.Find(bson.M{"$and": []bson.M{
+			bson.M{"content.type": TypeTopic},
+			bson.M{"$or": []bson.M{
+				bson.M{"$and": titleConditions},
+				bson.M{"$and": markdownConditions},
+			},
+			},
+		}}), "/search?q="+q, PerPage)
 	}
 
 	var topics []Topic
