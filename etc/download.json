@@ -168,5 +168,251 @@
 				"url": "https://go.googlecode.com/files/go1.1.1.windows-amd64.zip"
 			}
 		]
+	}, {
+		"version": "go1.1",
+		"date": "2013-05-13",
+		"files": [
+			{
+				"filename": "go1.1.darwin-386.pkg",
+				"summary": "go1.1 Mac OS X (x86 32-bit) PKG installer",
+				"size": "46.2 MB",
+				"sha1": "ee2341f5bcec98a5c28c900999a5ddb322ea8096",
+				"url": "https://go.googlecode.com/files/go1.1.darwin-386.pkg"
+			}, {
+				"filename": "go1.1.darwin-386.tar.gz",
+				"summary": "go1.1 Mac OS X (x86 32-bit) tarball",
+				"size": "31.0 MB",
+				"sha1": "5a9ba4546222476e112abadc9e2ef8bd907918be",
+				"url": "https://go.googlecode.com/files/go1.1.darwin-386.tar.gz"
+			}, {
+				"filename": "go1.1.darwin-amd64.pkg",
+				"summary": "go1.1 Mac OS X (x86 64-bit) PKG installer",
+				"size": "55.7 MB",
+				"sha1": "b311d2e5a67b1901780850ae84caec9ad722cf20",
+				"url": "https://go.googlecode.com/files/go1.1.darwin-amd64.pkg"
+			}, {
+				"filename": "go1.1.darwin-amd64.tar.gz",
+				"summary": "go1.1 Mac OS X (x86 64-bit) tarball",
+				"size": "40.4 MB",
+				"sha1": "d4dcf2c42ed465731d3050265ac4cf10acf11c15",
+				"url": "https://go.googlecode.com/files/go1.1.darwin-amd64.tar.gz"
+			}, {
+				"filename": "go1.1.freebsd-386.tar.gz",
+				"summary": "go1.1 FreeBSD (x86 32-bit) tarball",
+				"size": "30.2 MB",
+				"sha1": "099d7aa5cee7800376031cd078d058b4503d88b0",
+				"url": "https://go.googlecode.com/files/go1.1.freebsd-386.tar.gz"
+			}, {
+				"filename": "go1.1.freebsd-amd64.tar.gz",
+				"summary": "go1.1 FreeBSD (x86 64-bit) tarball",
+				"size": "30.8 MB",
+				"sha1": "d0c54a17e15747d67b9cda4f00fb4152233b8736",
+				"url": "https://go.googlecode.com/files/go1.1.freebsd-amd64.tar.gz"
+			}, {
+				"filename": "go1.1.linux-386.tar.gz",
+				"summary": "go1.1 Linux (x86 32-bit) tarball",
+				"size": "30.3 MB",
+				"sha1": "8e48c8d6738316c07ad8a3d3714c30fb67afba1d",
+				"url": "https://go.googlecode.com/files/go1.1.linux-386.tar.gz"
+			}, {
+				"filename": "go1.1.linux-amd64.tar.gz",
+				"summary": "go1.1 Linux (x86 64-bit) tarball",
+				"size": "39.8 MB",
+				"sha1": "58087060236614f13d7089d798055b4255ed02ec",
+				"url": "https://go.googlecode.com/files/go1.1.linux-amd64.tar.gz"
+			}, {
+				"filename": "go1.1.src.tar.gz",
+				"summary": "go1.1 (source only)",
+				"size": "8.6 MB",
+				"sha1": "a464704ebbbdd552a39b5f9429b059c117d165b3",
+				"url": "https://go.googlecode.com/files/go1.1.src.tar.gz"
+			}, {
+				"filename": "go1.1.windows-386.msi",
+				"summary": "go1.1 Windows (x86 32-bit) MSI installer",
+				"size": "26.8 MB",
+				"sha1": "3b15ba9869635e201eacffdbdffef7a670e67913",
+				"url": "https://go.googlecode.com/files/go1.1.windows-386.msi"
+			}, {
+				"filename": "go1.1.windows-386.zip",
+				"summary": "go1.1.1 Windows (x86 32-bit) ZIP archive",
+				"size": "32.7 MB",
+				"sha1": "01832d85c529c3104bf0a3702313730f76dde434",
+				"url": "https://go.googlecode.com/files/go1.1.windows-386.zip"
+			}, {
+				"filename": "go1.1.windows-amd64.msi",
+				"summary": "go1.1 Windows (x86 64-bit) MSI installer",
+				"size": "36.0 MB",
+				"sha1": "7fdb42507f6b000fa8b582b98aa08c6eb576fa4b",
+				"url": "https://go.googlecode.com/files/go1.1.windows-amd64.msi"
+			}, {
+				"filename": "go1.1.windows-amd64.zip",
+				"summary": "go1.1 Windows (x86 64-bit) ZIP archive",
+				"size": "45.7 MB",
+				"sha1": "c09c4e97588572edbaa1b69b4d5e223279cb3f1f",
+				"url": "https://go.googlecode.com/files/go1.1.windows-amd64.zip"
+			}
+		]
+	}, {
+		"version": "go1.0.3",
+		"date": "2012-12-20",
+		"files": [
+			{
+				"filename": "go1.0.3.darwin-386-signed.pkg",
+				"summary": "go1.0.3 Mac OS X (x86 32-bit) Signed PKG installer",
+				"size": "26.9 MB",
+				"sha1": "62c79f84146e85d7b0d0d815c3a0642fde029346",
+				"url": "https://go.googlecode.com/files/go1.0.3.darwin-386-signed.pkg"
+			}, {
+				"filename": "go1.0.3.darwin-386.pkg",
+				"summary": "go1.0.3 Mac OS X (x86 32-bit) PKG installer",
+				"size": "26.9 MB",
+				"sha1": "ee2e319a1879492bc3eef92489f688dbdd9f8b4b",
+				"url": "https://go.googlecode.com/files/go1.0.3.darwin-386.pkg"
+			}, {
+				"filename": "go1.0.3.darwin-386.tar.gz",
+				"summary": "go1.0.3 Mac OS X (x86 32-bit) tarball",
+				"size": "26.7 MB",
+				"sha1": "8a67537b4169efa96e472d355b22049417263860",
+				"url": "https://go.googlecode.com/files/go1.0.3.darwin-386.tar.gz"
+			}, {
+				"filename": "go1.0.3.darwin-amd64-signed.pkg",
+				"summary": "go1.0.3 Mac OS X (x86 64-bit) Signed PKG installer",
+				"size": "26.4 MB",
+				"sha1": "b311d2e5a67b1901780850ae84caec9ad722cf20",
+				"url": "https://go.googlecode.com/files/go1.0.3.darwin-amd64-signed.pkg"
+			}, {
+				"filename": "go1.0.3.darwin-amd64.pkg",
+				"summary": "go1.0.3 Mac OS X (x86 64-bit) PKG installer",
+				"size": "26.4 MB",
+				"sha1": "029085bfa23709a47a72a846fdbb93127261985a",
+				"url": "https://go.googlecode.com/files/go1.0.3.darwin-amd64.pkg"
+			}, {
+				"filename": "go1.0.3.darwin-amd64.tar.gz",
+				"summary": "go1.0.3 Mac OS X (x86 64-bit) tarball",
+				"size": "26.2 MB",
+				"sha1": "49a697b5b9ec6a3f3d9b4584843be36563d02316",
+				"url": "https://go.googlecode.com/files/go1.0.3.darwin-amd64.tar.gz"
+			}, {
+				"filename": "go1.0.3.freebsd-amd64.tar.gz",
+				"summary": "go1.0.3 FreeBSD (x86 64-bit) tarball",
+				"size": "26.0 MB",
+				"sha1": "73f218a942dd90f3e0613fd68be3ce9ba76554b0",
+				"url": "https://go.googlecode.com/files/go1.0.3.freebsd-amd64.tar.gz"
+			}, {
+				"filename": "go1.0.3.linux-386.tar.gz",
+				"summary": "go1.0.3 Linux (x86 32-bit) tarball",
+				"size": "26.4 MB",
+				"sha1": "56e5f3a8c1e83ecb6bae2b551c80d0d2520cc5b3",
+				"url": "https://go.googlecode.com/files/go1.0.3.linux-386.tar.gz"
+			}, {
+				"filename": "go1.0.3.linux-amd64.tar.gz",
+				"summary": "go1.0.3 Linux (x86 64-bit) tarball",
+				"size": "26.1 MB",
+				"sha1": "97299d1989936b90d0c51ec8028d1f5dca8df6b6",
+				"url": "https://go.googlecode.com/files/go1.0.3.linux-amd64.tar.gz"
+			}, {
+				"filename": "go1.0.3.src.tar.gz",
+				"summary": "go1.0.3 (source only)",
+				"size": "7.1 MB",
+				"sha1": "1a67293c10d6c06c633c078a7ca67e98c8b58471",
+				"url": "https://go.googlecode.com/files/go1.0.3.src.tar.gz"
+			}, {
+				"filename": "go1.0.3.windows-386.msi",
+				"summary": "go1.0.3 Windows (x86 32-bit) MSI installer",
+				"size": "23.0 MB",
+				"sha1": "4293793b6cbb07955ea405e5a05131e357a1e3d9",
+				"url": "https://go.googlecode.com/files/go1.0.3.windows-386.msi"
+			}, {
+				"filename": "go1.0.3.windows-386.zip",
+				"summary": "go1.0.3 Windows (x86 32-bit) ZIP archive",
+				"size": "28.5 MB",
+				"sha1": "73fff09786c68b9211a2ddf14c690fe374d15780",
+				"url": "https://go.googlecode.com/files/go1.0.3.windows-386.zip"
+			}, {
+				"filename": "go1.0.3.windows-amd64.msi",
+				"summary": "go1.0.3 Windows (x86 64-bit) MSI installer",
+				"size": "23.2 MB",
+				"sha1": "f6800a87810e2a6106477c2311576d13e4177cd2",
+				"url": "https://go.googlecode.com/files/go1.0.3.windows-amd64.msi"
+			}, {
+				"filename": "go1.0.3.windows-amd64.zip",
+				"summary": "go1.0.3 Windows (x86 64-bit) ZIP archive",
+				"size": "28.9 MB",
+				"sha1": "1982dce67dbfad841772e4f0c49345404dad8be6",
+				"url": "https://go.googlecode.com/files/go1.0.3.windows-amd64.zip"
+			}
+		]
+	}, {
+		"version": "go1.0.2",
+		"date": "2012-06-13",
+		"files": [
+			{
+				"filename": "go1.0.2.darwin-386.pkg",
+				"summary": "go1.0.2 Mac OS X (x86 32-bit)",
+				"size": "29.0 MB",
+				"sha1": "adf3ddbd78ca35994e1daa616e096f48434628fb",
+				"url": "https://go.googlecode.com/files/go1.0.2.darwin-386.pkg"
+			}, {
+				"filename": "go1.0.2.darwin-amd64.pkg",
+				"summary": "go1.0.2 Mac OS X (x86 64-bit)",
+				"size": "28.5 MB",
+				"sha1": "fa06fb04c16408ea55fcde754ad9290a14e5a2bf",
+				"url": "https://go.googlecode.com/files/go1.0.2.darwin-amd64.pkg"
+			}, {
+				"filename": "go1.0.2.freebsd-386.tar.gz",
+				"summary": "go1.0.2 FreeBSD (x86 32-bit)",
+				"size": "28.4 MB",
+				"sha1": "e6fd08c8de72251826c90322a8f7884a8ad34ac0",
+				"url": "https://go.googlecode.com/files/go1.0.2.freebsd-386.tar.gz"
+			}, {
+				"filename": "go1.0.2.freebsd-amd64.tar.gz",
+				"summary": "go1.0.2 FreeBSD (x86 64-bit)",
+				"size": "28.1 MB",
+				"sha1": "9a32c79851d607450bb016c746549518e4d8ca31",
+				"url": "https://go.googlecode.com/files/go1.0.2.freebsd-amd64.tar.gz"
+			}, {
+				"filename": "go1.0.2.linux-386.tar.gz",
+				"summary": "go1.0.2 Linux (x86 32-bit)",
+				"size": "28.6 MB",
+				"sha1": "27a61ba07ee7d3dae6139ad3d8ce335fdda70374",
+				"url": "https://go.googlecode.com/files/go1.0.2.linux-386.tar.gz"
+			}, {
+				"filename": "go1.0.2.linux-amd64.tar.gz",
+				"summary": "go1.0.2 Linux (x86 64-bit)",
+				"size": "28.2 MB",
+				"sha1": "7349cddc54aeec427b00e5f353592f5a72c8421a",
+				"url": "https://go.googlecode.com/files/go1.0.2.linux-amd64.tar.gz"
+			}, {
+				"filename": "go1.0.3.src.tar.gz",
+				"summary": "go1.0.3 (source only)",
+				"size": "7.1 MB",
+				"sha1": "1a67293c10d6c06c633c078a7ca67e98c8b58471",
+				"url": "https://go.googlecode.com/files/go1.0.3.src.tar.gz"
+			}, {
+				"filename": "go1.0.3.windows-386.msi",
+				"summary": "go1.0.3 Windows (x86 32-bit) MSI installer",
+				"size": "23.0 MB",
+				"sha1": "4293793b6cbb07955ea405e5a05131e357a1e3d9",
+				"url": "https://go.googlecode.com/files/go1.0.3.windows-386.msi"
+			}, {
+				"filename": "go1.0.3.windows-386.zip",
+				"summary": "go1.0.3 Windows (x86 32-bit) ZIP archive",
+				"size": "28.5 MB",
+				"sha1": "73fff09786c68b9211a2ddf14c690fe374d15780",
+				"url": "https://go.googlecode.com/files/go1.0.3.windows-386.zip"
+			}, {
+				"filename": "go1.0.3.windows-amd64.msi",
+				"summary": "go1.0.3 Windows (x86 64-bit) MSI installer",
+				"size": "23.2 MB",
+				"sha1": "f6800a87810e2a6106477c2311576d13e4177cd2",
+				"url": "https://go.googlecode.com/files/go1.0.3.windows-amd64.msi"
+			}, {
+				"filename": "go1.0.3.windows-amd64.zip",
+				"summary": "go1.0.3 Windows (x86 64-bit) ZIP archive",
+				"size": "28.9 MB",
+				"sha1": "1982dce67dbfad841772e4f0c49345404dad8be6",
+				"url": "https://go.googlecode.com/files/go1.0.3.windows-amd64.zip"
+			}
+		]
 	}
 ]
