@@ -1,4 +1,5 @@
 {{define "Title"}}文章{{end}}
+{{define "ContentWidth"}}8{{end}}
 {{define "Breadcrumb"}}
 	<ul class="breadcrumb">
 		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
@@ -8,7 +9,6 @@
 {{define "Content"}}
 	<div class="content">
 		<h3><small>收录关于Golang的中文文章.如果作者发现不可以引用,请联系站长删除.</small></h3>
-		<a href="/article/new" class="btn btn-info">转载文章</a>
 	</div>
 	{{$utils := .utils}}
 	<div class="content">
@@ -26,8 +26,8 @@
 				{{end}}
 				<div class="space"></div>
 				<div class="info">
-					<a class="label label-info" href="/article/{{.Category.Id_.Hex}}">{{.Category.Name}}</a> • 
-					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
+					<a class="label label-info" href="#">{{.Category.Name}}</a> •
+					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> •
 					{{$utils.FormatTime .CreatedAt}} 提交 • 来自 <a href="{{.OriginalUrl}}" target="_blank">{{.OriginalSource}}</a>
 				</div>
 				<div class="space"></div>
@@ -46,8 +46,14 @@
 {{define "LeftSide"}}{{end}}
 
 {{define "RightSide"}}
-	<div class="col-lg-3">
+	<div class="col-md-4">
 		<div class="well sidebar-nav">
+		    <a href="/article/new" class="btn btn-info">转载文章</a>
 		</div>
-	</div>
+	{{if .utils.HasAd "4cols"}}
+		<div class="well sidebar-nav">
+			{{.utils.AdCode "4cols"}}
+		</div>
+	{{end}}
+    </div>
 {{end}}

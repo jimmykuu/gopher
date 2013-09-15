@@ -13,7 +13,7 @@ import (
 )
 
 // 管理页面的子菜单
-const ADMIN_NAV = template.HTML(`<div class="col-lg-3">
+const ADMIN_NAV = template.HTML(`<div class="col-md-3">
 	<ul class="nav nav-list" id="admin-sidebar">
 		<li><a href="/admin/nodes"><i class="icon-chevron-right"></i>节点管理</a></li>
 		<li><a href="/admin/site_categories"><i class="icon-chevron-right"></i> 站点分类管理</a></li>
@@ -457,6 +457,8 @@ func adminListAdsHandler(w http.ResponseWriter, r *http.Request) {
 func adminNewAdHandler(w http.ResponseWriter, r *http.Request) {
 	choices := []wtforms.Choice{
 		wtforms.Choice{"frongpage", "首页"},
+		wtforms.Choice{"3cols", "3列宽度"},
+		wtforms.Choice{"4cols", "4列宽度"},
 	}
 	form := wtforms.NewForm(
 		wtforms.NewSelectField("position", "位置", choices, "", wtforms.Required{}),
@@ -498,7 +500,7 @@ func adminNewAdHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // URL: /admin/ad/{id}/delete
-// 删除友情链接
+// 删除广告
 func adminDeleteAdHandler(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
@@ -509,7 +511,7 @@ func adminDeleteAdHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // URL: /admin/ad/{id}/edit
-// 编辑友情链接
+// 编辑广告
 func adminEditAdHandler(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
@@ -519,6 +521,8 @@ func adminEditAdHandler(w http.ResponseWriter, r *http.Request) {
 
 	choices := []wtforms.Choice{
 		wtforms.Choice{"frongpage", "首页"},
+		wtforms.Choice{"3cols", "3列宽度"},
+		wtforms.Choice{"4cols", "4列宽度"},
 	}
 	form := wtforms.NewForm(
 		wtforms.NewSelectField("position", "位置", choices, ad.Position, wtforms.Required{}),

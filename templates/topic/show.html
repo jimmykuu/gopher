@@ -1,4 +1,5 @@
 {{define "Title"}}{{.topic.Title}}{{end}}
+{{define "ContentWidth"}}8{{end}}
 {{define "Breadcrumb"}}
 	{{$topic := .utils.AssertTopic .topic}}
 	<ul class="breadcrumb">
@@ -15,10 +16,10 @@
 			<h1>{{$topic.Title}}</h1>
 			{{if .username}}
 				{{if $topic.CanEdit .username}}
-					<a href="/t/{{$topic.Id_.Hex}}/edit" class="btn btn-info pull-right"><i class="icon-pencil icon-white"></i> 编辑</a>
+                <a href="/t/{{$topic.Id_.Hex}}/edit" class="btn btn-info btn-sm pull-right" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>
 				{{end}}
 				{{if $topic.CanDelete .username}}
-					<a href="/t/{{$topic.Id_.Hex}}/delete" class="btn btn-danger pull-right" onclick="return confirm('确定删除吗？');"><i class="icon-remove icon-white"></i> 删除</a>
+					<a href="/t/{{$topic.Id_.Hex}}/delete" class="btn btn-danger btn-sm pull-right" title="删除" onclick="return confirm('确定删除吗？');"><i class="glyphicon glyphicon-remove"></i></a>
 				{{end}}
 			{{end}}
 			<div>
@@ -43,10 +44,10 @@
 			<span class="label pull-right">#{{$utils.Index $index}}</span>
 			{{if $username}}
 				{{if $reply.CanDelete $username}}
-					<a href="/comment/{{.Id_.Hex}}/delete" class="remove label pull-right" title="删除"><i class="icon-white icon-remove"></i></a>
+					<a href="/comment/{{.Id_.Hex}}/delete" class="remove btn btn-danger btn-xs pull-right" title="删除"><i class="glyphicon glyphicon-remove"></i></a>
 				{{end}}
 			{{end}}
-			<a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img class="img-rounded" src="{{.Creater.AvatarImgSrc}}-middle"></a>
+            <a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img class="img-rounded" src="{{.Creater.AvatarImgSrc}}-middle" alt="{{.Creater.Username}}"></a>
 			<div class="info">
 				<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> •
 				{{$utils.FormatTime .CreatedAt}}
@@ -60,14 +61,14 @@
 	</div>
 	{{if .username}}
 		<div id="reply">
-			<form action="/comment/{{$topic.Id_.Hex}}" method="post" class="form-vertical" id="reply-form">
+			<form action="/comment/{{$topic.Id_.Hex}}" method="post" class="form-vertical" id="reply-form" role="form">
 				<fieldset>
 					<input type="hidden" name="html" id="html">
 					<div class="form-group">
 						<label for="wmd-input">新回复</label>
 						<div class="wmd-panel">
 							<div id="wmd-button-bar"></div>
-							<textarea class="wmd-input col-lg-12" id="wmd-input" name="content" rows="6"></textarea>
+							<textarea class="wmd-input col-md-12" id="wmd-input" name="content" rows="6"></textarea>
 						</div>
 						<div class="clearfix"></div>
 					</div>
@@ -117,7 +118,7 @@
 {{define "LeftSide"}}{{end}}
 {{define "RightSide"}}
 	{{$topic := .utils.AssertTopic .topic}}
-	<div class="col-lg-3">
+	<div class="col-md-4">
 		<div class="well sidebar-nav">
 			<h4><small>作者</small></h4>
 			<hr>
@@ -135,5 +136,10 @@
 				{{end}}
 			</ul>
 		</div>
+        {{if .utils.HasAd "frongpage"}}
+		    <div class="well sidebar-nav">
+			{{.utils.AdCode "frongpage"}}
+		    </div>
+        {{end}}
 	</div>
 {{end}}

@@ -1,4 +1,5 @@
 {{define "Title"}}注册{{end}}
+{{define "ContentWidth"}}9{{end}}
 {{define "Breadcrumb"}}
 	<ul class="breadcrumb">
         <li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
@@ -12,7 +13,7 @@
             {{.utils.RenderInputH .form "password" 2 6}}
             {{.utils.RenderInputH .form "email" 2 6}}
 			<div class="form-group">
-                <div class="col-lg-offset-2 col-lg-6">
+                <div class="col-md-offset-2 col-md-6">
 				    <input id="submit" type="submit" class="btn btn-primary" value="注册">
 			    	<p>
 				    	<br>

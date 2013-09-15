@@ -1,4 +1,5 @@
 {{define "Title"}}第三方包{{end}}
+{{define "ContentWidth"}}8{{end}}
 {{define "Breadcrumb"}}
 	<ul class="breadcrumb">
 		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
@@ -41,14 +42,19 @@
 {{define "LeftSide"}}{{end}}
 
 {{define "RightSide"}}
-	<div class="col-lg-3">
+	<div class="col-md-4 sidebar">
 		<div class="well sidebar-nav">
 			<h4><small>分类</small></h4>
 			<ul class="nav">
 				{{range .categories}}
 				<li><a href="/packages/{{.Id}}">{{.Name}}<span class="badge pull-right">{{.PackageCount}}</span></a></li>
 				{{end}}
-			</ul>
+		    </ul>
 		</div>
+        {{if .utils.HasAd "4cols"}}
+        <div class="well sidebar-nav">
+            {{.utils.AdCode "4cols"}}
+        </div>
+        {{end}}
 	</div>
 {{end}}

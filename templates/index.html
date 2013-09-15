@@ -1,5 +1,6 @@
 {{define "Title"}}首页{{end}}
 {{define "Breadcrumb"}}{{end}}
+{{define "ContentWidth"}}8{{end}}
 {{define "Content"}}
 	<div class="content">
 		{{$utils := .utils}}
@@ -27,7 +28,7 @@
 		<dl class="topics">
 		{{range .topics}}
 			<dd>
-				<a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img class="img-rounded" src="{{.Creater.AvatarImgSrc}}-middle"></a>
+            <a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img class="img-rounded" src="{{.Creater.AvatarImgSrc}}-middle" alt="{{.Creater.Username}}"></a>
 				{{if .CommentCount}}
 					<a class="badge pull-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
 				{{end}}
@@ -54,7 +55,7 @@
 {{define "LeftSide"}}{{end}}
 
 {{define "RightSide"}}
-	<div class="col-lg-3">
+	<div class="col-md-4 sidebar">
 		<div class="well sidebar-nav">
 			{{if .username}}
 				{{.utils.UserInfo .username}}

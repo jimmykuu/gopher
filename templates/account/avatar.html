@@ -1,4 +1,5 @@
 {{define "Title"}}修改头像{{end}}
+{{define "ContentWidth"}}9{{end}}
 {{define "Breadcrumb"}}
 	<ul class="breadcrumb">
 		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
@@ -8,7 +9,7 @@
 {{end}}
 {{define "Content"}}
 	{{if .error}}
-	<div class="alert alert-error">
+	<div class="alert alert-danger">
 		<a href="#" class="close" data-dismiss="alert">&times;</a>
 		<strong>{{.error}}</strong>
 	</div>

@@ -1,4 +1,5 @@
 {{define "Title"}}{{.package.Title}}{{end}}
+{{define "ContentWidth"}}8{{end}}
 {{define "Breadcrumb"}}
 	{{$package := .utils.AssertPackage .package}}
 	{{$category := $package.Category}}
@@ -16,8 +17,8 @@
 		{{if .username}}
 			{{$package := .utils.AssertPackage .package}}
 			{{if $package.CanEdit .username}}
-				<a href="/p/{{.package.Id_.Hex}}/delete" class="btn btn-danger pull-right"><i class="icon-remove icon-white"></i> 删除</a>
-				<a href="/p/{{.package.Id_.Hex}}/edit" class="btn btn-info pull-right"><i class="icon-pencil icon-white"></i> 编辑</a>
+            <a href="/p/{{.package.Id_.Hex}}/delete" class="btn btn-danger btn-sm pull-right" title="删除"><i class="glyphicon glyphicon-remove"></i></a>
+				<a href="/p/{{.package.Id_.Hex}}/edit" class="btn btn-info btn-sm pull-right" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>
 			{{end}}
 		{{end}}
 		<h1>{{.package.Title}}</h1>

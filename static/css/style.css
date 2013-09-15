@@ -161,7 +161,6 @@ header nav li a:hover {
 }
 
 #admin-sidebar {
-	width: 228px;
 	margin: 0;
 	padding: 0;
 	background-color: #fff;
@@ -286,7 +285,7 @@ ul#menu li {
 }
 
 ul#menu li a {
-	padding: 10px 30px 10px;
+	padding: 10px 25px;
 	position: relative;
 	display: block;
 	color: #999;
