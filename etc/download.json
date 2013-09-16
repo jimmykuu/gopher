@@ -383,35 +383,35 @@
 				"sha1": "7349cddc54aeec427b00e5f353592f5a72c8421a",
 				"url": "https://go.googlecode.com/files/go1.0.2.linux-amd64.tar.gz"
 			}, {
-				"filename": "go1.0.3.src.tar.gz",
-				"summary": "go1.0.3 (source only)",
-				"size": "7.1 MB",
-				"sha1": "1a67293c10d6c06c633c078a7ca67e98c8b58471",
-				"url": "https://go.googlecode.com/files/go1.0.3.src.tar.gz"
+				"filename": "go1.0.2.src.tar.gz",
+				"summary": "go1.0.2 (source only)",
+				"size": "9.2 MB",
+				"sha1": "408bb361df8c34b1bba41383812154e932907526",
+				"url": "https://go.googlecode.com/files/go1.0.2.src.tar.gz"
 			}, {
-				"filename": "go1.0.3.windows-386.msi",
-				"summary": "go1.0.3 Windows (x86 32-bit) MSI installer",
-				"size": "23.0 MB",
-				"sha1": "4293793b6cbb07955ea405e5a05131e357a1e3d9",
-				"url": "https://go.googlecode.com/files/go1.0.3.windows-386.msi"
+				"filename": "go1.0.2.windows-386.msi",
+				"summary": "go1.0.2 Windows (x86 32-bit) MSI installer",
+				"size": "24.3 MB",
+				"sha1": "49aec39fcf1e34f64336021a60159170250ec732",
+				"url": "https://go.googlecode.com/files/go1.0.2.windows-386.msi"
 			}, {
-				"filename": "go1.0.3.windows-386.zip",
-				"summary": "go1.0.3 Windows (x86 32-bit) ZIP archive",
-				"size": "28.5 MB",
-				"sha1": "73fff09786c68b9211a2ddf14c690fe374d15780",
-				"url": "https://go.googlecode.com/files/go1.0.3.windows-386.zip"
+				"filename": "go1.0.2.windows-386.zip",
+				"summary": "go1.0.2 Windows (x86 32-bit) ZIP archive",
+				"size": "30.3 MB",
+				"sha1": "d278b35a2460cbb1fe3ae39e4d6c842f13fa8dfd",
+				"url": "https://go.googlecode.com/files/go1.0.2.windows-386.zip"
 			}, {
-				"filename": "go1.0.3.windows-amd64.msi",
-				"summary": "go1.0.3 Windows (x86 64-bit) MSI installer",
-				"size": "23.2 MB",
-				"sha1": "f6800a87810e2a6106477c2311576d13e4177cd2",
-				"url": "https://go.googlecode.com/files/go1.0.3.windows-amd64.msi"
+				"filename": "go1.0.2.windows-amd64.msi",
+				"summary": "go1.0.2 Windows (x86 64-bit) MSI installer",
+				"size": "24.9 MB",
+				"sha1": "fc0bcee70701b3e3ecd4fbf53cd1091ef6b62db1",
+				"url": "https://go.googlecode.com/files/go1.0.2.windows-amd64.msi"
 			}, {
-				"filename": "go1.0.3.windows-amd64.zip",
-				"summary": "go1.0.3 Windows (x86 64-bit) ZIP archive",
-				"size": "28.9 MB",
-				"sha1": "1982dce67dbfad841772e4f0c49345404dad8be6",
-				"url": "https://go.googlecode.com/files/go1.0.3.windows-amd64.zip"
+				"filename": "go1.0.2.windows-amd64.zip",
+				"summary": "go1.0.2 Windows (x86 64-bit) ZIP archive",
+				"size": "31.0 MB",
+				"sha1": "ef0a9cf37962374795a51176996af87b613d900d",
+				"url": "https://go.googlecode.com/files/go1.0.2.windows-amd64.zip"
 			}
 		]
 	}
