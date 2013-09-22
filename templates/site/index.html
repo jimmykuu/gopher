@@ -24,8 +24,8 @@
 					<img src="https://plus.google.com/_/favicon?domain={{.Url}}"><a href="{{.Url}}" target="_blank">{{.Title}}</a>
 					{{if $username}}
 						{{if .CanEdit $username}}
-							<a href="/site/{{.Id_.Hex}}/edit" title="编辑"><i class="icon-pencil"></i></a>
-							<a href="/site/{{.Id_.Hex}}/delete" title="删除" onclick="javascript:return confirm('确定要删除吗？');"><i class="icon-remove"></i></a>
+							<a class="btn btn-xs btn-info" href="/site/{{.Id_.Hex}}/edit" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>
+							<a class="btn btn-xs btn-danger" href="/site/{{.Id_.Hex}}/delete" title="删除" onclick="javascript:return confirm('确定要删除吗？');"><i class="glyphicon glyphicon-remove"></i></a>
 						{{end}}
 					{{end}}
 				</dt>
