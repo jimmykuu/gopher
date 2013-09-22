@@ -21,7 +21,7 @@
 			<dl class="site">
 			{{range $sites}}
 				<dt id="site-{{.Id_.Hex}}">
-					<img src="http://www.google.com/s2/favicons?domain_url={{.Url}}"><a href="{{.Url}}" target="_blank">{{.Title}}</a>
+					<img src="https://plus.google.com/_/favicon?domain={{.Url}}"><a href="{{.Url}}" target="_blank">{{.Title}}</a>
 					{{if $username}}
 						{{if .CanEdit $username}}
 							<a href="/site/{{.Id_.Hex}}/edit" title="编辑"><i class="icon-pencil"></i></a>
