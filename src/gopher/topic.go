@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jimmykuu/wtforms"
 	"html/template"
+	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 	"net/http"
 	"strings"
@@ -16,6 +17,15 @@ import (
 )
 
 func topicsHandler(w http.ResponseWriter, r *http.Request, conditions bson.M, sort string, url string, subActive string) {
+	session, err := mgo.Dial(Config.DB)
+	if err != nil {
+		panic(err)
+	}
+	defer session.Close()
+
+	session.SetMode(mgo.Monotonic, true)
+
+	DB := session.DB("gopher")
 	page, err := getPage(r)
 
 	if err != nil {

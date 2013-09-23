@@ -227,38 +227,6 @@ func (u *Utils) AssertPackage(i interface{}) *Package {
 	return &v
 }
 
-// 在模板中渲染成表单控件
-// func (u *Utils) Input(form wtforms.Form, fieldName string, attrs ...string) template.HTML {
-// 	field, err := form.Field(fieldName)
-
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	errClass := ""
-// 	if field.HasErrors() {
-// 		errClass = " has-error"
-// 	}
-
-// 	return template.HTML(fmt.Sprintf(`<div class="form-group%s">%s%s%s</div>`, errClass, field.RenderLabel(), field.RenderInput(attrs), field.RenderErrors()))
-// }
-
-// 在模板中渲染成表单控件, 水平排列
-// func (u *Utils) InputH(form wtforms.Form, fieldName string, attrs ...string) template.HTML {
-// 	field, err := form.Field(fieldName)
-
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	errClass := ""
-// 	if field.HasErrors() {
-// 		errClass = " has-error"
-// 	}
-
-// 	return template.HTML(fmt.Sprintf(`<div class="form-group%s">%s%s%s</div>`, errClass, field.RenderLabel(`class="control-label"`), field.RenderInput(attrs), field.RenderErrors()))
-// }
-
 func message(w http.ResponseWriter, r *http.Request, title string, message string, class string) {
 	renderTemplate(w, r, "message.html", map[string]interface{}{"title": title, "message": template.HTML(message), "class": class})
 }
@@ -414,6 +382,7 @@ func renderTemplate(w http.ResponseWriter, r *http.Request, file string, data ma
 	data["utils"] = utils
 
 	data["analyticsCode"] = analyticsCode
+	data["shareCode"] = shareCode
 	data["staticFileVersion"] = Config.StaticFileVersion
 	flash, _ := store.Get(r, "flash")
 	data["flash"] = flash

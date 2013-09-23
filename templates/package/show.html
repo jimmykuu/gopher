@@ -22,7 +22,11 @@
 			{{end}}
 		{{end}}
 		<h1>{{.package.Title}}</h1>
-		{{.package.Html}}
+        {{.shareCode}}
+        <div class="clearfix"></div>
+        <div class="body">
+		    {{.package.Html}}
+        </div>
 		<hr>
 		<ul>
 			<li><strong>类别：</strong><a href="/packages/{{$category.Id}}">{{$category.Name}}</a></li>

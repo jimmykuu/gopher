@@ -1,7 +1,7 @@
 [
     {
 		"version": "go1.2rc1",
-		"date": "2013-09-20",
+		"date": "2013-09-19",
 		"files": [
 			{
 				"filename": "go1.2rc1.darwin-386-osx10.6.pkg",

@@ -15,19 +15,22 @@
 		<h1>{{.article.Title}}</h1>
 		{{if .username}}
 	 		{{if $article.CanEdit .username}}
-				<a href="/a/{{$article.Id_.Hex}}/edit" class="btn btn-info pull-right"><i class="icon-pencil icon-white"></i> 编辑</a>
+				<a href="/a/{{$article.Id_.Hex}}/edit" class="btn btn-info btn-sm pull-right" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>
 			{{end}}
 		{{end}}
 		<div>感谢 <a href="/member/{{$article.Creater.Username}}">{{$article.Creater.Username}}</a> 在 <time datetime="{{$article.CreatedAt}}">{{.utils.FormatTime $article.CreatedAt}}</time> 投递 {{.article.Hits}} 次点击</div>
-		<h2><small>本文转载自: <a href="{{.article.OriginalUrl}}" target="_blank">{{.article.OriginalSource}}</a></small></h2>
-		<hr>
-		<div class="article">
-			{{.article.Html}}
-		</div>
-		<div class="alert alert-block">
-			<p>本文转载自: <a href="{{.article.OriginalUrl}}" target="_blank">{{.article.OriginalSource}}</a></p>
-			<p>(本站只作转载,不代表本站同意文中观点或证实文中信息)</p>
-		</div>
+        {{.shareCode}}
+        <div class="body">
+            <h2><small>本文转载自: <a href="{{.article.OriginalUrl}}" target="_blank">{{.article.OriginalSource}}</a></small></h2>
+            <hr>
+            <div class="article">
+                {{.article.Html}}
+            </div>
+            <div class="alert alert-block">
+                <p>本文转载自: <a href="{{.article.OriginalUrl}}" target="_blank">{{.article.OriginalSource}}</a></p>
+                <p>(本站只作转载,不代表本站同意文中观点或证实文中信息)</p>
+            </div>
+        </div>
 	</article>
 	{{$utils := .utils}}
 	<div id="replies" class="content">

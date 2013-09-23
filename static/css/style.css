@@ -375,3 +375,11 @@ ul#menu li.nav-download {
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 }
+
+#bdshare span, #bdshare a {
+    height: 24px;
+}
+
+div.body {
+    padding-top: 1.5em;
+}

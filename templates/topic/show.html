@@ -25,14 +25,18 @@
 			<div>
 				由 <a href="/member/{{$topic.Creater.Username}}">{{$topic.Creater.Username}}</a> 在 {{.utils.FormatTime $topic.CreatedAt }} 发布 {{$topic.Hits}} 次点击
 			</div>
+            {{.shareCode}}
+            <div class="clearfix"></div>
 		</div>
-		{{$topic.Html}}
-		{{if $topic.Updater}}
-			<hr>
-			<div class="alert alert-success">
-				{{$topic.Updater.Username}} 于 {{.utils.FormatTime $topic.UpdatedAt }} 修改
-			</div>
-		{{end}}
+        <div class="body">
+            {{$topic.Html}}
+            {{if $topic.Updater}}
+                <hr>
+                <div class="alert alert-success">
+                    {{$topic.Updater.Username}} 于 {{.utils.FormatTime $topic.UpdatedAt }} 修改
+                </div>
+            {{end}}
+        </div>
 	</div>
 	{{$utils := .utils}}
 	<div id="replies" class="content">
