@@ -3,6 +3,10 @@ body {
 	padding-bottom: 40px;
 }
 
+pre.prettyprint ol.linenums {
+    margin-left: 0;
+}
+
 header div.btn-group {
 	margin-top: 4px;
 }
@@ -10,6 +14,10 @@ header div.btn-group {
 li.number {
 	color: #999;
 	font-weight: bold;
+}
+
+dl.site dt {
+    padding-top: 8px;
 }
 
 .navbar-fixed-top .brand {

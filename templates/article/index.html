@@ -47,9 +47,7 @@
 
 {{define "RightSide"}}
 	<div class="col-md-4">
-		<div class="well sidebar-nav">
-		    <a href="/article/new" class="btn btn-info">转载文章</a>
-		</div>
+		<a href="/article/new" class="btn btn-info btn-lg btn-block" style="margin-bottom: 20px;">转载文章</a>
 	{{if .utils.HasAd "4cols"}}
 		<div class="well sidebar-nav">
 			{{.utils.AdCode "4cols"}}

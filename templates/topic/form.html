@@ -24,7 +24,7 @@
 				<div class="form-group">
 					<div class="wmd-panel">
 						<div id="wmd-button-bar"></div>
-						<textarea class="wmd-input col-md-12" id="wmd-input" name="content" rows="20">{{.content}}</textarea>
+						<textarea class="wmd-input col-md-12" id="wmd-input" name="content" rows="20" placeholder="支持Markdown">{{.content}}</textarea>
 					</div>
 				</div>
 				<div class="form-group">
@@ -54,4 +54,27 @@
 {{end}}
 
 {{define "LeftSide"}}{{end}}
-{{define "RightSide"}}{{end}}
+{{define "RightSide"}}
+<div class="col-md-4 sidebar">
+    <div class="well sidebar-nav">
+        <h4>请在创建主题时考虑：</h4>
+        <ul>
+            <li>请选择一个合适的节点。</li>
+            <li><strong>提问型主题：</strong>请用准确的语言描述你遇到的问题，如果问题足够在标题中写完，那么正文是不用填写的，在正文中写 RT 是完全没有必要的。</li>
+            <li><strong>分享型主题：</strong>欢迎你在这里分享你在网上看到的关于Go语言的信息，请不要在分享社会新闻。</li>
+            <li>主题内容使用Markdown格式，请参考下面的Markdown格式说明</li>
+        </ul>
+        <h4>Markdown格式说明</h4>
+        <ul>
+            <li><strong>粗体</strong><code>**粗体**</code></li>
+            <li><i>斜体</i><code>*斜体*</code></li>
+            <li>http://www.example.com/自动加连接</li>
+            <li><code>![img alt](http://foo.com/bar.jpg)</code>显示图片
+            <li><code>`println("Hello Golang")`</code>单行代码</li>
+            <li>用<code>&lt;pre&gt;&lt;/pre&gt;</code>标签写多行代码</li>
+            <li>缩进4个空格也可以写多行代码</li>
+            <li><a href="http://wowubuntu.com/markdown/" target="_blank">完整参考</a></li>
+        </ul>
+    </div>
+</div>
+{{end}}

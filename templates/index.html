@@ -35,8 +35,8 @@
 				<a href="/t/{{.Id_.Hex}}" class="title">{{.Title}}</a>
 				<div class="space"></div>
 				<div class="info" style="margin-left:60px">
-					<a class="label label-info" href="/go/{{.Node.Id}}">{{.Node.Name}}</a> • 
-					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
+					<a class="label label-info" href="/go/{{.Node.Id}}">{{.Node.Name}}</a> •
+					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> •
 					{{if .CommentCount}}
 						{{$utils.FormatTime .LatestRepliedAt}} • 最后回复来自 <a href="/member/{{.LatestReplier.Username}}">{{.LatestReplier.Username}}</a>
 					{{else}}
@@ -68,9 +68,7 @@
 				<div align="center">已注册用户：<a href="/signin">登录</a></div>
 			{{end}}
 		</div>
-		<div class="well sidebar-nav">
-			<a href="/topic/new" class="btn btn-success">发表话题</a>
-		</div>
+		<a href="/topic/new" class="btn btn-success btn-lg btn-block" style="margin-bottom: 20px;">发表话题</a>
 		{{if .utils.HasAd "frongpage"}}
 		<div class="well sidebar-nav">
 			{{.utils.AdCode "frongpage"}}
