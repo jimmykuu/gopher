@@ -457,6 +457,7 @@ func adminListAdsHandler(w http.ResponseWriter, r *http.Request) {
 func adminNewAdHandler(w http.ResponseWriter, r *http.Request) {
 	choices := []wtforms.Choice{
 		wtforms.Choice{"frongpage", "首页"},
+		wtforms.Choice{"2cols", "2列宽度"},
 		wtforms.Choice{"3cols", "3列宽度"},
 		wtforms.Choice{"4cols", "4列宽度"},
 	}

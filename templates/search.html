@@ -1,5 +1,5 @@
 {{define "Title"}}搜索结果{{end}}
-{{define "ContentWidth"}}8{{end}}
+{{define "ContentWidth"}}10{{end}}
 {{define "Breadcrumb"}}
 	<ul class="breadcrumb">
 		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
@@ -46,11 +46,9 @@
 
 {{define "LeftSide"}}{{end}}
 {{define "RightSide"}}
-    <div class="col-md-4 sidebar">
-    	{{if .utils.HasAd "frongpage"}}
-    	<div class="well sidebar-nav">
-		    {{.utils.AdCode "frongpage"}}
-		</div>
+    <div class="col-md-2 sidebar">
+    	{{if .utils.HasAd "2cols"}}
+		    {{.utils.AdCode "2cols"}}
         {{end}}
     </div>
 {{end}}
