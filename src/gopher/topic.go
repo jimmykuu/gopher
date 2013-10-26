@@ -368,7 +368,7 @@ func deleteTopicHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 删除Topic记录
-	c = DB.C("topics")
+	c = DB.C("contents")
 	c.Remove(bson.M{"_id": topicId})
 
 	http.Redirect(w, r, "/", http.StatusFound)
