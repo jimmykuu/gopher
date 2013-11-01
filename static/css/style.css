@@ -255,6 +255,7 @@ div.header {
 
 .footer-links {
 	margin: 10px 0;
+    padding-left: 0;
 }
 .footer-links li {
 	display: inline;
