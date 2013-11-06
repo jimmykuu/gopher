@@ -357,3 +357,17 @@ type AD struct {
 	Name     string        `bson:"name"`
 	Code     string        `bson:"code"`
 }
+
+type Book struct {
+	Id_             bson.ObjectId `bson:"_id"`
+	Title           string        `bson:"title"`
+	Cover           string        `bson:"conver"`
+	Author          string        `bson:"author"`
+	Translator      string        `bson:"translator"`
+	Pages           int           `bson:"pages"`
+	Introduction    string        `bson:"introduction"`
+	Publisher       string        `bson:"publisher"`
+	Language        string        `bson:"language"`
+	PublicationDate string        `bson:"publication_date"`
+	ISBN            string        `bson:"isbn"`
+}

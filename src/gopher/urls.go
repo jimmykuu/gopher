@@ -41,6 +41,8 @@ var (
 		Handler{"/admin/ad/new", Administrator, adminNewAdHandler},
 		Handler{"/admin/ad/{id}/delete", Administrator, adminDeleteAdHandler},
 		Handler{"/admin/ad/{id}/edit", Administrator, adminEditAdHandler},
+		Handler{"/admin/book/new", Administrator, adminNewBookHandler},
+		Handler{"/admin/books", Administrator, adminListBooksHandler},
 
 		Handler{"/signup", Everyone, signupHandler},
 		Handler{"/signin", Everyone, signinHandler},
@@ -92,6 +94,9 @@ var (
 		Handler{"/p/{packageId}", Everyone, showPackageHandler},
 		Handler{"/p/{packageId}/edit", Authenticated, editPackageHandler},
 		Handler{"/p/{packageId}/delete", Administrator, deletePackageHandler},
+
+		Handler{"/books", Everyone, booksHandler},
+		Handler{"/book/{bookId}", Everyone, showBookHandler},
 
 		Handler{"/download", Everyone, downloadHandler},
 	}

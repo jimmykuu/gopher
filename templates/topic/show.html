@@ -10,7 +10,6 @@
 {{define "Content"}}
 	{{$topic := .utils.AssertTopic .topic}}
 	{{$username := .username}}
-	
 	<div class="content">
 		<div class="page-header">
 			<h1>{{$topic.Title}}</h1>
@@ -88,7 +87,8 @@
 		<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Editor.js"></script>
 		<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Sanitizer.js"></script>
 		<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/jquery.textchange.min.js"></script>
-		<script>
+        <script type="text/javascript" src="/static/js/jquery.atwho.min.js"></script>
+		<script type="text/javascript">
 			(function () {
 				var converter1 = Markdown.getSanitizingConverter();
 				var editor1 = new Markdown.Editor(converter1);
@@ -102,6 +102,11 @@
 			$('#wmd-input').bind('notext', function () {
 				$('#submit').attr('disabled', true);
 			});
+
+            $("#wmd-input").atwho({
+                at: "@",
+                data: {{.usernames}}
+            });
 
 			$('#reply-form').submit(function () {
 				$("#html").val($('#wmd-preview').html());

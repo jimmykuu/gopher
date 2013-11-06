@@ -65,6 +65,7 @@
 					<li class="nav-sites{{if .utils.Equal .active "site"}} active{{end}}"><a href="/sites">酷站</a></li>
 					<li class="nav-packages{{if .utils.Equal .active "package"}} active{{end}}"><a href="/packages">第三方包</a></li>
 					<li class="nav-members{{if .utils.Equal .active "members"}} active{{end}}"><a href="/members">会员</a></li>
+                    <li class="nav-books{{if .utils.Equal .active "books"}} active{{end}}"><a href="/books">图书</a></li>
 					<li class="nav-tour"><a href="http://tour.golangtc.com" target="_blank">Go 指南</a></li>
 					<li class="nav-download{{if .utils.Equal .active "download"}} active{{end}}"><a href="/download">下载</a></li>
                     <li><a href="/timeline">时间线</a></li>
@@ -116,6 +117,6 @@
 </body>
 <script type="text/javascript" src="http://cdn.staticfile.org/twitter-bootstrap/3.0.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="http://gopher.qiniudn.com/static/js/prettify.js"></script>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/application.js?v={{.staticFileVersion}}"></script>
+<script type="text/javascript" src="/static/js/application.js?v={{.staticFileVersion}}"></script>
 <script type="text/javascript" src="/static/js/history.js?v=1"></script>
 </html>

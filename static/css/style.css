@@ -294,7 +294,7 @@ ul#menu li {
 }
 
 ul#menu li a {
-	padding: 10px 25px;
+	padding: 10px 23px;
 	position: relative;
 	display: block;
 	color: #999;
@@ -357,6 +357,15 @@ ul#menu li.active.nav-packages a:before {
 	border-bottom-color: #ff7f0e;
 }
 
+ul#menu li.nav-books {
+    border-bottom-color: #9467bd;
+}
+
+ul#menu li.active.nav-books a:before {
+    color: #9467bd;
+    border-bottom-color: #9467bd;
+}
+
 ul#menu li.nav-members {
 	border-bottom-color: #17becf;
 }
@@ -391,4 +400,24 @@ ul#menu li.nav-download {
 
 div.body {
     padding-top: 1.5em;
+}
+
+div#book h2 {
+    background: none;
+}
+
+ul.books {
+    list-style: none;
+    display: block;
+    margin-top: 10px;
+}
+
+ul.books li {
+    float: left;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+div.book-detail .tab-pane {
+    padding-top: 2em;
 }

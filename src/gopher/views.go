@@ -127,6 +127,11 @@ func (u *Utils) HTML(str string) template.HTML {
 	return template.HTML(str)
 }
 
+// \n => <br>
+func (u *Utils) Br(str string) template.HTML {
+	return template.HTML(strings.Replace(str, "\n", "<br>", -1))
+}
+
 func (u *Utils) RenderInput(form wtforms.Form, fieldStr string, inputAttrs ...string) template.HTML {
 	field, err := form.Field(fieldStr)
 	if err != nil {

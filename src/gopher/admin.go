@@ -10,6 +10,7 @@ import (
 	"html/template"
 	"labix.org/v2/mgo/bson"
 	"net/http"
+	"strconv"
 )
 
 // 管理页面的子菜单
@@ -19,6 +20,7 @@ const ADMIN_NAV = template.HTML(`<div class="col-md-3">
 		<li><a href="/admin/site_categories"><i class="icon-chevron-right"></i> 站点分类管理</a></li>
 		<li><a href="/admin/article_categories"><i class="icon-chevron-right"></i> 文章分类管理</a></li>
 		<li><a href="/admin/package_categories"><i class="icon-chevron-right"></i> 包分类管理</a></li>
+        <li><a href="/admin/books"><i class="icon-chevron-right"></i> 图书管理</a></li>
 		<li><a href="/admin/users"><i class="icon-chevron-right"></i> 用户管理</a></li>
 		<li><a href="/admin/link_exchanges"><i class="icon-chevron-right"></i> 友情链接</a></li>
 		<li><a href="/admin/ads"><i class="icon-chevron-right"></i> 广告</a></li>
@@ -559,5 +561,63 @@ func adminEditAdHandler(w http.ResponseWriter, r *http.Request) {
 		"adminNav": ADMIN_NAV,
 		"form":     form,
 		"isNew":    false,
+	})
+}
+
+func adminListBooksHandler(w http.ResponseWriter, r *http.Request) {
+	c := DB.C("books")
+	var books []Book
+	c.Find(nil).All(&books)
+
+	renderTemplate(w, r, "book/list.html", map[string]interface{}{
+		"adminNav": ADMIN_NAV,
+		"books":    books,
+	})
+}
+
+func adminNewBookHandler(w http.ResponseWriter, r *http.Request) {
+	form := wtforms.NewForm(
+		wtforms.NewTextField("title", "书名", "", wtforms.Required{}),
+		wtforms.NewTextField("cover", "封面", "", wtforms.Required{}),
+		wtforms.NewTextField("author", "作者", "", wtforms.Required{}),
+		wtforms.NewTextField("translator", "译者", ""),
+		wtforms.NewTextArea("introduction", "简介", ""),
+		wtforms.NewTextField("pages", "页数", "", wtforms.Required{}),
+		wtforms.NewTextField("language", "语言", "", wtforms.Required{}),
+		wtforms.NewTextField("publisher", "出版社", ""),
+		wtforms.NewTextField("publication_date", "出版年月日", ""),
+		wtforms.NewTextField("isbn", "ISBN", ""),
+	)
+
+	if r.Method == "POST" {
+		if form.Validate(r) {
+			pages, _ := strconv.Atoi(form.Value("pages"))
+			c := DB.C("books")
+			err := c.Insert(&Book{
+				Id_:             bson.NewObjectId(),
+				Title:           form.Value("title"),
+				Cover:           form.Value("cover"),
+				Author:          form.Value("author"),
+				Translator:      form.Value("translator"),
+				Pages:           pages,
+				Language:        form.Value("language"),
+				Publisher:       form.Value("publisher"),
+				PublicationDate: form.Value("publication_date"),
+				Introduction:    form.Value("introduction"),
+				ISBN:            form.Value("isbn"),
+			})
+
+			if err != nil {
+				panic(err)
+			}
+			http.Redirect(w, r, "/admin/books", http.StatusFound)
+			return
+		}
+	}
+
+	renderTemplate(w, r, "book/form.html", map[string]interface{}{
+		"adminNav": ADMIN_NAV,
+		"form":     form,
+		"isNew":    true,
 	})
 }
