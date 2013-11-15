@@ -17,7 +17,6 @@ import (
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 	"net/http"
-	"net/smtp"
 	"os"
 	"sort"
 	"strconv"
@@ -251,20 +250,6 @@ func Page(r *http.Request) (int, error) {
 	}
 
 	return page, nil
-}
-
-func sendMail(subject string, message string, to []string) {
-	auth := smtp.PlainAuth(
-		"",
-		Config.SmtpUsername,
-		Config.SmtpPassword,
-		Config.SmtpHost,
-	)
-	msg := fmt.Sprintf("To: %s\r\nFrom: jimmykuu@126.com\r\nSubject: %s\r\nContent-Type: text/html\r\n\r\n%s", strings.Join(to, ";"), subject, message)
-	err := smtp.SendMail(Config.SmtpAddr, auth, Config.FromEmail, to, []byte(msg))
-	if err != nil {
-		panic(err)
-	}
 }
 
 // 检查一个string元素是否在数组里面

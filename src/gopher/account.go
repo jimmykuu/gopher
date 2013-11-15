@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
+	"github.com/jimmykuu/webhelpers"
 	"github.com/jimmykuu/wtforms"
 	. "github.com/qiniu/api/conf"
 	qiniu_io "github.com/qiniu/api/io"
@@ -361,18 +362,30 @@ func forgotPasswordHandler(w http.ResponseWriter, r *http.Request) {
 			} else if user.Email != form.Value("email") {
 				form.AddError("username", "用户名和邮件不匹配")
 			} else {
-				message2 := `Hi %s,
+				message2 := `Hi %s,<br>
 我们的系统收到一个请求，说你希望通过电子邮件重新设置你在 Golang中国 的密码。你可以点击下面的链接开始重设密码：
 
-%s/reset/%s
+<a href="%s/reset/%s">%s/reset/%s</a><br>
 
 如果这个请求不是由你发起的，那没问题，你不用担心，你可以安全地忽略这封邮件。
 
-如果你有任何疑问，可以回复这封邮件向我提问。`
+如果你有任何疑问，可以回复<a href="mailto:support@golangtc.com">support@golangtc.com</a>向我提问。`
 				code := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 				c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"resetcode": code}})
-				message2 = fmt.Sprintf(message2, user.Username, Config.Host, code)
-				sendMail("[Golang中国]重设密码", message2, []string{user.Email})
+				message2 = fmt.Sprintf(message2, user.Username, Config.Host, code, Config.Host, code)
+				webhelpers.SendMail(
+					"[Golang中国]重设密码",
+					message2,
+					Config.FromEmail,
+					[]string{user.Email},
+					webhelpers.SmtpConfig{
+						Username: Config.SmtpUsername,
+						Password: Config.SmtpPassword,
+						Host:     Config.SmtpHost,
+						Addr:     Config.SmtpAddr,
+					},
+					true,
+				)
 				message(w, r, "通过电子邮件重设密码", "一封包含了重设密码指令的邮件已经发送到你的注册邮箱，按照邮件中的提示，即可重设你的密码。", "success")
 				return
 			}
