@@ -1,5 +1,89 @@
 [
     {
+        "version": "go1.2rc5",
+        "date": "2013-11-17",
+        "files": [
+            {
+                "filename": "go1.2rc5.darwin-386-osx10.6.tar.gz",
+                "summary": "go1.2rc5 Mac OS X (x86 32-bit) tarball",
+                "size": "39.8 MB",
+                "sha1": "b8989b67a0d924d4532719fe671679051df2d946",
+                "url": "https://go.googlecode.com/files/go1.2rc5.darwin-386-osx10.6.tar.gz"
+            }, {
+                "filename": "go1.2rc5.darwin-386-osx10.8.tar.gz",
+                "summary": "go1.2rc5 Mac OS X (x86 32-bit) tarball",
+                "size": "40.3 MB",
+                "sha1": "dd4d78fdd7c2da306a205aeee945efb6105ee0a5",
+                "url": "https://go.googlecode.com/files/go1.2rc5.darwin-386-osx10.8.tar.gz"
+            }, {
+                "filename": "go1.2rc5.darwin-amd64-osx10.6.tar.gz",
+                "summary": "go1.2rc5 Mac OS X (x86 64-bit) tarball",
+                "size": "51.6 MB",
+                "sha1": "cbc45de13309cd1d019381fc3fa441a32d3b5561",
+                "url": "https://go.googlecode.com/files/go1.2rc5.darwin-amd64-osx10.6.tar.gz"
+            }, {
+                "filename": "go1.2rc5.darwin-amd64-osx10.8.tar.gz",
+                "summary": "go1.2rc5 Mac OS X (x86 64-bit) tarball",
+                "size": "52.2 MB",
+                "sha1": "cc21a45e20424977defe5140f4b6ea7a3d6557c7",
+                "url": "https://go.googlecode.com/files/go1.2rc5.darwin-amd64-osx10.8.tar.gz"
+            }, {
+                "filename": "go1.2rc5.freebsd-386.tar.gz",
+                "summary": "go1.2rc5 FreeBSD (x86 32-bit) tarball",
+                "size": "39.9 MB",
+                "sha1": "97c48db86a88d0787462064f38b3f58d59ee9945",
+                "url": "https://go.googlecode.com/files/go1.2rc5.freebsd-386.tar.gz"
+            }, {
+                "filename": "go1.2rc5.freebsd-amd64.tar.gz",
+                "summary": "go1.2rc5 FreeBSD (x86 64-bit) tarball",
+                "size": "40.7 MB",
+                "sha1": "2ef074cfd6b7b60660f5220071dab51bf769119e",
+                "url": "https://go.googlecode.com/files/go1.2rc5.freebsd-amd64.tar.gz"
+            }, {
+                "filename": "go1.2rc5.linux-386.tar.gz",
+                "summary": "go1.2rc5 Linux (x86 32-bit) tarball",
+                "size": "41.2 MB",
+                "sha1": "a31f1aac3fa638e37f045da0aedb08c69d0bbdee",
+                "url": "https://go.googlecode.com/files/go1.2rc5.linux-386.tar.gz"
+            }, {
+                "filename": "go1.2rc5.linux-amd64.tar.gz",
+                "summary": "go1.2rc5 Linux (x86 64-bit) tarball",
+                "size": "53.4 MB",
+                "sha1": "edccc7c01aa1607aa84889c9333e93b3957766d8",
+                "url": "https://go.googlecode.com/files/go1.2rc5.linux-amd64.tar.gz"
+            }, {
+                "filename": "go1.2rc5.src.tar.gz",
+                "summary": "go1.2rc5 (source only)",
+                "size": "9.1 MB",
+                "sha1": "f0cc813715d06a8e2febd580e126b7489b6a945d",
+                "url": "https://go.googlecode.com/files/go1.2rc5.src.tar.gz"
+            }, {
+                "filename": "go1.2rc5.windows-386.msi",
+                "summary": "go1.2rc5 Windows (x86 32-bit) MSI installer",
+                "size": "33.6 MB",
+                "sha1": "c8276dc3457299681453a74692b6945e2f32d269",
+                "url": "https://go.googlecode.com/files/go1.2rc5.windows-386.msi"
+            }, {
+                "filename": "go1.2rc5.windows-386.zip",
+                "summary": "go1.2rc5 Windows (x86 32-bit) ZIP archive",
+                "size": "41.2 MB",
+                "sha1": "ebafed269a959be24830a0d65c20caf33d5d5fc4",
+                "url": "https://go.googlecode.com/files/go1.2rc5.windows-386.zip"
+            }, {
+                "filename": "go1.2rc5.windows-amd64.msi",
+                "summary": "go1.2rc5 Windows (x86 64-bit) MSI installer",
+                "size": "42.9 MB",
+                "sha1": "ee8c099deac87376eab819f89dae900b9c5abeb4",
+                "url": "https://go.googlecode.com/files/go1.2rc5.windows-amd64.msi"
+            }, {
+                "filename": "go1.2rc5.windows-amd64.zip",
+                "summary": "go1.2rc5 Windows (x86 64-bit) ZIP archive",
+                "size": "54.5 MB",
+                "sha1": "3f0b094aeb57043c342059dff678bf6edd56eb83",
+                "url": "https://go.googlecode.com/files/go1.2rc5.windows-amd64.zip"
+            }
+        ]
+    }, {
         "version": "go1.2rc4",
         "date": "2013-11-12",
         "files": [
