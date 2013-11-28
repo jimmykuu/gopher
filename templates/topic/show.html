@@ -44,7 +44,7 @@
 		<dl class="replies">
 		{{range $index, $reply := $topic.Comments}}
 		<dd id="{{.Id_.Hex}}">
-			<span class="label pull-right">#{{$utils.Index $index}}</span>
+			<span class="label label-default pull-right">#{{$utils.Index $index}}</span>
 			{{if $username}}
 				{{if $reply.CanDelete $username}}
 					<a href="/comment/{{.Id_.Hex}}/delete" class="remove btn btn-danger btn-xs pull-right" title="删除"><i class="glyphicon glyphicon-remove"></i></a>
