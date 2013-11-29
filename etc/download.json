@@ -4,11 +4,23 @@
         "date": "2013-11-17",
         "files": [
             {
+                "filename": "go1.2rc5.darwin-386-osx10.6.pkg",
+                "summary": "go1.2rc5 Mac OS X (x86 32-bit) PKG installer",
+                "size": "40.0 MB",
+                "sha1": "75a3eeea075978767b4c02c415b75d1697da0309",
+                "url": "https://go.googlecode.com/files/go1.2rc5.darwin-386-osx10.6.pkg"
+            }, {
                 "filename": "go1.2rc5.darwin-386-osx10.6.tar.gz",
                 "summary": "go1.2rc5 Mac OS X (x86 32-bit) tarball",
                 "size": "39.8 MB",
                 "sha1": "b8989b67a0d924d4532719fe671679051df2d946",
                 "url": "https://go.googlecode.com/files/go1.2rc5.darwin-386-osx10.6.tar.gz"
+            }, {
+                "filename": "go1.2rc5.darwin-386-osx10.8.pkg",
+                "summary": "go1.2rc5 Mac OS X (x86 32-bit) PKG installer",
+                "size": "40.5 MB",
+                "sha1": "df4688fedc274d17c1377d6f6097146cc5a98763",
+                "url": "https://go.googlecode.com/files/go1.2rc5.darwin-386-osx10.8.pkg"
             }, {
                 "filename": "go1.2rc5.darwin-386-osx10.8.tar.gz",
                 "summary": "go1.2rc5 Mac OS X (x86 32-bit) tarball",
@@ -16,11 +28,23 @@
                 "sha1": "dd4d78fdd7c2da306a205aeee945efb6105ee0a5",
                 "url": "https://go.googlecode.com/files/go1.2rc5.darwin-386-osx10.8.tar.gz"
             }, {
+                "filename": "go1.2rc5.darwin-amd64-osx10.6.pkg",
+                "summary": "go1.2rc5 Mac OS X (x86 64-bit) PKG installer",
+                "size": "51.9 MB",
+                "sha1": "9d780fa066a96a7622b8d39b4a854c54ca6fef7d",
+                "url": "https://go.googlecode.com/files/go1.2rc5.darwin-amd64-osx10.6.pkg"
+            }, {
                 "filename": "go1.2rc5.darwin-amd64-osx10.6.tar.gz",
                 "summary": "go1.2rc5 Mac OS X (x86 64-bit) tarball",
                 "size": "51.6 MB",
                 "sha1": "cbc45de13309cd1d019381fc3fa441a32d3b5561",
                 "url": "https://go.googlecode.com/files/go1.2rc5.darwin-amd64-osx10.6.tar.gz"
+            }, {
+                "filename": "go1.2rc5.darwin-amd64-osx10.8.pkg",
+                "summary": "go1.2rc5 Mac OS X (x86 64-bit) PKG installer",
+                "size": "52.4 MB",
+                "sha1": "1ac75072c4f69d618526a6ba5af613cb60b5a083",
+                "url": "https://go.googlecode.com/files/go1.2rc5.darwin-amd64-osx10.8.pkg"
             }, {
                 "filename": "go1.2rc5.darwin-amd64-osx10.8.tar.gz",
                 "summary": "go1.2rc5 Mac OS X (x86 64-bit) tarball",
