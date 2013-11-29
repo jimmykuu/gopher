@@ -1,6 +1,6 @@
 #Gopher
 
-Golang中国([www.golang.tc](http://www.golangtc.com))源代码.
+Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 
 ##Requirements
 
