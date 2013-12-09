@@ -4,7 +4,7 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 
 ##Requirements
 
-- Go1.0+
+- Go1.2+
 - MongoDB
 - github.com/gorilla/mux
 - github.com/gorilla/sessions

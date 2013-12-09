@@ -82,10 +82,6 @@ func (u *Utils) Index(index int) int {
 	return index + 1
 }
 
-func (u *Utils) Equal(src, dest string) bool {
-	return src == dest
-}
-
 func (u *Utils) FormatTime(t time.Time) string {
 	now := time.Now()
 	duration := now.Sub(t)
