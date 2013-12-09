@@ -6,14 +6,15 @@ package gopher
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/jimmykuu/wtforms"
 	"html/template"
-	"labix.org/v2/mgo"
-	"labix.org/v2/mgo/bson"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/gorilla/mux"
+	"github.com/jimmykuu/wtforms"
+	"labix.org/v2/mgo"
+	"labix.org/v2/mgo/bson"
 )
 
 func topicsHandler(w http.ResponseWriter, r *http.Request, conditions bson.M, sort string, url string, subActive string) {

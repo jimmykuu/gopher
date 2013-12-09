@@ -5,11 +5,12 @@
 package gopher
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/gorilla/mux"
 	"github.com/jimmykuu/wtforms"
 	"labix.org/v2/mgo/bson"
-	"net/http"
-	"time"
 )
 
 // URL: /sites

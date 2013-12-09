@@ -6,9 +6,10 @@ package gopher
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func handlerFun(handler Handler) http.HandlerFunc {

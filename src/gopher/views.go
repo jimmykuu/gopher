@@ -8,20 +8,21 @@ import (
 	"bytes"
 	"crypto/md5"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/gorilla/sessions"
-	"github.com/jimmykuu/webhelpers"
-	"github.com/jimmykuu/wtforms"
 	"html/template"
 	"io"
-	"labix.org/v2/mgo"
-	"labix.org/v2/mgo/bson"
 	"net/http"
 	"os"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
+	"github.com/jimmykuu/webhelpers"
+	"github.com/jimmykuu/wtforms"
+	"labix.org/v2/mgo"
+	"labix.org/v2/mgo/bson"
 )
 
 const (

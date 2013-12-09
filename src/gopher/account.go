@@ -4,9 +4,14 @@
 package gopher
 
 import (
-	"code.google.com/p/go-uuid/uuid"
 	"crypto/md5"
 	"fmt"
+	"io"
+	"net/http"
+	"strings"
+	"time"
+
+	"code.google.com/p/go-uuid/uuid"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/jimmykuu/webhelpers"
@@ -14,11 +19,7 @@ import (
 	. "github.com/qiniu/api/conf"
 	qiniu_io "github.com/qiniu/api/io"
 	"github.com/qiniu/api/rs"
-	"io"
 	"labix.org/v2/mgo/bson"
-	"net/http"
-	"strings"
-	"time"
 )
 
 var defaultAvatars = []string{

@@ -1,9 +1,10 @@
 package gopher
 
 import (
+	"net/http"
+
 	"github.com/gorilla/mux"
 	"labix.org/v2/mgo/bson"
-	"net/http"
 )
 
 func booksHandler(w http.ResponseWriter, r *http.Request) {
