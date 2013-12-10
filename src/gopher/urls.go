@@ -42,8 +42,10 @@ var (
 		{"/admin/ad/new", Administrator, adminNewAdHandler},
 		{"/admin/ad/{id}/delete", Administrator, adminDeleteAdHandler},
 		{"/admin/ad/{id}/edit", Administrator, adminEditAdHandler},
-		{"/admin/book/new", Administrator, adminNewBookHandler},
-		{"/admin/books", Administrator, adminListBooksHandler},
+		{"/admin/book/new", Administrator, newBookHandler},
+		{"/admin/books", Administrator, listBooksHandler},
+		{"/admin/book/{id}/edit", Administrator, editBookHandler},
+		{"/admin/book/{id}/delete", Administrator, deleteBookHandler},
 
 		{"/signup", Everyone, signupHandler},
 		{"/signin", Everyone, signinHandler},
@@ -97,7 +99,7 @@ var (
 		{"/p/{packageId}/delete", Administrator, deletePackageHandler},
 
 		{"/books", Everyone, booksHandler},
-		{"/book/{bookId}", Everyone, showBookHandler},
+		{"/book/{id}", Everyone, showBookHandler},
 
 		{"/download", Everyone, downloadHandler},
 	}
