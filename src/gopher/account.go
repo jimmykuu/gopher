@@ -122,7 +122,7 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 				panic(err)
 			}
 
-			c2.Update(bson.M{"_id": status.Id_}, bson.M{"$inc": bson.M{"userindex": 1, "usercount": 1}})
+			c2.Update(nil, bson.M{"$inc": bson.M{"userindex": 1, "usercount": 1}})
 
 			// 发送邮件
 			/*

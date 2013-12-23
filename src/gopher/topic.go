@@ -160,10 +160,8 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 			c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
 
 			c = DB.C("status")
-			var status Status
-			c.Find(nil).One(&status)
 
-			c.Update(bson.M{"_id": status.Id_}, bson.M{"$inc": bson.M{"topiccount": 1}})
+			c.Update(nil, bson.M{"$inc": bson.M{"topiccount": 1}})
 
 			http.Redirect(w, r, "/t/"+id_.Hex(), http.StatusFound)
 			return
@@ -355,12 +353,8 @@ func deleteTopicHandler(w http.ResponseWriter, r *http.Request) {
 	c.Update(bson.M{"_id": topic.NodeId}, bson.M{"$inc": bson.M{"topiccount": -1}})
 
 	c = DB.C("status")
-	var status Status
-	c.Find(nil).One(&status)
-	// 统计的主题数减一
-	c.Update(bson.M{"_id": status.Id_}, bson.M{"$inc": bson.M{"topiccount": -1}})
-	// 减去统计的回复数减去该主题的回复数
-	c.Update(bson.M{"_id": status.Id_}, bson.M{"$inc": bson.M{"replycount": -topic.CommentCount}})
+	// 统计的主题数减一，减去统计的回复数减去该主题的回复数
+	c.Update(nil, bson.M{"$inc": bson.M{"topiccount": -1, "replycount": -topic.CommentCount}})
 
 	//删除评论
 	c = DB.C("comments")

@@ -460,6 +460,10 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 		// 修改最后回复用户Id和时间
 		c = DB.C("contents")
 		c.Update(bson.M{"_id": bson.ObjectIdHex(contentId)}, bson.M{"$set": bson.M{"latestreplierid": user.Id_.Hex(), "latestrepliedat": now}})
+
+		// 修改中的回复数量
+		c = DB.C("status")
+		c.Update(nil, bson.M{"$inc": bson.M{"replycount": 1}})
 	}
 
 	http.Redirect(w, r, url, http.StatusFound)
@@ -502,6 +506,10 @@ func deleteCommentHandler(w http.ResponseWriter, r *http.Request) {
 				c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{"latestreplierid": latestComment.CreatedBy.Hex(), "latestrepliedat": latestComment.CreatedAt}})
 			}
 		}
+
+		// 修改中的回复数量
+		c = DB.C("status")
+		c.Update(nil, bson.M{"$inc": bson.M{"replycount": -1}})
 	}
 
 	var url string
