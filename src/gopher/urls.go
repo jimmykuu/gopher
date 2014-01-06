@@ -89,6 +89,7 @@ var (
 		{"/article/new", Authenticated, newArticleHandler},
 		{"/articles", Everyone, listArticlesHandler},
 		{"/a/{articleId}", Everyone, showArticleHandler},
+		{"/a/{articleId}/redirect", Everyone, redirectArticleHandler},
 		{"/a/{articleId}/edit", Authenticated, editArticleHandler},
 
 		{"/packages", Everyone, packagesHandler},

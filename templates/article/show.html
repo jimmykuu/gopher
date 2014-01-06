@@ -10,7 +10,6 @@
 {{end}}
 {{define "Content"}}
 	{{$article := .utils.AssertArticle .article}}
-	{{$username := .username}}
 	<article class="content">
 		<h1>{{.article.Title}}</h1>
 		{{if .username}}
@@ -21,15 +20,7 @@
 		<div>感谢 <a href="/member/{{$article.Creater.Username}}">{{$article.Creater.Username}}</a> 在 <time datetime="{{$article.CreatedAt}}">{{.utils.FormatTime $article.CreatedAt}}</time> 投递 {{.article.Hits}} 次点击</div>
         {{.shareCode}}
         <div class="body">
-            <h2><small>本文转载自: <a href="{{.article.OriginalUrl}}" target="_blank">{{.article.OriginalSource}}</a></small></h2>
-            <hr>
-            <div class="article">
-                {{.article.Html}}
-            </div>
-            <div class="alert alert-block">
-                <p>本文转载自: <a href="{{.article.OriginalUrl}}" target="_blank">{{.article.OriginalSource}}</a></p>
-                <p>(本站只作转载,不代表本站同意文中观点或证实文中信息)</p>
-            </div>
+            <h2><small>文章来源: <a href="{{.article.OriginalUrl}}" target="_blank">{{.article.OriginalSource}}</a></small></h2>
         </div>
 	</article>
 	{{$utils := .utils}}
@@ -40,19 +31,16 @@
 		{{range $index, $comment := $article.Comments}}
 		<dd id="{{.Id_.Hex}}">
 			<span class="label pull-right">#{{$utils.Index $index}}</span>
-			{{if $username}}
-				{{if $comment.CanDelete $username}}
+			{{if $.username}}
+				{{if $comment.CanDelete $.username}}
 					<a href="/comment/{{.Id_.Hex}}/delete" class="remove label pull-right" title="删除"><i class="icon-white icon-remove"></i></a>
 				{{end}}
 			{{end}}
 			<a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img src="{{.Creater.AvatarImgSrc}}-middle"></a>
 			<div class="info">
-				<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
+				<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> •
 				{{$utils.FormatTime .CreatedAt}}
 			</div>
-			<div class="space"></div>
-			<div class="reply-content">{{.Html}}</div>
-			<div class="clear"></div>
 		</dd>
 		{{end}}
 		</dl>

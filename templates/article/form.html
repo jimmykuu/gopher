@@ -8,9 +8,6 @@
 {{end}}
 {{define "Content"}}
 	<div class="content">
-		<div class="alert alert-info">
-			为了保持网站风格的一致,需要将文章使用<em>Markdown</em>语法进行编辑.
-		</div>
 		<form action="{{.action}}" method="post" id="article-form" role="form">
 			{{$html := .form.Field "html"}}
 			{{$html.RenderInput}}
@@ -18,38 +15,11 @@
 			{{.utils.RenderInput .form "category"}}
 			{{.utils.RenderInput .form "original_source"}}
 			{{.utils.RenderInput .form "original_url"}}
-			
-			<div class="form-group">
-				<div class="wmd-panel">
-					<div id="wmd-button-bar"></div>
-					<textarea class="wmd-input form-control" id="wmd-input" name="content" rows="20">{{.form.Value "content"}}</textarea>
-				</div>
-			</div>
-			<div class="form-group">
-				<label>预览</label>
-				<div id="wmd-preview" class="wmd-panel wmd-preview">{{.html}}</div>
-			</div>
 			<div class="form-actions">
 				<input type="submit" class="btn btn-primary" value="{{.title}}">
 			</div>
 		</form>
 	</div>
-	<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Converter.js"></script>
-	<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Editor.js"></script>
-	<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Sanitizer.js"></script>
-	<script>
-		(function () {
-			var converter1 = Markdown.getSanitizingConverter();
-			var editor1 = new Markdown.Editor(converter1);
-			editor1.run();
-		})();
-		
-		$('#article-form').submit(function () {
-			$('#html').val($('#wmd-preview').html());
-			
-			return true;
-		});
-	</script>
 {{end}}
 
 {{define "LeftSide"}}{{end}}

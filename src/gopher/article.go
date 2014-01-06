@@ -6,7 +6,6 @@ package gopher
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
 	"strings"
 	"time"
@@ -32,20 +31,13 @@ func newArticleHandler(w http.ResponseWriter, r *http.Request) {
 	form := wtforms.NewForm(
 		wtforms.NewHiddenField("html", ""),
 		wtforms.NewTextField("title", "标题", "", wtforms.Required{}),
-		wtforms.NewTextArea("content", "内容", "", wtforms.Required{}),
 		wtforms.NewTextField("original_source", "原始出处", "", wtforms.Required{}),
 		wtforms.NewTextField("original_url", "原始链接", "", wtforms.URL{}),
 		wtforms.NewSelectField("category", "分类", choices, ""),
 	)
 
 	if r.Method == "POST" && form.Validate(r) {
-		session, _ := store.Get(r, "user")
-		username, _ := session.Values["username"]
-		username = username.(string)
-
-		user := User{}
-		c = DB.C("users")
-		c.Find(bson.M{"username": username}).One(&user)
+		user, _ := currentUser(r)
 
 		c = DB.C("contents")
 
@@ -60,8 +52,6 @@ func newArticleHandler(w http.ResponseWriter, r *http.Request) {
 				Id_:       id_,
 				Type:      TypeArticle,
 				Title:     form.Value("title"),
-				Markdown:  form.Value("content"),
-				Html:      template.HTML(html),
 				CreatedBy: user.Id_,
 				CreatedAt: time.Now(),
 			},
@@ -128,7 +118,28 @@ func listArticlesHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// URL: /a/{articl_id}
+// URL: /a{articleId}/redirect
+// 转到原文链接
+func redirectArticleHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	articleId := vars["articleId"]
+	c := DB.C("contents")
+
+	article := new(Article)
+
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(articleId)}).One(&article)
+
+	if err != nil {
+		fmt.Println("redirectArticleHandler:", err.Error())
+		return
+	}
+
+	c.UpdateId(bson.ObjectIdHex(articleId), bson.M{"$inc": bson.M{"content.hits": 1}})
+
+	http.Redirect(w, r, article.OriginalUrl, http.StatusFound)
+}
+
+// URL: /a/{articleId}
 // 显示文章
 func showArticleHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -143,8 +154,6 @@ func showArticleHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("showArticleHandler:", err.Error())
 		return
 	}
-
-	c.UpdateId(bson.ObjectIdHex(articleId), bson.M{"$inc": bson.M{"content.hits": 1}})
 
 	renderTemplate(w, r, "article/show.html", map[string]interface{}{
 		"article": article,
@@ -186,20 +195,13 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 	form := wtforms.NewForm(
 		wtforms.NewHiddenField("html", ""),
 		wtforms.NewTextField("title", "标题", article.Title, wtforms.Required{}),
-		wtforms.NewTextArea("content", "内容", article.Markdown, wtforms.Required{}),
 		wtforms.NewTextField("original_source", "原始出处", article.OriginalSource, wtforms.Required{}),
 		wtforms.NewTextField("original_url", "原始链接", article.OriginalUrl, wtforms.URL{}),
 		wtforms.NewSelectField("category", "分类", choices, article.CategoryId.Hex()),
 	)
 
-	content := article.Markdown
-	html := article.Html
-
 	if r.Method == "POST" {
 		if form.Validate(r) {
-			html := form.Value("html")
-			html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
-
 			categoryId := bson.ObjectIdHex(form.Value("category"))
 			c = DB.C("contents")
 			err = c.Update(bson.M{"_id": article.Id_}, bson.M{"$set": bson.M{
@@ -207,8 +209,6 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 				"originalsource":    form.Value("original_source"),
 				"originalurl":       form.Value("original_url"),
 				"content.title":     form.Value("title"),
-				"content.markdown":  form.Value("content"),
-				"content.html":      template.HTML(html),
 				"content.updatedby": user.Id_.Hex(),
 				"content.updatedat": time.Now(),
 			}})
@@ -221,17 +221,12 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/a/"+article.Id_.Hex(), http.StatusFound)
 			return
 		}
-
-		content = form.Value("content")
-		html = template.HTML(form.Value("html"))
 	}
 
 	renderTemplate(w, r, "article/form.html", map[string]interface{}{
-		"form":    form,
-		"title":   "编辑",
-		"action":  "/a/" + articleId + "/edit",
-		"html":    html,
-		"content": content,
-		"active":  "article",
+		"form":   form,
+		"title":  "编辑",
+		"action": "/a/" + articleId + "/edit",
+		"active": "article",
 	})
 }
