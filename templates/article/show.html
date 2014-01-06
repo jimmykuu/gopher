@@ -14,7 +14,8 @@
 		<h1>{{.article.Title}}</h1>
 		{{if .username}}
 	 		{{if $article.CanEdit .username}}
-				<a href="/a/{{$article.Id_.Hex}}/edit" class="btn btn-info btn-sm pull-right" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>
+				<a href="/a/{{$article.Id_.Hex}}/edit" class="btn btn-info btn-xs pull-right" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>
+                <a href="/a/{{$article.Id_.Hex}}/delete" class="btn btn-danger btn-xs pull-right" title="删除" onclick="return confirm('确认删除吗？');"><i class="glyphicon glyphicon-remove"></i></a>
 			{{end}}
 		{{end}}
 		<div>感谢 <a href="/member/{{$article.Creater.Username}}">{{$article.Creater.Username}}</a> 在 <time datetime="{{$article.CreatedAt}}">{{.utils.FormatTime $article.CreatedAt}}</time> 投递 {{.article.Hits}} 次点击</div>
@@ -41,6 +42,9 @@
 				<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> •
 				{{$utils.FormatTime .CreatedAt}}
 			</div>
+            <div class="space"></div>
+            <div class="reply-content">{{.Html}}</div>
+            <div class="clear"></div>
 		</dd>
 		{{end}}
 		</dl>

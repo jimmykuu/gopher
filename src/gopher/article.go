@@ -230,3 +230,32 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 		"active": "article",
 	})
 }
+
+// URL: /a/{articleId}/delete
+// 删除文章
+func deleteArticleHandler(w http.ResponseWriter, r *http.Request) {
+	user, _ := currentUser(r)
+
+	vars := mux.Vars(r)
+	articleId := vars["articleId"]
+
+	c := DB.C("contents")
+
+	article := new(Article)
+
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(articleId)}).One(&article)
+
+	if err != nil {
+		fmt.Println("deleteArticleHandler:", err.Error())
+		return
+	}
+
+	if article.CanDelete(user.Username) {
+		c.Remove(bson.M{"_id": article.Id_})
+
+		c = DB.C("comments")
+		c.Remove(bson.M{"contentid": article.Id_})
+
+		http.Redirect(w, r, "/articles", http.StatusFound)
+	}
+}
