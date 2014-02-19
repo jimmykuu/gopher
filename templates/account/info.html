@@ -7,15 +7,14 @@
 	</ul>
 {{end}}
 {{define "Content"}}
-	{{$utils := .utils}}
-	{{$user := $utils.AssertUser .user}}
+	{{$user := .utils.AssertUser .user}}
 	<div class="content">
 		<img src="{{$user.AvatarImgSrc}}-large" class="pull-left img-rounded" style="margin-right: 20px;">
 		<h3>{{$user.Username}}</h3>
 		{{if $user.Tagline}}
 			<h3><small>{{$user.Tagline}}</small></h3>
 		{{end}}
-		<h4><small>Golang China 第 {{$user.Index}} 号会员，加入于 {{$utils.FormatTime $user.JoinedAt}}</small></h4>
+		<h4><small>Golang China 第 {{$user.Index}} 号会员，加入于 {{.utils.FormatTime $user.JoinedAt}}</small></h4>
 		<!--
 		{{if .username}}
 			{{if $user.IsFollowedBy .username | not}}
@@ -40,7 +39,7 @@
 			{{if $user.Website}}
 			<li>
 				<img src="http://gopher.qiniudn.com/static/img/icon-website.png">
-				<a href="{{$utils.Url $user.Website}}" target="_blank">{{$user.Website}}</a>
+				<a href="{{.utils.Url $user.Website}}" target="_blank">{{$user.Website}}</a>
 			</li>
 			{{end}}
 			{{if $user.Weibo}}
@@ -78,10 +77,10 @@
 					<a class="label label-info" href="/go/{{.Node.Id}}">{{.Node.Name}}</a> •
 					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> •
 					{{if .CommentCount}}
-						{{$utils.FormatTime .LatestRepliedAt}} •
+						{{$.utils.FormatTime .LatestRepliedAt}} •
 						最后回复来自 <a href="/member/{{.LatestReplier.Username}}">{{.LatestReplier.Username}}</a>
 					{{else}}
-						{{$utils.FormatTime .CreatedAt}}
+						{{.utils.FormatTime .CreatedAt}}
 					{{end}}
 				</div>
 				<div class="clear"></div>
@@ -99,7 +98,7 @@
 		<div class="reply">
 			<span>
 				回复了 <a href="/member/{{.Topic.Creater.Username}}">{{.Topic.Creater.Username}}</a> 创建的主题: <a href="/t/{{.Topic.Id_.Hex}}">{{.Topic.Title}}</a>
-			<span class="pull-right">{{$utils.FormatTime .CreatedAt}}</span>
+			<span class="pull-right">{{$.utils.FormatTime .CreatedAt}}</span>
 			</span>
 			<div>
 				{{.Html}}

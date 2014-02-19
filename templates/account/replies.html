@@ -8,14 +8,12 @@
 	</ul>
 {{end}}
 {{define "Content"}}
-	{{$utils := .utils}}
-
 	<div class="content">
 		<dl class="replies">
 		{{range .replies}}
 			<dd>
 				回复了 <a href="/member/{{.Topic.Creater.Username}}">{{.Topic.Creater.Username}}</a> 创建的主题: <a href="/t/{{.Topic.Id_.Hex}}">{{.Topic.Title}}</a>
-				<span class="pull-right">{{$utils.FormatTime .CreatedAt}}</span>
+				<span class="pull-right">{{$.utils.FormatTime .CreatedAt}}</span>
 				<div>{{.Html}}</div>
 			</dd>
 		{{end}}

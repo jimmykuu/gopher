@@ -24,14 +24,13 @@
             <h2><small>文章来源: <a href="{{.article.OriginalUrl}}" target="_blank">{{.article.OriginalSource}}</a></small></h2>
         </div>
 	</article>
-	{{$utils := .utils}}
 	<div id="replies" class="content">
 		<span>{{$article.CommentCount}} 评论</span>
 		<hr>
 		<dl class="replies">
 		{{range $index, $comment := $article.Comments}}
 		<dd id="{{.Id_.Hex}}">
-			<span class="label pull-right">#{{$utils.Index $index}}</span>
+			<span class="label pull-right">#{{$.utils.Index $index}}</span>
 			{{if $.username}}
 				{{if $comment.CanDelete $.username}}
 					<a href="/comment/{{.Id_.Hex}}/delete" class="remove label pull-right" title="删除"><i class="icon-white icon-remove"></i></a>
@@ -40,7 +39,7 @@
 			<a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img src="{{.Creater.AvatarImgSrc}}-middle"></a>
 			<div class="info">
 				<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> •
-				{{$utils.FormatTime .CreatedAt}}
+				{{$.utils.FormatTime .CreatedAt}}
 			</div>
             <div class="space"></div>
             <div class="reply-content">{{.Html}}</div>

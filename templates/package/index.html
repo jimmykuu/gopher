@@ -14,7 +14,6 @@
 		</div>
 		<h2>最新提交</h2>
 		<dl class="topics">
-		{{$utils := .utils}}
 		{{$username := .username}}
 		{{range .latestPackages}}
 			<dd>
@@ -29,11 +28,11 @@
 				<div class="info">
 					<a class="label label-info" href="/packages/{{.Category.Id}}">{{.Category.Name}}</a> •
 					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> •
-					{{$utils.FormatTime .CreatedAt}} 提交
+					{{$.utils.FormatTime .CreatedAt}} 提交
 				</div>
 				<div class="space"></div>
 				<p class="muted">
-					{{$utils.Truncate .Html 200}}
+					{{$.utils.Truncate .Html 200}}
 				</p>
 				<div class="clear"></div>
 			</dd>

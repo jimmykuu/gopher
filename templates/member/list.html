@@ -14,7 +14,6 @@
 {{define "Content"}}
 	<div class="content">
 		<h3><small>{{if .city}}{{.city}}的{{end}}所有会员</small></h3>
-		{{$utils := .utils}}
 		<ul class="members clearfix">
 			{{range .members}}
 			<li>

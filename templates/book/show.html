@@ -8,7 +8,6 @@
 	</ul>
 {{end}}
 {{define "Content"}}
-    {{$utils := .utils}}
 	<div class="content">
         <div class="clearfix">
             <img src="http://gopher.qiniudn.com/static/img/{{.book.Cover}}-book" style="float: left;">
@@ -38,7 +37,7 @@
 
         <div class="tab-content book-detail">
             <div class="tab-pane active" id="introduction">
-                {{$utils.Br .book.Introduction}}
+                {{$.utils.Br .book.Introduction}}
             </div>
             <div class="tab-pane" id="info">
                 <ul class="list-unstyled">

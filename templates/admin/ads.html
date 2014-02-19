@@ -8,7 +8,6 @@
 	</ul>
 {{end}}
 {{define "Content"}}
-	{{$utils := .utils}}
 	<div class="content">
 		<p><a href="/admin/ad/new" class="btn btn-info">添加</a></p>
 		<table class="table table-striped table-bordered table-hover">
@@ -25,7 +24,7 @@
 			<tr id="ad-{{.Id_.Hex}}">
 				<td>{{.Position}}</td>
 				<td>{{.Name}}</td>
-				<td>{{$utils.HTML .Code}}</td>
+				<td>{{$.utils.HTML .Code}}</td>
 				<td>
 					<a href="/admin/ad/{{.Id_.Hex}}/edit" class="btn btn-xs btn-info" title="编辑"><i class="glyphicon glyphicon-white glyphicon-pencil"></i></a>
 					<a href="javascript:;" class="btn btn-xs btn-danger remove-ad" title="删除" ad_id="{{.Id_.Hex}}"><i class="glyphicon glyphicon-white glyphicon-remove"></i></a>

@@ -7,7 +7,6 @@
 	</ul>
 {{end}}
 {{define "Content"}}
-	{{$utils := .utils}}
 	<div class="content">
 		<dl class="topics">
 			{{range .topics}}
@@ -22,9 +21,9 @@
 					<a class="label label-info" href="/go/{{.Node.Id}}">{{.Node.Name}}</a> • 
 					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
 					{{if .CommentCount}}
-						{{$utils.FormatTime .LatestRepliedAt}} • 最后回复来自 <a href="/member/{{.LatestReplier.Username}}">{{.LatestReplier.Username}}</a>
+						{{$.utils.FormatTime .LatestRepliedAt}} • 最后回复来自 <a href="/member/{{.LatestReplier.Username}}">{{.LatestReplier.Username}}</a>
 					{{else}}
-						{{$utils.FormatTime .CreatedAt}}
+						{{$.utils.FormatTime .CreatedAt}}
 					{{end}}
 				</div>
 				<div class="clear"></div>

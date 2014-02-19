@@ -3,7 +3,6 @@
 {{define "ContentWidth"}}8{{end}}
 {{define "Content"}}
 	<div class="content">
-		{{$utils := .utils}}
 		<div>
 			<h3 class="pull-left">欢迎来到Golang中国社区</h3>
 		<ul class="nav nav-tabs pull-right">
@@ -38,9 +37,9 @@
 					<a class="label label-info" href="/go/{{.Node.Id}}">{{.Node.Name}}</a> •
 					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> •
 					{{if .CommentCount}}
-						{{$utils.FormatTime .LatestRepliedAt}} • 最后回复来自 <a href="/member/{{.LatestReplier.Username}}">{{.LatestReplier.Username}}</a>
+						{{$.utils.FormatTime .LatestRepliedAt}} • 最后回复来自 <a href="/member/{{.LatestReplier.Username}}">{{.LatestReplier.Username}}</a>
 					{{else}}
-						{{$utils.FormatTime .CreatedAt}}
+						{{$.utils.FormatTime .CreatedAt}}
 					{{end}}
 				</div>
 				<div class="clear"></div>

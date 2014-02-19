@@ -10,7 +10,6 @@
 	<div class="content">
 		<h3><small>下面列出了基于Go语言开发的国内外网站或应用,以及和Go相关的网站,包括博客,开源项目等等.如发现不在此列的,请帮忙补充.</small></h3>
 	</div>
-	{{$username := .username}}
 	{{range .categories}}
 		{{$sites := .Sites}}
 		{{if len $sites}}
@@ -22,8 +21,8 @@
 			{{range $sites}}
 				<dt id="site-{{.Id_.Hex}}">
 					<img src="https://plus.google.com/_/favicon?domain={{.Url}}"><a href="{{.Url}}" target="_blank">{{.Title}}</a>
-					{{if $username}}
-						{{if .CanEdit $username}}
+					{{if $.username}}
+						{{if .CanEdit $.username}}
 							<a class="btn btn-xs btn-info pull-right" href="/site/{{.Id_.Hex}}/edit" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>
 							<a class="btn btn-xs btn-danger pull-right" href="/site/{{.Id_.Hex}}/delete" title="删除" onclick="javascript:return confirm('确定要删除吗？');"><i class="glyphicon glyphicon-remove"></i></a>
 						{{end}}

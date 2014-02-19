@@ -35,24 +35,22 @@
 		</ul>
 	</div>
 	{{$package := .utils.AssertPackage .package}}
-	{{$username := .username}}
-	{{$utils := .utils}}
 	<div id="replies" class="content">
 		<span>{{.package.CommentCount}} 回复</span>
 			<hr>
 			<dl class="replies">
 			{{range $index, $reply := $package.Comments}}
 			<dd id="{{.Id_.Hex}}">
-				<span class="label pull-right">#{{$utils.Index $index}}</span>
-				{{if $username}}
-					{{if $reply.CanDelete $username}}
+				<span class="label pull-right">#{{$.utils.Index $index}}</span>
+				{{if $.username}}
+					{{if $reply.CanDelete $.username}}
 						<a href="/comment/{{.Id_.Hex}}/delete" class="remove label pull-right" title="删除"><i class="icon-white icon-remove"></i></a>
 					{{end}}
 				{{end}}
 				<a href="/" class="pull-left" style="margin-right: 10px;"><img src="{{.Creater.AvatarImgSrc}}-middle" class="img-rounded"></a>
 				<div class="info">
 					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
-					{{$utils.FormatTime .CreatedAt}}
+					{{$.utils.FormatTime .CreatedAt}}
 				</div>
 				<div class="space"></div>
 				<div class="reply-content">{{.Html}}</div>

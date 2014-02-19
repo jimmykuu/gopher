@@ -9,7 +9,6 @@
 {{end}}
 {{define "Content"}}
 	{{$topic := .utils.AssertTopic .topic}}
-	{{$username := .username}}
 	<div class="content">
 		<div class="page-header">
 			<h1>{{$topic.Title}}</h1>
@@ -37,23 +36,22 @@
             {{end}}
         </div>
 	</div>
-	{{$utils := .utils}}
 	<div id="replies" class="content">
 		<span>{{$topic.CommentCount}} 回复</span>
 		<hr>
 		<dl class="replies">
 		{{range $index, $reply := $topic.Comments}}
 		<dd id="{{.Id_.Hex}}">
-			<span class="label label-default pull-right">#{{$utils.Index $index}}</span>
-			{{if $username}}
-				{{if $reply.CanDelete $username}}
+			<span class="label label-default pull-right">#{{$.utils.Index $index}}</span>
+			{{if $.username}}
+				{{if $reply.CanDelete $.username}}
 					<a href="/comment/{{.Id_.Hex}}/delete" class="remove btn btn-danger btn-xs pull-right" title="删除"><i class="glyphicon glyphicon-remove"></i></a>
 				{{end}}
 			{{end}}
             <a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img class="img-rounded" src="{{.Creater.AvatarImgSrc}}-middle" alt="{{.Creater.Username}}"></a>
 			<div class="info">
 				<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> •
-				{{$utils.FormatTime .CreatedAt}}
+				{{$.utils.FormatTime .CreatedAt}}
 			</div>
 			<div class="space"></div>
 			<div class="reply-content">{{.Html}}</div>

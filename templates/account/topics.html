@@ -8,8 +8,7 @@
 	</ul>
 {{end}}
 {{define "Content"}}
-	{{$utils := .utils}}
-	{{$user := $utils.AssertUser .user}}
+	{{$user := .utils.AssertUser .user}}
 	<div class="content">
 		<img src="{{$user.AvatarImgSrc}}-large" class="pull-left">
 		<div class="clearfix"></div>
@@ -25,7 +24,7 @@
 				<span>
 					<a class="label label-info" href="/go/{{.Node.Id}}">{{.Node.Name}}</a> • 
 					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
-					{{$utils.FormatTime .CreatedAt}}
+					{{$.utils.FormatTime .CreatedAt}}
 				</span>
 				<div class="clearfix"></div>
 			</dd>
