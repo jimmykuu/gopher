@@ -80,7 +80,7 @@
 						{{$.utils.FormatTime .LatestRepliedAt}} •
 						最后回复来自 <a href="/member/{{.LatestReplier.Username}}">{{.LatestReplier.Username}}</a>
 					{{else}}
-						{{.utils.FormatTime .CreatedAt}}
+						{{$.utils.FormatTime .CreatedAt}}
 					{{end}}
 				</div>
 				<div class="clear"></div>
