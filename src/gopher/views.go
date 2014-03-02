@@ -371,8 +371,6 @@ func renderTemplate(w http.ResponseWriter, r *http.Request, file string, data ma
 	data["analyticsCode"] = analyticsCode
 	data["shareCode"] = shareCode
 	data["staticFileVersion"] = Config.StaticFileVersion
-	flash, _ := store.Get(r, "flash")
-	data["flash"] = flash
 	data["goVersion"] = goVersion
 
 	_, ok := data["active"]
