@@ -271,7 +271,7 @@ func showTopicHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	topicId := vars["topicId"]
 	c := DB.C("contents")
-
+	cusers:=DB.C("users")
 	topic := Topic{}
 
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": TypeTopic}).One(&topic)
@@ -282,7 +282,23 @@ func showTopicHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c.UpdateId(bson.ObjectIdHex(topicId), bson.M{"$inc": bson.M{"content.hits": 1}})
-
+	/*mark ggaaooppeenngg*/
+	user,_:=currentUser(r)
+	replies := user.RecentReplies
+	pos:=-1
+	for k,v:=range replies{
+		if v == topicId{
+			pos = k
+		}
+	}
+	if pos!=-1{
+		if pos == len(replies)-1{
+			replies = replies[:pos]
+		}else{
+			replies = append(replies[:pos],replies[pos+1:]...)
+		}
+		cusers.Update(bson.M{"_id":user.Id_},bson.M{"$set":bson.M{"recentreplies":replies}})
+	}
 	renderTemplate(w, r, "topic/show.html", map[string]interface{}{
 		"topic":  topic,
 		"active": "topic",

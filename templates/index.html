@@ -58,6 +58,8 @@
 		<div class="well sidebar-nav">
 			{{if .username}}
 				{{.utils.UserInfo .username}}
+				<!-- 最近回复处理工具 -->
+				{{.utils.RecentReplies .username}}
 			{{else}}
 				<h3><small>golang中国</small></h3>
 				<h4><small>致力于打造一个国内Gophers交流和分享的地方</small></h4>

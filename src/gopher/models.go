@@ -36,6 +36,8 @@ type User struct {
 	JoinedAt       time.Time
 	Follow         []string
 	Fans           []string
+	//存储的是最近回复的主题的objectid.hex
+	RecentReplies  []string
 	IsSuperuser    bool
 	IsActive       bool
 	ValidateCode   string
