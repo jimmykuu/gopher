@@ -37,12 +37,12 @@ type User struct {
 	Follow         []string
 	Fans           []string
 	//存储的是最近回复的主题的objectid.hex
-	RecentReplies  []string
-	IsSuperuser    bool
-	IsActive       bool
-	ValidateCode   string
-	ResetCode      string
-	Index          int
+	RecentReplies []string
+	IsSuperuser   bool
+	IsActive      bool
+	ValidateCode  string
+	ResetCode     string
+	Index         int
 }
 
 // 是否是默认头像

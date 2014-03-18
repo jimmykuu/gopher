@@ -113,27 +113,28 @@ func (u *Utils) UserInfo(username string) template.HTML {
 
 	return template.HTML(fmt.Sprintf(format, username, user.AvatarImgSrc(), username, username))
 }
+
 /*mark ggaaooppeenngg*/
-func (u *Utils) RecentReplies(username string) template.HTML{
+func (u *Utils) RecentReplies(username string) template.HTML {
 	c := DB.C("users")
-	ccontens :=DB.C("contents")
+	ccontens := DB.C("contents")
 	user := User{}
 	// 检查用户名
 	c.Find(bson.M{"username": username}).One(&user)
 	var anchors []string
-	anchor :=`<a href="/t/%s"  class="btn">%s</a><br>`
-	for _,v:=range user.RecentReplies{
+	anchor := `<a href="/t/%s"  class="btn">%s</a><br>`
+	for _, v := range user.RecentReplies {
 		var topic Topic
-		err:=ccontens.Find(bson.M{"_id":bson.ObjectIdHex(v)}).One(&topic)
-		if err!=nil{
+		err := ccontens.Find(bson.M{"_id": bson.ObjectIdHex(v)}).One(&topic)
+		if err != nil {
 			fmt.Println(err)
 		}
-		anchors = append(anchors,fmt.Sprintf(anchor,topic.Id_.Hex(),topic.Title))
-	}		
-	s:=strings.Join(anchors,"\n")
+		anchors = append(anchors, fmt.Sprintf(anchor, topic.Id_.Hex(), topic.Title))
+	}
+	s := strings.Join(anchors, "\n")
 	tpl := `<h4><small>最近回复</small></h4>
 			<hr>
-			`+s
+			` + s
 	return template.HTML(tpl)
 }
 func (u *Utils) Truncate(html template.HTML, length int) string {
@@ -443,7 +444,7 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 
 	temp2 := temp["content"].(map[string]interface{})
 	var contentCreator bson.ObjectId
-	contentCreator =temp2["createdby"].(bson.ObjectId)
+	contentCreator = temp2["createdby"].(bson.ObjectId)
 	type_ := temp2["type"].(int)
 
 	var url string
@@ -489,21 +490,20 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 		//修改用户的最近回复
 		c = DB.C("users")
 
-
 		//该最近回复提醒通过url被点击的时候会被disactive
 		//更新最近的评论
 		//自己的评论就不提示了
-		if contentCreator.Hex()!=user.Id_.Hex(){
+		if contentCreator.Hex() != user.Id_.Hex() {
 			var recentreplies []string
 			var Creater User
-			err:=c.Find(bson.M{"_id":contentCreator}).One(&Creater)
-			if err!=nil{
+			err := c.Find(bson.M{"_id": contentCreator}).One(&Creater)
+			if err != nil {
 				fmt.Println(err)
 			}
 			recentreplies = Creater.RecentReplies
 			//添加最近评论所在的主题id
-			recentreplies = append(recentreplies,contentId)
-			if err=c.Update(bson.M{"_id":contentCreator},bson.M{"$set":bson.M{"recentreplies":recentreplies}});err!=nil{
+			recentreplies = append(recentreplies, contentId)
+			if err = c.Update(bson.M{"_id": contentCreator}, bson.M{"$set": bson.M{"recentreplies": recentreplies}}); err != nil {
 				fmt.Println(err)
 			}
 		}
