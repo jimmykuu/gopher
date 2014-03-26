@@ -364,7 +364,7 @@ type AD struct {
 type Book struct {
 	Id_             bson.ObjectId `bson:"_id"`
 	Title           string        `bson:"title"`
-	Cover           string        `bson:"conver"`
+	Cover           string        `bson:"cover"`
 	Author          string        `bson:"author"`
 	Translator      string        `bson:"translator"`
 	Pages           int           `bson:"pages"`
