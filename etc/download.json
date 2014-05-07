@@ -1,5 +1,113 @@
 [
 	{
+        "version": "go1.2.2",
+        "date": "2014-05-05",
+        "files": [
+            {
+                "filename": "go1.2.2.darwin-386-osx10.6.pkg",
+                "summary": "go1.2.2 Mac OS X (x86 32-bit) PKG installer",
+                "size": "42.5 MB",
+                "sha1": "dff27e94c8ff25301cd958b0b1b629e97ea21f03",
+                "url": "https://storage.googleapis.com/golang/go1.2.2.darwin-386-osx10.6.pkg"
+            }, {
+                "filename": "go1.2.2.darwin-386-osx10.6.tar.gz",
+                "summary": "go1.2.2 Mac OS X (x86 32-bit) tarball",
+                "size": "42.3 MB",
+                "sha1": "360ec6cbfdec9257de029f918a881b9944718d7c",
+                "url": "https://storage.googleapis.com/golang/go1.2.2.darwin-386-osx10.6.tar.gz"
+            }, {
+                "filename": "go1.2.2.darwin-386-osx10.8.pkg",
+                "summary": "go1.2.2 Mac OS X (x86 32-bit) PKG installer",
+                "size": "43.1 MB",
+                "sha1": "f1fb44aa22cba3e81dc33f88393a54e49eae0d8b",
+                "url": "https://storage.googleapis.com/golang/go1.2.2.darwin-386-osx10.8.pkg"
+            }, {
+                "filename": "go1.2.2.darwin-386-osx10.8.tar.gz",
+                "summary": "go1.2.2 Mac OS X (x86 32-bit) tarball",
+                "size": "42.9 MB",
+                "sha1": "4219b464e82e7c23d9dc02c193e7a0a28a09af1a",
+                "url": "https://storage.googleapis.com/golang/go1.2.2.darwin-386-osx10.8.tar.gz"
+            }, {
+                "filename": "go1.2.2.darwin-amd64-osx10.6.pkg",
+                "summary": "go1.2.2 Mac OS X (x86 64-bit) PKG installer",
+                "size": "55.0 MB",
+                "sha1": "2d4b49f1105a78e1ea31d7f9ea0b43909cc209be",
+                "url": "https://storage.googleapis.com/golang/go1.2.2.darwin-amd64-osx10.6.pkg"
+            }, {
+                "filename": "go1.2.2.darwin-amd64-osx10.6.tar.gz",
+                "summary": "go1.2.2 Mac OS X (x86 64-bit) tarball",
+                "size": "54.7 MB",
+                "sha1": "24c182718fd61b2621692dcdfc34937a6b5ee369",
+                "url": "https://storage.googleapis.com/golang/go1.2.2.darwin-amd64-osx10.6.tar.gz"
+            }, {
+                "filename": "go1.2.2.darwin-amd64-osx10.8.pkg",
+                "summary": "go1.2.2 Mac OS X (x86 64-bit) PKG installer",
+                "size": "55.5 MB",
+                "sha1": "5d78f2a3fe82b01fe5dfcb267e703e754274b253",
+                "url": "https://storage.googleapis.com/golang/go1.2.2.darwin-amd64-osx10.8.pkg"
+            }, {
+                "filename": "go1.2.2.darwin-amd64-osx10.8.tar.gz",
+                "summary": "go1.2.2 Mac OS X (x86 64-bit) tarball",
+                "size": "55.3 MB",
+                "sha1": "19be1eca8fc01b32bb6588a70773b84cdce6bed1",
+                "url": "https://storage.googleapis.com/golang/go1.2.2.darwin-amd64-osx10.8.tar.gz"
+            }, {
+                "filename": "go1.2.2.freebsd-386.tar.gz",
+                "summary": "go1.2.2 FreeBSD (x86 32-bit) tarball",
+                "size": "42.4 MB",
+                "sha1": "d226b8e1c3f75d31fa426df63aa776d7e08cddac",
+                "url": "https://storage.googleapis.com/golang/go1.2.2.freebsd-386.tar.gz"
+            }, {
+                "filename": "go1.2.2.freebsd-amd64.tar.gz",
+                "summary": "go1.2.2 FreeBSD (x86 64-bit) tarball",
+                "size": "43.2 MB",
+                "sha1": "858744ab8ff9661d42940486af63d451853914a0",
+                "url": "https://storage.googleapis.com/golang/go1.2.2.freebsd-amd64.tar.gz"
+            }, {
+                "filename": "go1.2.2.linux-386.tar.gz",
+                "summary": "go1.2.2 Linux (x86 32-bit) tarball",
+                "size": "43.7 MB",
+                "sha1": "d16f892173b0589945d141cefb22adce57e3be9c",
+                "url": "https://storage.googleapis.com/golang/go1.2.2.linux-386.tar.gz"
+            }, {
+                "filename": "go1.2.2.linux-amd64.tar.gz",
+                "summary": "go1.2.2 Linux (x86 64-bit) tarball",
+                "size": "56.5 MB",
+                "sha1": "6bd151ca49c435462c8bf019477a6244b958ebb5",
+                "url": "https://storage.googleapis.com/golang/go1.2.2.linux-amd64.tar.gz"
+            }, {
+                "filename": "go1.2.2.src.tar.gz",
+                "summary": "go1.2.2 (source only)",
+                "size": "9.5 MB",
+                "sha1": "3ce0ac4db434fc1546fec074841ff40dc48c1167",
+                "url": "https://storage.googleapis.com/golang/go1.2.2.src.tar.gz"
+            }, {
+                "filename": "go1.2.2.windows-386.msi",
+                "summary": "go1.2.2 Windows (x86 32-bit) MSI installer",
+                "size": "35.9 MB",
+                "sha1": "60b91a7bf68596b23978acb109d1ff8668b7d18f",
+                "url": "https://storage.googleapis.com/golang/go1.2.2.windows-386.msi"
+            }, {
+                "filename": "go1.2.2.windows-386.zip",
+                "summary": "go1.2.2 Windows (x86 32-bit) ZIP archive",
+                "size": "43.8 MB",
+                "sha1": "560bb33ec70ab733f31ff15f1a48fe35963983b9",
+                "url": "https://storage.googleapis.com/golang/go1.2.2.windows-386.zip"
+            }, {
+                "filename": "go1.2.2.windows-amd64.msi",
+                "summary": "go1.2.2 Windows (x86 64-bit) MSI installer",
+                "size": "45.6 MB",
+                "sha1": "c8f5629bc8d91b161840b4a05a3043c6e5fa310b",
+                "url": "https://storage.googleapis.com/golang/go1.2.2.windows-amd64.msi"
+            }, {
+                "filename": "go1.2.2.windows-amd64.zip",
+                "summary": "go1.2.2 Windows (x86 64-bit) ZIP archive",
+                "size": "57.8 MB",
+                "sha1": "9ee22fe6c4d98124d582046aab465ab69eaab048",
+                "url": "https://storage.googleapis.com/golang/go1.2.2.windows-amd64.zip"
+            }
+        ]
+    }, {
 		"version": "go1.2.1",
 		"date": "2014-03-02",
 		"files": [
@@ -34,11 +142,11 @@
 				"sha1": "605552db5c97c387c812893c6a23dcfb727f687b",
 				"url": "https://go.googlecode.com/files/go1.2.1.darwin-amd64-osx10.6.pkg"
 			}, {
-			"filename": "go1.2.1.darwin-amd64-osx10.6.tar.gz",
-			"summary": "go1.2.1 Mac OS X (x86 64-bit) tarball",
-			"size": "51.8 MB",
-			"sha1": "3447ac38656c85ebc98a83d97663e06fa312bf65",
-			"url": "https://go.googlecode.com/files/go1.2.1.darwin-amd64-osx10.6.tar.gz"
+			    "filename": "go1.2.1.darwin-amd64-osx10.6.tar.gz",
+			    "summary": "go1.2.1 Mac OS X (x86 64-bit) tarball",
+			    "size": "51.8 MB",
+			    "sha1": "3447ac38656c85ebc98a83d97663e06fa312bf65",
+			    "url": "https://go.googlecode.com/files/go1.2.1.darwin-amd64-osx10.6.tar.gz"
 			}, {
 				"filename": "go1.2.1.darwin-amd64-osx10.8.pkg",
 				"summary": "go1.2.1 Mac OS X (x86 64-bit) PKG installer",
