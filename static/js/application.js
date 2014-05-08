@@ -6,6 +6,6 @@ $(document).ready(function(){
 
     $('.wmd-input').atwho({
         at: "@",
-        data: 'http://localhost:8888/users.json'
+        data: 'http://www.golangtc.com/users.json'
     });
 });
