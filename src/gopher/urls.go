@@ -21,6 +21,7 @@ var (
 		{"/faq", Everyone, staticHandler("faq.html")},
 		{"/timeline", Everyone, staticHandler("timeline.html")},
 		{"/search", Everyone, searchHandler},
+		{"/users.json", Everyone, usersJsonHandler},
 
 		{"/admin", Administrator, adminHandler},
 		{"/admin/nodes", Administrator, adminListNodesHandler},

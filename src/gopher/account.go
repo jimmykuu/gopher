@@ -5,6 +5,7 @@ package gopher
 
 import (
 	"crypto/md5"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -586,4 +587,25 @@ func changePasswordHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	renderTemplate(w, r, "account/change_password.html", map[string]interface{}{"form": form})
+}
+
+func usersJsonHandler(w http.ResponseWriter, r *http.Request) {
+	var users []User
+	c := DB.C("users")
+	err := c.Find(nil).All(&users)
+	if err != nil {
+		fmt.Println("changePasswordHandler->findAllUsers:", err)
+		return
+	}
+	var usernames []string
+	for _, user := range users {
+		usernames = append(usernames, user.Username)
+	}
+
+	b, err := json.Marshal(usernames)
+	if err != nil {
+		fmt.Println("changePasswordHandler:", err)
+		return
+	}
+	w.Write(b)
 }
