@@ -98,11 +98,11 @@ func (u *Utils) UserInfo(username string) template.HTML {
 
 	format := `<div>
         <a href="/member/%s"><img class="gravatar img-rounded" src="%s-middle" style="float:left;"></a>
-        <h3><a href="/member/%s">%s</a></h3>
+        <h3><a href="/member/%s">%s</a><br><small>%s</small></h3>
         <div class="clearfix"></div>
     </div>`
 
-	return template.HTML(fmt.Sprintf(format, username, user.AvatarImgSrc(), username, username))
+	return template.HTML(fmt.Sprintf(format, username, user.AvatarImgSrc(), username, username, user.Tagline))
 }
 
 /*mark ggaaooppeenngg*/
