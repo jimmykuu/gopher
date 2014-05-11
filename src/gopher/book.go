@@ -18,7 +18,7 @@ func booksHandler(w http.ResponseWriter, r *http.Request) {
 
 	var englishBooks []Book
 	c.Find(bson.M{"language": "英文"}).All(&englishBooks)
-	renderTemplate(w, r, "book/index.html", map[string]interface{}{
+	renderTemplate(w, r, "book/index.html", BASE, map[string]interface{}{
 		"chineseBooks": chineseBooks,
 		"englishBooks": englishBooks,
 		"active":       "books",
@@ -34,7 +34,7 @@ func showBookHandler(w http.ResponseWriter, r *http.Request) {
 	var book Book
 	c.Find(bson.M{"_id": bson.ObjectIdHex(bookId)}).One(&book)
 
-	renderTemplate(w, r, "book/show.html", map[string]interface{}{
+	renderTemplate(w, r, "book/show.html", BASE, map[string]interface{}{
 		"book":   book,
 		"active": "books",
 	})
@@ -88,11 +88,10 @@ func editBookHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	renderTemplate(w, r, "book/form.html", map[string]interface{}{
-		"adminNav": ADMIN_NAV,
-		"book":     book,
-		"form":     form,
-		"isNew":    false,
+	renderTemplate(w, r, "book/form.html", BASE, map[string]interface{}{
+		"book":  book,
+		"form":  form,
+		"isNew": false,
 	})
 }
 
@@ -112,9 +111,8 @@ func listBooksHandler(w http.ResponseWriter, r *http.Request) {
 	var books []Book
 	c.Find(nil).All(&books)
 
-	renderTemplate(w, r, "book/list.html", map[string]interface{}{
-		"adminNav": ADMIN_NAV,
-		"books":    books,
+	renderTemplate(w, r, "book/list.html", ADMIN, map[string]interface{}{
+		"books": books,
 	})
 }
 
@@ -158,9 +156,8 @@ func newBookHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	renderTemplate(w, r, "book/form.html", map[string]interface{}{
-		"adminNav": ADMIN_NAV,
-		"form":     form,
-		"isNew":    true,
+	renderTemplate(w, r, "book/form.html", ADMIN, map[string]interface{}{
+		"form":  form,
+		"isNew": true,
 	})
 }

@@ -39,5 +39,5 @@ func downloadHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	renderTemplate(w, r, "download.html", map[string]interface{}{"versions": versions, "active": "download"})
+	renderTemplate(w, r, "download.html", BASE, map[string]interface{}{"versions": versions, "active": "download"})
 }

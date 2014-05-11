@@ -1,45 +1,35 @@
 {{define "Title"}}后台管理：友情链接{{end}}
-{{define "ContentWidth"}}9{{end}}
-{{define "Breadcrumb"}}
-	<ul class="breadcrumb">
-		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
-		<li><a href="/admin">管理</a></li>
-		<li class="active">友情链接</li>
-	</ul>
-{{end}}
 {{define "Content"}}
-	<div class="content">
-		<p><a href="/admin/link_exchange/new" class="btn btn-info">添加</a></p>
-		<table class="table table-striped table-bordered table-hover">
-		<thead>
-			<tr>
-				<th>名称</th>
-				<th>URL</th>
-				<th>描述</th>
-				<th>Logo</th>
-				<th width="60"></th>
-			</tr>
-		</thead>
-		<tbody>
-		{{range .linkExchanges}}
-			<tr id="link_exchange-{{.Id_.Hex}}">
-				<td>{{.Name}}</td>
-				<td>{{.URL}}</td>
-				<td>{{.Description}}</td>
-				<td>
-					{{if .Logo}}
-						<img src="{{.Logo}}">
-					{{end}}
-				</td>
-				<td>
-					<a href="/admin/link_exchange/{{.Id_.Hex}}/edit" class="btn btn-xs btn-info" title="编辑"><i class="glyphicon glyphicon-white glyphicon-pencil"></i></a>
-					<a href="javascript:;" class="btn btn-xs btn-danger remove-link_exchange" title="删除" link_exchange_id="{{.Id_.Hex}}"><i class="glyphicon glyphicon-white glyphicon-remove"></i></a>
-				</td>
-			</tr>
-		{{end}}
-		</tbody>
-		</table>
-	</div>
+	<p><a href="/admin/link_exchange/new" class="ui icon blue button"><i class="add icon"></i> 添加</a></p>
+	<table class="ui table segment">
+	<thead>
+		<tr>
+			<th>名称</th>
+			<th>URL</th>
+			<th>描述</th>
+			<th>Logo</th>
+			<th width="60"></th>
+		</tr>
+	</thead>
+	<tbody>
+	{{range .linkExchanges}}
+		<tr id="link_exchange-{{.Id_.Hex}}">
+			<td>{{.Name}}</td>
+			<td>{{.URL}}</td>
+			<td>{{.Description}}</td>
+			<td>
+				{{if .Logo}}
+					<img src="{{.Logo}}">
+				{{end}}
+			</td>
+			<td>
+				<a href="/admin/link_exchange/{{.Id_.Hex}}/edit" class="ui mini blue icon button" title="编辑"><i class="edit icon"></i></a>
+				<a href="javascript:;" class="ui mini red icon button remove-link_exchange" title="删除" link_exchange_id="{{.Id_.Hex}}"><i class="remove icon"></i></a>
+			</td>
+		</tr>
+	{{end}}
+	</tbody>
+	</table>
 	<script type="text/javascript">
 		$("a.remove-link_exchange").click(function () {
 			if (confirm("确定删除吗？")) {
@@ -55,9 +45,3 @@
 		});
 	</script>
 {{end}}
-
-{{define "LeftSide"}}
-	{{.adminNav}}
-{{end}}
-
-{{define "RightSide"}}{{end}}

@@ -6,6 +6,9 @@ package gopher
 
 import (
 	"net/http"
+
+	"github.com/jimmykuu/wtforms"
+	"labix.org/v2/mgo/bson"
 )
 
 // URL: /nodes
@@ -16,5 +19,64 @@ func nodesHandler(w http.ResponseWriter, r *http.Request) {
 	c := DB.C("nodes")
 	c.Find(nil).Sort("-topiccount").All(&nodes)
 
-	renderTemplate(w, r, "node/list.html", map[string]interface{}{"nodes": nodes})
+	renderTemplate(w, r, "node/list.html", BASE, map[string]interface{}{"nodes": nodes})
+}
+
+// URL: /admin/node/new
+// 新建节点
+func adminNewNodeHandler(w http.ResponseWriter, r *http.Request) {
+	form := wtforms.NewForm(
+		wtforms.NewTextField("id", "ID", "", &wtforms.Required{}),
+		wtforms.NewTextField("name", "名称", "", &wtforms.Required{}),
+		wtforms.NewTextArea("description", "描述", "", &wtforms.Required{}),
+	)
+
+	if r.Method == "POST" {
+		if form.Validate(r) {
+			c := DB.C("nodes")
+			node := Node{}
+
+			err := c.Find(bson.M{"id": form.Value("id")}).One(&node)
+
+			if err == nil {
+				form.AddError("id", "该ID已经存在")
+
+				renderTemplate(w, r, "node/new.html", ADMIN, map[string]interface{}{"form": form})
+				return
+			}
+
+			err = c.Find(bson.M{"name": form.Value("name")}).One(&node)
+
+			if err == nil {
+				form.AddError("name", "该名称已经存在")
+
+				renderTemplate(w, r, "node/new.html", ADMIN, map[string]interface{}{"form": form})
+				return
+			}
+
+			Id_ := bson.NewObjectId()
+			err = c.Insert(&Node{
+				Id_:         Id_,
+				Id:          form.Value("id"),
+				Name:        form.Value("name"),
+				Description: form.Value("description")})
+
+			if err != nil {
+				panic(err)
+			}
+
+			http.Redirect(w, r, "/admin/node/new", http.StatusFound)
+		}
+	}
+
+	renderTemplate(w, r, "node/new.html", ADMIN, map[string]interface{}{"form": form})
+}
+
+// URL: /admin/nodes
+// 列出所有的节点
+func adminListNodesHandler(w http.ResponseWriter, r *http.Request) {
+	var nodes []Node
+	c := DB.C("nodes")
+	c.Find(nil).All(&nodes)
+	renderTemplate(w, r, "admin/nodes.html", ADMIN, map[string]interface{}{"nodes": nodes})
 }

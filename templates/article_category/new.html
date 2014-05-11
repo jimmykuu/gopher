@@ -1,0 +1,8 @@
+{{define "Title"}}新建文章分类{{end}}
+{{define "Content"}}
+	<h1 class="ui header">新建文章分类</h1>
+	<form action="/admin/article_category/new" method="post" class="ui form segment">
+		{{input .form "name"}}
+		<input type="submit" value="新建" class="ui blue submit button">
+	</form>
+{{end}}

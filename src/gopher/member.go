@@ -20,7 +20,7 @@ func membersHandler(w http.ResponseWriter, r *http.Request) {
 
 	membersCount, _ := c.Find(nil).Count()
 
-	renderTemplate(w, r, "member/index.html", map[string]interface{}{
+	renderTemplate(w, r, "member/index.html", BASE, map[string]interface{}{
 		"newestMembers": newestMembers,
 		"membersCount":  membersCount,
 		"active":        "members",
@@ -51,7 +51,7 @@ func allMembersHandler(w http.ResponseWriter, r *http.Request) {
 
 	query.All(&members)
 
-	renderTemplate(w, r, "member/list.html", map[string]interface{}{
+	renderTemplate(w, r, "member/list.html", BASE, map[string]interface{}{
 		"members":    members,
 		"active":     "members",
 		"pagination": pagination,
@@ -75,7 +75,7 @@ func memberInfoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderTemplate(w, r, "account/info.html", map[string]interface{}{
+	renderTemplate(w, r, "account/info.html", BASE, map[string]interface{}{
 		"user":   user,
 		"active": "members",
 	})
@@ -118,7 +118,7 @@ func memberTopicsHandler(w http.ResponseWriter, r *http.Request) {
 
 	query.All(&topics)
 
-	renderTemplate(w, r, "account/topics.html", map[string]interface{}{
+	renderTemplate(w, r, "account/topics.html", BASE, map[string]interface{}{
 		"user":       user,
 		"topics":     topics,
 		"pagination": pagination,
@@ -164,7 +164,7 @@ func memberRepliesHandler(w http.ResponseWriter, r *http.Request) {
 
 	query.All(&replies)
 
-	renderTemplate(w, r, "account/replies.html", map[string]interface{}{
+	renderTemplate(w, r, "account/replies.html", BASE, map[string]interface{}{
 		"user":       user,
 		"pagination": pagination,
 		"page":       page,
@@ -199,7 +199,7 @@ func membersInTheSameCityHandler(w http.ResponseWriter, r *http.Request) {
 
 	query.All(&members)
 
-	renderTemplate(w, r, "member/list.html", map[string]interface{}{
+	renderTemplate(w, r, "member/list.html", BASE, map[string]interface{}{
 		"members":    members,
 		"active":     "members",
 		"pagination": pagination,

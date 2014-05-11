@@ -28,7 +28,7 @@ func packagesHandler(w http.ResponseWriter, r *http.Request) {
 	c = DB.C("contents")
 	c.Find(bson.M{"content.type": TypePackage}).Sort("-content.createdat").Limit(10).All(&latestPackages)
 
-	renderTemplate(w, r, "package/index.html", map[string]interface{}{
+	renderTemplate(w, r, "package/index.html", BASE, map[string]interface{}{
 		"categories":     categories,
 		"latestPackages": latestPackages,
 		"active":         "package",
@@ -87,7 +87,7 @@ func newPackageHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/p/"+id.Hex(), http.StatusFound)
 		return
 	}
-	renderTemplate(w, r, "package/form.html", map[string]interface{}{
+	renderTemplate(w, r, "package/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"title":  "提交第三方包",
 		"action": "/package/new",
@@ -164,7 +164,7 @@ func editPackageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	form.SetValue("html", "")
-	renderTemplate(w, r, "package/form.html", map[string]interface{}{
+	renderTemplate(w, r, "package/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"title":  "编辑第三方包",
 		"action": "/p/" + packageId + "/edit",
@@ -197,7 +197,7 @@ func listPackagesHandler(w http.ResponseWriter, r *http.Request) {
 	c = DB.C("packagecategories")
 	c.Find(nil).All(&categories)
 
-	renderTemplate(w, r, "package/list.html", map[string]interface{}{
+	renderTemplate(w, r, "package/list.html", BASE, map[string]interface{}{
 		"categories": categories,
 		"packages":   packages,
 		"category":   category,
@@ -227,7 +227,7 @@ func showPackageHandler(w http.ResponseWriter, r *http.Request) {
 	c = DB.C("packagecategories")
 	c.Find(nil).All(&categories)
 
-	renderTemplate(w, r, "package/show.html", map[string]interface{}{
+	renderTemplate(w, r, "package/show.html", BASE, map[string]interface{}{
 		"package":    package_,
 		"categories": categories,
 		"active":     "package",

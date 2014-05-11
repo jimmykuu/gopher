@@ -1,28 +1,18 @@
 {{define "Title"}}站点类别{{end}}
-{{define "ContentWidth"}}9{{end}}
-{{define "Breadcrumb"}}{{end}}
 {{define "Content"}}
-	<div class="content">
-		<p><a href="/admin/site_category/new" class="btn btn-info">添加</a></p>
-		<table class="table table-striped table-bordered table-hover">
-		<thead>
-			<tr>
-				<th>名称</th>
-			</tr>
-		</thead>
-		<tbody>
-		{{range .categories}}
-			<tr>
-				<td>{{.Name}}</td>
-			</tr>
-		{{end}}
-		</tbody>
-		</table>
-	</div>
+	<p><a href="/admin/site_category/new" class="ui icon blue button"><i class="add icon"></i> 添加</a></p>
+	<table class="ui table">
+	<thead>
+		<tr>
+			<th>名称</th>
+		</tr>
+	</thead>
+	<tbody>
+	{{range .categories}}
+		<tr>
+			<td>{{.Name}}</td>
+		</tr>
+	{{end}}
+	</tbody>
+	</table>
 {{end}}
-
-{{define "LeftSide"}}
-	{{.adminNav}}
-{{end}}
-
-{{define "RightSide"}}{{end}}

@@ -70,7 +70,7 @@ func newArticleHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderTemplate(w, r, "article/form.html", map[string]interface{}{
+	renderTemplate(w, r, "article/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"title":  "新建",
 		"action": "/article/new",
@@ -110,7 +110,7 @@ func listArticlesHandler(w http.ResponseWriter, r *http.Request) {
 
 	query.All(&articles)
 
-	renderTemplate(w, r, "article/index.html", map[string]interface{}{
+	renderTemplate(w, r, "article/index.html", BASE, map[string]interface{}{
 		"articles":   articles,
 		"pagination": pagination,
 		"page":       page,
@@ -155,7 +155,7 @@ func showArticleHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderTemplate(w, r, "article/show.html", map[string]interface{}{
+	renderTemplate(w, r, "article/show.html", BASE, map[string]interface{}{
 		"article": article,
 		"active":  "article",
 	})
@@ -223,7 +223,7 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	renderTemplate(w, r, "article/form.html", map[string]interface{}{
+	renderTemplate(w, r, "article/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"title":  "编辑",
 		"action": "/a/" + articleId + "/edit",

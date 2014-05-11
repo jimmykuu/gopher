@@ -5,7 +5,6 @@
 package gopher
 
 import (
-	"bytes"
 	"crypto/md5"
 	"fmt"
 	"html/template"
@@ -35,14 +34,6 @@ var (
 	fileVersion map[string]string = make(map[string]string) // {path: version}
 	utils       *Utils
 )
-
-var funcMaps = template.FuncMap{
-	"gravatar": func(email string, size uint16) string {
-		h := md5.New()
-		io.WriteString(h, email)
-		return fmt.Sprintf("http://www.gravatar.com/avatar/%x?s=%d", h.Sum(nil), size)
-	},
-}
 
 type Utils struct {
 }
@@ -252,7 +243,7 @@ func (u *Utils) AssertPackage(i interface{}) *Package {
 }
 
 func message(w http.ResponseWriter, r *http.Request, title string, message string, class string) {
-	renderTemplate(w, r, "message.html", map[string]interface{}{"title": title, "message": template.HTML(message), "class": class})
+	renderTemplate(w, r, "message.html", BASE, map[string]interface{}{"title": title, "message": template.HTML(message), "class": class})
 }
 
 // 获取链接的页码，默认"?p=1"这种类型
@@ -355,59 +346,9 @@ func init() {
 	}
 }
 
-func parseTemplate(file string, data map[string]interface{}) []byte {
-	var buf bytes.Buffer
-
-	t, err := template.ParseFiles("templates/base.html", "templates/"+file)
-	if err != nil {
-		panic(err)
-	}
-	t = t.Funcs(funcMaps)
-	err = t.Execute(&buf, data)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return buf.Bytes()
-}
-
-func renderTemplate(w http.ResponseWriter, r *http.Request, file string, data map[string]interface{}) {
-	_, isPresent := data["signout"]
-
-	// 如果isPresent==true，说明在执行登出操作
-	if !isPresent {
-		// 加入用户信息
-		user, ok := currentUser(r)
-
-		if ok {
-			data["username"] = user.Username
-			data["isSuperUser"] = user.IsSuperuser
-			data["email"] = user.Email
-			data["fansCount"] = len(user.Fans)
-			data["followCount"] = len(user.Follow)
-		}
-	}
-
-	data["utils"] = utils
-
-	data["analyticsCode"] = analyticsCode
-	data["shareCode"] = shareCode
-	data["staticFileVersion"] = Config.StaticFileVersion
-	data["goVersion"] = goVersion
-
-	_, ok := data["active"]
-	if !ok {
-		data["active"] = ""
-	}
-
-	page := parseTemplate(file, data)
-	w.Write(page)
-}
-
 func staticHandler(templateFile string) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		renderTemplate(w, r, templateFile, map[string]interface{}{})
+		renderTemplate(w, r, templateFile, BASE, map[string]interface{}{})
 	}
 }
 
@@ -634,7 +575,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		println(err.Error())
 	}
 
-	renderTemplate(w, r, "search.html", map[string]interface{}{
+	renderTemplate(w, r, "search.html", BASE, map[string]interface{}{
 		"q":          q,
 		"topics":     topics,
 		"pagination": pagination,

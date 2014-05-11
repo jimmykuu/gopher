@@ -19,7 +19,7 @@ func sitesHandler(w http.ResponseWriter, r *http.Request) {
 	var categories []SiteCategory
 	c := DB.C("sitecategories")
 	c.Find(nil).All(&categories)
-	renderTemplate(w, r, "site/index.html", map[string]interface{}{
+	renderTemplate(w, r, "site/index.html", BASE, map[string]interface{}{
 		"categories": categories,
 		"active":     "site",
 	})
@@ -49,7 +49,7 @@ func newSiteHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		if !form.Validate(r) {
-			renderTemplate(w, r, "site/form.html", map[string]interface{}{"form": form, "action": "/site/new", "title": "新建"})
+			renderTemplate(w, r, "site/form.html", BASE, map[string]interface{}{"form": form, "action": "/site/new", "title": "新建"})
 			return
 		}
 
@@ -58,7 +58,7 @@ func newSiteHandler(w http.ResponseWriter, r *http.Request) {
 		err := c.Find(bson.M{"url": form.Value("url")}).One(&site)
 		if err == nil {
 			form.AddError("url", "该站点已经有了")
-			renderTemplate(w, r, "site/form.html", map[string]interface{}{"form": form, "action": "/site/new", "title": "新建"})
+			renderTemplate(w, r, "site/form.html", BASE, map[string]interface{}{"form": form, "action": "/site/new", "title": "新建"})
 			return
 		}
 
@@ -82,7 +82,7 @@ func newSiteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderTemplate(w, r, "site/form.html", map[string]interface{}{
+	renderTemplate(w, r, "site/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"action": "/site/new",
 		"title":  "新建",
@@ -136,7 +136,7 @@ func editSiteHandler(w http.ResponseWriter, r *http.Request) {
 		err := c.Find(bson.M{"url": form.Value("url"), "_id": bson.M{"$ne": site.Id_}}).One(&site2)
 		if err == nil {
 			form.AddError("url", "该站点已经有了")
-			renderTemplate(w, r, "site/form.html", map[string]interface{}{"form": form, "action": "/site/" + siteId + "/edit", "title": "编辑"})
+			renderTemplate(w, r, "site/form.html", BASE, map[string]interface{}{"form": form, "action": "/site/" + siteId + "/edit", "title": "编辑"})
 			return
 		}
 
@@ -155,7 +155,7 @@ func editSiteHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderTemplate(w, r, "site/form.html", map[string]interface{}{
+	renderTemplate(w, r, "site/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"action": "/site/" + siteId + "/edit",
 		"title":  "编辑",

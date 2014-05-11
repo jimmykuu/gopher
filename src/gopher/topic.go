@@ -60,7 +60,7 @@ func topicsHandler(w http.ResponseWriter, r *http.Request, conditions bson.M, so
 	c = DB.C("link_exchanges")
 	c.Find(nil).All(&linkExchanges)
 
-	renderTemplate(w, r, "index.html", map[string]interface{}{
+	renderTemplate(w, r, "index.html", BASE, map[string]interface{}{
 		"nodes":         hotNodes,
 		"status":        status,
 		"topics":        topics,
@@ -172,7 +172,7 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 		form.SetValue("html", "")
 	}
 
-	renderTemplate(w, r, "topic/form.html", map[string]interface{}{
+	renderTemplate(w, r, "topic/form.html", BASE, map[string]interface{}{
 		"form":    form,
 		"title":   "新建",
 		"html":    html,
@@ -255,7 +255,7 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 		form.SetValue("html", "")
 	}
 
-	renderTemplate(w, r, "topic/form.html", map[string]interface{}{
+	renderTemplate(w, r, "topic/form.html", BASE, map[string]interface{}{
 		"form":    form,
 		"title":   "编辑",
 		"action":  "/t/" + topicId + "/edit",
@@ -301,7 +301,7 @@ func showTopicHandler(w http.ResponseWriter, r *http.Request) {
 			cusers.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"recentreplies": replies}})
 		}
 	}
-	renderTemplate(w, r, "topic/show.html", map[string]interface{}{
+	renderTemplate(w, r, "topic/show.html", BASE, map[string]interface{}{
 		"topic":  topic,
 		"active": "topic",
 	})
@@ -343,7 +343,7 @@ func topicInNodeHandler(w http.ResponseWriter, r *http.Request) {
 
 	query.All(&topics)
 
-	renderTemplate(w, r, "/topic/list.html", map[string]interface{}{
+	renderTemplate(w, r, "/topic/list.html", BASE, map[string]interface{}{
 		"topics": topics,
 		"node":   node,
 		"active": "topic",

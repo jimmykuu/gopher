@@ -1,30 +1,23 @@
 {{define "Title"}}节点{{end}}
-{{define "ContentWidth"}}9{{end}}
-{{define "Breadcrumb"}}{{end}}
 {{define "Content"}}
-	<div class="content">
-		<p><a href="/admin/node/new" class="btn btn-info">添加</a></p>
-		<table class="table table-striped table-bordered table-hover">
-		<thead>
-			<tr>
-				<th>ID</th>
-				<th>名称</th>
-			</tr>
-		</thead>
-		<tbody>
-		{{range .nodes}}
-			<tr>
-				<td>{{.Id}}</td>
-				<td>{{.Name}}</td>
-			</tr>
-		{{end}}
-		</tbody>
-		</table>
-	</div>
+	<a href="/admin/node/new" class="ui icon button green">
+		<i class="add icon"></i>
+		添加
+	</a>
+	<table class="ui table">
+	<thead>
+		<tr>
+			<th>ID</th>
+			<th>名称</th>
+		</tr>
+	</thead>
+	<tbody>
+	{{range .nodes}}
+		<tr>
+			<td>{{.Id}}</td>
+			<td>{{.Name}}</td>
+		</tr>
+	{{end}}
+	</tbody>
+	</table>
 {{end}}
-
-{{define "LeftSide"}}
-	{{.adminNav}}
-{{end}}
-
-{{define "RightSide"}}{{end}}
