@@ -47,7 +47,14 @@ func (u *Utils) Url(url string) string {
 	return "http://" + url
 }
 
+/*
+for 循环作用域找不到这个工具
+func (u *Utils) TopicLink(id bson.ObjectId) string {
+	return "http://www.golangtc.com/t/" + id.Hex()
+}
+*/
 func (u *Utils) StaticUrl(path string) string {
+
 	version, ok := fileVersion[path]
 	if ok {
 		return "/static/" + path + "?v=" + version
@@ -73,7 +80,9 @@ func (u *Utils) StaticUrl(path string) string {
 func (u *Utils) Index(index int) int {
 	return index + 1
 }
-
+func (u *Utils) FormatDate(t time.Time) string {
+	return t.Format("2006-01-02")
+}
 func (u *Utils) FormatTime(t time.Time) string {
 	now := time.Now()
 	duration := now.Sub(t)

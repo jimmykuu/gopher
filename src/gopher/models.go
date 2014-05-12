@@ -206,6 +206,11 @@ func (t *Topic) Node() *Node {
 	return &node
 }
 
+func (t *Topic) Link(createdBy bson.ObjectId) string {
+	return "http://golangtc.com/t/" + createdBy.Hex()
+
+}
+
 // 主题的最近的一个回复
 func (t *Topic) LatestReplier() *User {
 	if t.LatestReplierId == "" {
