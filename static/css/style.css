@@ -421,3 +421,17 @@ ul.books li {
 div.book-detail .tab-pane {
     padding-top: 2em;
 }
+
+#toTop {
+	text-align: center;
+    color: #428bca;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+	cursor: pointer;
+    display: none;
+}
+
+#toTop span {
+	font-size: 24px;
+}
