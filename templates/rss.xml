@@ -1,0 +1,26 @@
+<rss version="2.0">
+  <channel>
+    <title><![CDATA[golangtc.com - golang中国社区]]></title>
+    <link>http://golangtc.com</link>
+    <description><![CDATA[Linux.CN - golang中国社区]]></description>
+    <lastBuildDate>2014-05-12</lastBuildDate>
+    <pubDate>2014-05-12</pubDate>
+    <language>zh-CN</language>
+    <image>
+      <link>http://golangtc.com/</link>
+      <url>http://gopher.qiniudn.com/static/img/golang-china.png?v=14</url>
+      <title><![CDATA[golangtc - golang中国社区]]></title>
+    </image>
+	{{range $t := .topics }}
+    <item>
+      <title><![CDATA[{{$t.Content.Title}}]]></title>
+      <link></link>
+      <guid></guid>
+      <description>><![CDATA[{{$t.Content.Html}}]]></description>
+      <author><![CDATA[golangtc.com ]]></author>
+      <pubDate>{{$t.CreatedAt}}</pubDate>
+      <comments></comments>
+    </item>
+	{{end}}
+  </channel>
+</rss>
