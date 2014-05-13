@@ -31,7 +31,6 @@ func Dawn() time.Time {
 
 func init() {
 	latestTime = Dawn()
-	latestTime = latestTime.AddDate(0, 0, -2)
 }
 
 func RssRefresh() {
