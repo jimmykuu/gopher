@@ -5,5 +5,6 @@ import (
 )
 
 func main() {
+	go gopher.RssRefresh()
 	gopher.StartServer()
 }
