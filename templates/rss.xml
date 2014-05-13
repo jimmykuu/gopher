@@ -18,8 +18,7 @@
       <guid>{{$t.Link $t.Content.CreatedBy}}</guid>
       <description>><![CDATA[{{$t.Content.Html}}]]></description>
       <author><![CDATA[golangtc.com ]]></author>
-      <pubDate>{{$t.CreatedAt}}</pubDate>
-      <comments></comments>
+      <pubDate>{{$t.Format $t.Content.CreatedAt}}</pubDate>
     </item>
 	{{end}}
   </channel>

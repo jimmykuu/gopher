@@ -16,30 +16,30 @@ var (
 	//缓存
 	cache list.List
 	//最后更新时间
-	latestTime *time.Time
+	latestTime time.Time
 )
 
 //今天凌晨零点时间
-func Dawn() *time.Time {
+func Dawn() time.Time {
 	now := time.Now()
 	t := now.Round(24 * time.Hour)
 	if t.After(now) {
 		t = t.AddDate(0, 0, -1)
 	}
-	return &t
+	return t
 }
 
 func init() {
 	latestTime = Dawn()
+	latestTime = latestTime.AddDate(0, 0, -2)
 }
 
 func RssRefresh() {
 	now := time.Now()
-	if now.After(*latestTime) {
-		latestTime = &now
+	if now.After(latestTime) {
 		c := DB.C("contents")
 		c.Find(bson.M{"content.createdat": bson.M{"$gt": latestTime}}).All(&contents)
-		fmt.Print(contents)
+		latestTime = now
 		cache.PushBack(contents)
 		if cache.Len() > 7 {
 			cache.Remove(cache.Front())
@@ -66,7 +66,7 @@ func rssHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	rssTopics := getFromCache()
 	t.Execute(w, map[string]interface{}{
-		"date":   *latestTime,
+		"date":   latestTime,
 		"topics": rssTopics,
 		"utils":  utils,
 	})

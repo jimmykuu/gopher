@@ -49,9 +49,6 @@ func (u *Utils) Url(url string) string {
 
 /*
 for 循环作用域找不到这个工具
-func (u *Utils) TopicLink(id bson.ObjectId) string {
-	return "http://www.golangtc.com/t/" + id.Hex()
-}
 */
 func (u *Utils) StaticUrl(path string) string {
 
