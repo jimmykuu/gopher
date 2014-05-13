@@ -3,8 +3,8 @@ package gopher
 import (
 	"container/list"
 	"fmt"
-	"html/template"
 	"net/http"
+	"text/template"
 	"time"
 
 	"labix.org/v2/mgo/bson"
@@ -64,6 +64,7 @@ func rssHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 	rssTopics := getFromCache()
+	w.Header().Set("Content-Type", "application/xml")
 	t.Execute(w, map[string]interface{}{
 		"date":   latestTime,
 		"topics": rssTopics,

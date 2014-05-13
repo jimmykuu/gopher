@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
   <channel>
     <title><![CDATA[golangtc.com - golang中国社区]]></title>
@@ -14,9 +15,9 @@
 	{{range $t := .topics }}
     <item>
       <title><![CDATA[{{$t.Content.Title}}]]></title>
-      <link>{{$t.Content.CreatedBy }}</link>
+      <link>{{$t.Link $t.Content.CreatedBy}}</link>
       <guid>{{$t.Link $t.Content.CreatedBy}}</guid>
-      <description>><![CDATA[{{$t.Content.Html}}]]></description>
+      <description><![CDATA[{{$t.Content.Html}}]]></description>
       <author><![CDATA[golangtc.com ]]></author>
       <pubDate>{{$t.Format $t.Content.CreatedAt}}</pubDate>
     </item>
