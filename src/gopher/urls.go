@@ -23,7 +23,7 @@ var (
 		{"/search", Everyone, searchHandler},
 		{"/users.json", Everyone, usersJsonHandler},
 
-		{"/rss", Everyone, rssHandler},
+		{"/topics.rss", Everyone, rssHandler},
 		{"/admin", Administrator, adminHandler},
 		{"/admin/nodes", Administrator, adminListNodesHandler},
 		{"/admin/node/new", Administrator, adminNewNodeHandler},
