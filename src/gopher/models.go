@@ -38,11 +38,13 @@ type User struct {
 	Fans           []string
 	//存储的是最近回复的主题的objectid.hex
 	RecentReplies []string
-	IsSuperuser   bool
-	IsActive      bool
-	ValidateCode  string
-	ResetCode     string
-	Index         int
+	//存储的是最近评论被AT的主题的objectid.hex
+	RecentAts    []string
+	IsSuperuser  bool
+	IsActive     bool
+	ValidateCode string
+	ResetCode    string
+	Index        int
 }
 
 // 是否是默认头像
@@ -321,7 +323,6 @@ func (c *Comment) CanDelete(username string) bool {
 	if err != nil {
 		return false
 	}
-
 	return user.IsSuperuser
 }
 

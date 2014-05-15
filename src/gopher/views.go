@@ -11,6 +11,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -129,11 +130,25 @@ func (u *Utils) RecentReplies(username string) template.HTML {
 		anchors = append(anchors, fmt.Sprintf(anchor, topic.Id_.Hex(), topic.Title))
 	}
 	s := strings.Join(anchors, "\n")
+	//最近被at
+	var ats []string
+	for _, v := range user.RecentAts {
+		var topic Topic
+		if err := ccontens.Find(bson.M{"_id": bson.ObjectIdHex(v)}).One(&topic); err != nil {
+			fmt.Println(err)
+		}
+		ats = append(ats, fmt.Sprintf(anchor, topic.Id_.Hex(), topic.Title))
+	}
+	a := strings.Join(ats, "\n")
 	tpl := `<h4><small>最近回复</small></h4>
 			<hr>
-			` + s
+			` + s +
+		`<h4><small>被at</small></h4>
+			<hr>
+			` + a
 	return template.HTML(tpl)
 }
+
 func (u *Utils) Truncate(html template.HTML, length int) string {
 	text := webhelpers.RemoveFormatting(string(html))
 	return webhelpers.Truncate(text, length, "...")
@@ -373,6 +388,18 @@ func getPage(r *http.Request) (page int, err error) {
 	return
 }
 
+//mark gga
+//提取评论中被at的用户名
+func findAts(content string) []string {
+	regAt := regexp.MustCompile(`@(\S*) `)
+	allAts := regAt.FindAllStringSubmatch(content, -1)
+	var users []string
+	for _, v := range allAts {
+		users = append(users, v[1])
+	}
+	return users
+}
+
 // URL: /comment/{contentId}
 // 评论，不同内容共用一个评论方法
 func commentHandler(w http.ResponseWriter, r *http.Request) {
@@ -434,9 +461,23 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 		c = DB.C("status")
 		c.Update(nil, bson.M{"$inc": bson.M{"replycount": 1}})
 		/*mark ggaaooppeenngg*/
-		//修改用户的最近回复
 		c = DB.C("users")
+		//查找评论中at的用户,并且更新recentAts
+		users := findAts(content)
+		for _, v := range users {
+			var user User
+			err := c.Find(bson.M{"username": v}).One(&user)
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				user.RecentAts = append(user.RecentAts, contentId)
+				if err = c.Update(bson.M{"username": user.Username}, bson.M{"$set": bson.M{"recentats": user.RecentAts}}); err != nil {
+					fmt.Println(err)
+				}
+			}
+		}
 
+		//修改用户的最近回复
 		//该最近回复提醒通过url被点击的时候会被disactive
 		//更新最近的评论
 		//自己的评论就不提示了
