@@ -12,7 +12,7 @@ import (
 // 广告列表
 func adminListAdsHandler(w http.ResponseWriter, r *http.Request) {
 	var ads []AD
-	c := DB.C("ads")
+	c := DB.C(ADS)
 	c.Find(nil).All(&ads)
 
 	renderTemplate(w, r, "admin/ads.html", ADMIN, map[string]interface{}{
@@ -44,7 +44,7 @@ func adminNewAdHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		c := DB.C("ads")
+		c := DB.C(ADS)
 		err := c.Insert(&AD{
 			Id_:      bson.NewObjectId(),
 			Position: form.Value("position"),
@@ -71,7 +71,7 @@ func adminNewAdHandler(w http.ResponseWriter, r *http.Request) {
 func adminDeleteAdHandler(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
-	c := DB.C("ads")
+	c := DB.C(ADS)
 	c.RemoveId(bson.ObjectIdHex(id))
 
 	w.Write([]byte("true"))
@@ -82,7 +82,7 @@ func adminDeleteAdHandler(w http.ResponseWriter, r *http.Request) {
 func adminEditAdHandler(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
-	c := DB.C("ads")
+	c := DB.C(ADS)
 	var ad AD
 	c.Find(bson.M{"_id": bson.ObjectIdHex(id)}).One(&ad)
 

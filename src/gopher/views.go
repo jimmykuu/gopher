@@ -96,7 +96,7 @@ func (u *Utils) FormatTime(t time.Time) string {
 }
 
 func (u *Utils) UserInfo(username string) template.HTML {
-	c := DB.C("users")
+	c := DB.C(USERS)
 
 	user := User{}
 	// 检查用户名
@@ -113,8 +113,8 @@ func (u *Utils) UserInfo(username string) template.HTML {
 
 /*mark ggaaooppeenngg*/
 func (u *Utils) RecentReplies(username string) template.HTML {
-	c := DB.C("users")
-	ccontens := DB.C("contents")
+	c := DB.C(USERS)
+	ccontens := DB.C(CONTENTS)
 	user := User{}
 	// 检查用户名
 	c.Find(bson.M{"username": username}).One(&user)
@@ -210,13 +210,13 @@ func (u *Utils) RenderInputH(form wtforms.Form, fieldStr string, labelWidth, inp
 }
 
 func (u *Utils) HasAd(position string) bool {
-	c := DB.C("ads")
+	c := DB.C(ADS)
 	count, _ := c.Find(bson.M{"position": position}).Limit(1).Count()
 	return count == 1
 }
 
 func (u *Utils) AdCode(position string) template.HTML {
-	c := DB.C("ads")
+	c := DB.C(ADS)
 	var ad AD
 	c.Find(bson.M{"position": position}).Limit(1).One(&ad)
 
@@ -309,7 +309,7 @@ func init() {
 
 	// 如果没有status,创建
 	var status Status
-	c := DB.C("status")
+	c := DB.C(STATUS)
 	err = c.Find(nil).One(&status)
 
 	if err != nil {
@@ -335,7 +335,7 @@ func init() {
 		fmt.Println("你没有设置超级账户,请在config.json中的superusers中设置,如有多个账户,用逗号分开")
 	}
 
-	c = DB.C("users")
+	c = DB.C(USERS)
 	var users []User
 	c.Find(bson.M{"issuperuser": true}).All(&users)
 
@@ -386,7 +386,7 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 	contentId := vars["contentId"]
 
 	var temp map[string]interface{}
-	c := DB.C("contents")
+	c := DB.C(CONTENTS)
 	c.Find(bson.M{"_id": bson.ObjectIdHex(contentId)}).One(&temp)
 
 	temp2 := temp["content"].(map[string]interface{})
@@ -414,7 +414,7 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 	Id_ := bson.NewObjectId()
 	now := time.Now()
 
-	c = DB.C("comments")
+	c = DB.C(COMMENTS)
 	c.Insert(&Comment{
 		Id_:       Id_,
 		Type:      type_,
@@ -427,15 +427,15 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 
 	if type_ == TypeTopic {
 		// 修改最后回复用户Id和时间
-		c = DB.C("contents")
+		c = DB.C(CONTENTS)
 		c.Update(bson.M{"_id": bson.ObjectIdHex(contentId)}, bson.M{"$set": bson.M{"latestreplierid": user.Id_.Hex(), "latestrepliedat": now}})
 
 		// 修改中的回复数量
-		c = DB.C("status")
+		c = DB.C(STATUS)
 		c.Update(nil, bson.M{"$inc": bson.M{"replycount": 1}})
 		/*mark ggaaooppeenngg*/
 		//修改用户的最近回复
-		c = DB.C("users")
+		c = DB.C(USERS)
 
 		//该最近回复提醒通过url被点击的时候会被disactive
 		//更新最近的评论
@@ -465,7 +465,7 @@ func deleteCommentHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	var commentId string = vars["commentId"]
 
-	c := DB.C("comments")
+	c := DB.C(COMMENTS)
 	var comment Comment
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(commentId)}).One(&comment)
 
@@ -476,7 +476,7 @@ func deleteCommentHandler(w http.ResponseWriter, r *http.Request) {
 
 	c.Remove(bson.M{"_id": comment.Id_})
 
-	c = DB.C("contents")
+	c = DB.C(CONTENTS)
 	c.Update(bson.M{"_id": comment.ContentId}, bson.M{"$inc": bson.M{"content.commentcount": -1}})
 
 	if comment.Type == TypeTopic {
@@ -498,7 +498,7 @@ func deleteCommentHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// 修改中的回复数量
-		c = DB.C("status")
+		c = DB.C(STATUS)
 		c.Update(nil, bson.M{"$inc": bson.M{"replycount": -1}})
 	}
 
@@ -550,7 +550,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		markdownConditions = append(markdownConditions, bson.M{"content.markdown": bson.M{"$regex": bson.RegEx{keyword, "i"}}})
 	}
 
-	c := DB.C("contents")
+	c := DB.C(CONTENTS)
 
 	var pagination *Pagination
 

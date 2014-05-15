@@ -12,7 +12,7 @@ import (
 // URL: /books
 // 图书列表
 func booksHandler(w http.ResponseWriter, r *http.Request) {
-	c := DB.C("books")
+	c := DB.C(BOOKS)
 	var chineseBooks []Book
 	c.Find(bson.M{"language": "中文"}).All(&chineseBooks)
 
@@ -30,7 +30,7 @@ func booksHandler(w http.ResponseWriter, r *http.Request) {
 func showBookHandler(w http.ResponseWriter, r *http.Request) {
 	bookId := mux.Vars(r)["id"]
 
-	c := DB.C("books")
+	c := DB.C(BOOKS)
 	var book Book
 	c.Find(bson.M{"_id": bson.ObjectIdHex(bookId)}).One(&book)
 
@@ -45,7 +45,7 @@ func showBookHandler(w http.ResponseWriter, r *http.Request) {
 func editBookHandler(w http.ResponseWriter, r *http.Request) {
 	bookId := mux.Vars(r)["id"]
 
-	c := DB.C("books")
+	c := DB.C(BOOKS)
 	var book Book
 	c.Find(bson.M{"_id": bson.ObjectIdHex(bookId)}).One(&book)
 
@@ -100,14 +100,14 @@ func editBookHandler(w http.ResponseWriter, r *http.Request) {
 func deleteBookHandler(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
-	c := DB.C("books")
+	c := DB.C(BOOKS)
 	c.RemoveId(bson.ObjectIdHex(id))
 
 	w.Write([]byte("true"))
 }
 
 func listBooksHandler(w http.ResponseWriter, r *http.Request) {
-	c := DB.C("books")
+	c := DB.C(BOOKS)
 	var books []Book
 	c.Find(nil).All(&books)
 
@@ -133,7 +133,7 @@ func newBookHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		if form.Validate(r) {
 			pages, _ := strconv.Atoi(form.Value("pages"))
-			c := DB.C("books")
+			c := DB.C(BOOKS)
 			err := c.Insert(&Book{
 				Id_:             bson.NewObjectId(),
 				Title:           form.Value("title"),

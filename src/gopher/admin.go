@@ -5,8 +5,6 @@
 package gopher
 
 import (
-	"bytes"
-	"html/template"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -16,21 +14,6 @@ import (
 // URL: /admin
 // 后台管理首页
 func adminHandler(w http.ResponseWriter, r *http.Request) {
-	var buf bytes.Buffer
-
-	t, err := template.ParseFiles("templates/admin/index.html")
-	if err != nil {
-		panic(err)
-	}
-	t = t.Funcs(funcMaps)
-	err = t.Execute(&buf, nil)
-
-	if err != nil {
-		panic(err)
-	}
-
-	w.Write(buf.Bytes())
-
 	renderTemplate(w, r, "admin/index.html", ADMIN, map[string]interface{}{})
 }
 
@@ -45,7 +28,7 @@ func adminListUsersHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var users []User
-	c := DB.C("users")
+	c := DB.C(USERS)
 
 	pagination := NewPagination(c.Find(nil).Sort("-joinedat"), "/admin/users", PerPage)
 
@@ -65,7 +48,7 @@ func adminListUsersHandler(w http.ResponseWriter, r *http.Request) {
 func adminActivateUserHandler(w http.ResponseWriter, r *http.Request) {
 	userId := mux.Vars(r)["userId"]
 
-	c := DB.C("users")
+	c := DB.C(USERS)
 	c.Update(bson.M{"_id": bson.ObjectIdHex(userId)}, bson.M{"$set": bson.M{"isactive": true}})
 	http.Redirect(w, r, "/admin/users", http.StatusFound)
 }

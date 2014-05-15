@@ -11,7 +11,7 @@ import (
 // URL: /admin/link_exchanges
 // 友情链接列表
 func adminListLinkExchangesHandler(w http.ResponseWriter, r *http.Request) {
-	c := DB.C("link_exchanges")
+	c := DB.C(LINK_EXCHANGES)
 	var linkExchanges []LinkExchange
 	c.Find(nil).All(&linkExchanges)
 
@@ -39,7 +39,7 @@ func adminNewLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		c := DB.C("link_exchanges")
+		c := DB.C(LINK_EXCHANGES)
 		var linkExchange LinkExchange
 		err := c.Find(bson.M{"url": form.Value("url")}).One(&linkExchange)
 
@@ -79,7 +79,7 @@ func adminNewLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
 func adminEditLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
 	linkExchangeId := mux.Vars(r)["linkExchangeId"]
 
-	c := DB.C("link_exchanges")
+	c := DB.C(LINK_EXCHANGES)
 	var linkExchange LinkExchange
 	c.Find(bson.M{"_id": bson.ObjectIdHex(linkExchangeId)}).One(&linkExchange)
 
@@ -125,7 +125,7 @@ func adminEditLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
 func adminDeleteLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
 	linkExchangeId := mux.Vars(r)["linkExchangeId"]
 
-	c := DB.C("link_exchanges")
+	c := DB.C(LINK_EXCHANGES)
 	c.RemoveId(bson.ObjectIdHex(linkExchangeId))
 
 	w.Write([]byte("true"))

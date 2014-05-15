@@ -17,6 +17,20 @@ const (
 	TypeSite      = 'S'
 	TypePackage   = 'P'
 	DefaultAvatar = "gopher_teal.jpg"
+
+	ADS                = "ads"
+	ARTICLE_CATEGORIES = "articlecategories"
+	BOOKS              = "books"
+	COMMENTS           = "comments"
+	CONTENTS           = "contents"
+	NODES              = "nodes"
+	PACKAGES           = "packages"
+	PACKAGE_CATEGORIES = "package_exchanges"
+	LINK_EXCHANGES     = "link_exchanges"
+	SITE_CATEGORIES    = "site_categories"
+	SITES              = "sites"
+	STATUS             = "status"
+	USERS              = "users"
 )
 
 // 用户

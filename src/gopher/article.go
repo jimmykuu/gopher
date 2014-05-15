@@ -19,7 +19,7 @@ import (
 // 新建文章
 func newArticleHandler(w http.ResponseWriter, r *http.Request) {
 	var categories []ArticleCategory
-	c := DB.C("articlecategories")
+	c := DB.C(ARTICLE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
 	var choices []wtforms.Choice
@@ -39,7 +39,7 @@ func newArticleHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" && form.Validate(r) {
 		user, _ := currentUser(r)
 
-		c = DB.C("contents")
+		c = DB.C(CONTENTS)
 
 		id_ := bson.NewObjectId()
 
@@ -96,7 +96,7 @@ func listArticlesHandler(w http.ResponseWriter, r *http.Request) {
 	//	c = db.C("status")
 	//	c.Find(nil).One(&status)
 
-	c := DB.C("contents")
+	c := DB.C(CONTENTS)
 
 	pagination := NewPagination(c.Find(bson.M{"content.type": TypeArticle}).Sort("-content.createdat"), "/articles", PerPage)
 
@@ -123,7 +123,7 @@ func listArticlesHandler(w http.ResponseWriter, r *http.Request) {
 func redirectArticleHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	articleId := vars["articleId"]
-	c := DB.C("contents")
+	c := DB.C(CONTENTS)
 
 	article := new(Article)
 
@@ -144,7 +144,7 @@ func redirectArticleHandler(w http.ResponseWriter, r *http.Request) {
 func showArticleHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	articleId := vars["articleId"]
-	c := DB.C("contents")
+	c := DB.C(CONTENTS)
 
 	article := Article{}
 
@@ -168,7 +168,7 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 
 	articleId := mux.Vars(r)["articleId"]
 
-	c := DB.C("contents")
+	c := DB.C(CONTENTS)
 	var article Article
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(articleId)}).One(&article)
 
@@ -183,7 +183,7 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var categorys []ArticleCategory
-	c = DB.C("articlecategories")
+	c = DB.C(ARTICLE_CATEGORIES)
 	c.Find(nil).All(&categorys)
 
 	var choices []wtforms.Choice
@@ -203,7 +203,7 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		if form.Validate(r) {
 			categoryId := bson.ObjectIdHex(form.Value("category"))
-			c = DB.C("contents")
+			c = DB.C(CONTENTS)
 			err = c.Update(bson.M{"_id": article.Id_}, bson.M{"$set": bson.M{
 				"categoryid":        categoryId,
 				"originalsource":    form.Value("original_source"),
@@ -239,7 +239,7 @@ func deleteArticleHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	articleId := vars["articleId"]
 
-	c := DB.C("contents")
+	c := DB.C(CONTENTS)
 
 	article := new(Article)
 
@@ -253,7 +253,7 @@ func deleteArticleHandler(w http.ResponseWriter, r *http.Request) {
 	if article.CanDelete(user.Username) {
 		c.Remove(bson.M{"_id": article.Id_})
 
-		c = DB.C("comments")
+		c = DB.C(COMMENTS)
 		c.Remove(bson.M{"contentid": article.Id_})
 
 		http.Redirect(w, r, "/articles", http.StatusFound)

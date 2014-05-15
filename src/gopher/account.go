@@ -54,7 +54,7 @@ func currentUser(r *http.Request) (*User, bool) {
 
 	user := User{}
 
-	c := DB.C("users")
+	c := DB.C(USERS)
 
 	// 检查用户名
 	err := c.Find(bson.M{"username": username}).One(&user)
@@ -77,7 +77,7 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		if form.Validate(r) {
-			c := DB.C("users")
+			c := DB.C(USERS)
 
 			result := User{}
 
@@ -100,7 +100,7 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			c2 := DB.C("status")
+			c2 := DB.C(STATUS)
 			var status Status
 			c2.Find(nil).One(&status)
 
@@ -162,7 +162,7 @@ func activateHandler(w http.ResponseWriter, r *http.Request) {
 
 	var user User
 
-	c := DB.C("users")
+	c := DB.C(USERS)
 
 	err := c.Find(bson.M{"validatecode": code}).One(&user)
 
@@ -173,7 +173,7 @@ func activateHandler(w http.ResponseWriter, r *http.Request) {
 
 	c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"isactive": true, "validatecode": ""}})
 
-	c = DB.C("status")
+	c = DB.C(STATUS)
 	var status Status
 	c.Find(nil).One(&status)
 	c.Update(bson.M{"_id": status.Id_}, bson.M{"$inc": bson.M{"usercount": 1}})
@@ -194,7 +194,7 @@ func signinHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		if form.Validate(r) {
-			c := DB.C("users")
+			c := DB.C(USERS)
 			user := User{}
 
 			err := c.Find(bson.M{"username": form.Value("username")}).One(&user)
@@ -258,7 +258,7 @@ func followHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := User{}
-	c := DB.C("users")
+	c := DB.C(USERS)
 	err := c.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
@@ -289,7 +289,7 @@ func unfollowHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := User{}
-	c := DB.C("users")
+	c := DB.C(USERS)
 	err := c.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
@@ -325,7 +325,7 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		if profileForm.Validate(r) {
-			c := DB.C("users")
+			c := DB.C(USERS)
 			c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{
 				"website":        profileForm.Value("website"),
 				"location":       profileForm.Value("location"),
@@ -357,7 +357,7 @@ func forgotPasswordHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		if form.Validate(r) {
 			var user User
-			c := DB.C("users")
+			c := DB.C(USERS)
 			err := c.Find(bson.M{"username": form.Value("username")}).One(&user)
 			if err != nil {
 				form.AddError("username", "没有该用户")
@@ -404,7 +404,7 @@ func resetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 	code := vars["code"]
 
 	var user User
-	c := DB.C("users")
+	c := DB.C(USERS)
 	err := c.Find(bson.M{"resetcode": code}).One(&user)
 
 	if err != nil {
@@ -532,7 +532,7 @@ func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// 存储远程文件名
-		c := DB.C("users")
+		c := DB.C(USERS)
 		c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"avatar": filename}})
 
 		http.Redirect(w, r, "/profile#avatar", http.StatusFound)
@@ -551,7 +551,7 @@ func chooseDefaultAvatar(w http.ResponseWriter, r *http.Request) {
 		avatar := r.FormValue("defaultAvatars")
 
 		if avatar != "" {
-			c := DB.C("users")
+			c := DB.C(USERS)
 			c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"avatar": avatar}})
 		}
 
@@ -574,7 +574,7 @@ func changePasswordHandler(w http.ResponseWriter, r *http.Request) {
 		if form.Value("new_password") == form.Value("confirm_password") {
 			currentPassword := encryptPassword(form.Value("current_password"))
 			if currentPassword == user.Password {
-				c := DB.C("users")
+				c := DB.C(USERS)
 				c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"password": encryptPassword(form.Value("new_password"))}})
 				message(w, r, "密码修改成功", `密码修改成功`, "success")
 				return
@@ -591,7 +591,7 @@ func changePasswordHandler(w http.ResponseWriter, r *http.Request) {
 
 func usersJsonHandler(w http.ResponseWriter, r *http.Request) {
 	var users []User
-	c := DB.C("users")
+	c := DB.C(USERS)
 	err := c.Find(nil).All(&users)
 	if err != nil {
 		fmt.Println("changePasswordHandler->findAllUsers:", err)

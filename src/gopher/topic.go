@@ -35,14 +35,14 @@ func topicsHandler(w http.ResponseWriter, r *http.Request, conditions bson.M, so
 	}
 
 	var hotNodes []Node
-	c := DB.C("nodes")
+	c := DB.C(NODES)
 	c.Find(bson.M{"topiccount": bson.M{"$gt": 0}}).Sort("-topiccount").Limit(10).All(&hotNodes)
 
 	var status Status
-	c = DB.C("status")
+	c = DB.C(STATUS)
 	c.Find(nil).One(&status)
 
-	c = DB.C("contents")
+	c = DB.C(CONTENTS)
 
 	pagination := NewPagination(c.Find(conditions).Sort(sort), url, PerPage)
 
@@ -57,7 +57,7 @@ func topicsHandler(w http.ResponseWriter, r *http.Request, conditions bson.M, so
 	query.All(&topics)
 
 	var linkExchanges []LinkExchange
-	c = DB.C("link_exchanges")
+	c = DB.C(LINK_EXCHANGES)
 	c.Find(nil).All(&linkExchanges)
 
 	renderTemplate(w, r, "index.html", BASE, map[string]interface{}{
@@ -96,7 +96,7 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 	nodeId := mux.Vars(r)["node"]
 
 	var nodes []Node
-	c := DB.C("nodes")
+	c := DB.C(NODES)
 	c.Find(nil).All(&nodes)
 
 	var choices = []wtforms.Choice{wtforms.Choice{}} // 第一个选项为空
@@ -122,10 +122,10 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 			username = username.(string)
 
 			user := User{}
-			c = DB.C("users")
+			c = DB.C(USERS)
 			c.Find(bson.M{"username": username}).One(&user)
 
-			c = DB.C("contents")
+			c = DB.C(CONTENTS)
 
 			id_ := bson.NewObjectId()
 
@@ -156,10 +156,10 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// 增加Node.TopicCount
-			c = DB.C("nodes")
+			c = DB.C(NODES)
 			c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
 
-			c = DB.C("status")
+			c = DB.C(STATUS)
 
 			c.Update(nil, bson.M{"$inc": bson.M{"topiccount": 1}})
 
@@ -189,7 +189,7 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 
 	topicId := mux.Vars(r)["topicId"]
 
-	c := DB.C("contents")
+	c := DB.C(CONTENTS)
 	var topic Topic
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": TypeTopic}).One(&topic)
 
@@ -204,7 +204,7 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var nodes []Node
-	c = DB.C("nodes")
+	c = DB.C(NODES)
 	c.Find(nil).All(&nodes)
 
 	var choices = []wtforms.Choice{wtforms.Choice{}} // 第一个选项为空
@@ -229,7 +229,7 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 			html2 = strings.Replace(html2, "<pre>", `<pre class="prettyprint linenums">`, -1)
 
 			nodeId := bson.ObjectIdHex(form.Value("node"))
-			c = DB.C("contents")
+			c = DB.C(CONTENTS)
 			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{
 				"nodeid":            nodeId,
 				"content.title":     form.Value("title"),
@@ -241,7 +241,7 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 
 			// 如果两次的节点不同,更新节点的主题数量
 			if topic.NodeId != nodeId {
-				c = DB.C("nodes")
+				c = DB.C(NODES)
 				c.Update(bson.M{"_id": topic.NodeId}, bson.M{"$inc": bson.M{"topiccount": -1}})
 				c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
 			}
@@ -270,8 +270,8 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 func showTopicHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	topicId := vars["topicId"]
-	c := DB.C("contents")
-	cusers := DB.C("users")
+	c := DB.C(CONTENTS)
+	cusers := DB.C(USERS)
 	topic := Topic{}
 
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": TypeTopic}).One(&topic)
@@ -312,7 +312,7 @@ func showTopicHandler(w http.ResponseWriter, r *http.Request) {
 func topicInNodeHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	nodeId := vars["node"]
-	c := DB.C("nodes")
+	c := DB.C(NODES)
 
 	node := Node{}
 	err := c.Find(bson.M{"id": nodeId}).One(&node)
@@ -329,7 +329,7 @@ func topicInNodeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c = DB.C("contents")
+	c = DB.C(CONTENTS)
 
 	pagination := NewPagination(c.Find(bson.M{"nodeid": node.Id_, "content.type": TypeTopic}).Sort("-latestrepliedat"), "/", 20)
 
@@ -355,7 +355,7 @@ func topicInNodeHandler(w http.ResponseWriter, r *http.Request) {
 func deleteTopicHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	topicId := bson.ObjectIdHex(vars["topicId"])
-	c := DB.C("contents")
+	c := DB.C(CONTENTS)
 
 	topic := Topic{}
 
@@ -367,21 +367,21 @@ func deleteTopicHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Node统计数减一
-	c = DB.C("nodes")
+	c = DB.C(NODES)
 	c.Update(bson.M{"_id": topic.NodeId}, bson.M{"$inc": bson.M{"topiccount": -1}})
 
-	c = DB.C("status")
+	c = DB.C(STATUS)
 	// 统计的主题数减一，减去统计的回复数减去该主题的回复数
 	c.Update(nil, bson.M{"$inc": bson.M{"topiccount": -1, "replycount": -topic.CommentCount}})
 
 	//删除评论
-	c = DB.C("comments")
+	c = DB.C(COMMENTS)
 	if topic.CommentCount > 0 {
 		c.Remove(bson.M{"contentid": topic.Id_})
 	}
 
 	// 删除Topic记录
-	c = DB.C("contents")
+	c = DB.C(CONTENTS)
 	c.Remove(bson.M{"_id": topicId})
 
 	http.Redirect(w, r, "/", http.StatusFound)

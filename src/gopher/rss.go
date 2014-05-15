@@ -36,7 +36,7 @@ func init() {
 func RssRefresh() {
 	now := time.Now()
 	if now.After(latestTime) {
-		c := DB.C("contents")
+		c := DB.C(CONTENTS)
 		c.Find(bson.M{"content.type": TypeTopic, "content.createdat": bson.M{"$gt": latestTime}}).Sort("-content.createdat").All(&contents)
 		latestTime = now
 		cache.PushBack(contents)

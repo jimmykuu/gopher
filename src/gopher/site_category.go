@@ -11,7 +11,7 @@ import (
 // 列出所有的站点分类
 func adminListSiteCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	var categories []SiteCategory
-	c := DB.C("sitecategories")
+	c := DB.C(SITE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
 	renderTemplate(w, r, "admin/site_categories.html", ADMIN, map[string]interface{}{"categories": categories})
@@ -30,7 +30,7 @@ func adminNewSiteCategoryHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		c := DB.C("sitecategories")
+		c := DB.C(SITE_CATEGORIES)
 		var category SiteCategory
 		err := c.Find(bson.M{"name": form.Value("name")}).One(&category)
 

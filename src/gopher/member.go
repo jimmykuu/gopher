@@ -14,7 +14,7 @@ import (
 // 显示最新加入的会员
 // URL: /members
 func membersHandler(w http.ResponseWriter, r *http.Request) {
-	c := DB.C("users")
+	c := DB.C(USERS)
 	var newestMembers []User
 	c.Find(nil).Sort("-joinedat").Limit(40).All(&newestMembers)
 
@@ -37,7 +37,7 @@ func allMembersHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	c := DB.C("users")
+	c := DB.C(USERS)
 
 	pagination := NewPagination(c.Find(nil).Sort("joinedat"), "/members/all", 40)
 
@@ -64,7 +64,7 @@ func allMembersHandler(w http.ResponseWriter, r *http.Request) {
 func memberInfoHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	username := vars["username"]
-	c := DB.C("users")
+	c := DB.C(USERS)
 
 	user := User{}
 
@@ -93,7 +93,7 @@ func memberTopicsHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	username := vars["username"]
-	c := DB.C("users")
+	c := DB.C(USERS)
 
 	user := User{}
 	err = c.Find(bson.M{"username": username}).One(&user)
@@ -139,7 +139,7 @@ func memberRepliesHandler(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	username := vars["username"]
-	c := DB.C("users")
+	c := DB.C(USERS)
 
 	user := User{}
 	err = c.Find(bson.M{"username": username}).One(&user)
@@ -156,7 +156,7 @@ func memberRepliesHandler(w http.ResponseWriter, r *http.Request) {
 
 	var replies []Comment
 
-	c = DB.C("comments")
+	c = DB.C(COMMENTS)
 
 	pagination := NewPagination(c.Find(bson.M{"createdby": user.Id_, "type": TypeTopic}).Sort("-createdat"), "/member/"+username+"/replies", PerPage)
 
@@ -185,7 +185,7 @@ func membersInTheSameCityHandler(w http.ResponseWriter, r *http.Request) {
 
 	cityName := mux.Vars(r)["cityName"]
 
-	c := DB.C("users")
+	c := DB.C(USERS)
 
 	pagination := NewPagination(c.Find(bson.M{"location": cityName}).Sort("joinedat"), "/members/city/"+cityName, 40)
 

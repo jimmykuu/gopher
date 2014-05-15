@@ -17,7 +17,7 @@ import (
 // 酷站首页,列出所有分类及站点
 func sitesHandler(w http.ResponseWriter, r *http.Request) {
 	var categories []SiteCategory
-	c := DB.C("sitecategories")
+	c := DB.C(SITE_CATEGORIES)
 	c.Find(nil).All(&categories)
 	renderTemplate(w, r, "site/index.html", BASE, map[string]interface{}{
 		"categories": categories,
@@ -31,7 +31,7 @@ func newSiteHandler(w http.ResponseWriter, r *http.Request) {
 	user, _ := currentUser(r)
 
 	var categories []SiteCategory
-	c := DB.C("sitecategories")
+	c := DB.C(SITE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
 	var choices []wtforms.Choice
@@ -54,7 +54,7 @@ func newSiteHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		var site Site
-		c = DB.C("contents")
+		c = DB.C(CONTENTS)
 		err := c.Find(bson.M{"url": form.Value("url")}).One(&site)
 		if err == nil {
 			form.AddError("url", "该站点已经有了")
@@ -98,7 +98,7 @@ func editSiteHandler(w http.ResponseWriter, r *http.Request) {
 	siteId := mux.Vars(r)["siteId"]
 
 	var site Site
-	c := DB.C("contents")
+	c := DB.C(CONTENTS)
 
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(siteId), "content.type": TypeSite}).One(&site)
 
@@ -113,7 +113,7 @@ func editSiteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var categories []SiteCategory
-	c = DB.C("sitecategories")
+	c = DB.C(SITE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
 	var choices []wtforms.Choice
@@ -132,7 +132,7 @@ func editSiteHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" && form.Validate(r) {
 		// 检查是否用重复
 		var site2 Site
-		c = DB.C("contents")
+		c = DB.C(CONTENTS)
 		err := c.Find(bson.M{"url": form.Value("url"), "_id": bson.M{"$ne": site.Id_}}).One(&site2)
 		if err == nil {
 			form.AddError("url", "该站点已经有了")
@@ -171,7 +171,7 @@ func deleteSiteHandler(w http.ResponseWriter, r *http.Request) {
 	siteId := mux.Vars(r)["siteId"]
 
 	var site Site
-	c := DB.C("contents")
+	c := DB.C(CONTENTS)
 
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(siteId)}).One(&site)
 

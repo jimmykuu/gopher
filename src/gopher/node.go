@@ -16,7 +16,7 @@ import (
 func nodesHandler(w http.ResponseWriter, r *http.Request) {
 	var nodes []Node
 
-	c := DB.C("nodes")
+	c := DB.C(NODES)
 	c.Find(nil).Sort("-topiccount").All(&nodes)
 
 	renderTemplate(w, r, "node/list.html", BASE, map[string]interface{}{"nodes": nodes})
@@ -33,7 +33,7 @@ func adminNewNodeHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "POST" {
 		if form.Validate(r) {
-			c := DB.C("nodes")
+			c := DB.C(NODES)
 			node := Node{}
 
 			err := c.Find(bson.M{"id": form.Value("id")}).One(&node)
@@ -76,7 +76,7 @@ func adminNewNodeHandler(w http.ResponseWriter, r *http.Request) {
 // 列出所有的节点
 func adminListNodesHandler(w http.ResponseWriter, r *http.Request) {
 	var nodes []Node
-	c := DB.C("nodes")
+	c := DB.C(NODES)
 	c.Find(nil).All(&nodes)
 	renderTemplate(w, r, "admin/nodes.html", ADMIN, map[string]interface{}{"nodes": nodes})
 }

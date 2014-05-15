@@ -12,7 +12,7 @@ import (
 // 列出所有的包分类
 func adminListPackageCategoriesHandler(w http.ResponseWriter, r *http.Request) {
 	var categories []PackageCategory
-	c := DB.C("packagecategories")
+	c := DB.C(PACKAGE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
 	renderTemplate(w, r, "admin/package_categories.html", ADMIN, map[string]interface{}{"categories": categories})
@@ -32,7 +32,7 @@ func adminNewPackageCategoryHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		c := DB.C("packagecategories")
+		c := DB.C(PACKAGE_CATEGORIES)
 		var category PackageCategory
 		err := c.Find(bson.M{"name": form.Value("name")}).One(&category)
 
@@ -65,7 +65,7 @@ func adminNewPackageCategoryHandler(w http.ResponseWriter, r *http.Request) {
 // 修改包分类
 func adminEditPackageCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
-	c := DB.C("packagecategories")
+	c := DB.C(PACKAGE_CATEGORIES)
 	var category PackageCategory
 	c.Find(bson.M{"_id": bson.ObjectIdHex(id)}).One(&category)
 
