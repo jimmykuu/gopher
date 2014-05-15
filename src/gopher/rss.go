@@ -33,19 +33,23 @@ func init() {
 	latestTime = Dawn()
 }
 
-func RssRefresh() {
-	now := time.Now()
-	if now.After(latestTime) {
-		c := DB.C("contents")
-		c.Find(bson.M{"content.createdat": bson.M{"$gt": latestTime}}).Sort("-content.createdat").All(&contents)
-		latestTime = now
-		cache.PushBack(contents)
-		if cache.Len() > 7 {
-			cache.Remove(cache.Front())
-		}
-	}
+var flag bool
 
-	time.Sleep(24 * time.Hour)
+func RssRefresh() {
+	for {
+		now := time.Now()
+		if now.After(latestTime) {
+			c := DB.C("contents")
+			c.Find(bson.M{"content.createdat": bson.M{"$gt": latestTime}}).Sort("-content.createdat").All(&contents)
+			latestTime = now
+			cache.PushBack(contents)
+			if cache.Len() > 7 {
+				cache.Remove(cache.Front())
+			}
+		}
+
+		time.Sleep(24 * time.Hour)
+	}
 }
 
 func getFromCache() []Topic {
