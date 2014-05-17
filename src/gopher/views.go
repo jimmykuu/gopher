@@ -134,10 +134,10 @@ func (u *Utils) RecentReplies(username string) template.HTML {
 	var ats []string
 	for _, v := range user.RecentAts {
 		var topic Topic
-		if err := ccontens.Find(bson.M{"_id": bson.ObjectIdHex(v)}).One(&topic); err != nil {
+		if err := ccontens.Find(bson.M{"_id": v.ContentId}).One(&topic); err != nil {
 			fmt.Println(err)
 		}
-		ats = append(ats, fmt.Sprintf(anchor, topic.Id_.Hex(), topic.Title))
+		ats = append(ats, fmt.Sprintf(anchor, topic.Id_.Hex()+"#"+v.CommentId.Hex(), topic.Title))
 	}
 	a := strings.Join(ats, "\n")
 	tpl := `<h4><small>最近回复</small></h4>
@@ -470,7 +470,7 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Println(err)
 			} else {
-				user.RecentAts = append(user.RecentAts, contentId)
+				user.RecentAts = append(user.RecentAts, At{bson.ObjectIdHex(contentId), Id_})
 				if err = c.Update(bson.M{"username": user.Username}, bson.M{"$set": bson.M{"recentats": user.RecentAts}}); err != nil {
 					fmt.Println(err)
 				}

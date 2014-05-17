@@ -19,6 +19,12 @@ const (
 	DefaultAvatar = "gopher_teal.jpg"
 )
 
+//主题id和评论id，用于定位到专门的评论
+type At struct {
+	ContentId bson.ObjectId
+	CommentId bson.ObjectId
+}
+
 // 用户
 type User struct {
 	Id_            bson.ObjectId `bson:"_id"`
@@ -39,7 +45,7 @@ type User struct {
 	//存储的是最近回复的主题的objectid.hex
 	RecentReplies []string
 	//存储的是最近评论被AT的主题的objectid.hex
-	RecentAts    []string
+	RecentAts    []At
 	IsSuperuser  bool
 	IsActive     bool
 	ValidateCode string

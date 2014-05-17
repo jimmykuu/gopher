@@ -308,7 +308,7 @@ func showTopicHandler(w http.ResponseWriter, r *http.Request) {
 		pos = -1
 		atsDisactive := map[int]bool{}
 		for k, v := range ats {
-			if v == topicId {
+			if v.ContentId.Hex() == topicId {
 				pos = k
 				atsDisactive[pos] = true
 			}
