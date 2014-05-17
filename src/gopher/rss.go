@@ -33,6 +33,8 @@ func init() {
 	latestTime = Dawn()
 }
 
+var flag bool
+
 func RssRefresh() {
 	now := time.Now()
 	if now.After(latestTime) {
@@ -43,9 +45,9 @@ func RssRefresh() {
 		if cache.Len() > 7 {
 			cache.Remove(cache.Front())
 		}
-	}
 
-	time.Sleep(24 * time.Hour)
+		time.Sleep(24 * time.Hour)
+	}
 }
 
 func getFromCache() []Topic {
