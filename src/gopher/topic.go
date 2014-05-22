@@ -271,7 +271,7 @@ func showTopicHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	topicId := vars["topicId"]
 	c := DB.C(CONTENTS)
-	cusers := DB.C(USERS)
+	//cusers := DB.C(USERS)
 	topic := Topic{}
 
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": TypeTopic}).One(&topic)
@@ -282,48 +282,48 @@ func showTopicHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c.UpdateId(bson.ObjectIdHex(topicId), bson.M{"$inc": bson.M{"content.hits": 1}})
-
-	user, has := currentUser(r)
-	if has {
-		replies := user.RecentReplies
-		ats := user.RecentAts
-		pos := -1
-		repliesDisactive := map[int]bool{}
-		for k, v := range replies {
-			if v == topicId {
-				pos = k
-				repliesDisactive[k] = true
-			}
-		}
-		if pos != -1 {
-			for pos, _ := range repliesDisactive {
-				if pos == len(replies)-1 {
-					replies = replies[:pos]
-				} else {
-					replies = append(replies[:pos], replies[pos+1:]...)
+	/*
+		user, has := currentUser(r)
+		if has {
+			replies := user.RecentReplies
+			ats := user.RecentAts
+			pos := -1
+			repliesDisactive := map[int]bool{}
+			for k, v := range replies {
+				if v == topicId {
+					pos = k
+					repliesDisactive[k] = true
 				}
 			}
-			cusers.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"recentreplies": replies}})
-		}
-		pos = -1
-		atsDisactive := map[int]bool{}
-		for k, v := range ats {
-			if v == topicId {
-				pos = k
-				atsDisactive[pos] = true
+			if pos != -1 {
+				for pos, _ := range repliesDisactive {
+					if pos == len(replies)-1 {
+						replies = replies[:pos]
+					} else {
+						replies = append(replies[:pos], replies[pos+1:]...)
+					}
+				}
+				cusers.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"recentreplies": replies}})
 			}
-		}
-		if pos != -1 {
-			for pos, _ := range atsDisactive {
-				if pos == len(ats)-1 {
-					ats = ats[:pos]
-				} else {
-					ats = append(ats[:pos], ats[pos+1:]...)
+			pos = -1
+			atsDisactive := map[int]bool{}
+			for k, v := range ats {
+				if v == topicId {
+					pos = k
+					atsDisactive[pos] = true
 				}
 			}
-			cusers.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"recentats": ats}})
-		}
-	}
+			if pos != -1 {
+				for pos, _ := range atsDisactive {
+					if pos == len(ats)-1 {
+						ats = ats[:pos]
+					} else {
+						ats = append(ats[:pos], ats[pos+1:]...)
+					}
+				}
+				cusers.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"recentats": ats}})
+			}
+		}*/
 	renderTemplate(w, r, "topic/show.html", BASE, map[string]interface{}{
 		"topic":  topic,
 		"active": "topic",
