@@ -25,7 +25,7 @@ const (
 	CONTENTS           = "contents"
 	NODES              = "nodes"
 	PACKAGES           = "packages"
-	PACKAGE_CATEGORIES = "package_exchanges"
+	PACKAGE_CATEGORIES = "packagecategories"
 	LINK_EXCHANGES     = "link_exchanges"
 	SITE_CATEGORIES    = "sitecategories"
 	SITES              = "sites"
