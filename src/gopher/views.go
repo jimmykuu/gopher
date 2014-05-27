@@ -114,6 +114,8 @@ func (u *Utils) UserInfo(username string) template.HTML {
 
 /*mark ggaaooppeenngg*/
 func (u *Utils) RecentReplies(username string) template.HTML {
+	return template.HTML("")
+
 	c := DB.C(USERS)
 	ccontens := DB.C(CONTENTS)
 	user := User{}
