@@ -9,24 +9,24 @@ import (
 
 // URL: /admin/article_categories
 // 列出所有的文章分类
-func adminListArticleCategoriesHandler(w http.ResponseWriter, r *http.Request) {
+func adminListArticleCategoriesHandler(handler Handler) {
 	var categories []SiteCategory
 	c := DB.C(ARTICLE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
-	renderTemplate(w, r, "admin/article_categories.html", ADMIN, map[string]interface{}{"categories": categories})
+	renderTemplate(handler, "admin/article_categories.html", ADMIN, map[string]interface{}{"categories": categories})
 }
 
 // URL: /admin/article_category/new
 // 新建文章分类
-func adminNewArticleCategoryHandler(w http.ResponseWriter, r *http.Request) {
+func adminNewArticleCategoryHandler(handler Handler) {
 	form := wtforms.NewForm(
 		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),
 	)
 
-	if r.Method == "POST" {
-		if !form.Validate(r) {
-			renderTemplate(w, r, "article_category/new.html", ADMIN, map[string]interface{}{"form": form})
+	if handler.Request.Method == "POST" {
+		if !form.Validate(handler.Request) {
+			renderTemplate(handler, "article_category/new.html", ADMIN, map[string]interface{}{"form": form})
 			return
 		}
 
@@ -36,7 +36,7 @@ func adminNewArticleCategoryHandler(w http.ResponseWriter, r *http.Request) {
 
 		if err == nil {
 			form.AddError("name", "该名称已经有了")
-			renderTemplate(w, r, "article_category/new.html", ADMIN, map[string]interface{}{"form": form})
+			renderTemplate(handler, "article_category/new.html", ADMIN, map[string]interface{}{"form": form})
 			return
 		}
 
@@ -49,8 +49,8 @@ func adminNewArticleCategoryHandler(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 
-		http.Redirect(w, r, "/admin/article_category/new", http.StatusFound)
+		http.Redirect(handler.ResponseWriter, handler.Request, "/admin/article_category/new", http.StatusFound)
 	}
 
-	renderTemplate(w, r, "article_category/new.html", ADMIN, map[string]interface{}{"form": form})
+	renderTemplate(handler, "article_category/new.html", ADMIN, map[string]interface{}{"form": form})
 }

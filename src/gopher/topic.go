@@ -17,7 +17,7 @@ import (
 	"labix.org/v2/mgo/bson"
 )
 
-func topicsHandler(w http.ResponseWriter, r *http.Request, conditions bson.M, sort string, url string, subActive string) {
+func topicsHandler(handler Handler, conditions bson.M, sort string, url string, subActive string) {
 	session, err := mgo.Dial(Config.DB)
 	if err != nil {
 		panic(err)
@@ -27,10 +27,10 @@ func topicsHandler(w http.ResponseWriter, r *http.Request, conditions bson.M, so
 	session.SetMode(mgo.Monotonic, true)
 
 	DB := session.DB("gopher")
-	page, err := getPage(r)
+	page, err := getPage(handler.Request)
 
 	if err != nil {
-		message(w, r, "页码错误", "页码错误", "error")
+		message(handler, "页码错误", "页码错误", "error")
 		return
 	}
 
@@ -50,7 +50,7 @@ func topicsHandler(w http.ResponseWriter, r *http.Request, conditions bson.M, so
 
 	query, err := pagination.Page(page)
 	if err != nil {
-		message(w, r, "页码错误", "页码错误", "error")
+		message(handler, "页码错误", "页码错误", "error")
 		return
 	}
 
@@ -60,7 +60,7 @@ func topicsHandler(w http.ResponseWriter, r *http.Request, conditions bson.M, so
 	c = DB.C(LINK_EXCHANGES)
 	c.Find(nil).All(&linkExchanges)
 
-	renderTemplate(w, r, "index.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "index.html", BASE, map[string]interface{}{
 		"nodes":         hotNodes,
 		"status":        status,
 		"topics":        topics,
@@ -74,26 +74,26 @@ func topicsHandler(w http.ResponseWriter, r *http.Request, conditions bson.M, so
 
 // URL: /
 // 网站首页,列出按回帖时间倒序排列的第一页
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-	topicsHandler(w, r, bson.M{"content.type": TypeTopic}, "-latestrepliedat", "/", "latestReply")
+func indexHandler(handler Handler) {
+	topicsHandler(handler, bson.M{"content.type": TypeTopic}, "-latestrepliedat", "/", "latestReply")
 }
 
 // URL: /topics/latest
 // 最新发布的主题，按照发布时间倒序排列
-func latestTopicsHandler(w http.ResponseWriter, r *http.Request) {
-	topicsHandler(w, r, bson.M{"content.type": TypeTopic}, "-content.createdat", "/topics/latest", "latestCreate")
+func latestTopicsHandler(handler Handler) {
+	topicsHandler(handler, bson.M{"content.type": TypeTopic}, "-content.createdat", "/topics/latest", "latestCreate")
 }
 
 // URL: /topics/no_reply
 // 无人回复的主题，按照发布时间倒序排列
-func noReplyTopicsHandler(w http.ResponseWriter, r *http.Request) {
-	topicsHandler(w, r, bson.M{"content.type": TypeTopic, "content.commentcount": 0}, "-content.createdat", "/topics/no_reply", "noReply")
+func noReplyTopicsHandler(handler Handler) {
+	topicsHandler(handler, bson.M{"content.type": TypeTopic, "content.commentcount": 0}, "-content.createdat", "/topics/no_reply", "noReply")
 }
 
 // URL: /topic/new
 // 新建主题
-func newTopicHandler(w http.ResponseWriter, r *http.Request) {
-	nodeId := mux.Vars(r)["node"]
+func newTopicHandler(handler Handler) {
+	nodeId := mux.Vars(handler.Request)["node"]
 
 	var nodes []Node
 	c := DB.C(NODES)
@@ -115,9 +115,9 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 	var content string
 	var html template.HTML
 
-	if r.Method == "POST" {
-		if form.Validate(r) {
-			session, _ := store.Get(r, "user")
+	if handler.Request.Method == "POST" {
+		if form.Validate(handler.Request) {
+			session, _ := store.Get(handler.Request, "user")
 			username, _ := session.Values["username"]
 			username = username.(string)
 
@@ -163,7 +163,7 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 
 			c.Update(nil, bson.M{"$inc": bson.M{"topiccount": 1}})
 
-			http.Redirect(w, r, "/t/"+id_.Hex(), http.StatusFound)
+			http.Redirect(handler.ResponseWriter, handler.Request, "/t/"+id_.Hex(), http.StatusFound)
 			return
 		}
 
@@ -172,7 +172,7 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 		form.SetValue("html", "")
 	}
 
-	renderTemplate(w, r, "topic/form.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "topic/form.html", BASE, map[string]interface{}{
 		"form":    form,
 		"title":   "新建",
 		"html":    html,
@@ -184,22 +184,22 @@ func newTopicHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /t/{topicId}/edit
 // 编辑主题
-func editTopicHandler(w http.ResponseWriter, r *http.Request) {
-	user, _ := currentUser(r)
+func editTopicHandler(handler Handler) {
+	user, _ := currentUser(handler.Request)
 
-	topicId := mux.Vars(r)["topicId"]
+	topicId := mux.Vars(handler.Request)["topicId"]
 
 	c := DB.C(CONTENTS)
 	var topic Topic
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": TypeTopic}).One(&topic)
 
 	if err != nil {
-		message(w, r, "没有该主题", "没有该主题,不能编辑", "error")
+		message(handler, "没有该主题", "没有该主题,不能编辑", "error")
 		return
 	}
 
 	if !topic.CanEdit(user.Username) {
-		message(w, r, "没有该权限", "对不起,你没有权限编辑该主题", "error")
+		message(handler, "没有该权限", "对不起,你没有权限编辑该主题", "error")
 		return
 	}
 
@@ -223,8 +223,8 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 	content := topic.Markdown
 	html := topic.Html
 
-	if r.Method == "POST" {
-		if form.Validate(r) {
+	if handler.Request.Method == "POST" {
+		if form.Validate(handler.Request) {
 			html2 := form.Value("html")
 			html2 = strings.Replace(html2, "<pre>", `<pre class="prettyprint linenums">`, -1)
 
@@ -246,7 +246,7 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 				c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
 			}
 
-			http.Redirect(w, r, "/t/"+topic.Id_.Hex(), http.StatusFound)
+			http.Redirect(handler.ResponseWriter, handler.Request, "/t/"+topic.Id_.Hex(), http.StatusFound)
 			return
 		}
 
@@ -255,7 +255,7 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 		form.SetValue("html", "")
 	}
 
-	renderTemplate(w, r, "topic/form.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "topic/form.html", BASE, map[string]interface{}{
 		"form":    form,
 		"title":   "编辑",
 		"action":  "/t/" + topicId + "/edit",
@@ -267,8 +267,8 @@ func editTopicHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /t/{topicId}
 // 根据主题的ID,显示主题的信息及回复
-func showTopicHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func showTopicHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
 	topicId := vars["topicId"]
 	c := DB.C(CONTENTS)
 	//cusers := DB.C(USERS)
@@ -324,7 +324,7 @@ func showTopicHandler(w http.ResponseWriter, r *http.Request) {
 				cusers.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"recentats": ats}})
 			}
 		}*/
-	renderTemplate(w, r, "topic/show.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "topic/show.html", BASE, map[string]interface{}{
 		"topic":  topic,
 		"active": "topic",
 	})
@@ -332,8 +332,8 @@ func showTopicHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /go/{node}
 // 列出节点下所有的主题
-func topicInNodeHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func topicInNodeHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
 	nodeId := vars["node"]
 	c := DB.C(NODES)
 
@@ -341,14 +341,14 @@ func topicInNodeHandler(w http.ResponseWriter, r *http.Request) {
 	err := c.Find(bson.M{"id": nodeId}).One(&node)
 
 	if err != nil {
-		message(w, r, "没有此节点", "请联系管理员创建此节点", "error")
+		message(handler, "没有此节点", "请联系管理员创建此节点", "error")
 		return
 	}
 
-	page, err := getPage(r)
+	page, err := getPage(handler.Request)
 
 	if err != nil {
-		message(w, r, "页码错误", "页码错误", "error")
+		message(handler, "页码错误", "页码错误", "error")
 		return
 	}
 
@@ -360,13 +360,13 @@ func topicInNodeHandler(w http.ResponseWriter, r *http.Request) {
 
 	query, err := pagination.Page(page)
 	if err != nil {
-		message(w, r, "没有找到页面", "没有找到页面", "error")
+		message(handler, "没有找到页面", "没有找到页面", "error")
 		return
 	}
 
 	query.All(&topics)
 
-	renderTemplate(w, r, "/topic/list.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "/topic/list.html", BASE, map[string]interface{}{
 		"topics": topics,
 		"node":   node,
 		"active": "topic",
@@ -375,8 +375,8 @@ func topicInNodeHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /t/{topicId}/delete
 // 删除主题
-func deleteTopicHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func deleteTopicHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
 	topicId := bson.ObjectIdHex(vars["topicId"])
 	c := DB.C(CONTENTS)
 
@@ -407,5 +407,5 @@ func deleteTopicHandler(w http.ResponseWriter, r *http.Request) {
 	c = DB.C(CONTENTS)
 	c.Remove(bson.M{"_id": topicId})
 
-	http.Redirect(w, r, "/", http.StatusFound)
+	http.Redirect(handler.ResponseWriter, handler.Request, "/", http.StatusFound)
 }

@@ -13,26 +13,26 @@ import (
 
 // URL: /nodes
 // 列出所有节点及其详细信息
-func nodesHandler(w http.ResponseWriter, r *http.Request) {
+func nodesHandler(handler Handler) {
 	var nodes []Node
 
 	c := DB.C(NODES)
 	c.Find(nil).Sort("-topiccount").All(&nodes)
 
-	renderTemplate(w, r, "node/list.html", BASE, map[string]interface{}{"nodes": nodes})
+	renderTemplate(handler, "node/list.html", BASE, map[string]interface{}{"nodes": nodes})
 }
 
 // URL: /admin/node/new
 // 新建节点
-func adminNewNodeHandler(w http.ResponseWriter, r *http.Request) {
+func adminNewNodeHandler(handler Handler) {
 	form := wtforms.NewForm(
 		wtforms.NewTextField("id", "ID", "", &wtforms.Required{}),
 		wtforms.NewTextField("name", "名称", "", &wtforms.Required{}),
 		wtforms.NewTextArea("description", "描述", "", &wtforms.Required{}),
 	)
 
-	if r.Method == "POST" {
-		if form.Validate(r) {
+	if handler.Request.Method == "POST" {
+		if form.Validate(handler.Request) {
 			c := DB.C(NODES)
 			node := Node{}
 
@@ -41,7 +41,7 @@ func adminNewNodeHandler(w http.ResponseWriter, r *http.Request) {
 			if err == nil {
 				form.AddError("id", "该ID已经存在")
 
-				renderTemplate(w, r, "node/new.html", ADMIN, map[string]interface{}{"form": form})
+				renderTemplate(handler, "node/new.html", ADMIN, map[string]interface{}{"form": form})
 				return
 			}
 
@@ -50,7 +50,7 @@ func adminNewNodeHandler(w http.ResponseWriter, r *http.Request) {
 			if err == nil {
 				form.AddError("name", "该名称已经存在")
 
-				renderTemplate(w, r, "node/new.html", ADMIN, map[string]interface{}{"form": form})
+				renderTemplate(handler, "node/new.html", ADMIN, map[string]interface{}{"form": form})
 				return
 			}
 
@@ -65,18 +65,18 @@ func adminNewNodeHandler(w http.ResponseWriter, r *http.Request) {
 				panic(err)
 			}
 
-			http.Redirect(w, r, "/admin/node/new", http.StatusFound)
+			http.Redirect(handler.ResponseWriter, handler.Request, "/admin/node/new", http.StatusFound)
 		}
 	}
 
-	renderTemplate(w, r, "node/new.html", ADMIN, map[string]interface{}{"form": form})
+	renderTemplate(handler, "node/new.html", ADMIN, map[string]interface{}{"form": form})
 }
 
 // URL: /admin/nodes
 // 列出所有的节点
-func adminListNodesHandler(w http.ResponseWriter, r *http.Request) {
+func adminListNodesHandler(handler Handler) {
 	var nodes []Node
 	c := DB.C(NODES)
 	c.Find(nil).All(&nodes)
-	renderTemplate(w, r, "admin/nodes.html", ADMIN, map[string]interface{}{"nodes": nodes})
+	renderTemplate(handler, "admin/nodes.html", ADMIN, map[string]interface{}{"nodes": nodes})
 }

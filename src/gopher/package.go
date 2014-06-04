@@ -18,7 +18,7 @@ import (
 
 // URL: /packages
 // 列出最新的一些第三方包
-func packagesHandler(w http.ResponseWriter, r *http.Request) {
+func packagesHandler(handler Handler) {
 	var categories []PackageCategory
 
 	c := DB.C(PACKAGE_CATEGORIES)
@@ -28,7 +28,7 @@ func packagesHandler(w http.ResponseWriter, r *http.Request) {
 	c = DB.C(CONTENTS)
 	c.Find(bson.M{"content.type": TypePackage}).Sort("-content.createdat").Limit(10).All(&latestPackages)
 
-	renderTemplate(w, r, "package/index.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "package/index.html", BASE, map[string]interface{}{
 		"categories":     categories,
 		"latestPackages": latestPackages,
 		"active":         "package",
@@ -37,8 +37,8 @@ func packagesHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /package/new
 // 新建第三方包
-func newPackageHandler(w http.ResponseWriter, r *http.Request) {
-	user, _ := currentUser(r)
+func newPackageHandler(handler Handler) {
+	user, _ := currentUser(handler.Request)
 
 	var categories []PackageCategory
 
@@ -59,7 +59,7 @@ func newPackageHandler(w http.ResponseWriter, r *http.Request) {
 		wtforms.NewTextArea("description", "描述", "", wtforms.Required{}),
 	)
 
-	if r.Method == "POST" && form.Validate(r) {
+	if handler.Request.Method == "POST" && form.Validate(handler.Request) {
 		c = DB.C(CONTENTS)
 		id := bson.NewObjectId()
 		categoryId := bson.ObjectIdHex(form.Value("category_id"))
@@ -84,10 +84,10 @@ func newPackageHandler(w http.ResponseWriter, r *http.Request) {
 		// 增加数量
 		c.Update(bson.M{"_id": categoryId}, bson.M{"$inc": bson.M{"packagecount": 1}})
 
-		http.Redirect(w, r, "/p/"+id.Hex(), http.StatusFound)
+		http.Redirect(handler.ResponseWriter, handler.Request, "/p/"+id.Hex(), http.StatusFound)
 		return
 	}
-	renderTemplate(w, r, "package/form.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "package/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"title":  "提交第三方包",
 		"action": "/package/new",
@@ -97,10 +97,10 @@ func newPackageHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /package/{packageId}/edit
 // 编辑第三方包
-func editPackageHandler(w http.ResponseWriter, r *http.Request) {
-	user, _ := currentUser(r)
+func editPackageHandler(handler Handler) {
+	user, _ := currentUser(handler.Request)
 
-	vars := mux.Vars(r)
+	vars := mux.Vars(handler.Request)
 	packageId := vars["packageId"]
 
 	package_ := Package{}
@@ -108,12 +108,12 @@ func editPackageHandler(w http.ResponseWriter, r *http.Request) {
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(packageId), "content.type": TypePackage}).One(&package_)
 
 	if err != nil {
-		message(w, r, "没有该包", "没有该包", "error")
+		message(handler, "没有该包", "没有该包", "error")
 		return
 	}
 
 	if !package_.CanEdit(user.Username) {
-		message(w, r, "没有权限", "你没有权限编辑该包", "error")
+		message(handler, "没有权限", "你没有权限编辑该包", "error")
 		return
 	}
 
@@ -136,7 +136,7 @@ func editPackageHandler(w http.ResponseWriter, r *http.Request) {
 		wtforms.NewTextArea("description", "描述", package_.Markdown, wtforms.Required{}),
 	)
 
-	if r.Method == "POST" && form.Validate(r) {
+	if handler.Request.Method == "POST" && form.Validate(handler.Request) {
 		c = DB.C(CONTENTS)
 		categoryId := bson.ObjectIdHex(form.Value("category_id"))
 		html := form.Value("html")
@@ -159,12 +159,12 @@ func editPackageHandler(w http.ResponseWriter, r *http.Request) {
 			c.Update(bson.M{"_id": categoryId}, bson.M{"$inc": bson.M{"packagecount": 1}})
 		}
 
-		http.Redirect(w, r, "/p/"+package_.Id_.Hex(), http.StatusFound)
+		http.Redirect(handler.ResponseWriter, handler.Request, "/p/"+package_.Id_.Hex(), http.StatusFound)
 		return
 	}
 
 	form.SetValue("html", "")
-	renderTemplate(w, r, "package/form.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "package/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"title":  "编辑第三方包",
 		"action": "/p/" + packageId + "/edit",
@@ -174,8 +174,8 @@ func editPackageHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /packages/{categoryId}
 // 根据类别列出包
-func listPackagesHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func listPackagesHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
 	categoryId := vars["categoryId"]
 	c := DB.C(PACKAGE_CATEGORIES)
 
@@ -183,7 +183,7 @@ func listPackagesHandler(w http.ResponseWriter, r *http.Request) {
 	err := c.Find(bson.M{"id": categoryId}).One(&category)
 
 	if err != nil {
-		message(w, r, "没有该类别", "没有该类别", "error")
+		message(handler, "没有该类别", "没有该类别", "error")
 		return
 	}
 
@@ -197,7 +197,7 @@ func listPackagesHandler(w http.ResponseWriter, r *http.Request) {
 	c = DB.C(PACKAGE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
-	renderTemplate(w, r, "package/list.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "package/list.html", BASE, map[string]interface{}{
 		"categories": categories,
 		"packages":   packages,
 		"category":   category,
@@ -207,8 +207,8 @@ func listPackagesHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /p/{packageId}
 // 显示第三方包详情
-func showPackageHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func showPackageHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
 	packageId := vars["packageId"]
 
 	c := DB.C(CONTENTS)
@@ -217,7 +217,7 @@ func showPackageHandler(w http.ResponseWriter, r *http.Request) {
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(packageId), "content.type": TypePackage}).One(&package_)
 
 	if err != nil {
-		message(w, r, "没找到该包", "请检查链接是否正确", "error")
+		message(handler, "没找到该包", "请检查链接是否正确", "error")
 		fmt.Println("showPackageHandler:", err.Error())
 		return
 	}
@@ -227,7 +227,7 @@ func showPackageHandler(w http.ResponseWriter, r *http.Request) {
 	c = DB.C(PACKAGE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
-	renderTemplate(w, r, "package/show.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "package/show.html", BASE, map[string]interface{}{
 		"package":    package_,
 		"categories": categories,
 		"active":     "package",
@@ -236,8 +236,8 @@ func showPackageHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /p/{packageId}/delete
 // 删除第三方包
-func deletePackageHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func deletePackageHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
 	packageId := vars["packageId"]
 
 	c := DB.C(CONTENTS)
@@ -255,5 +255,5 @@ func deletePackageHandler(w http.ResponseWriter, r *http.Request) {
 	c = DB.C(PACKAGE_CATEGORIES)
 	c.Update(bson.M{"_id": package_.CategoryId}, bson.M{"$inc": bson.M{"packagecount": -1}})
 
-	http.Redirect(w, r, "/packages", http.StatusFound)
+	http.Redirect(handler.ResponseWriter, handler.Request, "/packages", http.StatusFound)
 }

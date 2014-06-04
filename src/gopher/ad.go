@@ -10,19 +10,19 @@ import (
 
 // URL: /admin/ads
 // 广告列表
-func adminListAdsHandler(w http.ResponseWriter, r *http.Request) {
+func adminListAdsHandler(handler Handler) {
 	var ads []AD
 	c := DB.C(ADS)
 	c.Find(nil).All(&ads)
 
-	renderTemplate(w, r, "admin/ads.html", ADMIN, map[string]interface{}{
+	renderTemplate(handler, "admin/ads.html", ADMIN, map[string]interface{}{
 		"ads": ads,
 	})
 }
 
 // URL: /admin/ad/new
 // 添加广告
-func adminNewAdHandler(w http.ResponseWriter, r *http.Request) {
+func adminNewAdHandler(handler Handler) {
 	choices := []wtforms.Choice{
 		wtforms.Choice{"frongpage", "首页"},
 		wtforms.Choice{"2cols", "2列宽度"},
@@ -35,9 +35,9 @@ func adminNewAdHandler(w http.ResponseWriter, r *http.Request) {
 		wtforms.NewTextArea("code", "代码", "", wtforms.Required{}),
 	)
 
-	if r.Method == "POST" {
-		if !form.Validate(r) {
-			renderTemplate(w, r, "ad/form.html", ADMIN, map[string]interface{}{
+	if handler.Request.Method == "POST" {
+		if !form.Validate(handler.Request) {
+			renderTemplate(handler, "ad/form.html", ADMIN, map[string]interface{}{
 				"form":  form,
 				"isNew": true,
 			})
@@ -56,11 +56,11 @@ func adminNewAdHandler(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 
-		http.Redirect(w, r, "/admin/ads", http.StatusFound)
+		http.Redirect(handler.ResponseWriter, handler.Request, "/admin/ads", http.StatusFound)
 		return
 	}
 
-	renderTemplate(w, r, "ad/form.html", ADMIN, map[string]interface{}{
+	renderTemplate(handler, "ad/form.html", ADMIN, map[string]interface{}{
 		"form":  form,
 		"isNew": true,
 	})
@@ -68,19 +68,19 @@ func adminNewAdHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /admin/ad/{id}/delete
 // 删除广告
-func adminDeleteAdHandler(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
+func adminDeleteAdHandler(handler Handler) {
+	id := mux.Vars(handler.Request)["id"]
 
 	c := DB.C(ADS)
 	c.RemoveId(bson.ObjectIdHex(id))
 
-	w.Write([]byte("true"))
+	handler.ResponseWriter.Write([]byte("true"))
 }
 
 // URL: /admin/ad/{id}/edit
 // 编辑广告
-func adminEditAdHandler(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
+func adminEditAdHandler(handler Handler) {
+	id := mux.Vars(handler.Request)["id"]
 
 	c := DB.C(ADS)
 	var ad AD
@@ -97,9 +97,9 @@ func adminEditAdHandler(w http.ResponseWriter, r *http.Request) {
 		wtforms.NewTextArea("code", "代码", ad.Code, wtforms.Required{}),
 	)
 
-	if r.Method == "POST" {
-		if !form.Validate(r) {
-			renderTemplate(w, r, "ad/form.html", ADMIN, map[string]interface{}{
+	if handler.Request.Method == "POST" {
+		if !form.Validate(handler.Request) {
+			renderTemplate(handler, "ad/form.html", ADMIN, map[string]interface{}{
 				"form":  form,
 				"isNew": false,
 			})
@@ -116,11 +116,11 @@ func adminEditAdHandler(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 
-		http.Redirect(w, r, "/admin/ads", http.StatusFound)
+		http.Redirect(handler.ResponseWriter, handler.Request, "/admin/ads", http.StatusFound)
 		return
 	}
 
-	renderTemplate(w, r, "ad/form.html", ADMIN, map[string]interface{}{
+	renderTemplate(handler, "ad/form.html", ADMIN, map[string]interface{}{
 		"form":  form,
 		"isNew": false,
 	})

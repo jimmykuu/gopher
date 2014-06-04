@@ -10,19 +10,19 @@ import (
 
 // URL: /admin/link_exchanges
 // 友情链接列表
-func adminListLinkExchangesHandler(w http.ResponseWriter, r *http.Request) {
+func adminListLinkExchangesHandler(handler Handler) {
 	c := DB.C(LINK_EXCHANGES)
 	var linkExchanges []LinkExchange
 	c.Find(nil).All(&linkExchanges)
 
-	renderTemplate(w, r, "admin/link_exchanges.html", ADMIN, map[string]interface{}{
+	renderTemplate(handler, "admin/link_exchanges.html", ADMIN, map[string]interface{}{
 		"linkExchanges": linkExchanges,
 	})
 }
 
 // ULR: /admin/link_exchange/new
 // 增加友链
-func adminNewLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
+func adminNewLinkExchangeHandler(handler Handler) {
 	form := wtforms.NewForm(
 		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),
 		wtforms.NewTextField("url", "URL", "", wtforms.Required{}, wtforms.URL{}),
@@ -30,9 +30,9 @@ func adminNewLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
 		wtforms.NewTextField("logo", "Logo", ""),
 	)
 
-	if r.Method == "POST" {
-		if !form.Validate(r) {
-			renderTemplate(w, r, "link_exchange/form.html", ADMIN, map[string]interface{}{
+	if handler.Request.Method == "POST" {
+		if !form.Validate(handler.Request) {
+			renderTemplate(handler, "link_exchange/form.html", ADMIN, map[string]interface{}{
 				"form":  form,
 				"isNew": true,
 			})
@@ -45,7 +45,7 @@ func adminNewLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
 
 		if err == nil {
 			form.AddError("url", "该URL已经有了")
-			renderTemplate(w, r, "link_exchange/form.html", ADMIN, map[string]interface{}{
+			renderTemplate(handler, "link_exchange/form.html", ADMIN, map[string]interface{}{
 				"form":  form,
 				"isNew": true,
 			})
@@ -64,11 +64,11 @@ func adminNewLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 
-		http.Redirect(w, r, "/admin/link_exchanges", http.StatusFound)
+		http.Redirect(handler.ResponseWriter, handler.Request, "/admin/link_exchanges", http.StatusFound)
 		return
 	}
 
-	renderTemplate(w, r, "link_exchange/form.html", ADMIN, map[string]interface{}{
+	renderTemplate(handler, "link_exchange/form.html", ADMIN, map[string]interface{}{
 		"form":  form,
 		"isNew": true,
 	})
@@ -76,8 +76,8 @@ func adminNewLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /admin/link_exchange/{linkExchangeId}/edit
 // 编辑友情链接
-func adminEditLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
-	linkExchangeId := mux.Vars(r)["linkExchangeId"]
+func adminEditLinkExchangeHandler(handler Handler) {
+	linkExchangeId := mux.Vars(handler.Request)["linkExchangeId"]
 
 	c := DB.C(LINK_EXCHANGES)
 	var linkExchange LinkExchange
@@ -90,9 +90,9 @@ func adminEditLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
 		wtforms.NewTextField("logo", "Logo", linkExchange.Logo),
 	)
 
-	if r.Method == "POST" {
-		if !form.Validate(r) {
-			renderTemplate(w, r, "link_exchange/form.html", ADMIN, map[string]interface{}{
+	if handler.Request.Method == "POST" {
+		if !form.Validate(handler.Request) {
+			renderTemplate(handler, "link_exchange/form.html", ADMIN, map[string]interface{}{
 				"form":  form,
 				"isNew": false,
 			})
@@ -110,11 +110,11 @@ func adminEditLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 
-		http.Redirect(w, r, "/admin/link_exchanges", http.StatusFound)
+		http.Redirect(handler.ResponseWriter, handler.Request, "/admin/link_exchanges", http.StatusFound)
 		return
 	}
 
-	renderTemplate(w, r, "link_exchange/form.html", ADMIN, map[string]interface{}{
+	renderTemplate(handler, "link_exchange/form.html", ADMIN, map[string]interface{}{
 		"form":  form,
 		"isNew": false,
 	})
@@ -122,11 +122,11 @@ func adminEditLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /admin/link_exchange/{linkExchangeId}/delete
 // 删除友情链接
-func adminDeleteLinkExchangeHandler(w http.ResponseWriter, r *http.Request) {
-	linkExchangeId := mux.Vars(r)["linkExchangeId"]
+func adminDeleteLinkExchangeHandler(handler Handler) {
+	linkExchangeId := mux.Vars(handler.Request)["linkExchangeId"]
 
 	c := DB.C(LINK_EXCHANGES)
 	c.RemoveId(bson.ObjectIdHex(linkExchangeId))
 
-	w.Write([]byte("true"))
+	handler.ResponseWriter.Write([]byte("true"))
 }

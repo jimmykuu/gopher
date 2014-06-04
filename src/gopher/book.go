@@ -11,14 +11,14 @@ import (
 
 // URL: /books
 // 图书列表
-func booksHandler(w http.ResponseWriter, r *http.Request) {
+func booksHandler(handler Handler) {
 	c := DB.C(BOOKS)
 	var chineseBooks []Book
 	c.Find(bson.M{"language": "中文"}).All(&chineseBooks)
 
 	var englishBooks []Book
 	c.Find(bson.M{"language": "英文"}).All(&englishBooks)
-	renderTemplate(w, r, "book/index.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "book/index.html", BASE, map[string]interface{}{
 		"chineseBooks": chineseBooks,
 		"englishBooks": englishBooks,
 		"active":       "books",
@@ -27,14 +27,14 @@ func booksHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /book/{id}
 // 显示图书详情
-func showBookHandler(w http.ResponseWriter, r *http.Request) {
-	bookId := mux.Vars(r)["id"]
+func showBookHandler(handler Handler) {
+	bookId := mux.Vars(handler.Request)["id"]
 
 	c := DB.C(BOOKS)
 	var book Book
 	c.Find(bson.M{"_id": bson.ObjectIdHex(bookId)}).One(&book)
 
-	renderTemplate(w, r, "book/show.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "book/show.html", BASE, map[string]interface{}{
 		"book":   book,
 		"active": "books",
 	})
@@ -42,8 +42,8 @@ func showBookHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /admin/book/{id}/edit
 // 编辑图书
-func editBookHandler(w http.ResponseWriter, r *http.Request) {
-	bookId := mux.Vars(r)["id"]
+func editBookHandler(handler Handler) {
+	bookId := mux.Vars(handler.Request)["id"]
 
 	c := DB.C(BOOKS)
 	var book Book
@@ -62,8 +62,8 @@ func editBookHandler(w http.ResponseWriter, r *http.Request) {
 		wtforms.NewTextField("isbn", "ISBN", book.ISBN),
 	)
 
-	if r.Method == "POST" {
-		if form.Validate(r) {
+	if handler.Request.Method == "POST" {
+		if form.Validate(handler.Request) {
 			pages, _ := strconv.Atoi(form.Value("pages"))
 
 			err := c.Update(bson.M{"_id": book.Id_}, bson.M{"$set": bson.M{
@@ -83,12 +83,12 @@ func editBookHandler(w http.ResponseWriter, r *http.Request) {
 				panic(err)
 			}
 
-			http.Redirect(w, r, "/admin/books", http.StatusFound)
+			http.Redirect(handler.ResponseWriter, handler.Request, "/admin/books", http.StatusFound)
 			return
 		}
 	}
 
-	renderTemplate(w, r, "book/form.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "book/form.html", BASE, map[string]interface{}{
 		"book":  book,
 		"form":  form,
 		"isNew": false,
@@ -97,26 +97,26 @@ func editBookHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /book/{id}/delete
 // 删除图书
-func deleteBookHandler(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
+func deleteBookHandler(handler Handler) {
+	id := mux.Vars(handler.Request)["id"]
 
 	c := DB.C(BOOKS)
 	c.RemoveId(bson.ObjectIdHex(id))
 
-	w.Write([]byte("true"))
+	handler.ResponseWriter.Write([]byte("true"))
 }
 
-func listBooksHandler(w http.ResponseWriter, r *http.Request) {
+func listBooksHandler(handler Handler) {
 	c := DB.C(BOOKS)
 	var books []Book
 	c.Find(nil).All(&books)
 
-	renderTemplate(w, r, "book/list.html", ADMIN, map[string]interface{}{
+	renderTemplate(handler, "book/list.html", ADMIN, map[string]interface{}{
 		"books": books,
 	})
 }
 
-func newBookHandler(w http.ResponseWriter, r *http.Request) {
+func newBookHandler(handler Handler) {
 	form := wtforms.NewForm(
 		wtforms.NewTextField("title", "书名", "", wtforms.Required{}),
 		wtforms.NewTextField("cover", "封面", "", wtforms.Required{}),
@@ -130,8 +130,8 @@ func newBookHandler(w http.ResponseWriter, r *http.Request) {
 		wtforms.NewTextField("isbn", "ISBN", ""),
 	)
 
-	if r.Method == "POST" {
-		if form.Validate(r) {
+	if handler.Request.Method == "POST" {
+		if form.Validate(handler.Request) {
 			pages, _ := strconv.Atoi(form.Value("pages"))
 			c := DB.C(BOOKS)
 			err := c.Insert(&Book{
@@ -151,12 +151,12 @@ func newBookHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				panic(err)
 			}
-			http.Redirect(w, r, "/admin/books", http.StatusFound)
+			http.Redirect(handler.ResponseWriter, handler.Request, "/admin/books", http.StatusFound)
 			return
 		}
 	}
 
-	renderTemplate(w, r, "book/form.html", ADMIN, map[string]interface{}{
+	renderTemplate(handler, "book/form.html", ADMIN, map[string]interface{}{
 		"form":  form,
 		"isNew": true,
 	})

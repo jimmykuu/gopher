@@ -3,7 +3,6 @@ package gopher
 import (
 	"container/list"
 	"fmt"
-	"net/http"
 	"text/template"
 	"time"
 
@@ -59,15 +58,15 @@ func getFromCache() []Topic {
 	return topics
 }
 
-func rssHandler(w http.ResponseWriter, r *http.Request) {
+func rssHandler(handler Handler) {
 
 	t, err := template.ParseFiles("templates/rss.xml")
 	if err != nil {
 		fmt.Println(err)
 	}
 	rssTopics := getFromCache()
-	w.Header().Set("Content-Type", "application/xml")
-	t.Execute(w, map[string]interface{}{
+	handler.ResponseWriter.Header().Set("Content-Type", "application/xml")
+	t.Execute(handler.ResponseWriter, map[string]interface{}{
 		"date":   latestTime,
 		"topics": rssTopics,
 		"utils":  utils,

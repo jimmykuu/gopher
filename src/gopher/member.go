@@ -5,22 +5,20 @@
 package gopher
 
 import (
-	"net/http"
-
 	"github.com/gorilla/mux"
 	"labix.org/v2/mgo/bson"
 )
 
 // 显示最新加入的会员
 // URL: /members
-func membersHandler(w http.ResponseWriter, r *http.Request) {
+func membersHandler(handler Handler) {
 	c := DB.C(USERS)
 	var newestMembers []User
 	c.Find(nil).Sort("-joinedat").Limit(40).All(&newestMembers)
 
 	membersCount, _ := c.Find(nil).Count()
 
-	renderTemplate(w, r, "member/index.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "member/index.html", BASE, map[string]interface{}{
 		"newestMembers": newestMembers,
 		"membersCount":  membersCount,
 		"active":        "members",
@@ -29,11 +27,11 @@ func membersHandler(w http.ResponseWriter, r *http.Request) {
 
 // 显示所有会员
 // URL: /members/all
-func allMembersHandler(w http.ResponseWriter, r *http.Request) {
-	page, err := getPage(r)
+func allMembersHandler(handler Handler) {
+	page, err := getPage(handler.Request)
 
 	if err != nil {
-		message(w, r, "页码错误", "页码错误", "error")
+		message(handler, "页码错误", "页码错误", "error")
 		return
 	}
 
@@ -45,13 +43,13 @@ func allMembersHandler(w http.ResponseWriter, r *http.Request) {
 
 	query, err := pagination.Page(page)
 	if err != nil {
-		message(w, r, "页码错误", "页码错误", "error")
+		message(handler, "页码错误", "页码错误", "error")
 		return
 	}
 
 	query.All(&members)
 
-	renderTemplate(w, r, "member/list.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "member/list.html", BASE, map[string]interface{}{
 		"members":    members,
 		"active":     "members",
 		"pagination": pagination,
@@ -61,8 +59,8 @@ func allMembersHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /member/{username}
 // 显示用户信息
-func memberInfoHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func memberInfoHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
 	username := vars["username"]
 	c := DB.C(USERS)
 
@@ -71,11 +69,11 @@ func memberInfoHandler(w http.ResponseWriter, r *http.Request) {
 	err := c.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
-		message(w, r, "会员未找到", "会员未找到", "error")
+		message(handler, "会员未找到", "会员未找到", "error")
 		return
 	}
 
-	renderTemplate(w, r, "account/info.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "account/info.html", BASE, map[string]interface{}{
 		"user":   user,
 		"active": "members",
 	})
@@ -83,15 +81,15 @@ func memberInfoHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /member/{username}/topics
 // 用户发表的所有主题
-func memberTopicsHandler(w http.ResponseWriter, r *http.Request) {
-	page, err := getPage(r)
+func memberTopicsHandler(handler Handler) {
+	page, err := getPage(handler.Request)
 
 	if err != nil {
-		message(w, r, "页码错误", "页码错误", "error")
+		message(handler, "页码错误", "页码错误", "error")
 		return
 	}
 
-	vars := mux.Vars(r)
+	vars := mux.Vars(handler.Request)
 	username := vars["username"]
 	c := DB.C(USERS)
 
@@ -99,7 +97,7 @@ func memberTopicsHandler(w http.ResponseWriter, r *http.Request) {
 	err = c.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
-		message(w, r, "会员未找到", "会员未找到", "error")
+		message(handler, "会员未找到", "会员未找到", "error")
 		return
 	}
 
@@ -112,13 +110,13 @@ func memberTopicsHandler(w http.ResponseWriter, r *http.Request) {
 	query, err := pagination.Page(page)
 
 	if err != nil {
-		message(w, r, "没有找到页面", "没有找到页面", "error")
+		message(handler, "没有找到页面", "没有找到页面", "error")
 		return
 	}
 
 	query.All(&topics)
 
-	renderTemplate(w, r, "account/topics.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "account/topics.html", BASE, map[string]interface{}{
 		"user":       user,
 		"topics":     topics,
 		"pagination": pagination,
@@ -129,15 +127,15 @@ func memberTopicsHandler(w http.ResponseWriter, r *http.Request) {
 
 // /member/{username}/replies
 // 用户的所有回复
-func memberRepliesHandler(w http.ResponseWriter, r *http.Request) {
-	page, err := getPage(r)
+func memberRepliesHandler(handler Handler) {
+	page, err := getPage(handler.Request)
 
 	if err != nil {
-		message(w, r, "页码错误", "页码错误", "error")
+		message(handler, "页码错误", "页码错误", "error")
 		return
 	}
 
-	vars := mux.Vars(r)
+	vars := mux.Vars(handler.Request)
 	username := vars["username"]
 	c := DB.C(USERS)
 
@@ -145,12 +143,12 @@ func memberRepliesHandler(w http.ResponseWriter, r *http.Request) {
 	err = c.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
-		message(w, r, "会员未找到", "会员未找到", "error")
+		message(handler, "会员未找到", "会员未找到", "error")
 		return
 	}
 
 	if err != nil {
-		message(w, r, "没有找到页面", "没有找到页面", "error")
+		message(handler, "没有找到页面", "没有找到页面", "error")
 		return
 	}
 
@@ -164,7 +162,7 @@ func memberRepliesHandler(w http.ResponseWriter, r *http.Request) {
 
 	query.All(&replies)
 
-	renderTemplate(w, r, "account/replies.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "account/replies.html", BASE, map[string]interface{}{
 		"user":       user,
 		"pagination": pagination,
 		"page":       page,
@@ -175,15 +173,15 @@ func memberRepliesHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /members/city/{cityName}
 // 同城会员
-func membersInTheSameCityHandler(w http.ResponseWriter, r *http.Request) {
-	page, err := getPage(r)
+func membersInTheSameCityHandler(handler Handler) {
+	page, err := getPage(handler.Request)
 
 	if err != nil {
-		message(w, r, "页码错误", "页码错误", "error")
+		message(handler, "页码错误", "页码错误", "error")
 		return
 	}
 
-	cityName := mux.Vars(r)["cityName"]
+	cityName := mux.Vars(handler.Request)["cityName"]
 
 	c := DB.C(USERS)
 
@@ -193,13 +191,13 @@ func membersInTheSameCityHandler(w http.ResponseWriter, r *http.Request) {
 
 	query, err := pagination.Page(page)
 	if err != nil {
-		message(w, r, "页码错误", "页码错误", "error")
+		message(handler, "页码错误", "页码错误", "error")
 		return
 	}
 
 	query.All(&members)
 
-	renderTemplate(w, r, "member/list.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "member/list.html", BASE, map[string]interface{}{
 		"members":    members,
 		"active":     "members",
 		"pagination": pagination,

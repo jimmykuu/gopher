@@ -265,8 +265,8 @@ func (u *Utils) AssertPackage(i interface{}) *Package {
 	return &v
 }
 
-func message(w http.ResponseWriter, r *http.Request, title string, message string, class string) {
-	renderTemplate(w, r, "message.html", BASE, map[string]interface{}{"title": title, "message": template.HTML(message), "class": class})
+func message(handler Handler, title string, message string, class string) {
+	renderTemplate(handler, "message.html", BASE, map[string]interface{}{"title": title, "message": template.HTML(message), "class": class})
 }
 
 // 获取链接的页码，默认"?p=1"这种类型
@@ -369,9 +369,9 @@ func init() {
 	}
 }
 
-func staticHandler(templateFile string) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		renderTemplate(w, r, templateFile, BASE, map[string]interface{}{})
+func staticHandler(templateFile string) HandlerFunc {
+	return func(handler Handler) {
+		renderTemplate(handler, templateFile, BASE, map[string]interface{}{})
 	}
 }
 
@@ -404,14 +404,14 @@ func findAts(content string) []string {
 
 // URL: /comment/{contentId}
 // 评论，不同内容共用一个评论方法
-func commentHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
+func commentHandler(handler Handler) {
+	if handler.Request.Method != "POST" {
 		return
 	}
 
-	user, _ := currentUser(r)
+	user, _ := currentUser(handler.Request)
 
-	vars := mux.Vars(r)
+	vars := mux.Vars(handler.Request)
 	contentId := vars["contentId"]
 
 	var temp map[string]interface{}
@@ -435,9 +435,9 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 
 	c.Update(bson.M{"_id": bson.ObjectIdHex(contentId)}, bson.M{"$inc": bson.M{"content.commentcount": 1}})
 
-	content := r.FormValue("content")
+	content := handler.Request.FormValue("content")
 
-	html := r.FormValue("html")
+	html := handler.Request.FormValue("html")
 	html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
 
 	Id_ := bson.NewObjectId()
@@ -500,13 +500,13 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	http.Redirect(w, r, url, http.StatusFound)
+	http.Redirect(handler.ResponseWriter, handler.Request, url, http.StatusFound)
 }
 
 // URL: /comment/{commentId}/delete
 // 删除评论
-func deleteCommentHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func deleteCommentHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
 	var commentId string = vars["commentId"]
 
 	c := DB.C(COMMENTS)
@@ -514,7 +514,7 @@ func deleteCommentHandler(w http.ResponseWriter, r *http.Request) {
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(commentId)}).One(&comment)
 
 	if err != nil {
-		message(w, r, "评论不存在", "该评论不存在", "error")
+		message(handler, "评论不存在", "该评论不存在", "error")
 		return
 	}
 
@@ -556,11 +556,11 @@ func deleteCommentHandler(w http.ResponseWriter, r *http.Request) {
 		url = "/p/" + comment.ContentId.Hex()
 	}
 
-	http.Redirect(w, r, url, http.StatusFound)
+	http.Redirect(handler.ResponseWriter, handler.Request, url, http.StatusFound)
 }
 
-func searchHandler(w http.ResponseWriter, r *http.Request) {
-	p := r.FormValue("p")
+func searchHandler(handler Handler) {
+	p := handler.Request.FormValue("p")
 	page := 1
 
 	if p != "" {
@@ -568,12 +568,12 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		page, err = strconv.Atoi(p)
 
 		if err != nil {
-			message(w, r, "页码错误", "页码错误", "error")
+			message(handler, "页码错误", "页码错误", "error")
 			return
 		}
 	}
 
-	q := r.FormValue("q")
+	q := handler.Request.FormValue("q")
 
 	keywords := strings.Split(q, " ")
 
@@ -615,7 +615,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 
 	query, err := pagination.Page(page)
 	if err != nil {
-		message(w, r, "页码错误", "页码错误", "error")
+		message(handler, "页码错误", "页码错误", "error")
 		return
 	}
 
@@ -625,7 +625,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		println(err.Error())
 	}
 
-	renderTemplate(w, r, "search.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "search.html", BASE, map[string]interface{}{
 		"q":          q,
 		"topics":     topics,
 		"pagination": pagination,
