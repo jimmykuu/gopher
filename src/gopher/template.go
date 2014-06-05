@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"strings"
+	"time"
 
 	"github.com/jimmykuu/wtforms"
 )
@@ -41,6 +42,9 @@ var funcMaps = template.FuncMap{
 				field.RenderInput(),
 				errorMessage,
 			))
+	},
+	"loadtimes": func(startTime time.Time) string {
+		return fmt.Sprintf("%dms", time.Now().Sub(startTime)/1000000)
 	},
 }
 
@@ -96,6 +100,7 @@ func renderTemplate(handler Handler, file, baseFile string, data map[string]inte
 	data["shareCode"] = shareCode
 	data["staticFileVersion"] = Config.StaticFileVersion
 	data["goVersion"] = goVersion
+	data["startTime"] = handler.StartTime
 
 	_, ok := data["active"]
 	if !ok {

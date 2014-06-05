@@ -106,8 +106,12 @@
 			</p>
 			<p>&copy;2012-2014 golangtc.com</p>
 			<p>Website built by <a href="https://github.com/jimmykuu/gopher" target="_blank">Gopher</a>, powered by <a href="http://golang.org/" target="_blank">Golang</a>, <a href="http://www.mongodb.org/" target="_blank">MongoDB</a>.</p>
-			<p>Build version {{.goVersion}}.</p>
-			<p>Based on <a target="_blank" href="http://getbootstrap.com/">Bootstrap</a>. Icons from <a target="_blank" href="http://glyphicons.com/">Glyphicons</a>.</p>
+			<p>
+			  Build version {{.goVersion}}.
+			  Based on <a target="_blank" href="http://getbootstrap.com/">Bootstrap</a>. 
+			  Icons from <a target="_blank" href="http://glyphicons.com/">Glyphicons</a>.
+			  {{loadtimes .startTime}}.
+			</p>
 			<p style="text-align: center; vertical-align: middle;">
 				<a href="http://www.golang.org" target="_blank"><img src="http://gopher.qiniudn.com/static/img/Golang.png" alt="Golang"></a>
 				<a href="http://www.mongodb.org/" target="_blank"><img src="http://gopher.qiniudn.com/static/img/PoweredMongoDBbeige50.png" alt="MongoDB"></a>
