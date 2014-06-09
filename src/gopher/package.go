@@ -209,7 +209,13 @@ func listPackagesHandler(handler Handler) {
 // 显示第三方包详情
 func showPackageHandler(handler Handler) {
 	vars := mux.Vars(handler.Request)
+
 	packageId := vars["packageId"]
+
+	if !bson.IsObjectIdHex(packageId) {
+		http.NotFound(handler.ResponseWriter, handler.Request)
+		return
+	}
 
 	c := DB.C(CONTENTS)
 

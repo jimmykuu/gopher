@@ -274,10 +274,15 @@ func showTopicHandler(handler Handler) {
 	//cusers := DB.C(USERS)
 	topic := Topic{}
 
+	if !bson.IsObjectIdHex(topicId) {
+		http.NotFound(handler.ResponseWriter, handler.Request)
+		return
+	}
+
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": TypeTopic}).One(&topic)
 
 	if err != nil {
-		fmt.Println("showTopicHandler:", err.Error())
+		panic(err)
 		return
 	}
 
