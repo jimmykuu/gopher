@@ -189,6 +189,11 @@ func editTopicHandler(handler Handler) {
 
 	topicId := mux.Vars(handler.Request)["topicId"]
 
+	if !bson.IsObjectIdHex(topicId) {
+		http.NotFound(handler.ResponseWriter, handler.Request)
+		return
+	}
+
 	c := DB.C(CONTENTS)
 	var topic Topic
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": TypeTopic}).One(&topic)
@@ -382,12 +387,17 @@ func topicInNodeHandler(handler Handler) {
 // 删除主题
 func deleteTopicHandler(handler Handler) {
 	vars := mux.Vars(handler.Request)
-	topicId := bson.ObjectIdHex(vars["topicId"])
+	topicId := vars["topicId"]
+	if !bson.IsObjectIdHex(topicId) {
+		http.NotFound(handler.ResponseWriter, handler.Request)
+		return
+	}
+
 	c := DB.C(CONTENTS)
 
 	topic := Topic{}
 
-	err := c.Find(bson.M{"_id": topicId, "content.type": TypeTopic}).One(&topic)
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": TypeTopic}).One(&topic)
 
 	if err != nil {
 		fmt.Println("deleteTopic:", err.Error())

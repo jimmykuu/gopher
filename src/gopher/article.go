@@ -123,6 +123,11 @@ func listArticlesHandler(handler Handler) {
 func redirectArticleHandler(handler Handler) {
 	vars := mux.Vars(handler.Request)
 	articleId := vars["articleId"]
+
+	if !bson.IsObjectIdHex(articleId) {
+		http.NotFound(handler.ResponseWriter, handler.Request)
+		return
+	}
 	c := DB.C(CONTENTS)
 
 	article := new(Article)
@@ -144,6 +149,11 @@ func redirectArticleHandler(handler Handler) {
 func showArticleHandler(handler Handler) {
 	vars := mux.Vars(handler.Request)
 	articleId := vars["articleId"]
+
+	if !bson.IsObjectIdHex(articleId) {
+		http.NotFound(handler.ResponseWriter, handler.Request)
+		return
+	}
 	c := DB.C(CONTENTS)
 
 	article := Article{}
@@ -167,6 +177,10 @@ func editArticleHandler(handler Handler) {
 	user, _ := currentUser(handler.Request)
 
 	articleId := mux.Vars(handler.Request)["articleId"]
+	if !bson.IsObjectIdHex(articleId) {
+		http.NotFound(handler.ResponseWriter, handler.Request)
+		return
+	}
 
 	c := DB.C(CONTENTS)
 	var article Article
@@ -238,6 +252,10 @@ func deleteArticleHandler(handler Handler) {
 
 	vars := mux.Vars(handler.Request)
 	articleId := vars["articleId"]
+	if !bson.IsObjectIdHex(articleId) {
+		http.NotFound(handler.ResponseWriter, handler.Request)
+		return
+	}
 
 	c := DB.C(CONTENTS)
 

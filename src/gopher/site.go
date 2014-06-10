@@ -96,6 +96,10 @@ func editSiteHandler(handler Handler) {
 	user, _ := currentUser(handler.Request)
 
 	siteId := mux.Vars(handler.Request)["siteId"]
+	if !bson.IsObjectIdHex(siteId) {
+		http.NotFound(handler.ResponseWriter, handler.Request)
+		return
+	}
 
 	var site Site
 	c := DB.C(CONTENTS)
@@ -169,6 +173,11 @@ func deleteSiteHandler(handler Handler) {
 	user, _ := currentUser(handler.Request)
 
 	siteId := mux.Vars(handler.Request)["siteId"]
+
+	if !bson.IsObjectIdHex(siteId) {
+		http.NotFound(handler.ResponseWriter, handler.Request)
+		return
+	}
 
 	var site Site
 	c := DB.C(CONTENTS)

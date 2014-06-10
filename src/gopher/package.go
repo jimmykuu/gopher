@@ -103,6 +103,11 @@ func editPackageHandler(handler Handler) {
 	vars := mux.Vars(handler.Request)
 	packageId := vars["packageId"]
 
+	if !bson.IsObjectIdHex(packageId) {
+		http.NotFound(handler.ResponseWriter, handler.Request)
+		return
+	}
+
 	package_ := Package{}
 	c := DB.C(CONTENTS)
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(packageId), "content.type": TypePackage}).One(&package_)
@@ -245,6 +250,11 @@ func showPackageHandler(handler Handler) {
 func deletePackageHandler(handler Handler) {
 	vars := mux.Vars(handler.Request)
 	packageId := vars["packageId"]
+
+	if !bson.IsObjectIdHex(packageId) {
+		http.NotFound(handler.ResponseWriter, handler.Request)
+		return
+	}
 
 	c := DB.C(CONTENTS)
 

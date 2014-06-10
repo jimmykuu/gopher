@@ -30,6 +30,11 @@ func booksHandler(handler Handler) {
 func showBookHandler(handler Handler) {
 	bookId := mux.Vars(handler.Request)["id"]
 
+	if !bson.IsObjectIdHex(bookId) {
+		http.NotFound(handler.ResponseWriter, handler.Request)
+		return
+	}
+
 	c := DB.C(BOOKS)
 	var book Book
 	c.Find(bson.M{"_id": bson.ObjectIdHex(bookId)}).One(&book)

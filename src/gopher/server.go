@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -19,7 +20,7 @@ func handlerFun(route Route) http.HandlerFunc {
 		if r.URL.RawQuery != "" {
 			url += "?" + r.URL.RawQuery
 		}
-		fmt.Println(url)
+		fmt.Println(time.Now().Format("2006-01-02 15:04:05"), url)
 		if route.Permission == Everyone {
 			route.HandlerFunc(handler)
 		} else if route.Permission == Authenticated {
