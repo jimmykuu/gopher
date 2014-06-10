@@ -15,6 +15,11 @@ import (
 func handlerFun(route Route) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		handler := NewHandler(w, r)
+		url := r.Method + " " + r.URL.Path
+		if r.URL.RawQuery != "" {
+			url += "?" + r.URL.RawQuery
+		}
+		fmt.Println(url)
 		if route.Permission == Everyone {
 			route.HandlerFunc(handler)
 		} else if route.Permission == Authenticated {
