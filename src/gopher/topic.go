@@ -13,20 +13,10 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jimmykuu/wtforms"
-	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )
 
 func topicsHandler(handler Handler, conditions bson.M, sort string, url string, subActive string) {
-	session, err := mgo.Dial(Config.DB)
-	if err != nil {
-		panic(err)
-	}
-	defer session.Close()
-
-	session.SetMode(mgo.Monotonic, true)
-
-	DB := session.DB("gopher")
 	page, err := getPage(handler.Request)
 
 	if err != nil {
