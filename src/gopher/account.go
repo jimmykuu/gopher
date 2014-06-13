@@ -34,6 +34,27 @@ var defaultAvatars = []string{
 	"gopher_teal.jpg",
 }
 
+// 生成users.json字符串
+func generateUsersJson() {
+	var users []User
+	c := DB.C(USERS)
+	err := c.Find(nil).All(&users)
+	if err != nil {
+		panic(err)
+	}
+	var usernames []string
+	for _, user := range users {
+		usernames = append(usernames, user.Username)
+	}
+
+	b, err := json.Marshal(usernames)
+	if err != nil {
+		panic(err)
+	}
+
+	usersJson = b
+}
+
 // 加密密码,转成md5
 func encryptPassword(password string) string {
 	h := md5.New()
@@ -124,6 +145,9 @@ func signupHandler(handler Handler) {
 			}
 
 			c2.Update(nil, bson.M{"$inc": bson.M{"userindex": 1, "usercount": 1}})
+
+			// 重新生成users.json字符串
+			generateUsersJson()
 
 			// 发送邮件
 			/*
@@ -589,23 +613,8 @@ func changePasswordHandler(handler Handler) {
 	renderTemplate(handler, "account/change_password.html", BASE, map[string]interface{}{"form": form})
 }
 
+//  URL: /users.json
+// 获取所有用户的json列表
 func usersJsonHandler(handler Handler) {
-	var users []User
-	c := DB.C(USERS)
-	err := c.Find(nil).All(&users)
-	if err != nil {
-		fmt.Println("changePasswordHandler->findAllUsers:", err)
-		return
-	}
-	var usernames []string
-	for _, user := range users {
-		usernames = append(usernames, user.Username)
-	}
-
-	b, err := json.Marshal(usernames)
-	if err != nil {
-		fmt.Println("changePasswordHandler:", err)
-		return
-	}
-	handler.ResponseWriter.Write(b)
+	handler.ResponseWriter.Write(usersJson)
 }

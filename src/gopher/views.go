@@ -34,6 +34,7 @@ var (
 	store       *sessions.CookieStore
 	fileVersion map[string]string = make(map[string]string) // {path: version}
 	utils       *Utils
+	usersJson   []byte
 )
 
 type Utils struct {
@@ -367,6 +368,9 @@ func init() {
 	for _, username := range superusers {
 		c.Update(bson.M{"username": username, "issuperuser": false}, bson.M{"$set": bson.M{"issuperuser": true}})
 	}
+
+	// 生成users.json字符串
+	generateUsersJson()
 }
 
 func staticHandler(templateFile string) HandlerFunc {
