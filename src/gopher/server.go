@@ -15,11 +15,12 @@ import (
 
 func handlerFun(route Route) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		defer func() {
-			if e := recover(); e != nil {
-				fmt.Println("panic:", e)
-			}
-		}()
+		/*
+			defer func() {
+				if e := recover(); e != nil {
+					fmt.Println("panic:", e)
+				}
+			}()*/
 
 		handler := NewHandler(w, r)
 		url := r.Method + " " + r.URL.Path
