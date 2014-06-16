@@ -294,7 +294,7 @@ ul#menu li {
 }
 
 ul#menu li a {
-	padding: 10px 23px;
+	padding: 10px 19px;
 	position: relative;
 	display: block;
 	color: #999;
@@ -377,6 +377,10 @@ ul#menu li.active.nav-members a:before {
 
 ul#menu li.nav-tour {
 	border-bottom-color: #78797a;
+}
+
+ul#menu li.nav-godoc {
+	border-bottom-color: #375EAB;
 }
 
 ul#menu li.active.nav-download a:before {
