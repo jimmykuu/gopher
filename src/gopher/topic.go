@@ -325,7 +325,7 @@ func showTopicHandler(handler Handler) {
 			}
 		}
 	*/
-	renderTemplate(w, r, "topic/show.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "topic/show.html", BASE, map[string]interface{}{
 		"topic":  topic,
 		"active": "topic",
 	})
