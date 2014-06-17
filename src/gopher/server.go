@@ -8,15 +8,29 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 )
 
-func handlerFun(handler Handler) http.HandlerFunc {
+func handlerFun(route Route) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if handler.Permission == Everyone {
-			handler.HandlerFunc(w, r)
-		} else if handler.Permission == Authenticated {
+		/*
+			defer func() {
+				if e := recover(); e != nil {
+					fmt.Println("panic:", e)
+				}
+			}()*/
+
+		handler := NewHandler(w, r)
+		url := r.Method + " " + r.URL.Path
+		if r.URL.RawQuery != "" {
+			url += "?" + r.URL.RawQuery
+		}
+		fmt.Println(time.Now().Format("2006-01-02 15:04:05"), url)
+		if route.Permission == Everyone {
+			route.HandlerFunc(handler)
+		} else if route.Permission == Authenticated {
 			_, ok := currentUser(r)
 
 			if !ok {
@@ -24,8 +38,8 @@ func handlerFun(handler Handler) http.HandlerFunc {
 				return
 			}
 
-			handler.HandlerFunc(w, r)
-		} else if handler.Permission == Administrator {
+			route.HandlerFunc(handler)
+		} else if route.Permission == Administrator {
 			user, ok := currentUser(r)
 
 			if !ok {
@@ -34,11 +48,11 @@ func handlerFun(handler Handler) http.HandlerFunc {
 			}
 
 			if !user.IsSuperuser {
-				message(w, r, "没有权限", "对不起，你没有权限进行该操作", "error")
+				message(handler, "没有权限", "对不起，你没有权限进行该操作", "error")
 				return
 			}
 
-			handler.HandlerFunc(w, r)
+			route.HandlerFunc(handler)
 		}
 	}
 }
@@ -46,8 +60,8 @@ func handlerFun(handler Handler) http.HandlerFunc {
 func StartServer() {
 	http.Handle("/static/", http.FileServer(http.Dir(".")))
 	r := mux.NewRouter()
-	for _, handler := range handlers {
-		r.HandleFunc(handler.URL, handlerFun(handler))
+	for _, route := range routes {
+		r.HandleFunc(route.URL, handlerFun(route))
 	}
 
 	http.Handle("/", r)

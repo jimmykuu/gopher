@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
-	"net/http"
 	"strings"
+	"time"
 
 	"github.com/jimmykuu/wtforms"
 )
@@ -43,6 +43,9 @@ var funcMaps = template.FuncMap{
 				errorMessage,
 			))
 	},
+	"loadtimes": func(startTime time.Time) string {
+		return fmt.Sprintf("%dms", time.Now().Sub(startTime)/1000000)
+	},
 }
 
 // 解析模板
@@ -74,13 +77,13 @@ func parseTemplate(file, baseFile string, data map[string]interface{}) []byte {
 }
 
 // 渲染模板，并放入一些模板常用变量
-func renderTemplate(w http.ResponseWriter, r *http.Request, file, baseFile string, data map[string]interface{}) {
+func renderTemplate(handler Handler, file, baseFile string, data map[string]interface{}) {
 	_, isPresent := data["signout"]
 
 	// 如果isPresent==true，说明在执行登出操作
 	if !isPresent {
 		// 加入用户信息
-		user, ok := currentUser(r)
+		user, ok := currentUser(handler.Request)
 
 		if ok {
 			data["username"] = user.Username
@@ -97,6 +100,7 @@ func renderTemplate(w http.ResponseWriter, r *http.Request, file, baseFile strin
 	data["shareCode"] = shareCode
 	data["staticFileVersion"] = Config.StaticFileVersion
 	data["goVersion"] = goVersion
+	data["startTime"] = handler.StartTime
 
 	_, ok := data["active"]
 	if !ok {
@@ -104,5 +108,5 @@ func renderTemplate(w http.ResponseWriter, r *http.Request, file, baseFile strin
 	}
 
 	page := parseTemplate(file, baseFile, data)
-	w.Write(page)
+	handler.ResponseWriter.Write(page)
 }

@@ -34,6 +34,27 @@ var defaultAvatars = []string{
 	"gopher_teal.jpg",
 }
 
+// 生成users.json字符串
+func generateUsersJson() {
+	var users []User
+	c := DB.C(USERS)
+	err := c.Find(nil).All(&users)
+	if err != nil {
+		panic(err)
+	}
+	var usernames []string
+	for _, user := range users {
+		usernames = append(usernames, user.Username)
+	}
+
+	b, err := json.Marshal(usernames)
+	if err != nil {
+		panic(err)
+	}
+
+	usersJson = b
+}
+
 // 加密密码,转成md5
 func encryptPassword(password string) string {
 	h := md5.New()
@@ -54,7 +75,7 @@ func currentUser(r *http.Request) (*User, bool) {
 
 	user := User{}
 
-	c := DB.C("users")
+	c := DB.C(USERS)
 
 	// 检查用户名
 	err := c.Find(bson.M{"username": username}).One(&user)
@@ -68,16 +89,16 @@ func currentUser(r *http.Request) (*User, bool) {
 
 // URL: /signup
 // 处理用户注册,要求输入用户名,密码和邮箱
-func signupHandler(w http.ResponseWriter, r *http.Request) {
+func signupHandler(handler Handler) {
 	form := wtforms.NewForm(
 		wtforms.NewTextField("username", "用户名", "", wtforms.Required{}, wtforms.Regexp{Expr: `^[a-zA-Z0-9_]{3,16}$`, Message: "请使用a-z, A-Z, 0-9以及下划线, 长度3-16之间"}),
 		wtforms.NewPasswordField("password", "密码", wtforms.Required{}),
 		wtforms.NewTextField("email", "电子邮件", "", wtforms.Required{}, wtforms.Email{}),
 	)
 
-	if r.Method == "POST" {
-		if form.Validate(r) {
-			c := DB.C("users")
+	if handler.Request.Method == "POST" {
+		if form.Validate(handler.Request) {
+			c := DB.C(USERS)
 
 			result := User{}
 
@@ -86,7 +107,7 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 			if err == nil {
 				form.AddError("username", "该用户名已经被注册")
 
-				renderTemplate(w, r, "account/signup.html", BASE, map[string]interface{}{"form": form})
+				renderTemplate(handler, "account/signup.html", BASE, map[string]interface{}{"form": form})
 				return
 			}
 
@@ -96,11 +117,11 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 			if err == nil {
 				form.AddError("email", "电子邮件地址已经被注册")
 
-				renderTemplate(w, r, "account/signup.html", BASE, map[string]interface{}{"form": form})
+				renderTemplate(handler, "account/signup.html", BASE, map[string]interface{}{"form": form})
 				return
 			}
 
-			c2 := DB.C("status")
+			c2 := DB.C(STATUS)
 			var status Status
 			c2.Find(nil).One(&status)
 
@@ -125,6 +146,9 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 
 			c2.Update(nil, bson.M{"$inc": bson.M{"userindex": 1, "usercount": 1}})
 
+			// 重新生成users.json字符串
+			generateUsersJson()
+
 			// 发送邮件
 			/*
 							subject := "欢迎加入Golang 中国"
@@ -141,50 +165,50 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 							message(w, r, "注册成功", "请查看你的邮箱进行验证，如果收件箱没有，请查看垃圾邮件，如果还没有，请给jimmykuu@126.com发邮件，告知你的用户名。", "success")
 			*/
 			// 注册成功后设成登录状态
-			session, _ := store.Get(r, "user")
+			session, _ := store.Get(handler.Request, "user")
 			session.Values["username"] = username
-			session.Save(r, w)
+			session.Save(handler.Request, handler.ResponseWriter)
 
 			// 跳到修改用户信息页面
-			http.Redirect(w, r, "/profile", http.StatusFound)
+			http.Redirect(handler.ResponseWriter, handler.Request, "/profile", http.StatusFound)
 			return
 		}
 	}
 
-	renderTemplate(w, r, "account/signup.html", BASE, map[string]interface{}{"form": form})
+	renderTemplate(handler, "account/signup.html", BASE, map[string]interface{}{"form": form})
 }
 
 // URL: /activate/{code}
 // 用户根据邮件中的链接进行验证,根据code找到是否有对应的用户,如果有,修改User.IsActive为true
-func activateHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func activateHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
 	code := vars["code"]
 
 	var user User
 
-	c := DB.C("users")
+	c := DB.C(USERS)
 
 	err := c.Find(bson.M{"validatecode": code}).One(&user)
 
 	if err != nil {
-		message(w, r, "没有该验证码", "请检查连接是否正确", "error")
+		message(handler, "没有该验证码", "请检查连接是否正确", "error")
 		return
 	}
 
 	c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"isactive": true, "validatecode": ""}})
 
-	c = DB.C("status")
+	c = DB.C(STATUS)
 	var status Status
 	c.Find(nil).One(&status)
 	c.Update(bson.M{"_id": status.Id_}, bson.M{"$inc": bson.M{"usercount": 1}})
 
-	message(w, r, "通过验证", `恭喜你通过验证,请 <a href="/signin">登录</a>.`, "success")
+	message(handler, "通过验证", `恭喜你通过验证,请 <a href="/signin">登录</a>.`, "success")
 }
 
 // URL: /signin
 // 处理用户登录,如果登录成功,设置Cookie
-func signinHandler(w http.ResponseWriter, r *http.Request) {
-	next := r.FormValue("next")
+func signinHandler(handler Handler) {
+	next := handler.Request.FormValue("next")
 
 	form := wtforms.NewForm(
 		wtforms.NewHiddenField("next", next),
@@ -192,9 +216,9 @@ func signinHandler(w http.ResponseWriter, r *http.Request) {
 		wtforms.NewPasswordField("password", "密码", &wtforms.Required{}),
 	)
 
-	if r.Method == "POST" {
-		if form.Validate(r) {
-			c := DB.C("users")
+	if handler.Request.Method == "POST" {
+		if form.Validate(handler.Request) {
+			c := DB.C(USERS)
 			user := User{}
 
 			err := c.Find(bson.M{"username": form.Value("username")}).One(&user)
@@ -202,116 +226,116 @@ func signinHandler(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				form.AddError("username", "该用户不存在")
 
-				renderTemplate(w, r, "account/signin.html", BASE, map[string]interface{}{"form": form})
+				renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form})
 				return
 			}
 
 			if !user.IsActive {
 				form.AddError("username", "邮箱没有经过验证,如果没有收到邮件,请联系管理员")
-				renderTemplate(w, r, "account/signin.html", BASE, map[string]interface{}{"form": form})
+				renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form})
 				return
 			}
 
 			if user.Password != encryptPassword(form.Value("password")) {
 				form.AddError("password", "密码和用户名不匹配")
 
-				renderTemplate(w, r, "account/signin.html", BASE, map[string]interface{}{"form": form})
+				renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form})
 				return
 			}
 
-			session, _ := store.Get(r, "user")
+			session, _ := store.Get(handler.Request, "user")
 			session.Values["username"] = user.Username
-			session.Save(r, w)
+			session.Save(handler.Request, handler.ResponseWriter)
 
 			if form.Value("next") == "" {
-				http.Redirect(w, r, "/", http.StatusFound)
+				http.Redirect(handler.ResponseWriter, handler.Request, "/", http.StatusFound)
 			} else {
-				http.Redirect(w, r, next, http.StatusFound)
+				http.Redirect(handler.ResponseWriter, handler.Request, next, http.StatusFound)
 			}
 
 			return
 		}
 	}
 
-	renderTemplate(w, r, "account/signin.html", BASE, map[string]interface{}{"form": form})
+	renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form})
 }
 
 // URL: /signout
 // 用户登出,清除Cookie
-func signoutHandler(w http.ResponseWriter, r *http.Request) {
-	session, _ := store.Get(r, "user")
+func signoutHandler(handler Handler) {
+	session, _ := store.Get(handler.Request, "user")
 	session.Options = &sessions.Options{MaxAge: -1}
-	session.Save(r, w)
-	renderTemplate(w, r, "account/signout.html", BASE, map[string]interface{}{"signout": true})
+	session.Save(handler.Request, handler.ResponseWriter)
+	renderTemplate(handler, "account/signout.html", BASE, map[string]interface{}{"signout": true})
 }
 
-func followHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func followHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
 	username := vars["username"]
 
-	currUser, _ := currentUser(r)
+	currUser, _ := currentUser(handler.Request)
 
 	//不能关注自己
 	if currUser.Username == username {
-		message(w, r, "提示", "不能关注自己", "error")
+		message(handler, "提示", "不能关注自己", "error")
 		return
 	}
 
 	user := User{}
-	c := DB.C("users")
+	c := DB.C(USERS)
 	err := c.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
-		message(w, r, "关注的会员未找到", "关注的会员未找到", "error")
+		message(handler, "关注的会员未找到", "关注的会员未找到", "error")
 		return
 	}
 
 	if user.IsFollowedBy(currUser.Username) {
-		message(w, r, "你已经关注该会员", "你已经关注该会员", "error")
+		message(handler, "你已经关注该会员", "你已经关注该会员", "error")
 		return
 	}
 	c.Update(bson.M{"_id": user.Id_}, bson.M{"$push": bson.M{"fans": currUser.Username}})
 	c.Update(bson.M{"_id": currUser.Id_}, bson.M{"$push": bson.M{"follow": user.Username}})
 
-	http.Redirect(w, r, "/member/"+user.Username, http.StatusFound)
+	http.Redirect(handler.ResponseWriter, handler.Request, "/member/"+user.Username, http.StatusFound)
 }
 
-func unfollowHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func unfollowHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
 	username := vars["username"]
 
-	currUser, _ := currentUser(r)
+	currUser, _ := currentUser(handler.Request)
 
 	//不能取消关注自己
 	if currUser.Username == username {
-		message(w, r, "提示", "不能对自己进行操作", "error")
+		message(handler, "提示", "不能对自己进行操作", "error")
 		return
 	}
 
 	user := User{}
-	c := DB.C("users")
+	c := DB.C(USERS)
 	err := c.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
-		message(w, r, "没有该会员", "没有该会员", "error")
+		message(handler, "没有该会员", "没有该会员", "error")
 		return
 	}
 
 	if !user.IsFollowedBy(currUser.Username) {
-		message(w, r, "不能取消关注", "该会员不是你的粉丝,不能取消关注", "error")
+		message(handler, "不能取消关注", "该会员不是你的粉丝,不能取消关注", "error")
 		return
 	}
 
 	c.Update(bson.M{"_id": user.Id_}, bson.M{"$pull": bson.M{"fans": currUser.Username}})
 	c.Update(bson.M{"_id": currUser.Id_}, bson.M{"$pull": bson.M{"follow": user.Username}})
 
-	http.Redirect(w, r, "/member/"+user.Username, http.StatusFound)
+	http.Redirect(handler.ResponseWriter, handler.Request, "/member/"+user.Username, http.StatusFound)
 }
 
 // URL /profile
 // 用户设置页面,显示用户设置,用户头像,密码修改
-func profileHandler(w http.ResponseWriter, r *http.Request) {
-	user, _ := currentUser(r)
+func profileHandler(handler Handler) {
+	user, _ := currentUser(handler.Request)
 
 	profileForm := wtforms.NewForm(
 		wtforms.NewTextField("email", "电子邮件", user.Email, wtforms.Email{}),
@@ -323,9 +347,9 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 		wtforms.NewTextField("weibo", "新浪微博", user.Weibo),
 	)
 
-	if r.Method == "POST" {
-		if profileForm.Validate(r) {
-			c := DB.C("users")
+	if handler.Request.Method == "POST" {
+		if profileForm.Validate(handler.Request) {
+			c := DB.C(USERS)
 			c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{
 				"website":        profileForm.Value("website"),
 				"location":       profileForm.Value("location"),
@@ -334,12 +358,12 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 				"githubusername": profileForm.Value("github_username"),
 				"weibo":          profileForm.Value("weibo"),
 			}})
-			http.Redirect(w, r, "/profile", http.StatusFound)
+			http.Redirect(handler.ResponseWriter, handler.Request, "/profile", http.StatusFound)
 			return
 		}
 	}
 
-	renderTemplate(w, r, "account/profile.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "account/profile.html", BASE, map[string]interface{}{
 		"user":           user,
 		"profileForm":    profileForm,
 		"defaultAvatars": defaultAvatars,
@@ -348,16 +372,16 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /forgot_password
 // 忘记密码,输入用户名和邮箱,如果匹配,发出邮件
-func forgotPasswordHandler(w http.ResponseWriter, r *http.Request) {
+func forgotPasswordHandler(handler Handler) {
 	form := wtforms.NewForm(
 		wtforms.NewTextField("username", "用户名", "", wtforms.Required{}),
 		wtforms.NewTextField("email", "电子邮件", "", wtforms.Email{}),
 	)
 
-	if r.Method == "POST" {
-		if form.Validate(r) {
+	if handler.Request.Method == "POST" {
+		if form.Validate(handler.Request) {
 			var user User
-			c := DB.C("users")
+			c := DB.C(USERS)
 			err := c.Find(bson.M{"username": form.Value("username")}).One(&user)
 			if err != nil {
 				form.AddError("username", "没有该用户")
@@ -388,27 +412,27 @@ func forgotPasswordHandler(w http.ResponseWriter, r *http.Request) {
 					},
 					true,
 				)
-				message(w, r, "通过电子邮件重设密码", "一封包含了重设密码指令的邮件已经发送到你的注册邮箱，按照邮件中的提示，即可重设你的密码。", "success")
+				message(handler, "通过电子邮件重设密码", "一封包含了重设密码指令的邮件已经发送到你的注册邮箱，按照邮件中的提示，即可重设你的密码。", "success")
 				return
 			}
 		}
 	}
 
-	renderTemplate(w, r, "account/forgot_password.html", BASE, map[string]interface{}{"form": form})
+	renderTemplate(handler, "account/forgot_password.html", BASE, map[string]interface{}{"form": form})
 }
 
 // URL: /reset/{code}
 // 用户点击邮件中的链接,根据code找到对应的用户,设置新密码,修改完成后清除code
-func resetPasswordHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func resetPasswordHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
 	code := vars["code"]
 
 	var user User
-	c := DB.C("users")
+	c := DB.C(USERS)
 	err := c.Find(bson.M{"resetcode": code}).One(&user)
 
 	if err != nil {
-		message(w, r, "重设密码", `无效的重设密码标记,可能你已经重新设置过了或者链接已经失效,请通过<a href="/forgot_password">忘记密码</a>进行重设密码`, "error")
+		message(handler, "重设密码", `无效的重设密码标记,可能你已经重新设置过了或者链接已经失效,请通过<a href="/forgot_password">忘记密码</a>进行重设密码`, "error")
 		return
 	}
 
@@ -417,7 +441,7 @@ func resetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 		wtforms.NewPasswordField("confirm_password", "确认新密码", wtforms.Required{}),
 	)
 
-	if r.Method == "POST" && form.Validate(r) {
+	if handler.Request.Method == "POST" && form.Validate(handler.Request) {
 		if form.Value("new_password") == form.Value("confirm_password") {
 			c.Update(
 				bson.M{"_id": user.Id_},
@@ -428,14 +452,14 @@ func resetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 					},
 				},
 			)
-			message(w, r, "重设密码成功", `密码重设成功,你现在可以 <a href="/signin" class="btn btn-primary">登录</a> 了`, "success")
+			message(handler, "重设密码成功", `密码重设成功,你现在可以 <a href="/signin" class="btn btn-primary">登录</a> 了`, "success")
 			return
 		} else {
 			form.AddError("confirm_password", "密码不匹配")
 		}
 	}
 
-	renderTemplate(w, r, "account/reset_password.html", BASE, map[string]interface{}{"form": form, "code": code, "account": user.Username})
+	renderTemplate(handler, "account/reset_password.html", BASE, map[string]interface{}{"form": form, "code": code, "account": user.Username})
 }
 
 type Sizer interface {
@@ -444,14 +468,14 @@ type Sizer interface {
 
 // URL: /profile/avatar
 // 修改头像,提交到七牛云存储
-func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
-	user, _ := currentUser(r)
+func changeAvatarHandler(handler Handler) {
+	user, _ := currentUser(handler.Request)
 
-	if r.Method == "POST" {
-		formFile, formHeader, err := r.FormFile("file")
+	if handler.Request.Method == "POST" {
+		formFile, formHeader, err := handler.Request.FormFile("file")
 		if err != nil {
 			fmt.Println("changeAvatarHandler:", err.Error())
-			renderTemplate(w, r, "account/avatar.html", BASE, map[string]interface{}{
+			renderTemplate(handler, "account/avatar.html", BASE, map[string]interface{}{
 				"user":  user,
 				"error": "请选择图片上传",
 			})
@@ -474,7 +498,7 @@ func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
 		if !isValidateType {
 			fmt.Println("upload image type error:", uploadFileType)
 			// 提示错误
-			renderTemplate(w, r, "account/avatar.html", BASE, map[string]interface{}{
+			renderTemplate(handler, "account/avatar.html", BASE, map[string]interface{}{
 				"user":  user,
 				"error": "文件类型错误，请选择jpg/png图片上传。",
 			})
@@ -487,7 +511,7 @@ func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
 		if fileSize > 500*1024 {
 			// > 500K
 			fmt.Printf("upload image size > 500K: %dK\n", fileSize/1024)
-			renderTemplate(w, r, "account/avatar.html", BASE, map[string]interface{}{
+			renderTemplate(handler, "account/avatar.html", BASE, map[string]interface{}{
 				"user":  user,
 				"error": "图片大小大于500K，请选择500K以内图片上传。",
 			})
@@ -524,7 +548,7 @@ func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			fmt.Println("upload to qiniu failed:", err.Error())
-			renderTemplate(w, r, "account/avatar.html", BASE, map[string]interface{}{
+			renderTemplate(handler, "account/avatar.html", BASE, map[string]interface{}{
 				"user":  user,
 				"error": "上传失败，请反馈错误",
 			})
@@ -532,37 +556,37 @@ func changeAvatarHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// 存储远程文件名
-		c := DB.C("users")
+		c := DB.C(USERS)
 		c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"avatar": filename}})
 
-		http.Redirect(w, r, "/profile#avatar", http.StatusFound)
+		http.Redirect(handler.ResponseWriter, handler.Request, "/profile#avatar", http.StatusFound)
 		return
 	}
 
-	renderTemplate(w, r, "account/avatar.html", BASE, map[string]interface{}{"user": user})
+	renderTemplate(handler, "account/avatar.html", BASE, map[string]interface{}{"user": user})
 }
 
 // URL: /profile/choose_default_avatar
 // 选择默认头像
-func chooseDefaultAvatar(w http.ResponseWriter, r *http.Request) {
-	user, _ := currentUser(r)
+func chooseDefaultAvatar(handler Handler) {
+	user, _ := currentUser(handler.Request)
 
-	if r.Method == "POST" {
-		avatar := r.FormValue("defaultAvatars")
+	if handler.Request.Method == "POST" {
+		avatar := handler.Request.FormValue("defaultAvatars")
 
 		if avatar != "" {
-			c := DB.C("users")
+			c := DB.C(USERS)
 			c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"avatar": avatar}})
 		}
 
-		http.Redirect(w, r, "/profile#avatar", http.StatusFound)
+		http.Redirect(handler.ResponseWriter, handler.Request, "/profile#avatar", http.StatusFound)
 	}
 }
 
 // URL: /change_password
 // 修改密码
-func changePasswordHandler(w http.ResponseWriter, r *http.Request) {
-	user, _ := currentUser(r)
+func changePasswordHandler(handler Handler) {
+	user, _ := currentUser(handler.Request)
 
 	form := wtforms.NewForm(
 		wtforms.NewPasswordField("current_password", "当前密码", wtforms.Required{}),
@@ -570,13 +594,13 @@ func changePasswordHandler(w http.ResponseWriter, r *http.Request) {
 		wtforms.NewPasswordField("confirm_password", "新密码确认", wtforms.Required{}),
 	)
 
-	if r.Method == "POST" && form.Validate(r) {
+	if handler.Request.Method == "POST" && form.Validate(handler.Request) {
 		if form.Value("new_password") == form.Value("confirm_password") {
 			currentPassword := encryptPassword(form.Value("current_password"))
 			if currentPassword == user.Password {
-				c := DB.C("users")
+				c := DB.C(USERS)
 				c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"password": encryptPassword(form.Value("new_password"))}})
-				message(w, r, "密码修改成功", `密码修改成功`, "success")
+				message(handler, "密码修改成功", `密码修改成功`, "success")
 				return
 			} else {
 				form.AddError("current_password", "当前密码错误")
@@ -586,26 +610,11 @@ func changePasswordHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	renderTemplate(w, r, "account/change_password.html", BASE, map[string]interface{}{"form": form})
+	renderTemplate(handler, "account/change_password.html", BASE, map[string]interface{}{"form": form})
 }
 
-func usersJsonHandler(w http.ResponseWriter, r *http.Request) {
-	var users []User
-	c := DB.C("users")
-	err := c.Find(nil).All(&users)
-	if err != nil {
-		fmt.Println("changePasswordHandler->findAllUsers:", err)
-		return
-	}
-	var usernames []string
-	for _, user := range users {
-		usernames = append(usernames, user.Username)
-	}
-
-	b, err := json.Marshal(usernames)
-	if err != nil {
-		fmt.Println("changePasswordHandler:", err)
-		return
-	}
-	w.Write(b)
+//  URL: /users.json
+// 获取所有用户的json列表
+func usersJsonHandler(handler Handler) {
+	handler.ResponseWriter.Write(usersJson)
 }

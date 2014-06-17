@@ -34,6 +34,7 @@ var (
 	store       *sessions.CookieStore
 	fileVersion map[string]string = make(map[string]string) // {path: version}
 	utils       *Utils
+	usersJson   []byte
 )
 
 type Utils struct {
@@ -97,7 +98,7 @@ func (u *Utils) FormatTime(t time.Time) string {
 }
 
 func (u *Utils) UserInfo(username string) template.HTML {
-	c := DB.C("users")
+	c := DB.C(USERS)
 
 	user := User{}
 	// 检查用户名
@@ -114,8 +115,10 @@ func (u *Utils) UserInfo(username string) template.HTML {
 
 /*mark ggaaooppeenngg*/
 func (u *Utils) RecentReplies(username string) template.HTML {
-	c := DB.C("users")
-	ccontens := DB.C("contents")
+	return template.HTML("")
+
+	c := DB.C(USERS)
+	ccontens := DB.C(CONTENTS)
 	user := User{}
 	// 检查用户名
 	c.Find(bson.M{"username": username}).One(&user)
@@ -225,13 +228,13 @@ func (u *Utils) RenderInputH(form wtforms.Form, fieldStr string, labelWidth, inp
 }
 
 func (u *Utils) HasAd(position string) bool {
-	c := DB.C("ads")
+	c := DB.C(ADS)
 	count, _ := c.Find(bson.M{"position": position}).Limit(1).Count()
 	return count == 1
 }
 
 func (u *Utils) AdCode(position string) template.HTML {
-	c := DB.C("ads")
+	c := DB.C(ADS)
 	var ad AD
 	c.Find(bson.M{"position": position}).Limit(1).One(&ad)
 
@@ -263,8 +266,8 @@ func (u *Utils) AssertPackage(i interface{}) *Package {
 	return &v
 }
 
-func message(w http.ResponseWriter, r *http.Request, title string, message string, class string) {
-	renderTemplate(w, r, "message.html", BASE, map[string]interface{}{"title": title, "message": template.HTML(message), "class": class})
+func message(handler Handler, title string, message string, class string) {
+	renderTemplate(handler, "message.html", BASE, map[string]interface{}{"title": title, "message": template.HTML(message), "class": class})
 }
 
 // 获取链接的页码，默认"?p=1"这种类型
@@ -324,7 +327,7 @@ func init() {
 
 	// 如果没有status,创建
 	var status Status
-	c := DB.C("status")
+	c := DB.C(STATUS)
 	err = c.Find(nil).One(&status)
 
 	if err != nil {
@@ -350,7 +353,7 @@ func init() {
 		fmt.Println("你没有设置超级账户,请在config.json中的superusers中设置,如有多个账户,用逗号分开")
 	}
 
-	c = DB.C("users")
+	c = DB.C(USERS)
 	var users []User
 	c.Find(bson.M{"issuperuser": true}).All(&users)
 
@@ -365,11 +368,14 @@ func init() {
 	for _, username := range superusers {
 		c.Update(bson.M{"username": username, "issuperuser": false}, bson.M{"$set": bson.M{"issuperuser": true}})
 	}
+
+	// 生成users.json字符串
+	generateUsersJson()
 }
 
-func staticHandler(templateFile string) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		renderTemplate(w, r, templateFile, BASE, map[string]interface{}{})
+func staticHandler(templateFile string) HandlerFunc {
+	return func(handler Handler) {
+		renderTemplate(handler, templateFile, BASE, map[string]interface{}{})
 	}
 }
 
@@ -402,18 +408,18 @@ func findAts(content string) []string {
 
 // URL: /comment/{contentId}
 // 评论，不同内容共用一个评论方法
-func commentHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
+func commentHandler(handler Handler) {
+	if handler.Request.Method != "POST" {
 		return
 	}
 
-	user, _ := currentUser(r)
+	user, _ := currentUser(handler.Request)
 
-	vars := mux.Vars(r)
+	vars := mux.Vars(handler.Request)
 	contentId := vars["contentId"]
 
 	var temp map[string]interface{}
-	c := DB.C("contents")
+	c := DB.C(CONTENTS)
 	c.Find(bson.M{"_id": bson.ObjectIdHex(contentId)}).One(&temp)
 
 	temp2 := temp["content"].(map[string]interface{})
@@ -433,15 +439,15 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 
 	c.Update(bson.M{"_id": bson.ObjectIdHex(contentId)}, bson.M{"$inc": bson.M{"content.commentcount": 1}})
 
-	content := r.FormValue("content")
+	content := handler.Request.FormValue("content")
 
-	html := r.FormValue("html")
+	html := handler.Request.FormValue("html")
 	html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
 
 	Id_ := bson.NewObjectId()
 	now := time.Now()
 
-	c = DB.C("comments")
+	c = DB.C(COMMENTS)
 	c.Insert(&Comment{
 		Id_:       Id_,
 		Type:      type_,
@@ -454,14 +460,15 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 
 	if type_ == TypeTopic {
 		// 修改最后回复用户Id和时间
-		c = DB.C("contents")
+		c = DB.C(CONTENTS)
 		c.Update(bson.M{"_id": bson.ObjectIdHex(contentId)}, bson.M{"$set": bson.M{"latestreplierid": user.Id_.Hex(), "latestrepliedat": now}})
 
 		// 修改中的回复数量
-		c = DB.C("status")
+		c = DB.C(STATUS)
 		c.Update(nil, bson.M{"$inc": bson.M{"replycount": 1}})
 		/*mark ggaaooppeenngg*/
-		c = DB.C("users")
+		//修改用户的最近回复
+		c = DB.C(USERS)
 		//查找评论中at的用户,并且更新recentAts
 		users := findAts(content)
 		for _, v := range users {
@@ -497,27 +504,27 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	http.Redirect(w, r, url, http.StatusFound)
+	http.Redirect(handler.ResponseWriter, handler.Request, url, http.StatusFound)
 }
 
 // URL: /comment/{commentId}/delete
 // 删除评论
-func deleteCommentHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func deleteCommentHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
 	var commentId string = vars["commentId"]
 
-	c := DB.C("comments")
+	c := DB.C(COMMENTS)
 	var comment Comment
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(commentId)}).One(&comment)
 
 	if err != nil {
-		message(w, r, "评论不存在", "该评论不存在", "error")
+		message(handler, "评论不存在", "该评论不存在", "error")
 		return
 	}
 
 	c.Remove(bson.M{"_id": comment.Id_})
 
-	c = DB.C("contents")
+	c = DB.C(CONTENTS)
 	c.Update(bson.M{"_id": comment.ContentId}, bson.M{"$inc": bson.M{"content.commentcount": -1}})
 
 	if comment.Type == TypeTopic {
@@ -539,7 +546,7 @@ func deleteCommentHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// 修改中的回复数量
-		c = DB.C("status")
+		c = DB.C(STATUS)
 		c.Update(nil, bson.M{"$inc": bson.M{"replycount": -1}})
 	}
 
@@ -553,11 +560,11 @@ func deleteCommentHandler(w http.ResponseWriter, r *http.Request) {
 		url = "/p/" + comment.ContentId.Hex()
 	}
 
-	http.Redirect(w, r, url, http.StatusFound)
+	http.Redirect(handler.ResponseWriter, handler.Request, url, http.StatusFound)
 }
 
-func searchHandler(w http.ResponseWriter, r *http.Request) {
-	p := r.FormValue("p")
+func searchHandler(handler Handler) {
+	p := handler.Request.FormValue("p")
 	page := 1
 
 	if p != "" {
@@ -565,12 +572,12 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		page, err = strconv.Atoi(p)
 
 		if err != nil {
-			message(w, r, "页码错误", "页码错误", "error")
+			message(handler, "页码错误", "页码错误", "error")
 			return
 		}
 	}
 
-	q := r.FormValue("q")
+	q := handler.Request.FormValue("q")
 
 	keywords := strings.Split(q, " ")
 
@@ -591,7 +598,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		markdownConditions = append(markdownConditions, bson.M{"content.markdown": bson.M{"$regex": bson.RegEx{keyword, "i"}}})
 	}
 
-	c := DB.C("contents")
+	c := DB.C(CONTENTS)
 
 	var pagination *Pagination
 
@@ -612,7 +619,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 
 	query, err := pagination.Page(page)
 	if err != nil {
-		message(w, r, "页码错误", "页码错误", "error")
+		message(handler, "页码错误", "页码错误", "error")
 		return
 	}
 
@@ -622,7 +629,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		println(err.Error())
 	}
 
-	renderTemplate(w, r, "search.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "search.html", BASE, map[string]interface{}{
 		"q":          q,
 		"topics":     topics,
 		"pagination": pagination,

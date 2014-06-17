@@ -17,9 +17,9 @@ import (
 
 // URL: /article/new
 // 新建文章
-func newArticleHandler(w http.ResponseWriter, r *http.Request) {
+func newArticleHandler(handler Handler) {
 	var categories []ArticleCategory
-	c := DB.C("articlecategories")
+	c := DB.C(ARTICLE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
 	var choices []wtforms.Choice
@@ -36,10 +36,10 @@ func newArticleHandler(w http.ResponseWriter, r *http.Request) {
 		wtforms.NewSelectField("category", "分类", choices, ""),
 	)
 
-	if r.Method == "POST" && form.Validate(r) {
-		user, _ := currentUser(r)
+	if handler.Request.Method == "POST" && form.Validate(handler.Request) {
+		user, _ := currentUser(handler.Request)
 
-		c = DB.C("contents")
+		c = DB.C(CONTENTS)
 
 		id_ := bson.NewObjectId()
 
@@ -66,11 +66,11 @@ func newArticleHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		http.Redirect(w, r, "/a/"+id_.Hex(), http.StatusFound)
+		http.Redirect(handler.ResponseWriter, handler.Request, "/a/"+id_.Hex(), http.StatusFound)
 		return
 	}
 
-	renderTemplate(w, r, "article/form.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "article/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"title":  "新建",
 		"action": "/article/new",
@@ -80,11 +80,11 @@ func newArticleHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /articles
 // 列出所有文章
-func listArticlesHandler(w http.ResponseWriter, r *http.Request) {
-	page, err := getPage(r)
+func listArticlesHandler(handler Handler) {
+	page, err := getPage(handler.Request)
 
 	if err != nil {
-		message(w, r, "页码错误", "页码错误", "error")
+		message(handler, "页码错误", "页码错误", "error")
 		return
 	}
 
@@ -96,7 +96,7 @@ func listArticlesHandler(w http.ResponseWriter, r *http.Request) {
 	//	c = db.C("status")
 	//	c.Find(nil).One(&status)
 
-	c := DB.C("contents")
+	c := DB.C(CONTENTS)
 
 	pagination := NewPagination(c.Find(bson.M{"content.type": TypeArticle}).Sort("-content.createdat"), "/articles", PerPage)
 
@@ -104,13 +104,13 @@ func listArticlesHandler(w http.ResponseWriter, r *http.Request) {
 
 	query, err := pagination.Page(page)
 	if err != nil {
-		message(w, r, "页码错误", "页码错误", "error")
+		message(handler, "页码错误", "页码错误", "error")
 		return
 	}
 
 	query.All(&articles)
 
-	renderTemplate(w, r, "article/index.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "article/index.html", BASE, map[string]interface{}{
 		"articles":   articles,
 		"pagination": pagination,
 		"page":       page,
@@ -120,10 +120,15 @@ func listArticlesHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /a{articleId}/redirect
 // 转到原文链接
-func redirectArticleHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func redirectArticleHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
 	articleId := vars["articleId"]
-	c := DB.C("contents")
+
+	if !bson.IsObjectIdHex(articleId) {
+		http.NotFound(handler.ResponseWriter, handler.Request)
+		return
+	}
+	c := DB.C(CONTENTS)
 
 	article := new(Article)
 
@@ -136,15 +141,20 @@ func redirectArticleHandler(w http.ResponseWriter, r *http.Request) {
 
 	c.UpdateId(bson.ObjectIdHex(articleId), bson.M{"$inc": bson.M{"content.hits": 1}})
 
-	http.Redirect(w, r, article.OriginalUrl, http.StatusFound)
+	http.Redirect(handler.ResponseWriter, handler.Request, article.OriginalUrl, http.StatusFound)
 }
 
 // URL: /a/{articleId}
 // 显示文章
-func showArticleHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
+func showArticleHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
 	articleId := vars["articleId"]
-	c := DB.C("contents")
+
+	if !bson.IsObjectIdHex(articleId) {
+		http.NotFound(handler.ResponseWriter, handler.Request)
+		return
+	}
+	c := DB.C(CONTENTS)
 
 	article := Article{}
 
@@ -155,7 +165,7 @@ func showArticleHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	renderTemplate(w, r, "article/show.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "article/show.html", BASE, map[string]interface{}{
 		"article": article,
 		"active":  "article",
 	})
@@ -163,27 +173,31 @@ func showArticleHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /a/{articleId}/edit
 // 编辑主题
-func editArticleHandler(w http.ResponseWriter, r *http.Request) {
-	user, _ := currentUser(r)
+func editArticleHandler(handler Handler) {
+	user, _ := currentUser(handler.Request)
 
-	articleId := mux.Vars(r)["articleId"]
+	articleId := mux.Vars(handler.Request)["articleId"]
+	if !bson.IsObjectIdHex(articleId) {
+		http.NotFound(handler.ResponseWriter, handler.Request)
+		return
+	}
 
-	c := DB.C("contents")
+	c := DB.C(CONTENTS)
 	var article Article
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(articleId)}).One(&article)
 
 	if err != nil {
-		message(w, r, "没有该文章", "没有该文章,不能编辑", "error")
+		message(handler, "没有该文章", "没有该文章,不能编辑", "error")
 		return
 	}
 
 	if !article.CanEdit(user.Username) {
-		message(w, r, "没用该权限", "对不起,你没有权限编辑该文章", "error")
+		message(handler, "没用该权限", "对不起,你没有权限编辑该文章", "error")
 		return
 	}
 
 	var categorys []ArticleCategory
-	c = DB.C("articlecategories")
+	c = DB.C(ARTICLE_CATEGORIES)
 	c.Find(nil).All(&categorys)
 
 	var choices []wtforms.Choice
@@ -200,10 +214,10 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 		wtforms.NewSelectField("category", "分类", choices, article.CategoryId.Hex()),
 	)
 
-	if r.Method == "POST" {
-		if form.Validate(r) {
+	if handler.Request.Method == "POST" {
+		if form.Validate(handler.Request) {
 			categoryId := bson.ObjectIdHex(form.Value("category"))
-			c = DB.C("contents")
+			c = DB.C(CONTENTS)
 			err = c.Update(bson.M{"_id": article.Id_}, bson.M{"$set": bson.M{
 				"categoryid":        categoryId,
 				"originalsource":    form.Value("original_source"),
@@ -218,12 +232,12 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			http.Redirect(w, r, "/a/"+article.Id_.Hex(), http.StatusFound)
+			http.Redirect(handler.ResponseWriter, handler.Request, "/a/"+article.Id_.Hex(), http.StatusFound)
 			return
 		}
 	}
 
-	renderTemplate(w, r, "article/form.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "article/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"title":  "编辑",
 		"action": "/a/" + articleId + "/edit",
@@ -233,13 +247,17 @@ func editArticleHandler(w http.ResponseWriter, r *http.Request) {
 
 // URL: /a/{articleId}/delete
 // 删除文章
-func deleteArticleHandler(w http.ResponseWriter, r *http.Request) {
-	user, _ := currentUser(r)
+func deleteArticleHandler(handler Handler) {
+	user, _ := currentUser(handler.Request)
 
-	vars := mux.Vars(r)
+	vars := mux.Vars(handler.Request)
 	articleId := vars["articleId"]
+	if !bson.IsObjectIdHex(articleId) {
+		http.NotFound(handler.ResponseWriter, handler.Request)
+		return
+	}
 
-	c := DB.C("contents")
+	c := DB.C(CONTENTS)
 
 	article := new(Article)
 
@@ -253,9 +271,9 @@ func deleteArticleHandler(w http.ResponseWriter, r *http.Request) {
 	if article.CanDelete(user.Username) {
 		c.Remove(bson.M{"_id": article.Id_})
 
-		c = DB.C("comments")
+		c = DB.C(COMMENTS)
 		c.Remove(bson.M{"contentid": article.Id_})
 
-		http.Redirect(w, r, "/articles", http.StatusFound)
+		http.Redirect(handler.ResponseWriter, handler.Request, "/articles", http.StatusFound)
 	}
 }

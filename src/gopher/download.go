@@ -5,7 +5,6 @@ package gopher
 
 import (
 	"encoding/json"
-	"net/http"
 	"os"
 )
 
@@ -23,7 +22,7 @@ type Version struct {
 	Date    string `json:"date"`
 }
 
-func downloadHandler(w http.ResponseWriter, r *http.Request) {
+func downloadHandler(handler Handler) {
 	file, err := os.Open("etc/download.json")
 	if err != nil {
 		panic(err)
@@ -39,5 +38,5 @@ func downloadHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	renderTemplate(w, r, "download.html", BASE, map[string]interface{}{"versions": versions, "active": "download"})
+	renderTemplate(handler, "download.html", BASE, map[string]interface{}{"versions": versions, "active": "download"})
 }

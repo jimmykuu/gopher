@@ -9,34 +9,34 @@ import (
 
 // URL: /admin/site_categories
 // 列出所有的站点分类
-func adminListSiteCategoriesHandler(w http.ResponseWriter, r *http.Request) {
+func adminListSiteCategoriesHandler(handler Handler) {
 	var categories []SiteCategory
-	c := DB.C("sitecategories")
+	c := DB.C(SITE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
-	renderTemplate(w, r, "admin/site_categories.html", ADMIN, map[string]interface{}{"categories": categories})
+	renderTemplate(handler, "admin/site_categories.html", ADMIN, map[string]interface{}{"categories": categories})
 }
 
 // URL: /admin/site_category/new
 // 新建站点分类
-func adminNewSiteCategoryHandler(w http.ResponseWriter, r *http.Request) {
+func adminNewSiteCategoryHandler(handler Handler) {
 	form := wtforms.NewForm(
 		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),
 	)
 
-	if r.Method == "POST" {
-		if !form.Validate(r) {
-			renderTemplate(w, r, "site_category/new.html", ADMIN, map[string]interface{}{"form": form})
+	if handler.Request.Method == "POST" {
+		if !form.Validate(handler.Request) {
+			renderTemplate(handler, "site_category/new.html", ADMIN, map[string]interface{}{"form": form})
 			return
 		}
 
-		c := DB.C("sitecategories")
+		c := DB.C(SITE_CATEGORIES)
 		var category SiteCategory
 		err := c.Find(bson.M{"name": form.Value("name")}).One(&category)
 
 		if err == nil {
 			form.AddError("name", "该名称已经有了")
-			renderTemplate(w, r, "site_category/new.html", ADMIN, map[string]interface{}{"form": form})
+			renderTemplate(handler, "site_category/new.html", ADMIN, map[string]interface{}{"form": form})
 			return
 		}
 
@@ -49,8 +49,8 @@ func adminNewSiteCategoryHandler(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 
-		http.Redirect(w, r, "/admin/site_category/new", http.StatusFound)
+		http.Redirect(handler.ResponseWriter, handler.Request, "/admin/site_category/new", http.StatusFound)
 	}
 
-	renderTemplate(w, r, "site_category/new.html", ADMIN, map[string]interface{}{"form": form})
+	renderTemplate(handler, "site_category/new.html", ADMIN, map[string]interface{}{"form": form})
 }

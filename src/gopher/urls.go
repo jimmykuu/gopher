@@ -6,16 +6,29 @@ package gopher
 
 import (
 	"net/http"
+	"time"
 )
 
 type Handler struct {
+	ResponseWriter http.ResponseWriter
+	Request        *http.Request
+	StartTime      time.Time
+}
+
+func NewHandler(w http.ResponseWriter, r *http.Request) Handler {
+	return Handler{w, r, time.Now()}
+}
+
+type HandlerFunc func(Handler)
+
+type Route struct {
 	URL         string
 	Permission  int
-	HandlerFunc http.HandlerFunc
+	HandlerFunc HandlerFunc
 }
 
 var (
-	handlers = []Handler{
+	routes = []Route{
 		{"/", Everyone, indexHandler},
 		{"/about", Everyone, staticHandler("about.html")},
 		{"/faq", Everyone, staticHandler("faq.html")},
