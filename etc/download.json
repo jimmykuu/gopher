@@ -12,7 +12,7 @@
             }, {
                 "filename": "go1.3.darwin-386-osx10.6.tar.gz",
                 "summary": "go1.3 Mac OS X (x86 32-bit) tarball",
-                "size": "42.3 MB",
+                "size": "42.4 MB",
                 "sha1": "159d2797bee603a80b829c4404c1fb2ee089cc00",
                 "url": "http://golang.org/dl/go1.3.darwin-386-osx10.6.tar.gz"
             }, {
@@ -36,7 +36,7 @@
             }, {
                 "filename": "go1.3.darwin-amd64-osx10.6.tar.gz",
                 "summary": "go1.3 Mac OS X (x86 64-bit) tarball",
-                "size": "50.5 MB",
+                "size": "50.6 MB",
                 "sha1": "82ffcfb7962ca7114a1ee0a96cac51c53061ea05",
                 "url": "http://golang.org/dl/go1.3.darwin-amd64-osx10.6.tar.gz"
             }, {
