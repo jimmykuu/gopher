@@ -23,6 +23,8 @@ func handlerFun(route Route) http.HandlerFunc {
 			}()*/
 
 		handler := NewHandler(w, r)
+		defer handler.Session.Close()
+
 		url := r.Method + " " + r.URL.Path
 		if r.URL.RawQuery != "" {
 			url += "?" + r.URL.RawQuery

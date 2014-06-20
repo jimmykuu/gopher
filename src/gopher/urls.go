@@ -7,16 +7,33 @@ package gopher
 import (
 	"net/http"
 	"time"
+
+	"labix.org/v2/mgo"
 )
 
 type Handler struct {
 	ResponseWriter http.ResponseWriter
 	Request        *http.Request
 	StartTime      time.Time
+	Session        *mgo.Session
+	DB             *mgo.Database
 }
 
 func NewHandler(w http.ResponseWriter, r *http.Request) Handler {
-	return Handler{w, r, time.Now()}
+	session, err := mgo.Dial(Config.DB)
+	if err != nil {
+		panic(err)
+	}
+
+	session.SetMode(mgo.Monotonic, true)
+
+	return Handler{
+		ResponseWriter: w,
+		Request:        r,
+		StartTime:      time.Now(),
+		Session:        session,
+		DB:             session.DB("gopher"),
+	}
 }
 
 type HandlerFunc func(Handler)

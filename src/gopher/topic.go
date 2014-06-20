@@ -25,14 +25,14 @@ func topicsHandler(handler Handler, conditions bson.M, sort string, url string, 
 	}
 
 	var hotNodes []Node
-	c := DB.C(NODES)
+	c := handler.DB.C(NODES)
 	c.Find(bson.M{"topiccount": bson.M{"$gt": 0}}).Sort("-topiccount").Limit(10).All(&hotNodes)
 
 	var status Status
-	c = DB.C(STATUS)
+	c = handler.DB.C(STATUS)
 	c.Find(nil).One(&status)
 
-	c = DB.C(CONTENTS)
+	c = handler.DB.C(CONTENTS)
 
 	pagination := NewPagination(c.Find(conditions).Sort(sort), url, PerPage)
 
