@@ -5,9 +5,11 @@
 package gopher
 
 import (
+	"fmt"
 	"html/template"
 	"time"
 
+	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )
 
@@ -67,6 +69,14 @@ type User struct {
 	Index        int
 }
 
+func getDB() (*mgo.Database, error) {
+	session, err := mgo.Dial(Config.DB)
+	if err != nil {
+		return nil, err
+	}
+	return session.DB("gopher"), nil
+}
+
 // 是否是默认头像
 func (u *User) IsDefaultAvatar(avatar string) bool {
 	filename := u.Avatar
@@ -90,7 +100,11 @@ func (u *User) AvatarImgSrc() string {
 
 // 用户发表的最近10个主题
 func (u *User) LatestTopics() *[]Topic {
-	c := DB.C("contents")
+	db, err := getDB()
+	if err != nil {
+		fmt.Println(err)
+	}
+	c := db.C("contents")
 	var topics []Topic
 
 	c.Find(bson.M{"content.createdby": u.Id_, "content.type": TypeTopic}).Sort("-content.createdat").Limit(10).All(&topics)
@@ -100,7 +114,11 @@ func (u *User) LatestTopics() *[]Topic {
 
 // 用户的最近10个回复
 func (u *User) LatestReplies() *[]Comment {
-	c := DB.C("comments")
+	db, err := getDB()
+	if err != nil {
+		fmt.Println(err)
+	}
+	c := db.C("comments")
 	var replies []Comment
 
 	c.Find(bson.M{"createdby": u.Id_, "type": TypeTopic}).Sort("-createdat").Limit(10).All(&replies)
@@ -155,7 +173,11 @@ type Content struct {
 }
 
 func (c *Content) Creater() *User {
-	c_ := DB.C("users")
+	db, err := getDB()
+	if err != nil {
+		fmt.Println(err)
+	}
+	c_ := db.C("users")
 	user := User{}
 	c_.Find(bson.M{"_id": c.CreatedBy}).One(&user)
 
@@ -163,11 +185,15 @@ func (c *Content) Creater() *User {
 }
 
 func (c *Content) Updater() *User {
+	db, err := getDB()
+	if err != nil {
+		fmt.Println(err)
+	}
 	if c.UpdatedBy == "" {
 		return nil
 	}
 
-	c_ := DB.C("users")
+	c_ := db.C("users")
 	user := User{}
 	c_.Find(bson.M{"_id": bson.ObjectIdHex(c.UpdatedBy)}).One(&user)
 
@@ -175,7 +201,11 @@ func (c *Content) Updater() *User {
 }
 
 func (c *Content) Comments() *[]Comment {
-	c_ := DB.C("comments")
+	db, err := getDB()
+	if err != nil {
+		fmt.Println(err)
+	}
+	c_ := db.C("comments")
 	var comments []Comment
 
 	c_.Find(bson.M{"contentid": c.Id_}).All(&comments)
@@ -185,9 +215,13 @@ func (c *Content) Comments() *[]Comment {
 
 // 是否有权编辑主题
 func (c *Content) CanEdit(username string) bool {
+	db, err := getDB()
+	if err != nil {
+		fmt.Println(err)
+	}
 	var user User
-	c_ := DB.C("users")
-	err := c_.Find(bson.M{"username": username}).One(&user)
+	c_ := db.C("users")
+	err = c_.Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		return false
 	}
@@ -200,9 +234,13 @@ func (c *Content) CanEdit(username string) bool {
 }
 
 func (c *Content) CanDelete(username string) bool {
+	db, err := getDB()
+	if err != nil {
+		fmt.Println(err)
+	}
 	var user User
-	c_ := DB.C("users")
-	err := c_.Find(bson.M{"username": username}).One(&user)
+	c_ := db.C("users")
+	err = c_.Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		return false
 	}
@@ -221,7 +259,11 @@ type Topic struct {
 
 // 主题所属节点
 func (t *Topic) Node() *Node {
-	c := DB.C("nodes")
+	db, err := getDB()
+	if err != nil {
+		fmt.Print(err)
+	}
+	c := db.C("nodes")
 	node := Node{}
 	c.Find(bson.M{"_id": t.NodeId}).One(&node)
 
@@ -241,14 +283,18 @@ func (t *Topic) Format(tm time.Time) string {
 
 // 主题的最近的一个回复
 func (t *Topic) LatestReplier() *User {
+	db, err := getDB()
+	if err != nil {
+		fmt.Println(err)
+	}
 	if t.LatestReplierId == "" {
 		return nil
 	}
 
-	c := DB.C("users")
+	c := db.C("users")
 	user := User{}
 
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(t.LatestReplierId)}).One(&user)
+	err = c.Find(bson.M{"_id": bson.ObjectIdHex(t.LatestReplierId)}).One(&user)
 
 	if err != nil {
 		return nil
@@ -274,8 +320,12 @@ type SiteCategory struct {
 
 // 分类下的所有站点
 func (sc *SiteCategory) Sites() *[]Site {
+	db, err := getDB()
+	if err != nil {
+		fmt.Println(err)
+	}
 	var sites []Site
-	c := DB.C("contents")
+	c := db.C("contents")
 	c.Find(bson.M{"categoryid": sc.Id_, "content.type": TypeSite}).All(&sites)
 
 	return &sites
@@ -306,7 +356,11 @@ type Article struct {
 
 // 主题所属类型
 func (a *Article) Category() *ArticleCategory {
-	c := DB.C("articlecategories")
+	db, err := getDB()
+	if err != nil {
+		fmt.Println(err)
+	}
+	c := db.C("articlecategories")
 	category := ArticleCategory{}
 	c.Find(bson.M{"_id": a.CategoryId}).One(&category)
 
@@ -328,7 +382,11 @@ type Comment struct {
 
 // 评论人
 func (c *Comment) Creater() *User {
-	c_ := DB.C("users")
+	db, err := getDB()
+	if err != nil {
+		fmt.Println(err)
+	}
+	c_ := db.C("users")
 	user := User{}
 	c_.Find(bson.M{"_id": c.CreatedBy}).One(&user)
 
@@ -337,9 +395,13 @@ func (c *Comment) Creater() *User {
 
 // 是否有权删除评论，只允许管理员删除
 func (c *Comment) CanDelete(username string) bool {
+	db, err := getDB()
+	if err != nil {
+		fmt.Println(err)
+	}
 	var user User
-	c_ := DB.C("users")
-	err := c_.Find(bson.M{"username": username}).One(&user)
+	c_ := db.C("users")
+	err = c_.Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		return false
 	}
@@ -348,9 +410,13 @@ func (c *Comment) CanDelete(username string) bool {
 
 // 主题
 func (c *Comment) Topic() *Topic {
+	db, err := getDB()
+	if err != nil {
+		fmt.Println(err)
+	}
 	// 内容
 	var topic Topic
-	c_ := DB.C("contents")
+	c_ := db.C("contents")
 	c_.Find(bson.M{"_id": c.ContentId, "content.type": TypeTopic}).One(&topic)
 	return &topic
 }
@@ -371,8 +437,12 @@ type Package struct {
 }
 
 func (p *Package) Category() *PackageCategory {
+	db, err := getDB()
+	if err != nil {
+		fmt.Println(err)
+	}
 	category := PackageCategory{}
-	c := DB.C("packagecategories")
+	c := db.C("packagecategories")
 	c.Find(bson.M{"_id": p.CategoryId}).One(&category)
 
 	return &category

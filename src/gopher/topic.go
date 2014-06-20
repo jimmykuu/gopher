@@ -47,7 +47,7 @@ func topicsHandler(handler Handler, conditions bson.M, sort string, url string, 
 	query.All(&topics)
 
 	var linkExchanges []LinkExchange
-	c = DB.C(LINK_EXCHANGES)
+	c = handler.DB.C(LINK_EXCHANGES)
 	c.Find(nil).All(&linkExchanges)
 
 	renderTemplate(handler, "index.html", BASE, map[string]interface{}{
@@ -86,7 +86,7 @@ func newTopicHandler(handler Handler) {
 	nodeId := mux.Vars(handler.Request)["node"]
 
 	var nodes []Node
-	c := DB.C(NODES)
+	c := handler.DB.C(NODES)
 	c.Find(nil).All(&nodes)
 
 	var choices = []wtforms.Choice{wtforms.Choice{}} // 第一个选项为空
@@ -112,10 +112,10 @@ func newTopicHandler(handler Handler) {
 			username = username.(string)
 
 			user := User{}
-			c = DB.C(USERS)
+			c = handler.DB.C(USERS)
 			c.Find(bson.M{"username": username}).One(&user)
 
-			c = DB.C(CONTENTS)
+			c = handler.DB.C(CONTENTS)
 
 			id_ := bson.NewObjectId()
 
@@ -146,10 +146,10 @@ func newTopicHandler(handler Handler) {
 			}
 
 			// 增加Node.TopicCount
-			c = DB.C(NODES)
+			c = handler.DB.C(NODES)
 			c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
 
-			c = DB.C(STATUS)
+			c = handler.DB.C(STATUS)
 
 			c.Update(nil, bson.M{"$inc": bson.M{"topiccount": 1}})
 
@@ -175,7 +175,7 @@ func newTopicHandler(handler Handler) {
 // URL: /t/{topicId}/edit
 // 编辑主题
 func editTopicHandler(handler Handler) {
-	user, _ := currentUser(handler.Request)
+	user, _ := currentUser(handler)
 
 	topicId := mux.Vars(handler.Request)["topicId"]
 
@@ -184,7 +184,7 @@ func editTopicHandler(handler Handler) {
 		return
 	}
 
-	c := DB.C(CONTENTS)
+	c := handler.DB.C(CONTENTS)
 	var topic Topic
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": TypeTopic}).One(&topic)
 
@@ -199,7 +199,7 @@ func editTopicHandler(handler Handler) {
 	}
 
 	var nodes []Node
-	c = DB.C(NODES)
+	c = handler.DB.C(NODES)
 	c.Find(nil).All(&nodes)
 
 	var choices = []wtforms.Choice{wtforms.Choice{}} // 第一个选项为空
@@ -224,7 +224,7 @@ func editTopicHandler(handler Handler) {
 			html2 = strings.Replace(html2, "<pre>", `<pre class="prettyprint linenums">`, -1)
 
 			nodeId := bson.ObjectIdHex(form.Value("node"))
-			c = DB.C(CONTENTS)
+			c = handler.DB.C(CONTENTS)
 			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{
 				"nodeid":            nodeId,
 				"content.title":     form.Value("title"),
@@ -236,7 +236,7 @@ func editTopicHandler(handler Handler) {
 
 			// 如果两次的节点不同,更新节点的主题数量
 			if topic.NodeId != nodeId {
-				c = DB.C(NODES)
+				c = handler.DB.C(NODES)
 				c.Update(bson.M{"_id": topic.NodeId}, bson.M{"$inc": bson.M{"topiccount": -1}})
 				c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
 			}
@@ -265,8 +265,8 @@ func editTopicHandler(handler Handler) {
 func showTopicHandler(handler Handler) {
 	vars := mux.Vars(handler.Request)
 	topicId := vars["topicId"]
-	c := DB.C(CONTENTS)
-	cusers := DB.C(USERS)
+	c := handler.DB.C(CONTENTS)
+	cusers := handler.DB.C(USERS)
 	topic := Topic{}
 
 	if !bson.IsObjectIdHex(topicId) {
@@ -283,7 +283,7 @@ func showTopicHandler(handler Handler) {
 
 	c.UpdateId(bson.ObjectIdHex(topicId), bson.M{"$inc": bson.M{"content.hits": 1}})
 
-	user, has := currentUser(handler.Request)
+	user, has := currentUser(handler)
 	if has {
 		replies := user.RecentReplies
 		ats := user.RecentAts
@@ -336,7 +336,7 @@ func showTopicHandler(handler Handler) {
 func topicInNodeHandler(handler Handler) {
 	vars := mux.Vars(handler.Request)
 	nodeId := vars["node"]
-	c := DB.C(NODES)
+	c := handler.DB.C(NODES)
 
 	node := Node{}
 	err := c.Find(bson.M{"id": nodeId}).One(&node)
@@ -353,7 +353,7 @@ func topicInNodeHandler(handler Handler) {
 		return
 	}
 
-	c = DB.C(CONTENTS)
+	c = handler.DB.C(CONTENTS)
 
 	pagination := NewPagination(c.Find(bson.M{"nodeid": node.Id_, "content.type": TypeTopic}).Sort("-latestrepliedat"), "/", 20)
 
@@ -384,7 +384,7 @@ func deleteTopicHandler(handler Handler) {
 		return
 	}
 
-	c := DB.C(CONTENTS)
+	c := handler.DB.C(CONTENTS)
 
 	topic := Topic{}
 
@@ -396,21 +396,21 @@ func deleteTopicHandler(handler Handler) {
 	}
 
 	// Node统计数减一
-	c = DB.C(NODES)
+	c = handler.DB.C(NODES)
 	c.Update(bson.M{"_id": topic.NodeId}, bson.M{"$inc": bson.M{"topiccount": -1}})
 
-	c = DB.C(STATUS)
+	c = handler.DB.C(STATUS)
 	// 统计的主题数减一，减去统计的回复数减去该主题的回复数
 	c.Update(nil, bson.M{"$inc": bson.M{"topiccount": -1, "replycount": -topic.CommentCount}})
 
 	//删除评论
-	c = DB.C(COMMENTS)
+	c = handler.DB.C(COMMENTS)
 	if topic.CommentCount > 0 {
 		c.Remove(bson.M{"contentid": topic.Id_})
 	}
 
 	// 删除Topic记录
-	c = DB.C(CONTENTS)
+	c = handler.DB.C(CONTENTS)
 	c.Remove(bson.M{"_id": topicId})
 
 	http.Redirect(handler.ResponseWriter, handler.Request, "/", http.StatusFound)
