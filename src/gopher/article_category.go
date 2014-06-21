@@ -11,7 +11,7 @@ import (
 // 列出所有的文章分类
 func adminListArticleCategoriesHandler(handler Handler) {
 	var categories []SiteCategory
-	c := DB.C(ARTICLE_CATEGORIES)
+	c := handler.DB.C(ARTICLE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
 	renderTemplate(handler, "admin/article_categories.html", ADMIN, map[string]interface{}{"categories": categories})
@@ -30,7 +30,7 @@ func adminNewArticleCategoryHandler(handler Handler) {
 			return
 		}
 
-		c := DB.C(ARTICLE_CATEGORIES)
+		c := handler.DB.C(ARTICLE_CATEGORIES)
 		var category ArticleCategory
 		err := c.Find(bson.M{"name": form.Value("name")}).One(&category)
 

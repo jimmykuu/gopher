@@ -21,11 +21,11 @@ import (
 func packagesHandler(handler Handler) {
 	var categories []PackageCategory
 
-	c := DB.C(PACKAGE_CATEGORIES)
+	c := handler.DB.C(PACKAGE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
 	var latestPackages []Package
-	c = DB.C(CONTENTS)
+	c = handler.DB.C(CONTENTS)
 	c.Find(bson.M{"content.type": TypePackage}).Sort("-content.createdat").Limit(10).All(&latestPackages)
 
 	renderTemplate(handler, "package/index.html", BASE, map[string]interface{}{
@@ -38,11 +38,11 @@ func packagesHandler(handler Handler) {
 // URL: /package/new
 // 新建第三方包
 func newPackageHandler(handler Handler) {
-	user, _ := currentUser(handler.Request)
+	user, _ := currentUser(handler)
 
 	var categories []PackageCategory
 
-	c := DB.C(PACKAGE_CATEGORIES)
+	c := handler.DB.C(PACKAGE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
 	var choices []wtforms.Choice
@@ -60,7 +60,7 @@ func newPackageHandler(handler Handler) {
 	)
 
 	if handler.Request.Method == "POST" && form.Validate(handler.Request) {
-		c = DB.C(CONTENTS)
+		c = handler.DB.C(CONTENTS)
 		id := bson.NewObjectId()
 		categoryId := bson.ObjectIdHex(form.Value("category_id"))
 		html := form.Value("html")
@@ -80,7 +80,7 @@ func newPackageHandler(handler Handler) {
 			Url:        form.Value("url"),
 		})
 
-		c = DB.C(PACKAGE_CATEGORIES)
+		c = handler.DB.C(PACKAGE_CATEGORIES)
 		// 增加数量
 		c.Update(bson.M{"_id": categoryId}, bson.M{"$inc": bson.M{"packagecount": 1}})
 
@@ -98,7 +98,7 @@ func newPackageHandler(handler Handler) {
 // URL: /package/{packageId}/edit
 // 编辑第三方包
 func editPackageHandler(handler Handler) {
-	user, _ := currentUser(handler.Request)
+	user, _ := currentUser(handler)
 
 	vars := mux.Vars(handler.Request)
 	packageId := vars["packageId"]
@@ -109,7 +109,7 @@ func editPackageHandler(handler Handler) {
 	}
 
 	package_ := Package{}
-	c := DB.C(CONTENTS)
+	c := handler.DB.C(CONTENTS)
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(packageId), "content.type": TypePackage}).One(&package_)
 
 	if err != nil {
@@ -124,7 +124,7 @@ func editPackageHandler(handler Handler) {
 
 	var categories []PackageCategory
 
-	c = DB.C(PACKAGE_CATEGORIES)
+	c = handler.DB.C(PACKAGE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
 	var choices []wtforms.Choice
@@ -142,7 +142,7 @@ func editPackageHandler(handler Handler) {
 	)
 
 	if handler.Request.Method == "POST" && form.Validate(handler.Request) {
-		c = DB.C(CONTENTS)
+		c = handler.DB.C(CONTENTS)
 		categoryId := bson.ObjectIdHex(form.Value("category_id"))
 		html := form.Value("html")
 		html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
@@ -156,7 +156,7 @@ func editPackageHandler(handler Handler) {
 			"content.updatedat": time.Now(),
 		}})
 
-		c = DB.C(PACKAGE_CATEGORIES)
+		c = handler.DB.C(PACKAGE_CATEGORIES)
 		if categoryId != package_.CategoryId {
 			// 减少原来类别的包数量
 			c.Update(bson.M{"_id": package_.CategoryId}, bson.M{"$inc": bson.M{"packagecount": -1}})
@@ -182,7 +182,7 @@ func editPackageHandler(handler Handler) {
 func listPackagesHandler(handler Handler) {
 	vars := mux.Vars(handler.Request)
 	categoryId := vars["categoryId"]
-	c := DB.C(PACKAGE_CATEGORIES)
+	c := handler.DB.C(PACKAGE_CATEGORIES)
 
 	category := PackageCategory{}
 	err := c.Find(bson.M{"id": categoryId}).One(&category)
@@ -194,12 +194,12 @@ func listPackagesHandler(handler Handler) {
 
 	var packages []Package
 
-	c = DB.C(CONTENTS)
+	c = handler.DB.C(CONTENTS)
 	c.Find(bson.M{"categoryid": category.Id_, "content.type": TypePackage}).Sort("name").All(&packages)
 
 	var categories []PackageCategory
 
-	c = DB.C(PACKAGE_CATEGORIES)
+	c = handler.DB.C(PACKAGE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
 	renderTemplate(handler, "package/list.html", BASE, map[string]interface{}{
@@ -222,7 +222,7 @@ func showPackageHandler(handler Handler) {
 		return
 	}
 
-	c := DB.C(CONTENTS)
+	c := handler.DB.C(CONTENTS)
 
 	package_ := Package{}
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(packageId), "content.type": TypePackage}).One(&package_)
@@ -235,7 +235,7 @@ func showPackageHandler(handler Handler) {
 
 	var categories []PackageCategory
 
-	c = DB.C(PACKAGE_CATEGORIES)
+	c = handler.DB.C(PACKAGE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
 	renderTemplate(handler, "package/show.html", BASE, map[string]interface{}{
@@ -256,7 +256,7 @@ func deletePackageHandler(handler Handler) {
 		return
 	}
 
-	c := DB.C(CONTENTS)
+	c := handler.DB.C(CONTENTS)
 
 	package_ := Package{}
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(packageId), "content.type": TypePackage}).One(&package_)
@@ -268,7 +268,7 @@ func deletePackageHandler(handler Handler) {
 	c.Remove(bson.M{"_id": bson.ObjectIdHex(packageId)})
 
 	// 修改分类下的数量
-	c = DB.C(PACKAGE_CATEGORIES)
+	c = handler.DB.C(PACKAGE_CATEGORIES)
 	c.Update(bson.M{"_id": package_.CategoryId}, bson.M{"$inc": bson.M{"packagecount": -1}})
 
 	http.Redirect(handler.ResponseWriter, handler.Request, "/packages", http.StatusFound)

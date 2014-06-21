@@ -30,7 +30,7 @@ const (
 )
 
 var (
-	DB          *mgo.Database
+	//	DB          *mgo.Database
 	store       *sessions.CookieStore
 	fileVersion map[string]string = make(map[string]string) // {path: version}
 	utils       *Utils
@@ -98,7 +98,12 @@ func (u *Utils) FormatTime(t time.Time) string {
 }
 
 func (u *Utils) UserInfo(username string) template.HTML {
-	c := DB.C(USERS)
+	db, err := getDB()
+	if err != nil {
+		fmt.Print(err)
+		return template.HTML("")
+	}
+	c := db.C(USERS)
 
 	user := User{}
 	// 检查用户名
@@ -116,9 +121,13 @@ func (u *Utils) UserInfo(username string) template.HTML {
 /*mark ggaaooppeenngg*/
 func (u *Utils) RecentReplies(username string) template.HTML {
 	return template.HTML("")
-
-	c := DB.C(USERS)
-	ccontens := DB.C(CONTENTS)
+	db, err := getDB()
+	if err != nil {
+		fmt.Print(err)
+		return template.HTML("")
+	}
+	c := db.C(USERS)
+	ccontens := db.C(CONTENTS)
 	user := User{}
 	// 检查用户名
 	c.Find(bson.M{"username": username}).One(&user)
@@ -137,10 +146,10 @@ func (u *Utils) RecentReplies(username string) template.HTML {
 	var ats []string
 	for _, v := range user.RecentAts {
 		var topic Topic
-		if err := ccontens.Find(bson.M{"_id": bson.ObjectIdHex(v)}).One(&topic); err != nil {
+		if err := ccontens.Find(bson.M{"_id": v.ContentId}).One(&topic); err != nil {
 			fmt.Println(err)
 		}
-		ats = append(ats, fmt.Sprintf(anchor, topic.Id_.Hex(), topic.Title))
+		ats = append(ats, fmt.Sprintf(anchor, topic.Id_.Hex()+"#"+v.CommentId.Hex(), topic.Title))
 	}
 	a := strings.Join(ats, "\n")
 	tpl := `<h4><small>最近回复</small></h4>
@@ -228,13 +237,23 @@ func (u *Utils) RenderInputH(form wtforms.Form, fieldStr string, labelWidth, inp
 }
 
 func (u *Utils) HasAd(position string) bool {
-	c := DB.C(ADS)
+	db, err := getDB()
+	if err != nil {
+		fmt.Print(err)
+		return false
+	}
+	c := db.C(ADS)
 	count, _ := c.Find(bson.M{"position": position}).Limit(1).Count()
 	return count == 1
 }
 
 func (u *Utils) AdCode(position string) template.HTML {
-	c := DB.C(ADS)
+	db, err := getDB()
+	if err != nil {
+		fmt.Print(err)
+		return template.HTML("")
+	}
+	c := db.C(ADS)
 	var ad AD
 	c.Find(bson.M{"position": position}).Limit(1).One(&ad)
 
@@ -319,7 +338,7 @@ func init() {
 
 	session.SetMode(mgo.Monotonic, true)
 
-	DB = session.DB("gopher")
+	db := session.DB("gopher")
 
 	store = sessions.NewCookieStore([]byte(Config.CookieSecret))
 
@@ -327,7 +346,7 @@ func init() {
 
 	// 如果没有status,创建
 	var status Status
-	c := DB.C(STATUS)
+	c := db.C(STATUS)
 	err = c.Find(nil).One(&status)
 
 	if err != nil {
@@ -353,7 +372,7 @@ func init() {
 		fmt.Println("你没有设置超级账户,请在config.json中的superusers中设置,如有多个账户,用逗号分开")
 	}
 
-	c = DB.C(USERS)
+	c = db.C(USERS)
 	var users []User
 	c.Find(bson.M{"issuperuser": true}).All(&users)
 
@@ -370,7 +389,7 @@ func init() {
 	}
 
 	// 生成users.json字符串
-	generateUsersJson()
+	generateUsersJson(db)
 }
 
 func staticHandler(templateFile string) HandlerFunc {
@@ -413,18 +432,18 @@ func commentHandler(handler Handler) {
 		return
 	}
 
-	user, _ := currentUser(handler.Request)
+	user, _ := currentUser(handler)
 
 	vars := mux.Vars(handler.Request)
 	contentId := vars["contentId"]
 
 	var temp map[string]interface{}
-	c := DB.C(CONTENTS)
+	c := handler.DB.C(CONTENTS)
 	c.Find(bson.M{"_id": bson.ObjectIdHex(contentId)}).One(&temp)
 
 	temp2 := temp["content"].(map[string]interface{})
-	var contentCreator bson.ObjectId
-	contentCreator = temp2["createdby"].(bson.ObjectId)
+	//var contentCreator bson.ObjectId
+	//contentCreator = temp2["createdby"].(bson.ObjectId)
 	type_ := temp2["type"].(int)
 
 	var url string
@@ -447,7 +466,7 @@ func commentHandler(handler Handler) {
 	Id_ := bson.NewObjectId()
 	now := time.Now()
 
-	c = DB.C(COMMENTS)
+	c = handler.DB.C(COMMENTS)
 	c.Insert(&Comment{
 		Id_:       Id_,
 		Type:      type_,
@@ -460,48 +479,50 @@ func commentHandler(handler Handler) {
 
 	if type_ == TypeTopic {
 		// 修改最后回复用户Id和时间
-		c = DB.C(CONTENTS)
+		c = handler.DB.C(CONTENTS)
 		c.Update(bson.M{"_id": bson.ObjectIdHex(contentId)}, bson.M{"$set": bson.M{"latestreplierid": user.Id_.Hex(), "latestrepliedat": now}})
 
 		// 修改中的回复数量
-		c = DB.C(STATUS)
+		c = handler.DB.C(STATUS)
 		c.Update(nil, bson.M{"$inc": bson.M{"replycount": 1}})
 		/*mark ggaaooppeenngg*/
 		//修改用户的最近回复
-		c = DB.C(USERS)
-		//查找评论中at的用户,并且更新recentAts
-		users := findAts(content)
-		for _, v := range users {
-			var user User
-			err := c.Find(bson.M{"username": v}).One(&user)
-			if err != nil {
-				fmt.Println(err)
-			} else {
-				user.RecentAts = append(user.RecentAts, contentId)
-				if err = c.Update(bson.M{"username": user.Username}, bson.M{"$set": bson.M{"recentats": user.RecentAts}}); err != nil {
+		/*
+			c = handler.DB.C(USERS)
+			//查找评论中at的用户,并且更新recentAts
+			users := findAts(content)
+			for _, v := range users {
+				var user User
+				err := c.Find(bson.M{"username": v}).One(&user)
+				if err != nil {
+					fmt.Println(err)
+				} else {
+					user.RecentAts = append(user.RecentAts, At{bson.ObjectIdHex(contentId), Id_})
+					if err = c.Update(bson.M{"username": user.Username}, bson.M{"$set": bson.M{"recentats": user.RecentAts}}); err != nil {
+						fmt.Println(err)
+					}
+				}
+			}
+
+			//修改用户的最近回复
+			//该最近回复提醒通过url被点击的时候会被disactive
+			//更新最近的评论
+			//自己的评论就不提示了
+			if contentCreator.Hex() != user.Id_.Hex() {
+				var recentreplies []string
+				var Creater User
+				err := c.Find(bson.M{"_id": contentCreator}).One(&Creater)
+				if err != nil {
+					fmt.Println(err)
+				}
+				recentreplies = Creater.RecentReplies
+				//添加最近评论所在的主题id
+				recentreplies = append(recentreplies, contentId)
+				if err = c.Update(bson.M{"_id": contentCreator}, bson.M{"$set": bson.M{"recentreplies": recentreplies}}); err != nil {
 					fmt.Println(err)
 				}
 			}
-		}
-
-		//修改用户的最近回复
-		//该最近回复提醒通过url被点击的时候会被disactive
-		//更新最近的评论
-		//自己的评论就不提示了
-		if contentCreator.Hex() != user.Id_.Hex() {
-			var recentreplies []string
-			var Creater User
-			err := c.Find(bson.M{"_id": contentCreator}).One(&Creater)
-			if err != nil {
-				fmt.Println(err)
-			}
-			recentreplies = Creater.RecentReplies
-			//添加最近评论所在的主题id
-			recentreplies = append(recentreplies, contentId)
-			if err = c.Update(bson.M{"_id": contentCreator}, bson.M{"$set": bson.M{"recentreplies": recentreplies}}); err != nil {
-				fmt.Println(err)
-			}
-		}
+		*/
 	}
 
 	http.Redirect(handler.ResponseWriter, handler.Request, url, http.StatusFound)
@@ -513,7 +534,7 @@ func deleteCommentHandler(handler Handler) {
 	vars := mux.Vars(handler.Request)
 	var commentId string = vars["commentId"]
 
-	c := DB.C(COMMENTS)
+	c := handler.DB.C(COMMENTS)
 	var comment Comment
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(commentId)}).One(&comment)
 
@@ -524,7 +545,7 @@ func deleteCommentHandler(handler Handler) {
 
 	c.Remove(bson.M{"_id": comment.Id_})
 
-	c = DB.C(CONTENTS)
+	c = handler.DB.C(CONTENTS)
 	c.Update(bson.M{"_id": comment.ContentId}, bson.M{"$inc": bson.M{"content.commentcount": -1}})
 
 	if comment.Type == TypeTopic {
@@ -537,16 +558,16 @@ func deleteCommentHandler(handler Handler) {
 			} else {
 				// 如果删除的是该主题最后一个回复，设置主题的最新回复id，和时间
 				var latestComment Comment
-				c = DB.C("comments")
+				c = handler.DB.C("comments")
 				c.Find(bson.M{"contentid": topic.Id_}).Sort("-createdat").Limit(1).One(&latestComment)
 
-				c = DB.C("contents")
+				c = handler.DB.C("contents")
 				c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{"latestreplierid": latestComment.CreatedBy.Hex(), "latestrepliedat": latestComment.CreatedAt}})
 			}
 		}
 
 		// 修改中的回复数量
-		c = DB.C(STATUS)
+		c = handler.DB.C(STATUS)
 		c.Update(nil, bson.M{"$inc": bson.M{"replycount": -1}})
 	}
 
@@ -598,7 +619,7 @@ func searchHandler(handler Handler) {
 		markdownConditions = append(markdownConditions, bson.M{"content.markdown": bson.M{"$regex": bson.RegEx{keyword, "i"}}})
 	}
 
-	c := DB.C(CONTENTS)
+	c := handler.DB.C(CONTENTS)
 
 	var pagination *Pagination
 

@@ -20,6 +20,7 @@ import (
 	. "github.com/qiniu/api/conf"
 	qiniu_io "github.com/qiniu/api/io"
 	"github.com/qiniu/api/rs"
+	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )
 
@@ -35,9 +36,9 @@ var defaultAvatars = []string{
 }
 
 // 生成users.json字符串
-func generateUsersJson() {
+func generateUsersJson(db *mgo.Database) {
 	var users []User
-	c := DB.C(USERS)
+	c := db.C(USERS)
 	err := c.Find(nil).All(&users)
 	if err != nil {
 		panic(err)
@@ -63,7 +64,8 @@ func encryptPassword(password string) string {
 }
 
 // 返回当前用户
-func currentUser(r *http.Request) (*User, bool) {
+func currentUser(handler Handler) (*User, bool) {
+	r := handler.Request
 	session, _ := store.Get(r, "user")
 	username, ok := session.Values["username"]
 
@@ -75,7 +77,7 @@ func currentUser(r *http.Request) (*User, bool) {
 
 	user := User{}
 
-	c := DB.C(USERS)
+	c := handler.DB.C(USERS)
 
 	// 检查用户名
 	err := c.Find(bson.M{"username": username}).One(&user)
@@ -98,7 +100,7 @@ func signupHandler(handler Handler) {
 
 	if handler.Request.Method == "POST" {
 		if form.Validate(handler.Request) {
-			c := DB.C(USERS)
+			c := handler.DB.C(USERS)
 
 			result := User{}
 
@@ -121,7 +123,7 @@ func signupHandler(handler Handler) {
 				return
 			}
 
-			c2 := DB.C(STATUS)
+			c2 := handler.DB.C(STATUS)
 			var status Status
 			c2.Find(nil).One(&status)
 
@@ -147,7 +149,7 @@ func signupHandler(handler Handler) {
 			c2.Update(nil, bson.M{"$inc": bson.M{"userindex": 1, "usercount": 1}})
 
 			// 重新生成users.json字符串
-			generateUsersJson()
+			generateUsersJson(handler.DB)
 
 			// 发送邮件
 			/*
@@ -186,7 +188,7 @@ func activateHandler(handler Handler) {
 
 	var user User
 
-	c := DB.C(USERS)
+	c := handler.DB.C(USERS)
 
 	err := c.Find(bson.M{"validatecode": code}).One(&user)
 
@@ -197,7 +199,7 @@ func activateHandler(handler Handler) {
 
 	c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"isactive": true, "validatecode": ""}})
 
-	c = DB.C(STATUS)
+	c = handler.DB.C(STATUS)
 	var status Status
 	c.Find(nil).One(&status)
 	c.Update(bson.M{"_id": status.Id_}, bson.M{"$inc": bson.M{"usercount": 1}})
@@ -218,7 +220,7 @@ func signinHandler(handler Handler) {
 
 	if handler.Request.Method == "POST" {
 		if form.Validate(handler.Request) {
-			c := DB.C(USERS)
+			c := handler.DB.C(USERS)
 			user := User{}
 
 			err := c.Find(bson.M{"username": form.Value("username")}).One(&user)
@@ -273,7 +275,7 @@ func followHandler(handler Handler) {
 	vars := mux.Vars(handler.Request)
 	username := vars["username"]
 
-	currUser, _ := currentUser(handler.Request)
+	currUser, _ := currentUser(handler)
 
 	//不能关注自己
 	if currUser.Username == username {
@@ -282,7 +284,7 @@ func followHandler(handler Handler) {
 	}
 
 	user := User{}
-	c := DB.C(USERS)
+	c := handler.DB.C(USERS)
 	err := c.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
@@ -304,7 +306,7 @@ func unfollowHandler(handler Handler) {
 	vars := mux.Vars(handler.Request)
 	username := vars["username"]
 
-	currUser, _ := currentUser(handler.Request)
+	currUser, _ := currentUser(handler)
 
 	//不能取消关注自己
 	if currUser.Username == username {
@@ -313,7 +315,7 @@ func unfollowHandler(handler Handler) {
 	}
 
 	user := User{}
-	c := DB.C(USERS)
+	c := handler.DB.C(USERS)
 	err := c.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
@@ -335,7 +337,7 @@ func unfollowHandler(handler Handler) {
 // URL /profile
 // 用户设置页面,显示用户设置,用户头像,密码修改
 func profileHandler(handler Handler) {
-	user, _ := currentUser(handler.Request)
+	user, _ := currentUser(handler)
 
 	profileForm := wtforms.NewForm(
 		wtforms.NewTextField("email", "电子邮件", user.Email, wtforms.Email{}),
@@ -349,7 +351,7 @@ func profileHandler(handler Handler) {
 
 	if handler.Request.Method == "POST" {
 		if profileForm.Validate(handler.Request) {
-			c := DB.C(USERS)
+			c := handler.DB.C(USERS)
 			c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{
 				"website":        profileForm.Value("website"),
 				"location":       profileForm.Value("location"),
@@ -381,7 +383,7 @@ func forgotPasswordHandler(handler Handler) {
 	if handler.Request.Method == "POST" {
 		if form.Validate(handler.Request) {
 			var user User
-			c := DB.C(USERS)
+			c := handler.DB.C(USERS)
 			err := c.Find(bson.M{"username": form.Value("username")}).One(&user)
 			if err != nil {
 				form.AddError("username", "没有该用户")
@@ -428,7 +430,7 @@ func resetPasswordHandler(handler Handler) {
 	code := vars["code"]
 
 	var user User
-	c := DB.C(USERS)
+	c := handler.DB.C(USERS)
 	err := c.Find(bson.M{"resetcode": code}).One(&user)
 
 	if err != nil {
@@ -469,7 +471,7 @@ type Sizer interface {
 // URL: /profile/avatar
 // 修改头像,提交到七牛云存储
 func changeAvatarHandler(handler Handler) {
-	user, _ := currentUser(handler.Request)
+	user, _ := currentUser(handler)
 
 	if handler.Request.Method == "POST" {
 		formFile, formHeader, err := handler.Request.FormFile("file")
@@ -556,7 +558,7 @@ func changeAvatarHandler(handler Handler) {
 		}
 
 		// 存储远程文件名
-		c := DB.C(USERS)
+		c := handler.DB.C(USERS)
 		c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"avatar": filename}})
 
 		http.Redirect(handler.ResponseWriter, handler.Request, "/profile#avatar", http.StatusFound)
@@ -569,13 +571,13 @@ func changeAvatarHandler(handler Handler) {
 // URL: /profile/choose_default_avatar
 // 选择默认头像
 func chooseDefaultAvatar(handler Handler) {
-	user, _ := currentUser(handler.Request)
+	user, _ := currentUser(handler)
 
 	if handler.Request.Method == "POST" {
 		avatar := handler.Request.FormValue("defaultAvatars")
 
 		if avatar != "" {
-			c := DB.C(USERS)
+			c := handler.DB.C(USERS)
 			c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"avatar": avatar}})
 		}
 
@@ -586,7 +588,7 @@ func chooseDefaultAvatar(handler Handler) {
 // URL: /change_password
 // 修改密码
 func changePasswordHandler(handler Handler) {
-	user, _ := currentUser(handler.Request)
+	user, _ := currentUser(handler)
 
 	form := wtforms.NewForm(
 		wtforms.NewPasswordField("current_password", "当前密码", wtforms.Required{}),
@@ -598,7 +600,7 @@ func changePasswordHandler(handler Handler) {
 		if form.Value("new_password") == form.Value("confirm_password") {
 			currentPassword := encryptPassword(form.Value("current_password"))
 			if currentPassword == user.Password {
-				c := DB.C(USERS)
+				c := handler.DB.C(USERS)
 				c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"password": encryptPassword(form.Value("new_password"))}})
 				message(handler, "密码修改成功", `密码修改成功`, "success")
 				return

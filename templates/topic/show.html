@@ -41,6 +41,7 @@
 		<hr>
 		<dl class="replies">
 		{{range $index, $reply := $topic.Comments}}
+		<a name="{{.Id_.Hex}}"></a>
 		<dd id="{{.Id_.Hex}}">
 			<span class="label label-default pull-right">#{{$.utils.Index $index}}</span>
 			{{if $.username}}

@@ -12,7 +12,7 @@ import (
 // 显示最新加入的会员
 // URL: /members
 func membersHandler(handler Handler) {
-	c := DB.C(USERS)
+	c := handler.DB.C(USERS)
 	var newestMembers []User
 	c.Find(nil).Sort("-joinedat").Limit(40).All(&newestMembers)
 
@@ -35,7 +35,7 @@ func allMembersHandler(handler Handler) {
 		return
 	}
 
-	c := DB.C(USERS)
+	c := handler.DB.C(USERS)
 
 	pagination := NewPagination(c.Find(nil).Sort("joinedat"), "/members/all", 40)
 
@@ -62,7 +62,7 @@ func allMembersHandler(handler Handler) {
 func memberInfoHandler(handler Handler) {
 	vars := mux.Vars(handler.Request)
 	username := vars["username"]
-	c := DB.C(USERS)
+	c := handler.DB.C(USERS)
 
 	user := User{}
 
@@ -91,7 +91,7 @@ func memberTopicsHandler(handler Handler) {
 
 	vars := mux.Vars(handler.Request)
 	username := vars["username"]
-	c := DB.C(USERS)
+	c := handler.DB.C(USERS)
 
 	user := User{}
 	err = c.Find(bson.M{"username": username}).One(&user)
@@ -101,7 +101,7 @@ func memberTopicsHandler(handler Handler) {
 		return
 	}
 
-	c = DB.C("contents")
+	c = handler.DB.C("contents")
 
 	pagination := NewPagination(c.Find(bson.M{"content.createdby": user.Id_, "content.type": TypeTopic}).Sort("-latestrepliedat"), "/member/"+username+"/topics", PerPage)
 
@@ -137,7 +137,7 @@ func memberRepliesHandler(handler Handler) {
 
 	vars := mux.Vars(handler.Request)
 	username := vars["username"]
-	c := DB.C(USERS)
+	c := handler.DB.C(USERS)
 
 	user := User{}
 	err = c.Find(bson.M{"username": username}).One(&user)
@@ -154,7 +154,7 @@ func memberRepliesHandler(handler Handler) {
 
 	var replies []Comment
 
-	c = DB.C(COMMENTS)
+	c = handler.DB.C(COMMENTS)
 
 	pagination := NewPagination(c.Find(bson.M{"createdby": user.Id_, "type": TypeTopic}).Sort("-createdat"), "/member/"+username+"/replies", PerPage)
 
@@ -183,7 +183,7 @@ func membersInTheSameCityHandler(handler Handler) {
 
 	cityName := mux.Vars(handler.Request)["cityName"]
 
-	c := DB.C(USERS)
+	c := handler.DB.C(USERS)
 
 	pagination := NewPagination(c.Find(bson.M{"location": cityName}).Sort("joinedat"), "/members/city/"+cityName, 40)
 

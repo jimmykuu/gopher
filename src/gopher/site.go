@@ -17,7 +17,7 @@ import (
 // 酷站首页,列出所有分类及站点
 func sitesHandler(handler Handler) {
 	var categories []SiteCategory
-	c := DB.C(SITE_CATEGORIES)
+	c := handler.DB.C(SITE_CATEGORIES)
 	c.Find(nil).All(&categories)
 	renderTemplate(handler, "site/index.html", BASE, map[string]interface{}{
 		"categories": categories,
@@ -28,10 +28,10 @@ func sitesHandler(handler Handler) {
 // URL: /site/new
 // 提交站点
 func newSiteHandler(handler Handler) {
-	user, _ := currentUser(handler.Request)
+	user, _ := currentUser(handler)
 
 	var categories []SiteCategory
-	c := DB.C(SITE_CATEGORIES)
+	c := handler.DB.C(SITE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
 	var choices []wtforms.Choice
@@ -54,7 +54,7 @@ func newSiteHandler(handler Handler) {
 		}
 
 		var site Site
-		c = DB.C(CONTENTS)
+		c = handler.DB.C(CONTENTS)
 		err := c.Find(bson.M{"url": form.Value("url")}).One(&site)
 		if err == nil {
 			form.AddError("url", "该站点已经有了")
@@ -93,7 +93,7 @@ func newSiteHandler(handler Handler) {
 // URL: /site/{siteId}/edit
 // 修改提交过的站点信息,提交者自己或者管理员可以修改
 func editSiteHandler(handler Handler) {
-	user, _ := currentUser(handler.Request)
+	user, _ := currentUser(handler)
 
 	siteId := mux.Vars(handler.Request)["siteId"]
 	if !bson.IsObjectIdHex(siteId) {
@@ -102,7 +102,7 @@ func editSiteHandler(handler Handler) {
 	}
 
 	var site Site
-	c := DB.C(CONTENTS)
+	c := handler.DB.C(CONTENTS)
 
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(siteId), "content.type": TypeSite}).One(&site)
 
@@ -117,7 +117,7 @@ func editSiteHandler(handler Handler) {
 	}
 
 	var categories []SiteCategory
-	c = DB.C(SITE_CATEGORIES)
+	c = handler.DB.C(SITE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
 	var choices []wtforms.Choice
@@ -136,7 +136,7 @@ func editSiteHandler(handler Handler) {
 	if handler.Request.Method == "POST" && form.Validate(handler.Request) {
 		// 检查是否用重复
 		var site2 Site
-		c = DB.C(CONTENTS)
+		c = handler.DB.C(CONTENTS)
 		err := c.Find(bson.M{"url": form.Value("url"), "_id": bson.M{"$ne": site.Id_}}).One(&site2)
 		if err == nil {
 			form.AddError("url", "该站点已经有了")
@@ -170,7 +170,7 @@ func editSiteHandler(handler Handler) {
 // URL: /site/{siteId}/delete
 // 删除站点,提交者自己或者管理员可以删除
 func deleteSiteHandler(handler Handler) {
-	user, _ := currentUser(handler.Request)
+	user, _ := currentUser(handler)
 
 	siteId := mux.Vars(handler.Request)["siteId"]
 
@@ -180,7 +180,7 @@ func deleteSiteHandler(handler Handler) {
 	}
 
 	var site Site
-	c := DB.C(CONTENTS)
+	c := handler.DB.C(CONTENTS)
 
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(siteId)}).One(&site)
 

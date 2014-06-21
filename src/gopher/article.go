@@ -19,7 +19,7 @@ import (
 // 新建文章
 func newArticleHandler(handler Handler) {
 	var categories []ArticleCategory
-	c := DB.C(ARTICLE_CATEGORIES)
+	c := handler.DB.C(ARTICLE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
 	var choices []wtforms.Choice
@@ -37,9 +37,9 @@ func newArticleHandler(handler Handler) {
 	)
 
 	if handler.Request.Method == "POST" && form.Validate(handler.Request) {
-		user, _ := currentUser(handler.Request)
+		user, _ := currentUser(handler)
 
-		c = DB.C(CONTENTS)
+		c = handler.DB.C(CONTENTS)
 
 		id_ := bson.NewObjectId()
 
@@ -96,7 +96,7 @@ func listArticlesHandler(handler Handler) {
 	//	c = db.C("status")
 	//	c.Find(nil).One(&status)
 
-	c := DB.C(CONTENTS)
+	c := handler.DB.C(CONTENTS)
 
 	pagination := NewPagination(c.Find(bson.M{"content.type": TypeArticle}).Sort("-content.createdat"), "/articles", PerPage)
 
@@ -128,7 +128,7 @@ func redirectArticleHandler(handler Handler) {
 		http.NotFound(handler.ResponseWriter, handler.Request)
 		return
 	}
-	c := DB.C(CONTENTS)
+	c := handler.DB.C(CONTENTS)
 
 	article := new(Article)
 
@@ -154,7 +154,7 @@ func showArticleHandler(handler Handler) {
 		http.NotFound(handler.ResponseWriter, handler.Request)
 		return
 	}
-	c := DB.C(CONTENTS)
+	c := handler.DB.C(CONTENTS)
 
 	article := Article{}
 
@@ -174,7 +174,7 @@ func showArticleHandler(handler Handler) {
 // URL: /a/{articleId}/edit
 // 编辑主题
 func editArticleHandler(handler Handler) {
-	user, _ := currentUser(handler.Request)
+	user, _ := currentUser(handler)
 
 	articleId := mux.Vars(handler.Request)["articleId"]
 	if !bson.IsObjectIdHex(articleId) {
@@ -182,7 +182,7 @@ func editArticleHandler(handler Handler) {
 		return
 	}
 
-	c := DB.C(CONTENTS)
+	c := handler.DB.C(CONTENTS)
 	var article Article
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(articleId)}).One(&article)
 
@@ -197,7 +197,7 @@ func editArticleHandler(handler Handler) {
 	}
 
 	var categorys []ArticleCategory
-	c = DB.C(ARTICLE_CATEGORIES)
+	c = handler.DB.C(ARTICLE_CATEGORIES)
 	c.Find(nil).All(&categorys)
 
 	var choices []wtforms.Choice
@@ -217,7 +217,7 @@ func editArticleHandler(handler Handler) {
 	if handler.Request.Method == "POST" {
 		if form.Validate(handler.Request) {
 			categoryId := bson.ObjectIdHex(form.Value("category"))
-			c = DB.C(CONTENTS)
+			c = handler.DB.C(CONTENTS)
 			err = c.Update(bson.M{"_id": article.Id_}, bson.M{"$set": bson.M{
 				"categoryid":        categoryId,
 				"originalsource":    form.Value("original_source"),
@@ -248,7 +248,7 @@ func editArticleHandler(handler Handler) {
 // URL: /a/{articleId}/delete
 // 删除文章
 func deleteArticleHandler(handler Handler) {
-	user, _ := currentUser(handler.Request)
+	user, _ := currentUser(handler)
 
 	vars := mux.Vars(handler.Request)
 	articleId := vars["articleId"]
@@ -257,7 +257,7 @@ func deleteArticleHandler(handler Handler) {
 		return
 	}
 
-	c := DB.C(CONTENTS)
+	c := handler.DB.C(CONTENTS)
 
 	article := new(Article)
 
@@ -271,7 +271,7 @@ func deleteArticleHandler(handler Handler) {
 	if article.CanDelete(user.Username) {
 		c.Remove(bson.M{"_id": article.Id_})
 
-		c = DB.C(COMMENTS)
+		c = handler.DB.C(COMMENTS)
 		c.Remove(bson.M{"contentid": article.Id_})
 
 		http.Redirect(handler.ResponseWriter, handler.Request, "/articles", http.StatusFound)

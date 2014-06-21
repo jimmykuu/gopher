@@ -12,7 +12,7 @@ import (
 // URL: /books
 // 图书列表
 func booksHandler(handler Handler) {
-	c := DB.C(BOOKS)
+	c := handler.DB.C(BOOKS)
 	var chineseBooks []Book
 	c.Find(bson.M{"language": "中文"}).All(&chineseBooks)
 
@@ -35,7 +35,7 @@ func showBookHandler(handler Handler) {
 		return
 	}
 
-	c := DB.C(BOOKS)
+	c := handler.DB.C(BOOKS)
 	var book Book
 	c.Find(bson.M{"_id": bson.ObjectIdHex(bookId)}).One(&book)
 
@@ -50,7 +50,7 @@ func showBookHandler(handler Handler) {
 func editBookHandler(handler Handler) {
 	bookId := mux.Vars(handler.Request)["id"]
 
-	c := DB.C(BOOKS)
+	c := handler.DB.C(BOOKS)
 	var book Book
 	c.Find(bson.M{"_id": bson.ObjectIdHex(bookId)}).One(&book)
 
@@ -105,14 +105,14 @@ func editBookHandler(handler Handler) {
 func deleteBookHandler(handler Handler) {
 	id := mux.Vars(handler.Request)["id"]
 
-	c := DB.C(BOOKS)
+	c := handler.DB.C(BOOKS)
 	c.RemoveId(bson.ObjectIdHex(id))
 
 	handler.ResponseWriter.Write([]byte("true"))
 }
 
 func listBooksHandler(handler Handler) {
-	c := DB.C(BOOKS)
+	c := handler.DB.C(BOOKS)
 	var books []Book
 	c.Find(nil).All(&books)
 
@@ -138,7 +138,7 @@ func newBookHandler(handler Handler) {
 	if handler.Request.Method == "POST" {
 		if form.Validate(handler.Request) {
 			pages, _ := strconv.Atoi(form.Value("pages"))
-			c := DB.C(BOOKS)
+			c := handler.DB.C(BOOKS)
 			err := c.Insert(&Book{
 				Id_:             bson.NewObjectId(),
 				Title:           form.Value("title"),

@@ -6,6 +6,7 @@ import (
 	"text/template"
 	"time"
 
+	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )
 
@@ -35,14 +36,20 @@ func init() {
 var flag bool
 
 func RssRefresh() {
-	now := time.Now()
-	if now.After(latestTime) {
-		c := DB.C(CONTENTS)
-		c.Find(bson.M{"content.type": TypeTopic, "content.createdat": bson.M{"$gt": latestTime}}).Sort("-content.createdat").All(&contents)
-		latestTime = now
-		cache.PushBack(contents)
-		if cache.Len() > 7 {
-			cache.Remove(cache.Front())
+	for {
+		now := time.Now()
+		if now.After(latestTime) {
+			session, err := mgo.Dial(Config.DB)
+			if err != nil {
+				panic(err)
+			}
+			c := session.DB("gopher").C("contents")
+			c.Find(bson.M{"content.createdat": bson.M{"$gt": latestTime}}).Sort("-content.createdat").All(&contents)
+			latestTime = now
+			cache.PushBack(contents)
+			if cache.Len() > 7 {
+				cache.Remove(cache.Front())
+			}
 		}
 
 		time.Sleep(24 * time.Hour)

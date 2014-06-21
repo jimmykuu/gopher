@@ -33,7 +33,7 @@ func handlerFun(route Route) http.HandlerFunc {
 		if route.Permission == Everyone {
 			route.HandlerFunc(handler)
 		} else if route.Permission == Authenticated {
-			_, ok := currentUser(r)
+			_, ok := currentUser(handler)
 
 			if !ok {
 				http.Redirect(w, r, "/signin", http.StatusFound)
@@ -42,7 +42,7 @@ func handlerFun(route Route) http.HandlerFunc {
 
 			route.HandlerFunc(handler)
 		} else if route.Permission == Administrator {
-			user, ok := currentUser(r)
+			user, ok := currentUser(handler)
 
 			if !ok {
 				http.Redirect(w, r, "/signin", http.StatusFound)

@@ -28,7 +28,7 @@ func adminListUsersHandler(handler Handler) {
 	}
 
 	var users []User
-	c := DB.C(USERS)
+	c := handler.DB.C(USERS)
 
 	pagination := NewPagination(c.Find(nil).Sort("-joinedat"), "/admin/users", PerPage)
 
@@ -48,7 +48,7 @@ func adminListUsersHandler(handler Handler) {
 func adminActivateUserHandler(handler Handler) {
 	userId := mux.Vars(handler.Request)["userId"]
 
-	c := DB.C(USERS)
+	c := handler.DB.C(USERS)
 	c.Update(bson.M{"_id": bson.ObjectIdHex(userId)}, bson.M{"$set": bson.M{"isactive": true}})
 	http.Redirect(handler.ResponseWriter, handler.Request, "/admin/users", http.StatusFound)
 }
