@@ -98,11 +98,13 @@ func (u *Utils) FormatTime(t time.Time) string {
 }
 
 func (u *Utils) UserInfo(username string) template.HTML {
-	db, err := getDB()
+	sess, err := getSession()
 	if err != nil {
 		fmt.Print(err)
 		return template.HTML("")
 	}
+	defer sess.Close()
+	db := sess.DB("gopher")
 	c := db.C(USERS)
 
 	user := User{}
@@ -121,11 +123,13 @@ func (u *Utils) UserInfo(username string) template.HTML {
 /*mark ggaaooppeenngg*/
 func (u *Utils) RecentReplies(username string) template.HTML {
 	return template.HTML("")
-	db, err := getDB()
+	sess, err := getSession()
 	if err != nil {
 		fmt.Print(err)
 		return template.HTML("")
 	}
+	defer sess.Close()
+	db := sess.DB("gopher")
 	c := db.C(USERS)
 	ccontens := db.C(CONTENTS)
 	user := User{}
@@ -237,22 +241,26 @@ func (u *Utils) RenderInputH(form wtforms.Form, fieldStr string, labelWidth, inp
 }
 
 func (u *Utils) HasAd(position string) bool {
-	db, err := getDB()
+	sess, err := getSession()
 	if err != nil {
 		fmt.Print(err)
 		return false
 	}
+	defer sess.Close()
+	db := sess.DB("gopher")
 	c := db.C(ADS)
 	count, _ := c.Find(bson.M{"position": position}).Limit(1).Count()
 	return count == 1
 }
 
 func (u *Utils) AdCode(position string) template.HTML {
-	db, err := getDB()
+	sess, err := getSession()
 	if err != nil {
 		fmt.Print(err)
 		return template.HTML("")
 	}
+	defer sess.Close()
+	db := sess.DB("gopher")
 	c := db.C(ADS)
 	var ad AD
 	c.Find(bson.M{"position": position}).Limit(1).One(&ad)
