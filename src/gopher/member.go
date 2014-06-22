@@ -171,6 +171,36 @@ func memberRepliesHandler(handler Handler) {
 	})
 }
 
+// URL: /member/{username}/comments
+func memmberCommentHandler(handler Handler) {
+	page, err := getPage(handler.Request)
+	if err != nil {
+		message(handler, "页码错误", "页码错误", "error")
+		return
+	}
+
+	vars := mux.Vars(handler.Request)
+	username := vars["username"]
+	c := handler.DB.C(USERS)
+	user := User{}
+	err = c.Find(bson.M{"username": username}).One(&user)
+	if err != nil {
+		message(handler, "会员未找到", "会员未找到", "error")
+		return
+	}
+
+	var comments []Comment
+
+	c = handler.DB.C(CONTENTS)
+
+	pagination := NewPagination(c.Find(bson.M{"createdby": user.Id_, "type": TypeTopic}).Sort("-createdat"), "/member/"+username+"/replies", PerPage)
+}
+
+// URL: /member/{username}/comments
+func memberAtsHandler(handler Handler) {
+	return
+}
+
 // URL: /members/city/{cityName}
 // 同城会员
 func membersInTheSameCityHandler(handler Handler) {
