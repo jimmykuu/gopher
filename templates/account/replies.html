@@ -11,8 +11,10 @@
 	<div class="content">
 		<dl class="replies">
 		{{range .replies}}
+		    {{$topic := .Topic $.db}}
+		    {{$creater := $topic.Creater $.db}}
 			<dd>
-				回复了 <a href="/member/{{.Topic.Creater.Username}}">{{.Topic.Creater.Username}}</a> 创建的主题: <a href="/t/{{.Topic.Id_.Hex}}">{{.Topic.Title}}</a>
+				回复了 <a href="/member/{{$creater.Username}}">{{$creater.Username}}</a> 创建的主题: <a href="/t/{{$topic.Id_.Hex}}">{{$topic.Title}}</a>
 				<span class="pull-right">{{$.utils.FormatTime .CreatedAt}}</span>
 				<div>{{.Html}}</div>
 			</dd>

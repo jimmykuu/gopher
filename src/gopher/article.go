@@ -191,7 +191,7 @@ func editArticleHandler(handler Handler) {
 		return
 	}
 
-	if !article.CanEdit(user.Username) {
+	if !article.CanEdit(user.Username, handler.DB) {
 		message(handler, "没用该权限", "对不起,你没有权限编辑该文章", "error")
 		return
 	}
@@ -268,7 +268,7 @@ func deleteArticleHandler(handler Handler) {
 		return
 	}
 
-	if article.CanDelete(user.Username) {
+	if article.CanDelete(user.Username, handler.DB) {
 		c.Remove(bson.M{"_id": article.Id_})
 
 		c = handler.DB.C(COMMENTS)

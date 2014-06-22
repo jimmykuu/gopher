@@ -63,10 +63,6 @@ func parseTemplate(file, baseFile string, data map[string]interface{}) []byte {
 	}
 
 	t, err = t.ParseFiles("templates/" + file)
-	// t, err := template.ParseFiles("templates/"+baseFile, "templates/"+file)
-	// if err != nil {
-	// 	panic(err)
-	// }
 	err = t.Execute(&buf, data)
 
 	if err != nil {
@@ -101,6 +97,7 @@ func renderTemplate(handler Handler, file, baseFile string, data map[string]inte
 	data["staticFileVersion"] = Config.StaticFileVersion
 	data["goVersion"] = goVersion
 	data["startTime"] = handler.StartTime
+	data["db"] = handler.DB
 
 	_, ok := data["active"]
 	if !ok {

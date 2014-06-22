@@ -111,7 +111,7 @@ func editSiteHandler(handler Handler) {
 		return
 	}
 
-	if !site.CanEdit(user.Username) {
+	if !site.CanEdit(user.Username, handler.DB) {
 		message(handler, "没有权限", "你没有权限可以修改站点", "error")
 		return
 	}
@@ -189,7 +189,7 @@ func deleteSiteHandler(handler Handler) {
 		return
 	}
 
-	if !site.CanEdit(user.Username) {
+	if !site.CanEdit(user.Username, handler.DB) {
 		message(handler, "没有权限", "你没有权限可以删除站点", "error")
 		return
 	}

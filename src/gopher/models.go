@@ -5,7 +5,6 @@
 package gopher
 
 import (
-	"fmt"
 	"html/template"
 	"time"
 
@@ -69,15 +68,6 @@ type User struct {
 	Index        int
 }
 
-//局部的session，记得调用之后关闭
-func getSession() (*mgo.Session, error) {
-	session, err := mgo.Dial(Config.DB)
-	if err != nil {
-		return nil, err
-	}
-	return session, nil
-}
-
 // 是否是默认头像
 func (u *User) IsDefaultAvatar(avatar string) bool {
 	filename := u.Avatar
@@ -100,14 +90,7 @@ func (u *User) AvatarImgSrc() string {
 }
 
 // 用户发表的最近10个主题
-func (u *User) LatestTopics() *[]Topic {
-	sess, err := getSession()
-
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
+func (u *User) LatestTopics(db *mgo.Database) *[]Topic {
 	c := db.C("contents")
 	var topics []Topic
 
@@ -117,13 +100,7 @@ func (u *User) LatestTopics() *[]Topic {
 }
 
 // 用户的最近10个回复
-func (u *User) LatestReplies() *[]Comment {
-	sess, err := getSession()
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
+func (u *User) LatestReplies(db *mgo.Database) *[]Comment {
 	c := db.C("comments")
 	var replies []Comment
 
@@ -178,13 +155,7 @@ type Content struct {
 	UpdatedBy    string
 }
 
-func (c *Content) Creater() *User {
-	sess, err := getSession()
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
+func (c *Content) Creater(db *mgo.Database) *User {
 	c_ := db.C("users")
 	user := User{}
 	c_.Find(bson.M{"_id": c.CreatedBy}).One(&user)
@@ -192,13 +163,7 @@ func (c *Content) Creater() *User {
 	return &user
 }
 
-func (c *Content) Updater() *User {
-	sess, err := getSession()
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
+func (c *Content) Updater(db *mgo.Database) *User {
 	if c.UpdatedBy == "" {
 		return nil
 	}
@@ -210,13 +175,7 @@ func (c *Content) Updater() *User {
 	return &user
 }
 
-func (c *Content) Comments() *[]Comment {
-	sess, err := getSession()
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
+func (c *Content) Comments(db *mgo.Database) *[]Comment {
 	c_ := db.C("comments")
 	var comments []Comment
 
@@ -226,16 +185,10 @@ func (c *Content) Comments() *[]Comment {
 }
 
 // 是否有权编辑主题
-func (c *Content) CanEdit(username string) bool {
-	sess, err := getSession()
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
+func (c *Content) CanEdit(username string, db *mgo.Database) bool {
 	var user User
 	c_ := db.C("users")
-	err = c_.Find(bson.M{"username": username}).One(&user)
+	err := c_.Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		return false
 	}
@@ -247,16 +200,10 @@ func (c *Content) CanEdit(username string) bool {
 	return c.CreatedBy == user.Id_
 }
 
-func (c *Content) CanDelete(username string) bool {
-	sess, err := getSession()
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
+func (c *Content) CanDelete(username string, db *mgo.Database) bool {
 	var user User
 	c_ := db.C("users")
-	err = c_.Find(bson.M{"username": username}).One(&user)
+	err := c_.Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		return false
 	}
@@ -274,13 +221,7 @@ type Topic struct {
 }
 
 // 主题所属节点
-func (t *Topic) Node() *Node {
-	sess, err := getSession()
-	if err != nil {
-		fmt.Print(err)
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
+func (t *Topic) Node(db *mgo.Database) *Node {
 	c := db.C("nodes")
 	node := Node{}
 	c.Find(bson.M{"_id": t.NodeId}).One(&node)
@@ -300,13 +241,7 @@ func (t *Topic) Format(tm time.Time) string {
 }
 
 // 主题的最近的一个回复
-func (t *Topic) LatestReplier() *User {
-	sess, err := getSession()
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
+func (t *Topic) LatestReplier(db *mgo.Database) *User {
 	if t.LatestReplierId == "" {
 		return nil
 	}
@@ -314,7 +249,7 @@ func (t *Topic) LatestReplier() *User {
 	c := db.C("users")
 	user := User{}
 
-	err = c.Find(bson.M{"_id": bson.ObjectIdHex(t.LatestReplierId)}).One(&user)
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(t.LatestReplierId)}).One(&user)
 
 	if err != nil {
 		return nil
@@ -339,14 +274,7 @@ type SiteCategory struct {
 }
 
 // 分类下的所有站点
-func (sc *SiteCategory) Sites() *[]Site {
-	sess, err := getSession()
-
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
+func (sc *SiteCategory) Sites(db *mgo.Database) *[]Site {
 	var sites []Site
 	c := db.C("contents")
 	c.Find(bson.M{"categoryid": sc.Id_, "content.type": TypeSite}).All(&sites)
@@ -378,13 +306,7 @@ type Article struct {
 }
 
 // 主题所属类型
-func (a *Article) Category() *ArticleCategory {
-	sess, err := getSession()
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
+func (a *Article) Category(db *mgo.Database) *ArticleCategory {
 	c := db.C("articlecategories")
 	category := ArticleCategory{}
 	c.Find(bson.M{"_id": a.CategoryId}).One(&category)
@@ -406,13 +328,7 @@ type Comment struct {
 }
 
 // 评论人
-func (c *Comment) Creater() *User {
-	sess, err := getSession()
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
+func (c *Comment) Creater(db *mgo.Database) *User {
 	c_ := db.C("users")
 	user := User{}
 	c_.Find(bson.M{"_id": c.CreatedBy}).One(&user)
@@ -421,16 +337,10 @@ func (c *Comment) Creater() *User {
 }
 
 // 是否有权删除评论，只允许管理员删除
-func (c *Comment) CanDelete(username string) bool {
-	sess, err := getSession()
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
+func (c *Comment) CanDelete(username string, db *mgo.Database) bool {
 	var user User
 	c_ := db.C("users")
-	err = c_.Find(bson.M{"username": username}).One(&user)
+	err := c_.Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		return false
 	}
@@ -438,13 +348,7 @@ func (c *Comment) CanDelete(username string) bool {
 }
 
 // 主题
-func (c *Comment) Topic() *Topic {
-	sess, err := getSession()
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
+func (c *Comment) Topic(db *mgo.Database) *Topic {
 	// 内容
 	var topic Topic
 	c_ := db.C("contents")
@@ -467,13 +371,7 @@ type Package struct {
 	Url        string
 }
 
-func (p *Package) Category() *PackageCategory {
-	sess, err := getSession()
-	if err != nil {
-		fmt.Println(err)
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
+func (p *Package) Category(db *mgo.Database) *PackageCategory {
 	category := PackageCategory{}
 	c := db.C("packagecategories")
 	c.Find(bson.M{"_id": p.CategoryId}).One(&category)

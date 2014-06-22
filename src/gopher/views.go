@@ -97,14 +97,7 @@ func (u *Utils) FormatTime(t time.Time) string {
 	return t.Format("2006-01-02 15:04")
 }
 
-func (u *Utils) UserInfo(username string) template.HTML {
-	sess, err := getSession()
-	if err != nil {
-		fmt.Print(err)
-		return template.HTML("")
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
+func (u *Utils) UserInfo(username string, db *mgo.Database) template.HTML {
 	c := db.C(USERS)
 
 	user := User{}
@@ -121,15 +114,8 @@ func (u *Utils) UserInfo(username string) template.HTML {
 }
 
 /*mark ggaaooppeenngg*/
-func (u *Utils) RecentReplies(username string) template.HTML {
+func (u *Utils) RecentReplies(username string, db *mgo.Database) template.HTML {
 	return template.HTML("")
-	sess, err := getSession()
-	if err != nil {
-		fmt.Print(err)
-		return template.HTML("")
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
 	c := db.C(USERS)
 	ccontens := db.C(CONTENTS)
 	user := User{}
@@ -240,27 +226,13 @@ func (u *Utils) RenderInputH(form wtforms.Form, fieldStr string, labelWidth, inp
 		))
 }
 
-func (u *Utils) HasAd(position string) bool {
-	sess, err := getSession()
-	if err != nil {
-		fmt.Print(err)
-		return false
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
+func (u *Utils) HasAd(position string, db *mgo.Database) bool {
 	c := db.C(ADS)
 	count, _ := c.Find(bson.M{"position": position}).Limit(1).Count()
 	return count == 1
 }
 
-func (u *Utils) AdCode(position string) template.HTML {
-	sess, err := getSession()
-	if err != nil {
-		fmt.Print(err)
-		return template.HTML("")
-	}
-	defer sess.Close()
-	db := sess.DB("gopher")
+func (u *Utils) AdCode(position string, db *mgo.Database) template.HTML {
 	c := db.C(ADS)
 	var ad AD
 	c.Find(bson.M{"position": position}).Limit(1).One(&ad)

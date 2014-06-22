@@ -16,18 +16,20 @@
 		<dl class="topics">
 		{{$username := .username}}
 		{{range .latestPackages}}
+            {{$category := .Category $.db}}
+		    {{$creater := .Creater $.db}}
 			<dd>
 				<a href="/p/{{.Id_.Hex}}" class="title">{{.Title}}</a>
 				{{if $username}}
-					{{if .CanEdit $username}}
+					{{if .CanEdit $username $.db}}
 						<a href="/p/{{.Id_.Hex}}/edit"><i class="icon-pencil"></i></a>
 						<a href="/p/{{.Id_.Hex}}/delete" onclick="javascript:return confirm('确定要删除吗？');"><i class="icon-remove"></i></a>
 					{{end}}
 				{{end}}
 				<div class="space"></div>
 				<div class="info">
-					<a class="label label-info" href="/packages/{{.Category.Id}}">{{.Category.Name}}</a> •
-					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> •
+					<a class="label label-info" href="/packages/{{$category.Id}}">{{$category.Name}}</a> •
+					<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
 					{{$.utils.FormatTime .CreatedAt}} 提交
 				</div>
 				<div class="space"></div>
@@ -55,9 +57,9 @@
 			{{end}}
 		</ul>
 	</div>
-    {{if .utils.HasAd "4cols"}}
+    {{if .utils.HasAd "4cols" .db}}
     <div class="well sidebar-nav">
-        {{.utils.AdCode "4cols"}}
+        {{.utils.AdCode "4cols" .db}}
     </div>
     {{end}}
 </div>

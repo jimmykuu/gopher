@@ -2,36 +2,39 @@
 {{define "ContentWidth"}}8{{end}}
 {{define "Breadcrumb"}}
 	{{$topic := .utils.AssertTopic .topic}}
+    {{$node := $topic.Node .db}}
 	<ul class="breadcrumb">
 		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
-		<li><a href="/go/{{$topic.Node.Id}}">{{$topic.Node.Name}}</a></li>
+		<li><a href="/go/{{$node.Id}}">{{$node.Name}}</a></li>
 	</ul>
 {{end}}
 {{define "Content"}}
 	{{$topic := .utils.AssertTopic .topic}}
+    {{$creater := $topic.Creater .db}}
 	<div class="content">
 		<div class="page-header">
 			<h1>{{$topic.Title}}</h1>
 			{{if .username}}
-				{{if $topic.CanEdit .username}}
+				{{if $topic.CanEdit .username $.db}}
                 <a href="/t/{{$topic.Id_.Hex}}/edit" class="btn btn-info btn-sm pull-right" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>
 				{{end}}
-				{{if $topic.CanDelete .username}}
+				{{if $topic.CanDelete .username $.db}}
 					<a href="/t/{{$topic.Id_.Hex}}/delete" class="btn btn-danger btn-sm pull-right" title="删除" onclick="return confirm('确定删除吗？');"><i class="glyphicon glyphicon-remove"></i></a>
 				{{end}}
 			{{end}}
 			<div>
-				由 <a href="/member/{{$topic.Creater.Username}}">{{$topic.Creater.Username}}</a> 在 {{.utils.FormatTime $topic.CreatedAt }} 发布 {{$topic.Hits}} 次点击
+				由 <a href="/member/{{$creater.Username}}">{{$creater.Username}}</a> 在 {{.utils.FormatTime $topic.CreatedAt }} 发布 {{$topic.Hits}} 次点击
 			</div>
             {{.shareCode}}
             <div class="clearfix"></div>
 		</div>
         <div class="body">
             {{$topic.Html}}
-            {{if $topic.Updater}}
+			{{$updater := $topic.Updater .db}}
+            {{if $updater}}
                 <hr>
                 <div class="alert alert-success">
-                    {{$topic.Updater.Username}} 于 {{.utils.FormatTime $topic.UpdatedAt }} 修改
+                    {{$updater.Username}} 于 {{.utils.FormatTime $topic.UpdatedAt }} 修改
                 </div>
             {{end}}
         </div>
@@ -40,18 +43,19 @@
 		<span>{{$topic.CommentCount}} 回复</span>
 		<hr>
 		<dl class="replies">
-		{{range $index, $reply := $topic.Comments}}
+		{{range $index, $reply := $topic.Comments .db}}
+		{{$commenter := .Creater $.db}}
 		<a name="{{.Id_.Hex}}"></a>
 		<dd id="{{.Id_.Hex}}">
 			<span class="label label-default pull-right">#{{$.utils.Index $index}}</span>
 			{{if $.username}}
-				{{if $reply.CanDelete $.username}}
+				{{if $reply.CanDelete $.username $.db}}
 					<a href="/comment/{{.Id_.Hex}}/delete" class="remove btn btn-danger btn-xs pull-right" title="删除"><i class="glyphicon glyphicon-remove"></i></a>
 				{{end}}
 			{{end}}
-            <a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img class="img-rounded" src="{{.Creater.AvatarImgSrc}}-middle" alt="{{.Creater.Username}}"></a>
+            <a href="/member/{{$commenter.Username}}" class="pull-left" style="margin-right: 10px;"><img class="img-rounded" src="{{$commenter.AvatarImgSrc}}-middle" alt="{{$commenter.Username}}"></a>
 			<div class="info">
-				<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> •
+				<a href="/member/{{$commenter.Username}}"><strong>{{$commenter.Username}}</strong></a> •
 				{{$.utils.FormatTime .CreatedAt}}
 			</div>
 			<div class="space"></div>
@@ -120,25 +124,26 @@
 {{define "LeftSide"}}{{end}}
 {{define "RightSide"}}
 	{{$topic := .utils.AssertTopic .topic}}
+	{{$creater := $topic.Creater .db}}
 	<div class="col-md-4">
 		<div class="well sidebar-nav">
 			<h4><small>作者</small></h4>
 			<hr>
-			{{.utils.UserInfo $topic.Creater.Username}}
+			{{.utils.UserInfo $creater.Username .db}}
 		</div>
         <a href="/topic/new" class="btn btn-success btn-lg btn-block" style="margin-bottom: 20px;"><i class="glyphicon glyphicon-edit"></i> 发表话题</a>
 		<div class="well sidebar-nav">
 			<h4><small>作者其它话题</small></h4>
 			<hr>
 			<ul>
-				{{range $topic.Creater.LatestTopics}}
+				{{range $creater.LatestTopics .db}}
 				<li><a href="/t/{{.Id_.Hex}}">{{.Content.Title}}</a></li>
 				{{end}}
 			</ul>
 		</div>
-        {{if .utils.HasAd "frongpage"}}
+        {{if .utils.HasAd "frongpage" .db}}
 		    <div class="well sidebar-nav">
-			{{.utils.AdCode "frongpage"}}
+			{{.utils.AdCode "frongpage" .db}}
 		    </div>
         {{end}}
 	</div>

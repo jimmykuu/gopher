@@ -117,7 +117,7 @@ func editPackageHandler(handler Handler) {
 		return
 	}
 
-	if !package_.CanEdit(user.Username) {
+	if !package_.CanEdit(user.Username, handler.DB) {
 		message(handler, "没有权限", "你没有权限编辑该包", "error")
 		return
 	}
