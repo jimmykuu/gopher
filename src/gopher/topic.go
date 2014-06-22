@@ -193,7 +193,7 @@ func editTopicHandler(handler Handler) {
 		return
 	}
 
-	if !topic.CanEdit(user.Username) {
+	if !topic.CanEdit(user.Username, handler.DB) {
 		message(handler, "没有该权限", "对不起,你没有权限编辑该主题", "error")
 		return
 	}

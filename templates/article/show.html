@@ -5,20 +5,21 @@
 	<ul class="breadcrumb">
 		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
 		<li><a href="/articles">文章</a></li></li>
-		<li>{{$article.Category.Name}}</li>
+		<li>{{($article.Category .db).Name}}</li>
 	</ul>
 {{end}}
 {{define "Content"}}
 	{{$article := .utils.AssertArticle .article}}
+    {{$creater := $article.Creater .db}}
 	<article class="content">
 		<h1>{{.article.Title}}</h1>
 		{{if .username}}
-	 		{{if $article.CanEdit .username}}
+	 		{{if $article.CanEdit .username .db}}
 				<a href="/a/{{$article.Id_.Hex}}/edit" class="btn btn-info btn-xs pull-right" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>
                 <a href="/a/{{$article.Id_.Hex}}/delete" class="btn btn-danger btn-xs pull-right" title="删除" onclick="return confirm('确认删除吗？');"><i class="glyphicon glyphicon-remove"></i></a>
 			{{end}}
 		{{end}}
-		<div>感谢 <a href="/member/{{$article.Creater.Username}}">{{$article.Creater.Username}}</a> 在 <time datetime="{{$article.CreatedAt}}">{{.utils.FormatTime $article.CreatedAt}}</time> 投递 {{.article.Hits}} 次点击</div>
+		<div>感谢 <a href="/member/{{$creater.Username}}">{{$creater.Username}}</a> 在 <time datetime="{{$article.CreatedAt}}">{{.utils.FormatTime $article.CreatedAt}}</time> 投递 {{.article.Hits}} 次点击</div>
         {{.shareCode}}
         <div class="body">
             <h2><small>文章来源: <a href="{{.article.OriginalUrl}}" target="_blank">{{.article.OriginalSource}}</a></small></h2>
@@ -28,7 +29,7 @@
 		<span>{{$article.CommentCount}} 评论</span>
 		<hr>
 		<dl class="replies">
-		{{range $index, $comment := $article.Comments}}
+		{{range $index, $comment := $article.Comments .db}}
 		<dd id="{{.Id_.Hex}}">
 			<span class="label pull-right">#{{$.utils.Index $index}}</span>
 			{{if $.username}}
@@ -110,8 +111,8 @@
 {{define "RightSide"}}
 	<div class="col-md-2">
 		<a href="/article/new" class="btn btn-info btn-lg btn-block" style="margin-bottom: 20px;">转载文章</a>
-        {{if .utils.HasAd "2cols"}}
-		    {{.utils.AdCode "2cols"}}
+        {{if .utils.HasAd "2cols" .db}}
+		    {{.utils.AdCode "2cols" .db}}
         {{end}}
     </div>
 {{end}}
