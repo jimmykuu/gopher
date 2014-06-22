@@ -44,6 +44,7 @@
 		<hr>
 		<dl class="replies">
 		{{range $index, $reply := $topic.Comments .db}}
+		{{$commenter := .Creater $.db}}
 		<a name="{{.Id_.Hex}}"></a>
 		<dd id="{{.Id_.Hex}}">
 			<span class="label label-default pull-right">#{{$.utils.Index $index}}</span>
@@ -52,9 +53,9 @@
 					<a href="/comment/{{.Id_.Hex}}/delete" class="remove btn btn-danger btn-xs pull-right" title="删除"><i class="glyphicon glyphicon-remove"></i></a>
 				{{end}}
 			{{end}}
-            <a href="/member/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;"><img class="img-rounded" src="{{$creater.AvatarImgSrc}}-middle" alt="{{$creater.Username}}"></a>
+            <a href="/member/{{$commenter.Username}}" class="pull-left" style="margin-right: 10px;"><img class="img-rounded" src="{{$commenter.AvatarImgSrc}}-middle" alt="{{$commenter.Username}}"></a>
 			<div class="info">
-				<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
+				<a href="/member/{{$commenter.Username}}"><strong>{{$commenter.Username}}</strong></a> •
 				{{$.utils.FormatTime .CreatedAt}}
 			</div>
 			<div class="space"></div>
