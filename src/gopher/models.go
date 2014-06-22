@@ -36,8 +36,15 @@ const (
 
 //主题id和评论id，用于定位到专门的评论
 type At struct {
-	ContentId bson.ObjectId
-	CommentId bson.ObjectId
+	User      string
+	ContentId string
+	CommentId string
+}
+
+//主题id和主题标题
+type Reply struct {
+	ContentId  string
+	TopicTitle string
 }
 
 // 用户
@@ -58,7 +65,7 @@ type User struct {
 	Follow         []string
 	Fans           []string
 	//存储的是最近回复的主题的objectid.hex
-	RecentReplies []string
+	RecentReplies []Reply
 	//存储的是最近评论被AT的主题的objectid.hex
 	RecentAts    []At
 	IsSuperuser  bool

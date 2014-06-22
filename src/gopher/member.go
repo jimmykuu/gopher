@@ -172,7 +172,7 @@ func memberRepliesHandler(handler Handler) {
 }
 
 // URL: /member/{username}/comments
-func memmberCommentHandler(handler Handler) {
+func memmberNewsHandler(handler Handler) {
 	page, err := getPage(handler.Request)
 	if err != nil {
 		message(handler, "页码错误", "页码错误", "error")
@@ -189,11 +189,14 @@ func memmberCommentHandler(handler Handler) {
 		return
 	}
 
-	var comments []Comment
+	renderTemplate(handler, "account/news.html", BASE, map[string]interface{}{
+		"user":     user,
+		"page":     page,
+		"comments": user.RecentReplies,
+		"ats":      user.RecentAts,
 
-	c = handler.DB.C(CONTENTS)
-
-	pagination := NewPagination(c.Find(bson.M{"createdby": user.Id_, "type": TypeTopic}).Sort("-createdat"), "/member/"+username+"/replies", PerPage)
+		"active": "members",
+	})
 }
 
 // URL: /member/{username}/comments
