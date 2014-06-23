@@ -63,6 +63,9 @@ func parseTemplate(file, baseFile string, data map[string]interface{}) []byte {
 	}
 
 	t, err = t.ParseFiles("templates/" + file)
+	if err != nil {
+		panic(err)
+	}
 	err = t.Execute(&buf, data)
 
 	if err != nil {

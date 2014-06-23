@@ -118,8 +118,8 @@ var (
 		{"/site/new", Authenticated, newSiteHandler},
 		{"/site/{siteId}/edit", Authenticated, editSiteHandler},
 		{"/site/{siteId}/delete", Administrator, deleteSiteHandler},
-
 		{"/article/new", Authenticated, newArticleHandler},
+		{"/article/go/{categoryId}", Everyone, articlesInCategoryHandler},
 		{"/articles", Everyone, listArticlesHandler},
 		{"/a/{articleId}", Everyone, showArticleHandler},
 		{"/a/{articleId}/redirect", Everyone, redirectArticleHandler},
