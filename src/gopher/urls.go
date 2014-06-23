@@ -107,6 +107,7 @@ var (
 		{"/member/{username}", Everyone, memberInfoHandler},
 		{"/member/{username}/topics", Everyone, memberTopicsHandler},
 		{"/member/{username}/replies", Everyone, memberRepliesHandler},
+		{"/member/{username}/news", Everyone, memmberNewsHandler},
 		{"/follow/{username}", Authenticated, followHandler},
 		{"/unfollow/{username}", Authenticated, unfollowHandler},
 		{"/members", Everyone, membersHandler},

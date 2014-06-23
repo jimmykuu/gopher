@@ -266,7 +266,7 @@ func showTopicHandler(handler Handler) {
 	vars := mux.Vars(handler.Request)
 	topicId := vars["topicId"]
 	c := handler.DB.C(CONTENTS)
-	// cusers := handler.DB.C(USERS)
+	cusers := handler.DB.C(USERS)
 	topic := Topic{}
 
 	if !bson.IsObjectIdHex(topicId) {
@@ -282,49 +282,54 @@ func showTopicHandler(handler Handler) {
 	}
 
 	c.UpdateId(bson.ObjectIdHex(topicId), bson.M{"$inc": bson.M{"content.hits": 1}})
-	/*
-		user, has := currentUser(handler)
-		if has {
-			replies := user.RecentReplies
-			ats := user.RecentAts
-			pos := -1
-			repliesDisactive := map[int]bool{}
-			for k, v := range replies {
-				if v == topicId {
-					pos = k
-					repliesDisactive[k] = true
-				}
-			}
-			if pos != -1 {
-				for pos, _ := range repliesDisactive {
-					if pos == len(replies)-1 {
-						replies = replies[:pos]
-					} else {
-						replies = append(replies[:pos], replies[pos+1:]...)
-					}
-				}
-				cusers.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"recentreplies": replies}})
-			}
-			pos = -1
-			atsDisactive := map[int]bool{}
-			for k, v := range ats {
-				if v.ContentId.Hex() == topicId {
-					pos = k
-					atsDisactive[pos] = true
-				}
-			}
-			if pos != -1 {
-				for pos, _ := range atsDisactive {
-					if pos == len(ats)-1 {
-						ats = ats[:pos]
-					} else {
-						ats = append(ats[:pos], ats[pos+1:]...)
-					}
-				}
-				cusers.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"recentats": ats}})
+
+	user, has := currentUser(handler)
+
+	//去除新消息的提醒
+	if has {
+		replies := user.RecentReplies
+		ats := user.RecentAts
+		pos := -1
+
+		for k, v := range replies {
+			if v.ContentId == topicId {
+				pos = k
+				break
 			}
 		}
-	*/
+
+		//数组的删除不是这么删的,早知如此就应该存链表了
+
+		if pos != -1 {
+			if pos == len(replies)-1 {
+				replies = replies[:pos]
+			} else {
+				replies = append(replies[:pos], replies[pos+1:]...)
+			}
+			cusers.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"recentreplies": replies}})
+
+		}
+
+		pos = -1
+
+		for k, v := range ats {
+			if v.ContentId == topicId {
+				pos = k
+				break
+			}
+		}
+
+		if pos != -1 {
+			if pos == len(ats)-1 {
+				ats = ats[:pos]
+			} else {
+				ats = append(ats[:pos], ats[pos+1:]...)
+			}
+
+			cusers.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"recentats": ats}})
+		}
+	}
+
 	renderTemplate(handler, "topic/show.html", BASE, map[string]interface{}{
 		"topic":  topic,
 		"active": "topic",
