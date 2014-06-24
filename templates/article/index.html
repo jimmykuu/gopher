@@ -3,7 +3,10 @@
 {{define "Breadcrumb"}}
 	<ul class="breadcrumb">
 		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
-		<li class="active">文章</a></li>
+		<li class="active">文章</li>
+		{{if .type}}
+		<li class="active">{{.type}}</li>
+		{{end}}
 	</ul>
 {{end}}
 {{define "Content"}}
@@ -14,6 +17,7 @@
 		<dl class="topics">
 		{{range .articles}}
 		    {{$creater := .Creater $.db}}
+		    {{$category := .Category $.db}}
 			<dd>
 				<a href="/a/{{.Id_.Hex}}/redirect" class="title" target="_blank">{{.Title}}</a>
 				{{if $.username}}
@@ -24,7 +28,8 @@
 				{{end}}
 				<div class="space"></div>
 				<div class="info">
-					<a class="label label-info" href="#">{{(.Category $.db).Name}}</a> •
+					<a class="label label-info" href="/article/go/{{$category.Id_.Hex}}">{{$category.Name}}</a> •
+
 					<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
                     <a href="/a/{{.Id_.Hex}}">{{if .CommentCount}} {{.CommentCount}} {{end}}评论</a> •
 					{{$.utils.FormatTime .CreatedAt}} 提交 • 来自 <a href="{{.OriginalUrl}}" target="_blank">{{.OriginalSource}}</a>

@@ -78,6 +78,50 @@ func newArticleHandler(handler Handler) {
 	})
 }
 
+// URL: /article/go/{categoryId}
+// 文章分类列表
+
+func articlesInCategoryHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
+	categoryId := vars["categoryId"]
+
+	c := handler.DB.C(ARTICLE_CATEGORIES)
+
+	category := ArticleCategory{}
+
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(categoryId)}).One(&category)
+
+	if err != nil {
+		message(handler, "没有这个目录", "请联系管理员创建这个目录", "error")
+		return
+	}
+
+	page, err := getPage(handler.Request)
+
+	if err != nil {
+		message(handler, "页码错误", "页码错误", "error")
+		return
+	}
+
+	c = handler.DB.C(CONTENTS)
+
+	pagination := NewPagination(c.Find(bson.M{"categoryid": bson.ObjectIdHex(categoryId), "content.type": TypeArticle}).Sort("-content.createdat"), "/", 20)
+	var articles []Article
+	query, err := pagination.Page(page)
+	if err != nil {
+		message(handler, "没有找到页面", "没有找到页面", "error")
+		return
+	}
+	err = query.All(&articles)
+	if err != nil {
+		fmt.Println(err)
+	}
+	renderTemplate(handler, "/article/index.html", BASE, map[string]interface{}{
+		"articles": articles,
+		"type":     category.Name,
+	})
+}
+
 // URL: /articles
 // 列出所有文章
 func listArticlesHandler(handler Handler) {
