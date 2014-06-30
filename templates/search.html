@@ -9,26 +9,31 @@
 {{define "Content"}}
 	<div class="content">
 		<form class="form-inline" action="/search" method="get" role="form">
-			<div class="form-group col-lg-10">
+			<div class="input-group">
 				<input type="text" name="q" class="form-control" value="{{.q}}">
+				<span class="input-group-btn">
+     			    <button type="submit" class="btn btn-info">搜索</button>
+				</span>
 			</div>
-			<button type="submit" class="btn btn-info">搜索</button>
 		</form>
 
 		<dl class="topics">
 		{{range .topics}}
+		    {{$creater := .Creater $.db}}
+            {{$node := .Node $.db}}
+		    {{$latestReplier := .LatestReplier $.db}}
 			<dd>
-				<a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img src="{{.Creater.AvatarImgSrc}}-middle" class="img-rounded"></a>
+				<a href="/member/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;"><img src="{{$creater.AvatarImgSrc}}-middle" class="img-rounded"></a>
 				{{if .CommentCount}}
 					<a class="badge pull-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
 				{{end}}
 				<a href="/t/{{.Id_.Hex}}" class="title">{{.Title}}</a>
 				<div class="space"></div>
 				<div class="info" style="margin-left:60px;">
-					<a class="label label-info" href="/go/{{.Node.Id}}">{{.Node.Name}}</a> •
-					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> •
+					<a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
+					<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
 					{{if .CommentCount}}
-						{{$.utils.FormatTime .LatestRepliedAt}} • 最后回复来自 <a href="/member/{{.LatestReplier.Username}}">{{.LatestReplier.Username}}</a>
+						{{$.utils.FormatTime .LatestRepliedAt}} • 最后回复来自 <a href="/member/{{$latestReplier.Username}}">{{$latestReplier.Username}}</a>
 					{{else}}
 						{{$.utils.FormatTime .CreatedAt}}
 					{{end}}
@@ -45,8 +50,5 @@
 {{define "LeftSide"}}{{end}}
 {{define "RightSide"}}
     <div class="col-md-2 sidebar">
-    	{{if .utils.HasAd "2cols"}}
-		    {{.utils.AdCode "2cols"}}
-        {{end}}
     </div>
 {{end}}
