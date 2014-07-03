@@ -2,7 +2,7 @@
 {{define "ContentWidth"}}8{{end}}
 {{define "Breadcrumb"}}
 	{{$package := .utils.AssertPackage .package}}
-	{{$category := $package.Category}}
+	{{$category := $package.Category .db}}
 	<ul class="breadcrumb">
 		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
 		<li><a href="/packages">第三方包</a></li>
@@ -12,11 +12,11 @@
 {{end}}
 {{define "Content"}}
 	{{$package := .utils.AssertPackage .package}}
-	{{$category := $package.Category}}
+	{{$category := $package.Category .db}}
 	<div class="content">
 		{{if .username}}
 			{{$package := .utils.AssertPackage .package}}
-			{{if $package.CanEdit .username}}
+			{{if $package.CanEdit .username .db}}
             <a href="/p/{{.package.Id_.Hex}}/delete" class="btn btn-danger btn-sm pull-right" title="删除"><i class="glyphicon glyphicon-remove"></i></a>
 				<a href="/p/{{.package.Id_.Hex}}/edit" class="btn btn-info btn-sm pull-right" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>
 			{{end}}
@@ -39,17 +39,18 @@
 		<span>{{.package.CommentCount}} 回复</span>
 			<hr>
 			<dl class="replies">
-			{{range $index, $reply := $package.Comments}}
+			{{range $index, $reply := $package.Comments .db}}
+			{{$commenter := .Creater $.db}}
 			<dd id="{{.Id_.Hex}}">
 				<span class="label pull-right">#{{$.utils.Index $index}}</span>
 				{{if $.username}}
-					{{if $reply.CanDelete $.username}}
+					{{if $reply.CanDelete $.username $.db}}
 						<a href="/comment/{{.Id_.Hex}}/delete" class="remove label pull-right" title="删除"><i class="icon-white icon-remove"></i></a>
 					{{end}}
 				{{end}}
-				<a href="/" class="pull-left" style="margin-right: 10px;"><img src="{{.Creater.AvatarImgSrc}}-middle" class="img-rounded"></a>
+				<a href="/" class="pull-left" style="margin-right: 10px;"><img src="{{$commenter.AvatarImgSrc}}-middle" class="img-rounded"></a>
 				<div class="info">
-					<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> • 
+					<a href="/member/{{$commenter.Username}}"><strong>{{$commenter.Username}}</strong></a> • 
 					{{$.utils.FormatTime .CreatedAt}}
 				</div>
 				<div class="space"></div>
