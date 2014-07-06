@@ -30,7 +30,6 @@ const (
 )
 
 var (
-	//	DB          *mgo.Database
 	store       *sessions.CookieStore
 	fileVersion map[string]string = make(map[string]string) // {path: version}
 	utils       *Utils

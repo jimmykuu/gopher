@@ -89,6 +89,7 @@ var (
 		{"/change_password", Authenticated, changePasswordHandler},
 		{"/profile/avatar", Authenticated, changeAvatarHandler},
 		{"/profile/choose_default_avatar", Authenticated, chooseDefaultAvatar},
+		{"/profile/avatar/gravatar", Authenticated, setAvatarFromGravatar},
 
 		{"/nodes", Everyone, nodesHandler},
 		{"/go/{node}", Everyone, topicInNodeHandler},

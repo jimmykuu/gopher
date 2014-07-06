@@ -6,6 +6,7 @@ package gopher
 import (
 	"crypto/md5"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -468,6 +469,55 @@ type Sizer interface {
 	Size() int64
 }
 
+// 上传到七牛，并返回文件名
+func uploadAvatarToQiniu(file io.ReadCloser, contentType string) (filename string, err error) {
+	isValidateType := false
+	for _, imgType := range []string{"image/png", "image/jpeg"} {
+		if imgType == contentType {
+			isValidateType = true
+			break
+		}
+	}
+
+	if !isValidateType {
+		return "", errors.New("文件类型错误")
+	}
+
+	filenameExtension := ".jpg"
+	if contentType == "image/png" {
+		filenameExtension = ".png"
+	}
+
+	// 文件名：32位uuid，不带减号和后缀组成
+	filename = strings.Replace(uuid.NewUUID().String(), "-", "", -1) + filenameExtension
+
+	ACCESS_KEY = Config.QiniuAccessKey
+	SECRET_KEY = Config.QiniuSecretKey
+
+	key := "avatar/" + filename
+
+	ret := new(qiniu_io.PutRet)
+
+	var policy = rs.PutPolicy{
+		Scope: "gopher",
+	}
+
+	err = qiniu_io.Put(
+		nil,
+		ret,
+		policy.Token(nil),
+		key,
+		file,
+		nil,
+	)
+
+	if err != nil {
+		return "", err
+	}
+
+	return filename, nil
+}
+
 // URL: /profile/avatar
 // 修改头像,提交到七牛云存储
 func changeAvatarHandler(handler Handler) {
@@ -483,30 +533,6 @@ func changeAvatarHandler(handler Handler) {
 			})
 			return
 		}
-
-		defer formFile.Close()
-
-		// 检查是否是jpg或png文件
-		uploadFileType := formHeader.Header["Content-Type"][0]
-
-		isValidateType := false
-		for _, imgType := range []string{"image/png", "image/jpeg"} {
-			if imgType == uploadFileType {
-				isValidateType = true
-				break
-			}
-		}
-
-		if !isValidateType {
-			fmt.Println("upload image type error:", uploadFileType)
-			// 提示错误
-			renderTemplate(handler, "account/avatar.html", BASE, map[string]interface{}{
-				"user":  user,
-				"error": "文件类型错误，请选择jpg/png图片上传。",
-			})
-			return
-		}
-
 		// 检查文件尺寸是否在500K以内
 		fileSize := formFile.(Sizer).Size()
 
@@ -520,42 +546,12 @@ func changeAvatarHandler(handler Handler) {
 			return
 		}
 
-		filenameExtension := ".jpg"
-		if uploadFileType == "image/png" {
-			filenameExtension = ".png"
-		}
+		defer formFile.Close()
 
-		// 文件名：32位uuid，不带减号和后缀组成
-		filename := strings.Replace(uuid.NewUUID().String(), "-", "", -1) + filenameExtension
+		// 检查是否是jpg或png文件
+		uploadFileType := formHeader.Header["Content-Type"][0]
 
-		ACCESS_KEY = Config.QiniuAccessKey
-		SECRET_KEY = Config.QiniuSecretKey
-
-		key := "avatar/" + filename
-
-		ret := new(qiniu_io.PutRet)
-
-		var policy = rs.PutPolicy{
-			Scope: "gopher",
-		}
-
-		err = qiniu_io.Put(
-			nil,
-			ret,
-			policy.Token(nil),
-			key,
-			formFile,
-			nil,
-		)
-
-		if err != nil {
-			fmt.Println("upload to qiniu failed:", err.Error())
-			renderTemplate(handler, "account/avatar.html", BASE, map[string]interface{}{
-				"user":  user,
-				"error": "上传失败，请反馈错误",
-			})
-			return
-		}
+		filename, err := uploadAvatarToQiniu(formFile, uploadFileType)
 
 		// 存储远程文件名
 		c := handler.DB.C(USERS)
@@ -619,4 +615,26 @@ func changePasswordHandler(handler Handler) {
 // 获取所有用户的json列表
 func usersJsonHandler(handler Handler) {
 	handler.ResponseWriter.Write(usersJson)
+}
+
+// URl: /profile/avatar/gravatar
+// 从Gravatar获取头像
+func setAvatarFromGravatar(handler Handler) {
+	url := webhelpers.Gravatar("jimmy.kuu@gmail.com", 256)
+	resp, err := http.Get(url)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	filename, err := uploadAvatarToQiniu(resp.Body, resp.Header["Content-Type"][0])
+	if err != nil {
+		panic(err)
+	}
+
+	user, _ := currentUser(handler)
+	c := handler.DB.C(USERS)
+	c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"avatar": filename}})
+
+	http.Redirect(handler.ResponseWriter, handler.Request, "/profile#avatar", http.StatusFound)
 }
