@@ -441,3 +441,7 @@ div.book-detail .tab-pane {
 #toTop span {
 	font-size: 24px;
 }
+
+.content img, .reply-content img {
+	max-width: 100%;
+}
