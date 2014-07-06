@@ -280,6 +280,7 @@ ul.members {
 ul.members li {
 	float: left;
 	width: 100px;
+	width: 68px;
 	text-align: center;
 	margin-bottom: 20px;
 }
