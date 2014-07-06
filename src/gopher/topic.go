@@ -416,7 +416,7 @@ func deleteTopicHandler(handler Handler) {
 
 	// 删除Topic记录
 	c = handler.DB.C(CONTENTS)
-	c.Remove(bson.M{"_id": topicId})
+	c.Remove(bson.M{"_id": topic.Id_})
 
 	http.Redirect(handler.ResponseWriter, handler.Request, "/", http.StatusFound)
 }
