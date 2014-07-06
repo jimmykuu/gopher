@@ -620,7 +620,8 @@ func usersJsonHandler(handler Handler) {
 // URl: /profile/avatar/gravatar
 // 从Gravatar获取头像
 func setAvatarFromGravatar(handler Handler) {
-	url := webhelpers.Gravatar("jimmy.kuu@gmail.com", 256)
+	user, _ := currentUser(handler)
+	url := webhelpers.Gravatar(user.Email, 256)
 	resp, err := http.Get(url)
 	if err != nil {
 		panic(err)
@@ -632,7 +633,6 @@ func setAvatarFromGravatar(handler Handler) {
 		panic(err)
 	}
 
-	user, _ := currentUser(handler)
 	c := handler.DB.C(USERS)
 	c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"avatar": filename}})
 
