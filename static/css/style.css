@@ -279,8 +279,9 @@ ul.members {
 
 ul.members li {
 	float: left;
-	width: 100px;
-	width: 68px;
+	width: 12.5%;
+	height: 68px;
+	padding: 10px;
 	text-align: center;
 	margin-bottom: 20px;
 }
