@@ -177,16 +177,11 @@ func newTopicHandler(handler Handler) {
 func editTopicHandler(handler Handler) {
 	user, _ := currentUser(handler)
 
-	topicId := mux.Vars(handler.Request)["topicId"]
-
-	if !bson.IsObjectIdHex(topicId) {
-		http.NotFound(handler.ResponseWriter, handler.Request)
-		return
-	}
+	topicId := bson.ObjectIdHex(mux.Vars(handler.Request)["topicId"])
 
 	c := handler.DB.C(CONTENTS)
 	var topic Topic
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": TypeTopic}).One(&topic)
+	err := c.Find(bson.M{"_id": topicId, "content.type": TypeTopic}).One(&topic)
 
 	if err != nil {
 		message(handler, "没有该主题", "没有该主题,不能编辑", "error")
@@ -383,17 +378,13 @@ func topicInNodeHandler(handler Handler) {
 // 删除主题
 func deleteTopicHandler(handler Handler) {
 	vars := mux.Vars(handler.Request)
-	topicId := vars["topicId"]
-	if !bson.IsObjectIdHex(topicId) {
-		http.NotFound(handler.ResponseWriter, handler.Request)
-		return
-	}
+	topicId := bson.ObjectIdHex(vars["topicId"])
 
 	c := handler.DB.C(CONTENTS)
 
 	topic := Topic{}
 
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": TypeTopic}).One(&topic)
+	err := c.Find(bson.M{"_id": topicId, "content.type": TypeTopic}).One(&topic)
 
 	if err != nil {
 		fmt.Println("deleteTopic:", err.Error())

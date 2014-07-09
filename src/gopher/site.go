@@ -95,16 +95,12 @@ func newSiteHandler(handler Handler) {
 func editSiteHandler(handler Handler) {
 	user, _ := currentUser(handler)
 
-	siteId := mux.Vars(handler.Request)["siteId"]
-	if !bson.IsObjectIdHex(siteId) {
-		http.NotFound(handler.ResponseWriter, handler.Request)
-		return
-	}
+	siteId := bson.ObjectIdHex(mux.Vars(handler.Request)["siteId"])
 
 	var site Site
 	c := handler.DB.C(CONTENTS)
 
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(siteId), "content.type": TypeSite}).One(&site)
+	err := c.Find(bson.M{"_id": siteId, "content.type": TypeSite}).One(&site)
 
 	if err != nil {
 		message(handler, "错误的连接", "错误的连接", "error")
@@ -172,17 +168,12 @@ func editSiteHandler(handler Handler) {
 func deleteSiteHandler(handler Handler) {
 	user, _ := currentUser(handler)
 
-	siteId := mux.Vars(handler.Request)["siteId"]
-
-	if !bson.IsObjectIdHex(siteId) {
-		http.NotFound(handler.ResponseWriter, handler.Request)
-		return
-	}
+	siteId := bson.ObjectIdHex(mux.Vars(handler.Request)["siteId"])
 
 	var site Site
 	c := handler.DB.C(CONTENTS)
 
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(siteId)}).One(&site)
+	err := c.Find(bson.M{"_id": siteId}).One(&site)
 
 	if err != nil {
 		message(handler, "错误的连接", "错误的连接", "error")
