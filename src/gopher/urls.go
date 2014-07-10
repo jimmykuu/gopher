@@ -102,7 +102,7 @@ var (
 		{"/topic/new", Authenticated, newTopicHandler},
 		{"/new/{node}", Authenticated, newTopicHandler},
 		{"/t/{topicId:[0-9a-f]{24}}", Everyone, showTopicHandler},
-		{"/t/{topicId:[0-9a-f{24}}/edit", Authenticated, editTopicHandler},
+		{"/t/{topicId:[0-9a-f]{24}}/edit", Authenticated, editTopicHandler},
 		{"/t/{topicId:[0-9a-f]{24}}/delete", Administrator, deleteTopicHandler},
 
 		{"/member/{username}", Everyone, memberInfoHandler},
