@@ -237,14 +237,14 @@ func (t *Topic) Node(db *mgo.Database) *Node {
 }
 
 // 主题链接
-func (t *Topic) Link(createdBy bson.ObjectId) string {
-	return "http://golangtc.com/t/" + createdBy.Hex()
+func (t *Topic) Link(id bson.ObjectId) string {
+	return "http://golangtc.com/t/" + id.Hex()
 
 }
 
 //格式化日期
 func (t *Topic) Format(tm time.Time) string {
-	return tm.Format("2006-01-02 15:04:05")
+	return tm.Format(time.RFC822)
 }
 
 // 主题的最近的一个回复
