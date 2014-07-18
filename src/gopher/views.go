@@ -79,7 +79,7 @@ func (u *Utils) Index(index int) int {
 	return index + 1
 }
 func (u *Utils) FormatDate(t time.Time) string {
-	return t.Format("2006-01-02")
+	return t.Format(time.RFC822)
 }
 func (u *Utils) FormatTime(t time.Time) string {
 	now := time.Now()

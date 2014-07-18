@@ -31,6 +31,8 @@ func Dawn() time.Time {
 
 func init() {
 	latestTime = Dawn()
+	latestTime = latestTime.AddDate(0, 0, -7)
+	//latestTime, _= time.Parse("2006-01-02 15:04:05", "1993-10-01 15:04:04")
 }
 
 var flag bool
