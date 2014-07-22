@@ -138,5 +138,6 @@ var (
 		{"/book/{id}", Everyone, showBookHandler},
 
 		{"/download", Everyone, downloadHandler},
+		{"/download/package", Everyone, downloadPackagesHandler},
 	}
 )

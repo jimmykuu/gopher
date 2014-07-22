@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"time"
 
+	"code.google.com/p/go.net/websocket"
 	"github.com/gorilla/mux"
 )
 
@@ -61,6 +62,7 @@ func handlerFun(route Route) http.HandlerFunc {
 
 func StartServer() {
 	http.Handle("/static/", http.FileServer(http.Dir(".")))
+	http.Handle("/get/package", websocket.Handler(getPackageHandler))
 	r := mux.NewRouter()
 	for _, route := range routes {
 		r.HandleFunc(route.URL, handlerFun(route))

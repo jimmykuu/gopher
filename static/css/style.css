@@ -279,7 +279,7 @@ ul.members {
 
 ul.members li {
 	float: left;
-	width: 12.5%;
+	width: 110px;
 	height: 68px;
 	padding: 10px;
 	text-align: center;
@@ -296,7 +296,7 @@ ul#menu li {
 }
 
 ul#menu li a {
-	padding: 10px 19px;
+	padding: 10px 15px;
 	position: relative;
 	display: block;
 	color: #999;
@@ -444,4 +444,16 @@ div.book-detail .tab-pane {
 
 .content img, .reply-content img {
 	max-width: 100%;
+}
+
+sup.new {
+	color: white;
+	position: absolute;
+	display: block;
+	width: 23px;
+	height: 20px;
+	top: 0;
+	right: -4px;
+	font-size: 10px;
+	background: url(http://gopher.qiniudn.com/static/img/new.png) no-repeat;
 }

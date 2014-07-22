@@ -10,7 +10,7 @@
 	<link rel="stylesheet" href="http://gopher.qiniudn.com/static/css/bootstrap.min.css?v=3.2.0">
     <link rel="stylesheet" href="http://gopher.qiniudn.com/static/css/bootstrap-theme.min.css?v3.2.0">
 	<link rel="stylesheet" href="http://gopher.qiniudn.com/static/css/wmd.css" type="text/css">
-	<link rel="stylesheet" href="/static/css/style.css?v=3" type="text/css">
+	<link rel="stylesheet" href="/static/css/style.css?v=4" type="text/css">
 	<link rel="stylesheet" href="http://gopher.qiniudn.com/static/css/prettify.css" type="text/css">
     <link rel="stylesheet" href="/static/css/history.css?v=2" type="text/css">
 	<link rel="stylesheet" href="/static/css/jquery.atwho.min.css?v=0.4.11" type="text/css">
@@ -72,6 +72,7 @@
 					<li class="nav-tour"><a href="http://tour.golangtc.com" target="_blank">Go 指南</a></li>
 					<li class="nav-godoc"><a href="http://godoc.golangtc.com" target="_blank">GoDoc</a></li>
 					<li class="nav-download{{if eq .active "download"}} active{{end}}"><a href="/download">下载</a></li>
+					<li class="nav-package-download{{if eq .active "package-download"}} active{{end}}"><a href="/download/package">第三方包下载</a><sup class="new"></sup></li>
                     <li><a href="/timeline">时间线</a></li>
 				</ul>
 				<form action="/search" class="navbar-form pull-right" method="get" role="search">

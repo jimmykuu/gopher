@@ -1,0 +1,95 @@
+{{define "Title"}}下载第三方包{{end}}
+{{define "ContentWidth"}}8{{end}}
+{{define "Breadcrumb"}}
+	<ul class="breadcrumb">
+		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
+		<li><a href="/packages">第三方包</a></li>
+		<li class="active">下载</li>
+	</ul>
+{{end}}
+{{define "Content"}}
+	<div class="content">
+		<h1></h1>
+		<div class="input-group">
+		  <input type="text" id="package" class="form-control" placeholder="code.google.com/p/go.net/websocket" onkeypress="keypress();">
+		  <span class="input-group-btn">
+			<button class="btn btn-default" type="button" onclick="get_package();">Go!</button>
+		  </span>
+		</div>
+		<pre id="console" style="max-height: 200px; background-color: darkgreen; color: white; margin-top: 20px;"></pre>		   <div class="panel panel-info">
+		  <div class="panel-heading">下载地址</div>
+		  <div class="panel-body" id="download">
+			<ul>
+            </ul>
+		  </div>
+		</div>
+	</div>
+
+    <script type="text/javascript">
+	    function keypress() {
+		    if (event.keyCode == 13) {
+		        get_package();
+		    }
+		}
+	  
+	    function get_package() {
+		    $("#console").empty();
+		    $("#download ul").empty();
+
+		    var package = $("#package").val();
+		    console.log(package);
+		    if (package == "") {
+		        alert("请输入包名称");
+		        return;
+            }
+
+			var sock = null;
+			var wsurl = "ws://www.golangtc.com/get/package";
+				
+			try {
+				sock = new WebSocket(wsurl);
+			} catch (e) {
+				alert(e.Message);
+			}
+
+			sock.onopen = function () {
+				console.log("connected to " + wsurl);
+		        $('#console').append("$ go get -u -v " + package + "\n");
+		        sock.send(package);
+			}
+
+			sock.onerror = function (e) {
+				console.log("err from connect " + e);
+			}
+
+			sock.onclose = function (e) {
+				console.log("connection closed (" + e.code + ")");
+			}
+
+			sock.onmessage = function (e) {
+				console.log("message received: " + e.data);
+		        var data = eval('(' + e.data + ')');
+		        console.log(data);
+		        if (data.type == "output") {
+		            $("#console").append(data.msg + "\n");
+                } else if (data.type == "command") {
+		            $("#console").append("$ " + data.msg + "\n");
+		        } else if (data.type == "download") {
+                    $("#download ul").append('<li><a href="/static/download/packages/' + data.msg.replace(/\//g, '.') + '.tar.gz' + '" target="_blank">' + data.msg + '</li>');
+                } else if (data.type == "completed") {
+					$("#console").append("<strong>" + data.msg + "</strong>\n");
+				} else if (data.type == "error") {
+					$("#console").append('<span style="color: red;">' + data.msg + '</span>\n');
+				}
+																																	       $("#console").scrollTop($('#console')[0].scrollHeight);
+			}
+		}
+	</script>
+{{end}}
+
+{{define "LeftSide"}}{{end}}
+
+{{define "RightSide"}}
+
+{{end}}
+

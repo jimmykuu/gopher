@@ -8,9 +8,13 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 
+	"code.google.com/p/go.net/websocket"
 	"github.com/gorilla/mux"
 	"github.com/jimmykuu/wtforms"
 	"labix.org/v2/mgo/bson"
@@ -249,27 +253,150 @@ func showPackageHandler(handler Handler) {
 // 删除第三方包
 func deletePackageHandler(handler Handler) {
 	vars := mux.Vars(handler.Request)
-	packageId := vars["packageId"]
-
-	if !bson.IsObjectIdHex(packageId) {
-		http.NotFound(handler.ResponseWriter, handler.Request)
-		return
-	}
+	packageId := bson.ObjectIdHex(vars["packageId"])
 
 	c := handler.DB.C(CONTENTS)
 
 	package_ := Package{}
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(packageId), "content.type": TypePackage}).One(&package_)
+	err := c.Find(bson.M{"_id": packageId, "content.type": TypePackage}).One(&package_)
 
 	if err != nil {
 		return
 	}
 
-	c.Remove(bson.M{"_id": bson.ObjectIdHex(packageId)})
+	c.Remove(bson.M{"_id": packageId})
 
 	// 修改分类下的数量
 	c = handler.DB.C(PACKAGE_CATEGORIES)
 	c.Update(bson.M{"_id": package_.CategoryId}, bson.M{"$inc": bson.M{"packagecount": -1}})
 
 	http.Redirect(handler.ResponseWriter, handler.Request, "/packages", http.StatusFound)
+}
+
+// URL: /download/package
+// 下载第三方包
+func downloadPackagesHandler(handler Handler) {
+	renderTemplate(handler, "package/download.html", BASE, map[string]interface{}{
+		"active": "package",
+	})
+}
+
+// 用于接收Command的输出
+type ConsoleWriter struct {
+	ws       *websocket.Conn
+	packages []string
+}
+
+type Message struct {
+	Type string `json:"type"`
+	Msg  string `json:"msg"`
+}
+
+func NewConsoleWriter(ws *websocket.Conn) *ConsoleWriter {
+	return &ConsoleWriter{ws: ws}
+}
+
+func (cw *ConsoleWriter) Write(p []byte) (n int, err error) {
+	line := strings.Trim(string(p), "\n")
+
+	if strings.LastIndex(line, " (download)") == len(line)-len(" (download)") {
+		packageName := line[:len(line)-len(" (download)")]
+
+		cw.packages = append(cw.packages, packageName)
+		message := Message{
+			Type: "output",
+			Msg:  line,
+		}
+
+		err = websocket.JSON.Send(cw.ws, message)
+	} else {
+		err = websocket.JSON.Send(cw.ws, Message{
+			Type: "error",
+			Msg:  line,
+		})
+	}
+
+	n = len(p)
+
+	return
+}
+
+// URL: ws://.../get/package
+// 和页面WebSocket通信
+func getPackageHandler(ws *websocket.Conn) {
+	defer ws.Close()
+
+	var err error
+
+	for {
+		var reply string
+
+		if err = websocket.Message.Receive(ws, &reply); err != nil {
+			fmt.Println("can't receive")
+			break
+		}
+
+		fmt.Println("received back from client:", reply)
+
+		cmd := exec.Command("go", "get", "-u", "-v", reply)
+		cmd.Env = os.Environ()[:]
+		cmd.Env = append(cmd.Env, "GOPATH="+Config.GoGetPath)
+
+		writer := NewConsoleWriter(ws)
+
+		cmd.Stdout = writer
+		cmd.Stderr = writer
+		err := cmd.Start()
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+
+		err = cmd.Wait()
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+
+		// 压缩
+		for _, packageName := range writer.packages {
+			tarFilename := strings.Replace(packageName, "/", ".", -1) + ".tar"
+			message := Message{
+				Type: "command",
+				Msg:  fmt.Sprintf("tar %s %s", tarFilename, packageName),
+			}
+			websocket.JSON.Send(ws, message)
+
+			cmd := exec.Command("tar", "-cf", filepath.Join(Config.PackagesDownloadPath, tarFilename), packageName)
+			cmd.Dir = filepath.Join(Config.GoGetPath, "src")
+			err = cmd.Run()
+			if err != nil {
+				panic(err)
+			}
+
+			message = Message{
+				Type: "command",
+				Msg:  fmt.Sprintf("gzip -f %s.tar\n", strings.Replace(packageName, "/", ".", -1)),
+			}
+			websocket.JSON.Send(ws, message)
+
+			cmd = exec.Command("gzip", "-f", tarFilename)
+			cmd.Dir = Config.PackagesDownloadPath
+			err = cmd.Run()
+			if err != nil {
+				panic(err)
+			}
+
+			// 发送可以可以下载的package
+			websocket.JSON.Send(ws, Message{
+				Type: "download",
+				Msg:  packageName,
+			})
+		}
+
+		websocket.JSON.Send(ws, Message{
+			Type: "completed",
+			Msg:  "------Done------",
+		})
+	}
 }

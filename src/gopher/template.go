@@ -101,6 +101,7 @@ func renderTemplate(handler Handler, file, baseFile string, data map[string]inte
 	data["goVersion"] = goVersion
 	data["startTime"] = handler.StartTime
 	data["db"] = handler.DB
+	data["host"] = Config.Host
 
 	_, ok := data["active"]
 	if !ok {
