@@ -90,6 +90,16 @@
 {{define "LeftSide"}}{{end}}
 
 {{define "RightSide"}}
-
+    <div class="col-md-4 sidebar">
+		<div class="well sidebar-nav">
+		  <h4><small>最多下载</small></h4>
+		  <hr>
+		  <ul>
+			{{range .packages}}
+			<li>{{.Name}} <span class="badge pull-right">{{.Count}}</span></li>
+			{{end}}
+		  </ul>
+		</div>
+    </div>
 {{end}}
 

@@ -19,19 +19,20 @@ const (
 	TypePackage   = 'P'
 	DefaultAvatar = "gopher_teal.jpg"
 
-	ADS                = "ads"
-	ARTICLE_CATEGORIES = "articlecategories"
-	BOOKS              = "books"
-	COMMENTS           = "comments"
-	CONTENTS           = "contents"
-	NODES              = "nodes"
-	PACKAGES           = "packages"
-	PACKAGE_CATEGORIES = "packagecategories"
-	LINK_EXCHANGES     = "link_exchanges"
-	SITE_CATEGORIES    = "sitecategories"
-	SITES              = "sites"
-	STATUS             = "status"
-	USERS              = "users"
+	ADS                 = "ads"
+	ARTICLE_CATEGORIES  = "articlecategories"
+	BOOKS               = "books"
+	COMMENTS            = "comments"
+	CONTENTS            = "contents"
+	NODES               = "nodes"
+	PACKAGES            = "packages"
+	PACKAGE_CATEGORIES  = "packagecategories"
+	LINK_EXCHANGES      = "link_exchanges"
+	SITE_CATEGORIES     = "sitecategories"
+	SITES               = "sites"
+	STATUS              = "status"
+	USERS               = "users"
+	DOWNLOADED_PACKAGES = "downloaded_packages"
 )
 
 //主题id和评论id，用于定位到专门的评论

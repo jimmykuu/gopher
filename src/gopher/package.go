@@ -17,6 +17,7 @@ import (
 	"code.google.com/p/go.net/websocket"
 	"github.com/gorilla/mux"
 	"github.com/jimmykuu/wtforms"
+	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )
 
@@ -276,8 +277,12 @@ func deletePackageHandler(handler Handler) {
 // URL: /download/package
 // 下载第三方包
 func downloadPackagesHandler(handler Handler) {
+	var packages []DownloadedPackage
+	c := handler.DB.C(DOWNLOADED_PACKAGES)
+	c.Find(nil).Sort("-count").Limit(10).All(&packages)
 	renderTemplate(handler, "package/download.html", BASE, map[string]interface{}{
-		"active": "package",
+		"packages": packages,
+		"active":   "package-download",
 	})
 }
 
@@ -294,6 +299,11 @@ type Message struct {
 
 func NewConsoleWriter(ws *websocket.Conn) *ConsoleWriter {
 	return &ConsoleWriter{ws: ws}
+}
+
+type DownloadedPackage struct {
+	Name  string `bson:"name"`
+	Count int    `bson:"count"`
 }
 
 func (cw *ConsoleWriter) Write(p []byte) (n int, err error) {
@@ -329,16 +339,16 @@ func getPackageHandler(ws *websocket.Conn) {
 	var err error
 
 	for {
-		var reply string
+		var name string
 
-		if err = websocket.Message.Receive(ws, &reply); err != nil {
+		if err = websocket.Message.Receive(ws, &name); err != nil {
 			fmt.Println("can't receive")
 			break
 		}
 
-		fmt.Println("received back from client:", reply)
+		fmt.Println("received back from client:", name)
 
-		cmd := exec.Command("go", "get", "-u", "-v", reply)
+		cmd := exec.Command("go", "get", "-u", "-v", name)
 		cmd.Env = os.Environ()[:]
 		cmd.Env = append(cmd.Env, "GOPATH="+Config.GoGetPath)
 
@@ -398,5 +408,29 @@ func getPackageHandler(ws *websocket.Conn) {
 			Type: "completed",
 			Msg:  "------Done------",
 		})
+
+		session, err := mgo.Dial(Config.DB)
+		if err != nil {
+			panic(err)
+		}
+
+		session.SetMode(mgo.Monotonic, true)
+
+		defer session.Close()
+
+		DB := session.DB("gopher")
+
+		c := DB.C(DOWNLOADED_PACKAGES)
+
+		err = c.Find(bson.M{"name": name}).One(nil)
+		if err == nil {
+			c.Update(bson.M{"name": name}, bson.M{"$inc": bson.M{"count": 1}})
+		} else {
+			c.Insert(&DownloadedPackage{
+				Name:  name,
+				Count: 1,
+			})
+		}
+		break
 	}
 }
