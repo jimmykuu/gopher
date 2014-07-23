@@ -84,6 +84,10 @@
 																																	       $("#console").scrollTop($('#console')[0].scrollHeight);
 			}
 		}
+
+		function input_package(name) {
+		    $("#package").val(name);
+		}
 	</script>
 {{end}}
 
@@ -96,7 +100,7 @@
 		  <hr>
 		  <ul>
 			{{range .packages}}
-			<li>{{.Name}} <span class="badge pull-right">{{.Count}}</span></li>
+			<li><a href="javascript:;" onclick="input_package('{{.Name}}');">{{.Name}} <span class="badge pull-right">{{.Count}}</span></a></li>
 			{{end}}
 		  </ul>
 		</div>
