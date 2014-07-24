@@ -16,7 +16,11 @@
 			<button class="btn btn-default" type="button" onclick="get_package();">Go!</button>
 		  </span>
 		</div>
-		<pre id="console" style="max-height: 200px; background-color: darkgreen; color: white; margin-top: 20px;"></pre>		   <div class="panel panel-info">
+		<div id="console-wrap" style="max-height: 200px; background-color: darkgreen; color: white; margin-top: 20px; border-radius: 4px; padding: 10px; overflow-y: scroll;">
+		  <pre id="console" style="background-color: transparent; border: none; border-radius: 0; padding: 0; color: white;"></pre>
+		  <div id="waiting"></div>
+		</div>
+		<div class="panel panel-info">
 		  <div class="panel-heading">下载地址</div>
 		  <div class="panel-body" id="download">
 			<ul>
@@ -26,6 +30,8 @@
 	</div>
 
     <script type="text/javascript">
+	    var intervalID;
+
 	    function keypress() {
 		    if (event.keyCode == 13) {
 		        get_package();
@@ -56,6 +62,7 @@
 				console.log("connected to " + wsurl);
 		        $('#console').append("$ go get -u -v " + package + "\n");
 		        sock.send(package);
+		        intervalID = setInterval(displayProcess, 1000);
 			}
 
 			sock.onerror = function (e) {
@@ -69,7 +76,6 @@
 			sock.onmessage = function (e) {
 				console.log("message received: " + e.data);
 		        var data = eval('(' + e.data + ')');
-		        console.log(data);
 		        if (data.type == "output") {
 		            $("#console").append(data.msg + "\n");
                 } else if (data.type == "command") {
@@ -78,16 +84,24 @@
                     $("#download ul").append('<li><a href="/static/download/packages/' + data.msg.replace(/\//g, '.') + '.tar.gz' + '" target="_blank">' + data.msg + '</li>');
                 } else if (data.type == "completed") {
 					$("#console").append("<strong>" + data.msg + "</strong>\n");
+		            clearInterval(intervalID);
+		            $('#waiting').empty();
 				} else if (data.type == "error") {
 					$("#console").append('<span style="color: red;">' + data.msg + '</span>\n');
+		            clearInterval(intervalID);
+		            $('#waiting').empty();
 				}
-																																	       $("#console").scrollTop($('#console')[0].scrollHeight);
+																																	       $("#console-wrap").scrollTop($('#console')[0].scrollHeight);
 			}
 		}
 
 		function input_package(name) {
 		    $("#package").val(name);
 		}
+
+		function displayProcess() {
+		    $('#waiting').append('.');
+        }
 	</script>
 {{end}}
 
