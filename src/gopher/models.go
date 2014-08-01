@@ -48,32 +48,37 @@ type Reply struct {
 	TopicTitle string
 }
 
+//收藏的话题
+type CollectTopic struct {
+	TopicId       string
+	TimeCollected Time
+}
+
 // 用户
 type User struct {
-	Id_            bson.ObjectId `bson:"_id"`
-	Username       string
-	Password       string
-	Email          string
-	Avatar         string
-	Website        string
-	Location       string
-	Tagline        string
-	Bio            string
-	Twitter        string
-	Weibo          string
-	GitHubUsername string
-	JoinedAt       time.Time
-	Follow         []string
-	Fans           []string
-	//存储的是最近回复的主题的objectid.hex
-	RecentReplies []Reply
-	//存储的是最近评论被AT的主题的objectid.hex
-	RecentAts    []At
-	IsSuperuser  bool
-	IsActive     bool
-	ValidateCode string
-	ResetCode    string
-	Index        int
+	Id_             bson.ObjectId `bson:"_id"`
+	Username        string
+	Password        string
+	Email           string
+	Avatar          string
+	Website         string
+	Location        string
+	Tagline         string
+	Bio             string
+	Twitter         string
+	Weibo           string
+	GitHubUsername  string
+	JoinedAt        time.Time
+	Follow          []string
+	Fans            []string
+	RecentReplies   []Reply        //存储的是最近回复的主题的objectid.hex
+	RecentAts       []At           //存储的是最近评论被AT的主题的objectid.hex
+	TopicsCollected []CollectTopic //用户收藏的topic数组
+	IsSuperuser     bool
+	IsActive        bool
+	ValidateCode    string
+	ResetCode       string
+	Index           int
 }
 
 // 是否是默认头像

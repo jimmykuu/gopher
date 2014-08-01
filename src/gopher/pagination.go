@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"html/template"
 	"math"
+	"reflect"
 	"strings"
 
 	"labix.org/v2/mgo"
@@ -16,15 +17,15 @@ import (
 
 // 分页结构体
 type Pagination struct {
-	query   *mgo.Query
+	query   interface{}
 	count   int
-	prePage int
+	perPage int
 	url     string
 }
 
 // 在页面显示分页信息, 内容为 上一页 当前页/下一页 下一页
 func (p *Pagination) Html(number int) template.HTML {
-	pageCount := int(math.Ceil(float64(p.count) / float64(p.prePage)))
+	pageCount := int(math.Ceil(float64(p.count) / float64(p.perPage)))
 
 	if pageCount <= 1 {
 		return template.HTML("")
@@ -52,7 +53,7 @@ func (p *Pagination) Html(number int) template.HTML {
 
 // 返回第几页的查询
 func (p *Pagination) Page(number int) (*mgo.Query, error) {
-	pageCount := int(math.Ceil(float64(p.count) / float64(p.prePage)))
+	pageCount := int(math.Ceil(float64(p.count) / float64(p.perPage)))
 
 	query := p.query
 
@@ -65,9 +66,9 @@ func (p *Pagination) Page(number int) (*mgo.Query, error) {
 	}
 
 	if number > 1 {
-		query = query.Skip(p.prePage * (number - 1))
+		query = query.Skip(p.perPage * (number - 1))
 	}
-	return query.Limit(p.prePage), nil
+	return query.Limit(p.perPage), nil
 }
 
 // 内容总数
@@ -76,11 +77,16 @@ func (p *Pagination) Count() int {
 }
 
 // 创建一个分页结构体
-func NewPagination(query *mgo.Query, url string, prePage int) *Pagination {
+func NewPagination(query interface{}, url string, perPage int) *Pagination {
 	p := Pagination{}
 	p.query = query
-	p.count, _ = query.Count()
-	p.prePage = prePage
+	switch query.(type) {
+	case *mgo.Query:
+		p.count, _ = query.(*mgo.Query).Count()
+	case []CollectTopic:
+		p.count = len(query.([]CollectTopic))
+	}
+	p.perPage = perPage
 	p.url = url
 
 	return &p

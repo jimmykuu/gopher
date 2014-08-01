@@ -374,6 +374,19 @@ func topicInNodeHandler(handler Handler) {
 	})
 }
 
+// URL: /t/{topicId}/collect/
+// 将主题收藏至当前用户的收藏夹
+func collectTopicHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
+	topicId := vars["topicId"]
+	t := time.Now()
+	user, _ := currentUser(handler.Request)
+	user.TopicsCollected = append(user.TopicsCollected, CollectTopic{topicId, t})
+	c := handler.DB.C(USER)
+	c.UpdateId(user.Id_, bson.M{"topicscollected", user.TopicsCollected})
+	return http.Redirect(handler.ResponseWriter, handler.Request, "", http.StatusFound)
+}
+
 // URL: /t/{topicId}/delete
 // 删除主题
 func deleteTopicHandler(handler Handler) {

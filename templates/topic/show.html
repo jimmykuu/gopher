@@ -15,6 +15,7 @@
 		<div class="page-header">
 			<h1>{{$topic.Title}}</h1>
 			{{if .username}}
+                <a href="/t/{{$topic.Id_.Hex}}/collect" class="btn btn-info btn-sm pull-right" title="收藏"><i class="glyphicon glyphicon-plus"></i></a>
 				{{if $topic.CanEdit .username $.db}}
                 <a href="/t/{{$topic.Id_.Hex}}/edit" class="btn btn-info btn-sm pull-right" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>
 				{{end}}

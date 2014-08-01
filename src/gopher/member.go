@@ -79,6 +79,30 @@ func memberInfoHandler(handler Handler) {
 	})
 }
 
+// URL: /member/{username}/collect/
+// 用户收集的topic
+func memberTopicsCollectedHandler(handler Handler) {
+	page, err := getPage(handler.Request)
+	if err != nil {
+		message(handler, "页码错误", "页码错误", "error")
+	}
+	vars := mux.Vars(handler.Request)
+	username := vars["username"]
+	c := handler.DB.C(USERS)
+	user := User{}
+	err = c.Find(bson.M{"username": username}).One(&user)
+	if err != nil {
+		message(handler, "会员未找到", "会员未找到", "error")
+	}
+	renderTemplate(handler, "account/topics.html", BASE, map[string]interface{}{
+		"user":       user,
+		"collects":   user.TopicsCollected,
+		"pagination": pagination,
+		"page":       page,
+		"active":     "members",
+	})
+}
+
 // URL: /member/{username}/topics
 // 用户发表的所有主题
 func memberTopicsHandler(handler Handler) {
