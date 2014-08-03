@@ -51,7 +51,7 @@ type Reply struct {
 //收藏的话题
 type CollectTopic struct {
 	TopicId       string
-	TimeCollected Time
+	TimeCollected time.Time
 }
 
 // 用户

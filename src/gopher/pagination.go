@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"html/template"
 	"math"
-	"reflect"
 	"strings"
 
 	"labix.org/v2/mgo"
@@ -52,23 +51,42 @@ func (p *Pagination) Html(number int) template.HTML {
 }
 
 // 返回第几页的查询
-func (p *Pagination) Page(number int) (*mgo.Query, error) {
+func (p *Pagination) Page(number int) (interface{}, error) {
 	pageCount := int(math.Ceil(float64(p.count) / float64(p.perPage)))
+	switch p.query.(type) {
+	case *mgo.Query:
 
-	query := p.query
+		query := p.query.(*mgo.Query)
 
-	if count, _ := query.Count(); count == 0 {
-		return query, nil
+		if count, _ := query.Count(); count == 0 {
+			return query, nil
+		}
+
+		if !(number > 0 && number <= pageCount) {
+			return nil, errors.New("页码不在范围内")
+		}
+
+		if number > 1 {
+			query = query.Skip(p.perPage * (number - 1))
+		}
+		return query.Limit(p.perPage), nil
+	case []CollectTopic:
+		cts := p.query.([]CollectTopic)
+		if count := len(cts); count == 0 {
+			return cts, nil
+		}
+		if !(number > 0 && number <= pageCount) {
+			return nil, errors.New("页码不在范围内")
+		}
+		var end int
+		if number*p.perPage > p.count {
+			end = p.count
+		} else {
+			end = number * p.perPage
+		}
+		return cts[p.perPage*(number-1) : end], nil
 	}
-
-	if !(number > 0 && number <= pageCount) {
-		return nil, errors.New("页码不在范围内")
-	}
-
-	if number > 1 {
-		query = query.Skip(p.perPage * (number - 1))
-	}
-	return query.Limit(p.perPage), nil
+	return nil, errors.New("Query type is not *mgo.Query or slice")
 }
 
 // 内容总数

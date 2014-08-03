@@ -12,6 +12,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jimmykuu/wtforms"
+	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )
 
@@ -112,7 +113,7 @@ func articlesInCategoryHandler(handler Handler) {
 		message(handler, "没有找到页面", "没有找到页面", "error")
 		return
 	}
-	err = query.All(&articles)
+	err = query.(*mgo.Query).All(&articles)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -152,7 +153,7 @@ func listArticlesHandler(handler Handler) {
 		return
 	}
 
-	query.All(&articles)
+	query.(*mgo.Query).All(&articles)
 
 	renderTemplate(handler, "article/index.html", BASE, map[string]interface{}{
 		"articles":   articles,

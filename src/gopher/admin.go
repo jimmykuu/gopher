@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )
 
@@ -38,7 +39,7 @@ func adminListUsersHandler(handler Handler) {
 		return
 	}
 
-	query.All(&users)
+	query.(*mgo.Query).All(&users)
 
 	renderTemplate(handler, "admin/users.html", ADMIN, map[string]interface{}{"users": users, "pagination": pagination, "total": pagination.Count(), "page": page})
 }

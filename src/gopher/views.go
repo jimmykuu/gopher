@@ -614,7 +614,7 @@ func searchHandler(handler Handler) {
 		return
 	}
 
-	query.All(&topics)
+	query.(*mgo.Query).All(&topics)
 
 	if err != nil {
 		println(err.Error())

@@ -6,6 +6,7 @@ package gopher
 
 import (
 	"github.com/gorilla/mux"
+	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )
 
@@ -47,7 +48,7 @@ func allMembersHandler(handler Handler) {
 		return
 	}
 
-	query.All(&members)
+	query.(*mgo.Query).All(&members)
 
 	renderTemplate(handler, "member/list.html", BASE, map[string]interface{}{
 		"members":    members,
@@ -94,7 +95,8 @@ func memberTopicsCollectedHandler(handler Handler) {
 	if err != nil {
 		message(handler, "会员未找到", "会员未找到", "error")
 	}
-	renderTemplate(handler, "account/topics.html", BASE, map[string]interface{}{
+	pagination := NewPagination(user.TopicsCollected, "/member/"+username+"/collect", 3)
+	renderTemplate(handler, "account/collects.html", BASE, map[string]interface{}{
 		"user":       user,
 		"collects":   user.TopicsCollected,
 		"pagination": pagination,
@@ -138,7 +140,7 @@ func memberTopicsHandler(handler Handler) {
 		return
 	}
 
-	query.All(&topics)
+	query.(*mgo.Query).All(&topics)
 
 	renderTemplate(handler, "account/topics.html", BASE, map[string]interface{}{
 		"user":       user,
@@ -184,7 +186,7 @@ func memberRepliesHandler(handler Handler) {
 
 	query, err := pagination.Page(page)
 
-	query.All(&replies)
+	query.(*mgo.Query).All(&replies)
 
 	renderTemplate(handler, "account/replies.html", BASE, map[string]interface{}{
 		"user":       user,
@@ -252,7 +254,7 @@ func membersInTheSameCityHandler(handler Handler) {
 		return
 	}
 
-	query.All(&members)
+	query.(*mgo.Query).All(&members)
 
 	renderTemplate(handler, "member/list.html", BASE, map[string]interface{}{
 		"members":    members,

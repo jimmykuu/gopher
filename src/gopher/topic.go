@@ -13,6 +13,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jimmykuu/wtforms"
+	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )
 
@@ -44,7 +45,7 @@ func topicsHandler(handler Handler, conditions bson.M, sort string, url string, 
 		return
 	}
 
-	query.All(&topics)
+	query.(*mgo.Query).All(&topics)
 
 	var linkExchanges []LinkExchange
 	c = handler.DB.C(LINK_EXCHANGES)
@@ -365,7 +366,7 @@ func topicInNodeHandler(handler Handler) {
 		return
 	}
 
-	query.All(&topics)
+	query.(*mgo.Query).All(&topics)
 
 	renderTemplate(handler, "/topic/list.html", BASE, map[string]interface{}{
 		"topics": topics,
@@ -380,11 +381,12 @@ func collectTopicHandler(handler Handler) {
 	vars := mux.Vars(handler.Request)
 	topicId := vars["topicId"]
 	t := time.Now()
-	user, _ := currentUser(handler.Request)
+	user, _ := currentUser(handler)
 	user.TopicsCollected = append(user.TopicsCollected, CollectTopic{topicId, t})
-	c := handler.DB.C(USER)
-	c.UpdateId(user.Id_, bson.M{"topicscollected", user.TopicsCollected})
-	return http.Redirect(handler.ResponseWriter, handler.Request, "", http.StatusFound)
+	c := handler.DB.C(USERS)
+	c.UpdateId(user.Id_, bson.M{"$set": bson.M{"topicscollected": user.TopicsCollected}})
+	http.Redirect(handler.ResponseWriter, handler.Request, "/member/"+user.Username+"/collect", http.StatusFound)
+
 }
 
 // URL: /t/{topicId}/delete
