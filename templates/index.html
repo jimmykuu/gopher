@@ -62,6 +62,8 @@
 			{{if .username}}
 				{{.utils.UserInfo .username .db}}
 				{{.utils.News .username .db}}
+				<hr>
+				<a href="/member/{{.username}}/collect?p=1">收藏</a>
 			{{else}}
 				<h3><small>golang中国</small></h3>
 				<h4><small>致力于打造一个国内Gophers交流和分享的地方</small></h4>

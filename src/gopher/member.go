@@ -96,9 +96,13 @@ func memberTopicsCollectedHandler(handler Handler) {
 		message(handler, "会员未找到", "会员未找到", "error")
 	}
 	pagination := NewPagination(user.TopicsCollected, "/member/"+username+"/collect", 3)
+	collects, err := pagination.Page(page)
+	if err != nil {
+		message(handler, "页码错误", "页码错误", "error")
+	}
 	renderTemplate(handler, "account/collects.html", BASE, map[string]interface{}{
 		"user":       user,
-		"collects":   user.TopicsCollected,
+		"collects":   collects,
 		"pagination": pagination,
 		"page":       page,
 		"active":     "members",

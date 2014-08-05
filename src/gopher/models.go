@@ -54,6 +54,18 @@ type CollectTopic struct {
 	TimeCollected time.Time
 }
 
+func (ct *CollectTopic) Topic(db *mgo.Database) *Topic {
+	c := db.C(CONTENTS)
+	var topic Topic
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(ct.TopicId), "content.type": TypeTopic}).One(&topic)
+	if err != nil {
+		panic(err)
+		return nil
+	}
+	return &topic
+
+}
+
 // 用户
 type User struct {
 	Id_             bson.ObjectId `bson:"_id"`
@@ -197,10 +209,27 @@ func (c *Content) Comments(db *mgo.Database) *[]Comment {
 	return &comments
 }
 
+// 只能收藏未收藏过的主题
+func (c *Content) CanCollect(username string, db *mgo.Database) bool {
+	var user User
+	c_ := db.C(USERS)
+	err := c_.Find(bson.M{"username": username}).One(&user)
+	if err != nil {
+		return false
+	}
+	has := false
+	for _, v := range user.TopicsCollected {
+		if v.TopicId == c.Id_.Hex() {
+			has = true
+		}
+	}
+	return !has
+}
+
 // 是否有权编辑主题
 func (c *Content) CanEdit(username string, db *mgo.Database) bool {
 	var user User
-	c_ := db.C("users")
+	c_ := db.C(USERS)
 	err := c_.Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		return false

@@ -382,11 +382,15 @@ func collectTopicHandler(handler Handler) {
 	topicId := vars["topicId"]
 	t := time.Now()
 	user, _ := currentUser(handler)
+	for _, v := range user.TopicsCollected {
+		if v.TopicId == topicId {
+			return
+		}
+	}
 	user.TopicsCollected = append(user.TopicsCollected, CollectTopic{topicId, t})
 	c := handler.DB.C(USERS)
 	c.UpdateId(user.Id_, bson.M{"$set": bson.M{"topicscollected": user.TopicsCollected}})
-	http.Redirect(handler.ResponseWriter, handler.Request, "/member/"+user.Username+"/collect", http.StatusFound)
-
+	http.Redirect(handler.ResponseWriter, handler.Request, "/member/"+user.Username+"/collect?=p=1", http.StatusFound)
 }
 
 // URL: /t/{topicId}/delete

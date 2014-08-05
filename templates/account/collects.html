@@ -14,12 +14,15 @@
 	<p></p>
 	<dl>
 		{{range .collects}}
+			{{$t := .Topic $.db}}
+			{{$creater := $t.Creater $.db }}
+			{{$n := $t.Node $.db}}
 		<dd class="topic">
-		<a href="/t/{{.TopicId}}" class="title">{{.TopicId}}</a>
+		<a href="/t/{{.TopicId}}" class="title">{{$t.Title}}</a>
 		<div class="space"></div>
 		<span>
-			<a class="label label-info" href="/go/">go</a> • 
-			<a href="/member/"><strong>strong</strong></a> • 
+			<a class="label label-info" href="/go/{{$n.Id}}">{{$n.Name}}</a> • 
+			<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username }}</strong></a> • 
 			{{$.utils.FormatTime .TimeCollected}}
 		</span>
 		<div class="clearfix"></div>
