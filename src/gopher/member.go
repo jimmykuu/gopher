@@ -6,6 +6,7 @@ package gopher
 
 import (
 	"github.com/gorilla/mux"
+	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )
 
@@ -47,7 +48,7 @@ func allMembersHandler(handler Handler) {
 		return
 	}
 
-	query.All(&members)
+	query.(*mgo.Query).All(&members)
 
 	renderTemplate(handler, "member/list.html", BASE, map[string]interface{}{
 		"members":    members,
@@ -76,6 +77,35 @@ func memberInfoHandler(handler Handler) {
 	renderTemplate(handler, "account/info.html", BASE, map[string]interface{}{
 		"user":   user,
 		"active": "members",
+	})
+}
+
+// URL: /member/{username}/collect/
+// 用户收集的topic
+func memberTopicsCollectedHandler(handler Handler) {
+	page, err := getPage(handler.Request)
+	if err != nil {
+		message(handler, "页码错误", "页码错误", "error")
+	}
+	vars := mux.Vars(handler.Request)
+	username := vars["username"]
+	c := handler.DB.C(USERS)
+	user := User{}
+	err = c.Find(bson.M{"username": username}).One(&user)
+	if err != nil {
+		message(handler, "会员未找到", "会员未找到", "error")
+	}
+	pagination := NewPagination(user.TopicsCollected, "/member/"+username+"/collect", 3)
+	collects, err := pagination.Page(page)
+	if err != nil {
+		message(handler, "页码错误", "页码错误", "error")
+	}
+	renderTemplate(handler, "account/collects.html", BASE, map[string]interface{}{
+		"user":       user,
+		"collects":   collects,
+		"pagination": pagination,
+		"page":       page,
+		"active":     "members",
 	})
 }
 
@@ -114,7 +144,7 @@ func memberTopicsHandler(handler Handler) {
 		return
 	}
 
-	query.All(&topics)
+	query.(*mgo.Query).All(&topics)
 
 	renderTemplate(handler, "account/topics.html", BASE, map[string]interface{}{
 		"user":       user,
@@ -160,7 +190,7 @@ func memberRepliesHandler(handler Handler) {
 
 	query, err := pagination.Page(page)
 
-	query.All(&replies)
+	query.(*mgo.Query).All(&replies)
 
 	renderTemplate(handler, "account/replies.html", BASE, map[string]interface{}{
 		"user":       user,
@@ -228,7 +258,7 @@ func membersInTheSameCityHandler(handler Handler) {
 		return
 	}
 
-	query.All(&members)
+	query.(*mgo.Query).All(&members)
 
 	renderTemplate(handler, "member/list.html", BASE, map[string]interface{}{
 		"members":    members,

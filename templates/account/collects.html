@@ -1,0 +1,38 @@
+{{define "Title"}}{{.user.Username}} 创建的全部主题{{end}}
+{{define "ContentWidth"}}9{{end}}
+{{define "Breadcrumb"}}
+<ul class="breadcrumb">
+	<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
+	<li><a href="/member/{{.user.Username}}">{{.user.Username}}</a></li>
+	<li class="active">收藏主题</li>
+</ul>
+{{end}}
+{{define "Content"}}
+{{$user := .utils.AssertUser .user}}
+<div class="content">
+	<div class="clearfix"></div>
+	<p></p>
+	<dl>
+		{{range .collects}}
+			{{$t := .Topic $.db}}
+			{{$creater := $t.Creater $.db }}
+			{{$n := $t.Node $.db}}
+		<dd class="topic">
+		<a href="/t/{{.TopicId}}" class="title">{{$t.Title}}</a>
+		<div class="space"></div>
+		<span>
+			<a class="label label-info" href="/go/{{$n.Id}}">{{$n.Name}}</a> • 
+			<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username }}</strong></a> • 
+			{{$.utils.FormatTime .TimeCollected}}
+		</span>
+		<div class="clearfix"></div>
+		</dd>
+		{{end}}
+	</dl>
+	<hr>
+	{{.pagination.Html .page}}
+</div>
+{{end}}
+
+{{define "LeftSide"}}{{end}}
+{{define "RightSide"}}{{end}}

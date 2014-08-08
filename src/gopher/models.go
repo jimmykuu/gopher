@@ -48,32 +48,49 @@ type Reply struct {
 	TopicTitle string
 }
 
+//收藏的话题
+type CollectTopic struct {
+	TopicId       string
+	TimeCollected time.Time
+}
+
+func (ct *CollectTopic) Topic(db *mgo.Database) *Topic {
+	c := db.C(CONTENTS)
+	var topic Topic
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(ct.TopicId), "content.type": TypeTopic}).One(&topic)
+	if err != nil {
+		panic(err)
+		return nil
+	}
+	return &topic
+
+}
+
 // 用户
 type User struct {
-	Id_            bson.ObjectId `bson:"_id"`
-	Username       string
-	Password       string
-	Email          string
-	Avatar         string
-	Website        string
-	Location       string
-	Tagline        string
-	Bio            string
-	Twitter        string
-	Weibo          string
-	GitHubUsername string
-	JoinedAt       time.Time
-	Follow         []string
-	Fans           []string
-	//存储的是最近回复的主题的objectid.hex
-	RecentReplies []Reply
-	//存储的是最近评论被AT的主题的objectid.hex
-	RecentAts    []At
-	IsSuperuser  bool
-	IsActive     bool
-	ValidateCode string
-	ResetCode    string
-	Index        int
+	Id_             bson.ObjectId `bson:"_id"`
+	Username        string
+	Password        string
+	Email           string
+	Avatar          string
+	Website         string
+	Location        string
+	Tagline         string
+	Bio             string
+	Twitter         string
+	Weibo           string
+	GitHubUsername  string
+	JoinedAt        time.Time
+	Follow          []string
+	Fans            []string
+	RecentReplies   []Reply        //存储的是最近回复的主题的objectid.hex
+	RecentAts       []At           //存储的是最近评论被AT的主题的objectid.hex
+	TopicsCollected []CollectTopic //用户收藏的topic数组
+	IsSuperuser     bool
+	IsActive        bool
+	ValidateCode    string
+	ResetCode       string
+	Index           int
 }
 
 // 是否是默认头像
@@ -192,10 +209,27 @@ func (c *Content) Comments(db *mgo.Database) *[]Comment {
 	return &comments
 }
 
+// 只能收藏未收藏过的主题
+func (c *Content) CanCollect(username string, db *mgo.Database) bool {
+	var user User
+	c_ := db.C(USERS)
+	err := c_.Find(bson.M{"username": username}).One(&user)
+	if err != nil {
+		return false
+	}
+	has := false
+	for _, v := range user.TopicsCollected {
+		if v.TopicId == c.Id_.Hex() {
+			has = true
+		}
+	}
+	return !has
+}
+
 // 是否有权编辑主题
 func (c *Content) CanEdit(username string, db *mgo.Database) bool {
 	var user User
-	c_ := db.C("users")
+	c_ := db.C(USERS)
 	err := c_.Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		return false

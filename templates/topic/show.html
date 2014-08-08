@@ -22,6 +22,11 @@
 					<a href="/t/{{$topic.Id_.Hex}}/delete" class="btn btn-danger btn-sm pull-right" title="删除" onclick="return confirm('确定删除吗？');"><i class="glyphicon glyphicon-remove"></i></a>
 				{{end}}
 			{{end}}
+			{{if  ne .username  $creater.Username}}
+				{{if $topic.CanCollect .username $.db}}
+                <a href="/t/{{$topic.Id_.Hex}}/collect" class="btn btn-info btn-sm pull-right" title="收藏"><i class="glyphicon glyphicon-plus"></i></a>
+				{{end}}
+			{{end}}
 			<div>
 				由 <a href="/member/{{$creater.Username}}">{{$creater.Username}}</a> 在 {{.utils.FormatTime $topic.CreatedAt }} 发布 {{$topic.Hits}} 次点击
 			</div>

@@ -13,6 +13,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jimmykuu/wtforms"
+	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )
 
@@ -44,7 +45,7 @@ func topicsHandler(handler Handler, conditions bson.M, sort string, url string, 
 		return
 	}
 
-	query.All(&topics)
+	query.(*mgo.Query).All(&topics)
 
 	var linkExchanges []LinkExchange
 	c = handler.DB.C(LINK_EXCHANGES)
@@ -365,13 +366,31 @@ func topicInNodeHandler(handler Handler) {
 		return
 	}
 
-	query.All(&topics)
+	query.(*mgo.Query).All(&topics)
 
 	renderTemplate(handler, "/topic/list.html", BASE, map[string]interface{}{
 		"topics": topics,
 		"node":   node,
 		"active": "topic",
 	})
+}
+
+// URL: /t/{topicId}/collect/
+// 将主题收藏至当前用户的收藏夹
+func collectTopicHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
+	topicId := vars["topicId"]
+	t := time.Now()
+	user, _ := currentUser(handler)
+	for _, v := range user.TopicsCollected {
+		if v.TopicId == topicId {
+			return
+		}
+	}
+	user.TopicsCollected = append(user.TopicsCollected, CollectTopic{topicId, t})
+	c := handler.DB.C(USERS)
+	c.UpdateId(user.Id_, bson.M{"$set": bson.M{"topicscollected": user.TopicsCollected}})
+	http.Redirect(handler.ResponseWriter, handler.Request, "/member/"+user.Username+"/collect?=p=1", http.StatusFound)
 }
 
 // URL: /t/{topicId}/delete
