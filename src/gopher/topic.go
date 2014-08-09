@@ -390,7 +390,7 @@ func collectTopicHandler(handler Handler) {
 	user.TopicsCollected = append(user.TopicsCollected, CollectTopic{topicId, t})
 	c := handler.DB.C(USERS)
 	c.UpdateId(user.Id_, bson.M{"$set": bson.M{"topicscollected": user.TopicsCollected}})
-	http.Redirect(handler.ResponseWriter, handler.Request, "/member/"+user.Username+"/collect?=p=1", http.StatusFound)
+	http.Redirect(handler.ResponseWriter, handler.Request, "/member/"+user.Username+"/collect?p=1", http.StatusFound)
 }
 
 // URL: /t/{topicId}/delete

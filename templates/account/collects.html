@@ -23,7 +23,7 @@
 		<span>
 			<a class="label label-info" href="/go/{{$n.Id}}">{{$n.Name}}</a> • 
 			<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username }}</strong></a> • 
-			{{$.utils.FormatTime .TimeCollected}}
+			{{$.utils.FormatTime $t.CreatedAt}}
 		</span>
 		<div class="clearfix"></div>
 		</dd>

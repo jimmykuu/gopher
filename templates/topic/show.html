@@ -14,19 +14,21 @@
 	<div class="content">
 		<div class="page-header">
 			<h1>{{$topic.Title}}</h1>
+            <div class="btn-group btn-group-sm pull-right">
 			{{if .username}}
 				{{if $topic.CanEdit .username $.db}}
-                <a href="/t/{{$topic.Id_.Hex}}/edit" class="btn btn-info btn-sm pull-right" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>
+                <a href="/t/{{$topic.Id_.Hex}}/edit" class="btn btn-default" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>
 				{{end}}
 				{{if $topic.CanDelete .username $.db}}
-					<a href="/t/{{$topic.Id_.Hex}}/delete" class="btn btn-danger btn-sm pull-right" title="删除" onclick="return confirm('确定删除吗？');"><i class="glyphicon glyphicon-remove"></i></a>
+					<a href="/t/{{$topic.Id_.Hex}}/delete" class="btn btn-default" title="删除" onclick="return confirm('确定删除吗？');"><i class="glyphicon glyphicon-remove"></i></a>
 				{{end}}
 			{{end}}
-			{{if  ne .username  $creater.Username}}
+			{{if ne .username $creater.Username}}
 				{{if $topic.CanCollect .username $.db}}
-                <a href="/t/{{$topic.Id_.Hex}}/collect" class="btn btn-info btn-sm pull-right" title="收藏"><i class="glyphicon glyphicon-plus"></i></a>
+                <a href="/t/{{$topic.Id_.Hex}}/collect" class="btn btn-default" title="收藏"><i class="glyphicon glyphicon-star-empty"></i></a>
 				{{end}}
 			{{end}}
+			</div>
 			<div>
 				由 <a href="/member/{{$creater.Username}}">{{$creater.Username}}</a> 在 {{.utils.FormatTime $topic.CreatedAt }} 发布 {{$topic.Hits}} 次点击
 			</div>
