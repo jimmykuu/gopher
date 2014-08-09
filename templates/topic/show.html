@@ -22,10 +22,10 @@
 				{{if $topic.CanDelete .username $.db}}
 					<a href="/t/{{$topic.Id_.Hex}}/delete" class="btn btn-default" title="删除" onclick="return confirm('确定删除吗？');"><i class="glyphicon glyphicon-remove"></i></a>
 				{{end}}
-			{{end}}
-			{{if ne .username $creater.Username}}
-				{{if $topic.CanCollect .username $.db}}
-                <a href="/t/{{$topic.Id_.Hex}}/collect" class="btn btn-default" title="收藏"><i class="glyphicon glyphicon-star-empty"></i></a>
+				{{if ne .username $creater.Username}}
+					{{if $topic.CanCollect .username $.db}}
+					<a href="/t/{{$topic.Id_.Hex}}/collect" class="btn btn-default" title="收藏"><i class="glyphicon glyphicon-star-empty"></i></a>
+					{{end}}
 				{{end}}
 			{{end}}
 			</div>
