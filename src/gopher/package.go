@@ -279,7 +279,7 @@ func deletePackageHandler(handler Handler) {
 func downloadPackagesHandler(handler Handler) {
 	var packages []DownloadedPackage
 	c := handler.DB.C(DOWNLOADED_PACKAGES)
-	c.Find(nil).Sort("-count").Limit(10).All(&packages)
+	c.Find(nil).Sort("-count").Limit(20).All(&packages)
 	renderTemplate(handler, "package/download.html", BASE, map[string]interface{}{
 		"packages": packages,
 		"active":   "package-download",
