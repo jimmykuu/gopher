@@ -9,14 +9,18 @@
 {{end}}
 {{define "Content"}}
 	<div class="content">
-		<h1></h1>
+		<div class="alert alert-success" role="alert">
+		  <p>由于code.google.com被墙，导致一些托管在code.google.com上面的包go get不下来，此功能就是用于解决这个问题。
+		  <strong>使用方法：</strong>
+		  <p>输入完整包名，如：<code>code.google.com/p/go.net/websocket</code>，回车或点击【Go!】按钮即可。</p>
+		</div>
 		<div class="input-group">
-		  <input type="text" id="package" class="form-control" placeholder="输入包名" onkeypress="keypress();">
+		  <input type="text" id="package" class="form-control" placeholder="输入完整包名" onkeypress="keypress();">
 		  <span class="input-group-btn">
 			<button class="btn btn-default" type="button" onclick="get_package();">Go!</button>
 		  </span>
 		</div>
-		<div id="console-wrap" style="max-height: 200px; background-color: darkgreen; color: white; margin-top: 20px; border-radius: 4px; padding: 10px; overflow-y: scroll;">
+		<div id="console-wrap" style="max-height: 200px; background-color: darkgreen; color: white; margin-top: 20px; border-radius: 4px; padding: 10px; overflow-y: auto;">
 		  <pre id="console" style="background-color: transparent; border: none; border-radius: 0; padding: 0; color: white;"></pre>
 		  <div id="waiting"></div>
 		</div>
