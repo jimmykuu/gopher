@@ -51,6 +51,9 @@
 		    if (package == "") {
 		        alert("请输入包名称");
 		        return;
+            } else if (package.indexOf("/") == -1) {
+                alert("请输入正确的第三方包名");
+                return;
             }
 
 			var sock = null;
