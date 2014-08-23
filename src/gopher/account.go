@@ -353,7 +353,25 @@ func profileHandler(handler Handler) {
 	if handler.Request.Method == "POST" {
 		if profileForm.Validate(handler.Request) {
 			c := handler.DB.C(USERS)
+
+			// 检查邮箱
+			result := new(User)
+			err := c.Find(bson.M{"email": profileForm.Value("email")}).One(result)
+			fmt.Println(result)
+			if err == nil && result.Id_ != user.Id_ {
+				fmt.Println("xxxx")
+				profileForm.AddError("email", "电子邮件地址已经被使用")
+
+				renderTemplate(handler, "account/profile.html", BASE, map[string]interface{}{
+					"user":           user,
+					"profileForm":    profileForm,
+					"defaultAvatars": defaultAvatars,
+				})
+				return
+			}
+
 			c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{
+				"email":          profileForm.Value("email"),
 				"website":        profileForm.Value("website"),
 				"location":       profileForm.Value("location"),
 				"tagline":        profileForm.Value("tagline"),
