@@ -64,16 +64,16 @@
 			</div>
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav" id="menu">
-					<li class="nav-community{{if eq .active "topic"}} active{{end}}"><a href="/">社区</a></li>
-					<li class="nav-articles{{if eq .active "article"}} active{{end}}"><a href="/articles">文章</a></li>
-					<li class="nav-sites{{if eq .active "site"}} active{{end}}"><a href="/sites">酷站</a></li>
-					<li class="nav-packages{{if eq .active "package"}} active{{end}}"><a href="/packages">第三方包</a></li>
-					<li class="nav-members{{if eq .active "members"}} active{{end}}"><a href="/members">会员</a></li>
-                    <li class="nav-books{{if eq .active "books"}} active{{end}}"><a href="/books">图书</a></li>
-					<li class="nav-tour"><a href="http://tour.golangtc.com" target="_blank">Go 指南</a></li>
-					<li class="nav-godoc"><a href="http://godoc.golangtc.com" target="_blank">GoDoc</a></li>
-					<li class="nav-download{{if eq .active "download"}} active{{end}}"><a href="/download">下载</a></li>
-					<li class="nav-package-download{{if eq .active "package-download"}} active{{end}}"><a href="/download/package">第三方包下载</a><sup class="new"></sup></li>
+					<li{{if eq .active "topic"}} class="active"{{end}}><a href="/">社区</a></li>
+					<li{{if eq .active "article"}} class="active"{{end}}><a href="/articles">文章</a></li>
+					<li{{if eq .active "site"}} class="active"{{end}}><a href="/sites">酷站</a></li>
+					<li{{if eq .active "package"}} class="active"{{end}}><a href="/packages">第三方包</a></li>
+					<li{{if eq .active "members"}} class="active"{{end}}><a href="/members">会员</a></li>
+                    <li{{if eq .active "books"}} class="active"{{end}}><a href="/books">图书</a></li>
+					<li><a href="http://tour.golangtc.com" target="_blank">Go 指南</a></li>
+					<li><a href="http://godoc.golangtc.com" target="_blank">GoDoc</a></li>
+					<li{{if eq .active "download"}} class="active"{{end}}><a href="/download">下载</a></li>
+					<li{{if eq .active "package-download"}} class="active"{{end}}><a href="/download/package">第三方包下载</a><sup class="new"></sup></li>
                     <li><a href="/timeline">时间线</a></li>
 				</ul>
 				<form action="/search" class="navbar-form pull-right" method="get" role="search">

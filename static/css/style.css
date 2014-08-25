@@ -3,6 +3,18 @@ body {
 	padding-bottom: 40px;
 }
 
+a {
+	color: #778087;
+}
+
+a:visited, a:active {
+	color: #778087;
+}
+
+a:hover {
+    color: #4d5256;
+}
+
 pre.prettyprint ol.linenums {
     margin-left: 0;
 }
@@ -288,110 +300,6 @@ ul.members li {
 
 ul.members li a {
 	display: block;
-}
-
-ul#menu li {
-	border-bottom-style: solid;
-	border-bottom-width: 4px;
-}
-
-ul#menu li a {
-	padding: 10px 15px;
-	position: relative;
-	display: block;
-	color: #999;
-	background: transparent;
-	text-align: center;
-}
-
-ul#menu li a:before {
-	position: absolute;
-	content: "";
-	width: 0;
-	height: 0;
-	border-style: solid;
-	border-width: .5em;
-	border-top-color: transparent;
-	border-right-color: transparent;
-	border-left-color: transparent;
-	bottom: 0;
-	left: 50%;
-	margin-left: -.5em;
-}
-
-ul#menu li a:before {
-	color: transparent;
-}
-
-ul#menu li.nav-community {
-	border-bottom-color: #3776ab;
-}
-
-ul#menu li.active.nav-community a:before {
-	color: #3776ab;
-	border-bottom-color: #3776ab;
-}
-
-ul#menu li.nav-articles {
-	border-bottom-color: #d62728;
-}
-
-ul#menu li.active.nav-articles a:before {
-	color: #d62728;
-	border-bottom-color: #d62728;
-}
-
-ul#menu li.nav-sites {
-	border-bottom-color: #82b043;
-}
-
-ul#menu li.active.nav-sites a:before {
-	color: #82b043;
-	border-bottom-color: #82b043;
-}
-
-ul#menu li.nav-packages {
-	border-bottom-color: #ff7f0e;
-}
-
-ul#menu li.active.nav-packages a:before {
-	color: #ff7f0e;
-	border-bottom-color: #ff7f0e;
-}
-
-ul#menu li.nav-books {
-    border-bottom-color: #9467bd;
-}
-
-ul#menu li.active.nav-books a:before {
-    color: #9467bd;
-    border-bottom-color: #9467bd;
-}
-
-ul#menu li.nav-members {
-	border-bottom-color: #17becf;
-}
-
-ul#menu li.active.nav-members a:before {
-	color: #17becf;
-	border-bottom-color: #17becf;
-}
-
-ul#menu li.nav-tour {
-	border-bottom-color: #78797a;
-}
-
-ul#menu li.nav-godoc {
-	border-bottom-color: #375EAB;
-}
-
-ul#menu li.active.nav-download a:before {
-	color: #ce6dbd;
-	border-bottom-color: #ce6dbd;
-}
-
-ul#menu li.nav-download {
-	border-bottom-color: #ce6dbd;
 }
 
 .img-rounded {
