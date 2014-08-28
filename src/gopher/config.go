@@ -28,6 +28,7 @@ type ConfigStruct struct {
 	QiniuSecretKey       string `json:"qiniu_secret_key"`
 	GoGetPath            string `json:"go_get_path"`
 	PackagesDownloadPath string `json:"packages_download_path"`
+	PublicSalt           string `json:"public_salt"`
 }
 
 var Config ConfigStruct

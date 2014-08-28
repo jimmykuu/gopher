@@ -57,11 +57,11 @@ func generateUsersJson(db *mgo.Database) {
 	usersJson = b
 }
 
-// 加密密码,转成md5
-func encryptPassword(password string) string {
-	h := md5.New()
-	io.WriteString(h, password)
-	return fmt.Sprintf("%x", h.Sum(nil))
+// 加密密码，md5(md5(password + salt) + public_salt)
+func encryptPassword(password, salt string) string {
+	saltedPassword := fmt.Sprintf("%x", md5.Sum([]byte(password))) + salt
+	md5SaltedPassword := fmt.Sprintf("%x", md5.Sum([]byte(saltedPassword)))
+	return fmt.Sprintf("%x", md5.Sum([]byte(md5SaltedPassword+Config.PublicSalt)))
 }
 
 // 返回当前用户
@@ -131,11 +131,13 @@ func signupHandler(handler Handler) {
 			id := bson.NewObjectId()
 			username := form.Value("username")
 			validateCode := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
+			salt := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 			index := status.UserIndex + 1
 			err = c.Insert(&User{
 				Id_:          id,
 				Username:     username,
-				Password:     encryptPassword(form.Value("password")),
+				Password:     encryptPassword(form.Value("password"), salt),
+				Salt:         salt,
 				Email:        form.Value("email"),
 				ValidateCode: validateCode,
 				IsActive:     true,
@@ -238,8 +240,8 @@ func signinHandler(handler Handler) {
 				renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form})
 				return
 			}
-
-			if user.Password != encryptPassword(form.Value("password")) {
+			fmt.Println(user.Password, form.Value("password"), encryptPassword(form.Value("password"), user.Salt))
+			if user.Password != encryptPassword(form.Value("password"), user.Salt) {
 				form.AddError("password", "密码和用户名不匹配")
 
 				renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form})
@@ -464,11 +466,13 @@ func resetPasswordHandler(handler Handler) {
 
 	if handler.Request.Method == "POST" && form.Validate(handler.Request) {
 		if form.Value("new_password") == form.Value("confirm_password") {
+			salt := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 			c.Update(
 				bson.M{"_id": user.Id_},
 				bson.M{
 					"$set": bson.M{
-						"password":  encryptPassword(form.Value("new_password")),
+						"password":  encryptPassword(form.Value("new_password"), salt),
+						"salt":      salt,
 						"resetcode": "",
 					},
 				},
@@ -612,10 +616,14 @@ func changePasswordHandler(handler Handler) {
 
 	if handler.Request.Method == "POST" && form.Validate(handler.Request) {
 		if form.Value("new_password") == form.Value("confirm_password") {
-			currentPassword := encryptPassword(form.Value("current_password"))
+			currentPassword := encryptPassword(form.Value("current_password"), user.Password)
 			if currentPassword == user.Password {
 				c := handler.DB.C(USERS)
-				c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"password": encryptPassword(form.Value("new_password"))}})
+				salt := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
+				c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{
+					"password": encryptPassword(form.Value("new_password"), salt),
+					"salt":     salt,
+				}})
 				message(handler, "密码修改成功", `密码修改成功`, "success")
 				return
 			} else {

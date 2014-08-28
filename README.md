@@ -50,7 +50,10 @@ Windows:
         "superusers": "jimmykuu,another",
         "analytics_file": "",
         "time_zone_offset": 8,
-        "static_file_version": 1
+        "static_file_version": 1,
+        "go_get_path": "/tmp/download",
+        "packages_download_path": "/var/go/gopher/static/download/packages",
+        "public_salt": "nXweu8Jq44FgEfgM1Pv4xH51"
     }
 
 先启动MongoDB

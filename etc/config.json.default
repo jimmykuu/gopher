@@ -13,5 +13,7 @@
 	"qiniu_access_key": "",
 	"qiniu_secret_key": "",
 	"time_zone_offset": 8,
-	"static_file_version": 1
+	"static_file_version": 1,
+	"packages_download_path": "/tmp",
+	"public_salt": "nXweu8Jq44FgEfgM1Pv4xH51"
 }

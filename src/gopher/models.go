@@ -71,6 +71,7 @@ type User struct {
 	Id_             bson.ObjectId `bson:"_id"`
 	Username        string
 	Password        string
+	Salt            string `bson:"salt"`
 	Email           string
 	Avatar          string
 	Website         string
