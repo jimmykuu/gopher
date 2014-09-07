@@ -115,16 +115,25 @@
 {{define "LeftSide"}}{{end}}
 
 {{define "RightSide"}}
-    <div class="col-md-4 sidebar">
-		<div class="well sidebar-nav">
-		  <h4><small>最多下载</small></h4>
-		  <hr>
-		  <ul>
-			{{range .packages}}
-			<li><a href="javascript:;" onclick="input_package('{{.Name}}');">{{.Name}} <span class="badge pull-right">{{.Count}}</span></a></li>
-			{{end}}
-		  </ul>
-		</div>
-    </div>
+  <div class="col-md-4 sidebar">
+	<div class="panel panel-default">
+	  <div class="panel-heading">
+		<h3 class="panel-title">Go 语言包管理</h3>
+	  </div>
+	  <div class="panel-body">
+		<a href="http://gopm.io/" target="_blank">Go 语言包管理网站</a>提供类似的功能，无需 Git 和 Hg 等版本管理工具，就可以下载指定版本的 Go 语言包。也可以到该网站下载，网址：<a href="http://gopm.io" target="_blank">gopm.io</a>。
+	  </div>
+	</div>
+	<div class="panel panel-default">
+	  <div class="panel-heading">
+		<h3 class="panel-title">最多下载</h3>
+	  </div>
+	  <ul class="list-group">
+		{{range .packages}}
+		<li class="list-group-item"><a href="javascript:;" onclick="input_package('{{.Name}}');">{{.Name}} <span class="badge pull-right">{{.Count}}</span></a></li>
+		{{end}}
+	  </ul>
+	</div>
+  </div>
 {{end}}
 
