@@ -2,6 +2,7 @@ package gopher
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io/ioutil"
@@ -110,4 +111,13 @@ func renderTemplate(handler Handler, file, baseFile string, data map[string]inte
 
 	page := parseTemplate(file, baseFile, data)
 	handler.ResponseWriter.Write(page)
+}
+
+func renderJson(handler Handler, data interface{}) {
+	b, err := json.Marshal(data)
+	if err != nil {
+		panic(err)
+	}
+	handler.ResponseWriter.Header().Set("Content-Type", "application/json")
+	handler.ResponseWriter.Write(b)
 }

@@ -54,14 +54,17 @@
 		{{$commenter := .Creater $.db}}
 		<a name="{{.Id_.Hex}}"></a>
 		<dd id="{{.Id_.Hex}}">
-			<span class="label label-default pull-right">#{{$.utils.Index $index}}</span>
-			{{if $.username}}
-				{{if $reply.CanDelete $.username $.db}}
-					<a href="/comment/{{.Id_.Hex}}/delete" class="remove btn btn-danger btn-xs pull-right" title="删除"><i class="glyphicon glyphicon-remove"></i></a>
-				{{end}}
-			{{end}}
             <a href="/member/{{$commenter.Username}}" class="pull-left" style="margin-right: 10px;"><img class="img-rounded" src="{{$commenter.AvatarImgSrc}}-middle" alt="{{$commenter.Username}}"></a>
 			<div class="info">
+			  <span class="label label-default pull-right">#{{$.utils.Index $index}}</span>
+			  {{if $.username}}
+				{{if $reply.CanDeleteOrEdit $.username $.db}}
+			        <div class="btn-group btn-group-xs pull-right" style="margin-right: 1em;">
+					  <a href="javascript:;" class="edit-comment btn btn-default" title="编辑" comment-id="{{.Id_.Hex}}"><i class="glyphicon glyphicon-edit"></i></a>
+					  <a href="/comment/{{.Id_.Hex}}/delete" class="btn btn-default" title="删除" onclick="return confirm('确认删除该评论吗？');"><i class="glyphicon glyphicon-remove"></i></a>
+					</div>
+				{{end}}
+			  {{end}}
 				<a href="/member/{{$commenter.Username}}"><strong>{{$commenter.Username}}</strong></a> •
 				{{$.utils.FormatTime .CreatedAt}}
 			</div>
@@ -98,11 +101,12 @@
 		<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Sanitizer.js"></script>
 		<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/jquery.textchange.min.js"></script>
 		<script type="text/javascript">
-			(function () {
+			$(document).ready(function () {
+			  (function () {
 				var converter1 = Markdown.getSanitizingConverter();
 				var editor1 = new Markdown.Editor(converter1);
 				editor1.run();
-			})();
+		   	  })();
 
 			$('#wmd-input').bind('hastext', function () {
 				$('#submit').attr('disabled', false);
@@ -113,19 +117,85 @@
 			});
 
 			$('#reply-form').submit(function () {
-				$("#html").val($('#wmd-preview').html());
-					if ($('#wmd-input').val().trim() == '') {
-						$('#submit').attr('disabled', true);
-						return false;
-					}
+				if ($('#wmd-input').val().trim() == '') {
+					$('#submit').attr('disabled', true);
+					return false;
+				}
+                $("#html").val($('#wmd-preview').html());
 				return true;
 			});
+
+            $('#edit-comment-form').submit(function () {
+			    var markdown = $('#comment-markdown').val().trim();
+			    if (markdown == '') {
+			      return false;
+                }
+			    var converter = new Markdown.Converter();
+                var html = converter.makeHtml(markdown);
+			    $('#comment-html').val(html);
+
+				return true;
+			});
+			
+
+            $('#myTab a').click(function (e) {
+			  e.preventDefault();
+			  $(this).tab('show');
+			});
+
+            $('#myTab a[href="#preview"]').on('shown.bs.tab', function (e) {
+			  var markdown = $('#comment-markdown').val();
+			  var converter = new Markdown.Converter();
+              var html = converter.makeHtml(markdown);
+			  $('#preview-content').html(html);
+            });
+
+			$('.edit-comment').click(function () {
+			  var commentId = $(this).attr('comment-id');
+			  $.getJSON("/comment/" + commentId + ".json", function (data) {
+			    $('#edit-comment-form').attr('action', '/comment/' + commentId + '/edit');
+			    $('#comment-markdown').val(data.markdown);
+			    $('#myModal').modal({});
+			  });
+			});
+          });
 		</script>
 	{{else}}
 		<div class="content" style="padding: 2em;">
 			需要 <a href="/signin" class="btn btn-primary">登录</a> 后方可回复, 如果你还没有账号你可以 <a href="/signup" class="btn btn-danger">注册</a> 一个帐号。
 		</div>
 	{{end}}
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">编辑评论</h4>
+      </div>
+      <div class="modal-body">
+		<ul id="myTab" class="nav nav-tabs" role="tablist">
+		  <li class="active"><a role="" data-toggle="tab" href="#comment">回复</a></li>
+		  <li><a role="tab" data-toggle="rab" href="#preview">预览</a></li>
+		</ul>
+		<form action="" method="post" class="form-vertical" id="edit-comment-form" role="form">
+          <div id="myTabContent" class="tab-content">
+			<div class="tab-pane fade in active" id="comment">
+			  <input type="hidden" name="html" id="comment-html">
+			  <div class="form-group">
+				<textarea class="form-control" name="content" id="comment-markdown" rows="10"></textarea>
+			  </div>
+			</div>
+			<div class="tab-pane fade" id="preview">
+			  <div id="preview-content" class="wmd-panel wmd-preview" style="overflow: auto; max-height: 240px;">
+			  </div>
+			</div>
+		  <button type="submit" class="btn btn-info">提交</button>
+		</form>
+      </div>
+    </div>
+  </div>
+</div>
 {{end}}
 
 {{define "LeftSide"}}{{end}}

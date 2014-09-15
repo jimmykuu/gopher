@@ -205,7 +205,7 @@ func (c *Content) Comments(db *mgo.Database) *[]Comment {
 	c_ := db.C("comments")
 	var comments []Comment
 
-	c_.Find(bson.M{"contentid": c.Id_}).All(&comments)
+	c_.Find(bson.M{"contentid": c.Id_}).Sort("createdat").All(&comments)
 
 	return &comments
 }
@@ -379,8 +379,12 @@ func (c *Comment) Creater(db *mgo.Database) *User {
 	return &user
 }
 
-// 是否有权删除评论，只允许管理员删除
-func (c *Comment) CanDelete(username string, db *mgo.Database) bool {
+// 是否有权删除评论，管理员和作者可删除
+func (c *Comment) CanDeleteOrEdit(username string, db *mgo.Database) bool {
+	if c.Creater(db).Username == username {
+		return true
+	}
+
 	var user User
 	c_ := db.C("users")
 	err := c_.Find(bson.M{"username": username}).One(&user)

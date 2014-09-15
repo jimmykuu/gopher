@@ -96,6 +96,8 @@ var (
 
 		{"/comment/{contentId:[0-9a-f]{24}}", Authenticated, commentHandler},
 		{"/comment/{commentId:[0-9a-f]{24}}/delete", Administrator, deleteCommentHandler},
+		{"/comment/{id:[0-9a-f]{24}}.json", Authenticated, commentJsonHandler},
+		{"/comment/{id:[0-9a-f]{24}}/edit", Authenticated, editCommentHandler},
 
 		{"/topics/latest", Everyone, latestTopicsHandler},
 		{"/topics/no_reply", Everyone, noReplyTopicsHandler},
