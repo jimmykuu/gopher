@@ -75,24 +75,36 @@
 		</div>
         <a href="/topic/new" class="btn btn-success btn-lg btn-block" style="margin-bottom: 20px;"><i class="glyphicon glyphicon-edit"></i> 发表话题</a>
 		{{if .utils.HasAd "frongpage" .db}}
-		<div class="well sidebar-nav">
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+			<h3 class="panel-title">赞助商链接</h3>
+		  </div>
+		  <div class="panel-body">
 			{{.utils.AdCode "frongpage" .db}}
+		  </div>
 		</div>
 		{{end}}
-		<div class="well sidebar-nav">
-			<h4><small>最热节点</small></h4>
-			<hr>
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+			<h3 class="panel-title">最热节点</h3>
+		  </div>
+          <div class="panel-body">
 			{{range .nodes}}
-				<a href="/go/{{.Id}}" class="btn">{{.Name}}</a>
+			  <a href="/go/{{.Id}}" class="btn">{{.Name}}</a>
 			{{end}}
-			<div class="clearfix"></div>
+          </div>
+          <div class="panel-footer">
 			<a href="/nodes" class="pull-right">所有节点</a>
 			<div class="clearfix"></div>
+		  </div>
 		</div>
-		<div class="well sidebar-nav">
-			<h4><small>友情社区</small></h4>
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+			<h3 class="panel-title">友情社区</h3>
+		  </div>
+		  <ul class="list-group">
 			{{range .linkExchanges}}
-				<hr>
+			  <li class="list-group-item">
 				<a href="{{.URL}}" target="_blank" title="{{.Description}}">
 					{{if .Logo}}
 						<img src="{{.Logo}}" style="max-width: 224px;">
@@ -100,12 +112,20 @@
 						{{.Name}}
 					{{end}}
 				</a>
+              </li>
 			{{end}}
 		</div>
-		<div class="well sidebar-nav">
-			<h4><small>社区状态</small></h4>
-			<hr>
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+			<h3 class="panel-title">社区状态</h3>
+		  </div>
 			<table width="100%" class="status">
+			    <thead>
+				  <tr>
+					<th>&nbsp;</th>
+					<th></th>
+				  </tr>					
+				</thead>
 				<tbody>
 				<tr>
 					<td class="status-label">注册会员</td>
