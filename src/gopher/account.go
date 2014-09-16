@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
 	"strings"
 	"time"
@@ -137,6 +138,7 @@ func signupHandler(handler Handler) {
 				Id_:          id,
 				Username:     username,
 				Password:     encryptPassword(form.Value("password"), salt),
+				Avatar:       defaultAvatars[rand.Intn(len(defaultAvatars))],
 				Salt:         salt,
 				Email:        form.Value("email"),
 				ValidateCode: validateCode,
