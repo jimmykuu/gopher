@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"labix.org/v2/mgo"
+	"gopkg.in/mgo.v2"
 )
 
 type Handler struct {

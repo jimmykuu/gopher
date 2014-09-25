@@ -8,7 +8,7 @@ import (
 	"net/http"
 
 	"github.com/jimmykuu/wtforms"
-	"labix.org/v2/mgo/bson"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // URL: /nodes

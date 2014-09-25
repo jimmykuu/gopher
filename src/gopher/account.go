@@ -23,8 +23,8 @@ import (
 	. "github.com/qiniu/api/conf"
 	qiniu_io "github.com/qiniu/api/io"
 	"github.com/qiniu/api/rs"
-	"labix.org/v2/mgo"
-	"labix.org/v2/mgo/bson"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 var defaultAvatars = []string{

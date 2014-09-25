@@ -11,7 +11,7 @@ import (
 	"math"
 	"strings"
 
-	"labix.org/v2/mgo"
+	"gopkg.in/mgo.v2"
 )
 
 // 分页结构体
