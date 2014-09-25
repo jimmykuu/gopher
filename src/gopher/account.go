@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"code.google.com/p/go-uuid/uuid"
+	"github.com/dchest/captcha"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/jimmykuu/webhelpers"
@@ -98,10 +99,21 @@ func signupHandler(handler Handler) {
 		wtforms.NewTextField("username", "用户名", "", wtforms.Required{}, wtforms.Regexp{Expr: `^[a-zA-Z0-9_]{3,16}$`, Message: "请使用a-z, A-Z, 0-9以及下划线, 长度3-16之间"}),
 		wtforms.NewPasswordField("password", "密码", wtforms.Required{}),
 		wtforms.NewTextField("email", "电子邮件", "", wtforms.Required{}, wtforms.Email{}),
+		wtforms.NewTextField("captcha", "验证码", "", wtforms.Required{}),
+		wtforms.NewHiddenField("captchaId", ""),
 	)
 
 	if handler.Request.Method == "POST" {
 		if form.Validate(handler.Request) {
+			// 检查验证码
+			if !captcha.VerifyString(form.Value("captchaId"), form.Value("captcha")) {
+				form.AddError("captcha", "验证码错误")
+				form.SetValue("captcha", "")
+
+				renderTemplate(handler, "account/signup.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
+				return
+			}
+
 			c := handler.DB.C(USERS)
 
 			result := User{}
@@ -110,8 +122,9 @@ func signupHandler(handler Handler) {
 			err := c.Find(bson.M{"username": form.Value("username")}).One(&result)
 			if err == nil {
 				form.AddError("username", "该用户名已经被注册")
+				form.SetValue("captcha", "")
 
-				renderTemplate(handler, "account/signup.html", BASE, map[string]interface{}{"form": form})
+				renderTemplate(handler, "account/signup.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
 				return
 			}
 
@@ -120,8 +133,9 @@ func signupHandler(handler Handler) {
 
 			if err == nil {
 				form.AddError("email", "电子邮件地址已经被注册")
+				form.SetValue("captcha", "")
 
-				renderTemplate(handler, "account/signup.html", BASE, map[string]interface{}{"form": form})
+				renderTemplate(handler, "account/signup.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
 				return
 			}
 
@@ -182,7 +196,8 @@ func signupHandler(handler Handler) {
 		}
 	}
 
-	renderTemplate(handler, "account/signup.html", BASE, map[string]interface{}{"form": form})
+	form.SetValue("captcha", "")
+	renderTemplate(handler, "account/signup.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
 }
 
 // URL: /activate/{code}
@@ -221,10 +236,21 @@ func signinHandler(handler Handler) {
 		wtforms.NewHiddenField("next", next),
 		wtforms.NewTextField("username", "用户名", "", &wtforms.Required{}),
 		wtforms.NewPasswordField("password", "密码", &wtforms.Required{}),
+		wtforms.NewTextField("captcha", "验证码", "", wtforms.Required{}),
+		wtforms.NewHiddenField("captchaId", ""),
 	)
 
 	if handler.Request.Method == "POST" {
 		if form.Validate(handler.Request) {
+			// 检查验证码
+			if !captcha.VerifyString(form.Value("captchaId"), form.Value("captcha")) {
+				form.AddError("captcha", "验证码错误")
+				form.SetValue("captcha", "")
+
+				renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
+				return
+			}
+
 			c := handler.DB.C(USERS)
 			user := User{}
 
@@ -232,21 +258,25 @@ func signinHandler(handler Handler) {
 
 			if err != nil {
 				form.AddError("username", "该用户不存在")
+				form.SetValue("captcha", "")
 
-				renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form})
+				renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
 				return
 			}
 
 			if !user.IsActive {
 				form.AddError("username", "邮箱没有经过验证,如果没有收到邮件,请联系管理员")
-				renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form})
+				form.SetValue("captcha", "")
+
+				renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
 				return
 			}
-			fmt.Println(user.Password, form.Value("password"), encryptPassword(form.Value("password"), user.Salt))
+
 			if user.Password != encryptPassword(form.Value("password"), user.Salt) {
 				form.AddError("password", "密码和用户名不匹配")
+				form.SetValue("captcha", "")
 
-				renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form})
+				renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
 				return
 			}
 
@@ -264,7 +294,8 @@ func signinHandler(handler Handler) {
 		}
 	}
 
-	renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form})
+	form.SetValue("captcha", "")
+	renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
 }
 
 // URL: /signout
@@ -361,9 +392,7 @@ func profileHandler(handler Handler) {
 			// 检查邮箱
 			result := new(User)
 			err := c.Find(bson.M{"email": profileForm.Value("email")}).One(result)
-			fmt.Println(result)
 			if err == nil && result.Id_ != user.Id_ {
-				fmt.Println("xxxx")
 				profileForm.AddError("email", "电子邮件地址已经被使用")
 
 				renderTemplate(handler, "account/profile.html", BASE, map[string]interface{}{

@@ -13,6 +13,7 @@ go get -u -v github.com/jimmykuu/wtforms
 go get -u -v github.com/qiniu/bytes
 go get -u -v github.com/qiniu/rpc
 go get -u -v github.com/qiniu/api
+go get -u -v github.com/dchest/captcha
 
 export GOPATH="$OLDGOPATH"
 

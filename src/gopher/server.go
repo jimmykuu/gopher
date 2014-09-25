@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"code.google.com/p/go.net/websocket"
+	"github.com/dchest/captcha"
 	"github.com/gorilla/mux"
 )
 
@@ -63,6 +64,7 @@ func handlerFun(route Route) http.HandlerFunc {
 func StartServer() {
 	http.Handle("/static/", http.FileServer(http.Dir(".")))
 	http.Handle("/get/package", websocket.Handler(getPackageHandler))
+	http.Handle("/captcha/", captcha.Server(captcha.StdWidth, captcha.StdHeight))
 	r := mux.NewRouter()
 	for _, route := range routes {
 		r.HandleFunc(route.URL, handlerFun(route))

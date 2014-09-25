@@ -14,6 +14,13 @@
 				{{.form.RenderInput "next"}}
                 {{.utils.RenderInputH .form "username" 2 6 `placeholder="用户名"`}}
                 {{.utils.RenderInputH .form "password" 2 6 `placeholder="密码"`}}
+				{{.utils.RenderInputH .form "captcha" 2 3}}
+				<div class="form-group">
+				  <div class="col-lg-offset-2 col-lg-3">
+					<a href="javascript:;" onclick="reload();" title="点击更新验证码"><img src="/captcha/{{.captchaId}}.png" id="captcha-img"></a>
+				  </div>				
+				</div>
+			<input type="hidden" name="captchaId" value="{{.captchaId}}">
 
 				<div class="form-group">
 					<div class="col-lg-offset-2 col-lg-6">
@@ -28,6 +35,20 @@
 			</fieldset>
 		</form>
 	</div>
+<script type="text/javascript">
+  function setSrcQuery(e, q) {
+    var src  = e.src;
+    var p = src.indexOf('?');
+    if (p >= 0) {
+      src = src.substr(0, p);
+    }
+    e.src = src + "?" + q
+  }
+
+  function reload() {
+    setSrcQuery(document.getElementById('captcha-img'), "reload=" + (new Date()).getTime());
+  }
+</script>
 {{end}}
 
 {{define "LeftSide"}}{{end}}
