@@ -1,7 +1,7 @@
 [
 	{
 		"version": "go1.3.3",
-		"date": "2014-10-01",
+		"date": "2014-09-30",
 		"files": [
 		   {
                 "filename": "go1.3.3.darwin-386-osx10.6.pkg",
@@ -109,7 +109,7 @@
         ]	
 	}, {
 		"version": "go1.3.2",
-		"date": "2014-09-26",
+		"date": "2014-09-25",
 		"files": [
 		   {
                 "filename": "go1.3.2.darwin-386-osx10.6.pkg",
