@@ -112,6 +112,7 @@ var (
 		{"/member/{username}/topics", Everyone, memberTopicsHandler},
 		{"/member/{username}/replies", Everyone, memberRepliesHandler},
 		{"/member/{username}/news", Everyone, memmberNewsHandler},
+		{"/member/{username}/clear/{t}", Authenticated, memmberNewsClear},
 		{"/member/{username}/collect", Everyone, memberTopicsCollectedHandler},
 		{"/follow/{username}", Authenticated, followHandler},
 		{"/unfollow/{username}", Authenticated, unfollowHandler},

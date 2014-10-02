@@ -79,13 +79,13 @@ func commentHandler(handler Handler) {
 		//查找评论中at的用户,并且更新recentAts
 		users := findAts(content)
 		for _, v := range users {
-			var user User
-			err := c.Find(bson.M{"username": v}).One(&user)
+			var u User
+			err := c.Find(bson.M{"username": v}).One(&u)
 			if err != nil {
 				fmt.Println(err)
 			} else {
-				user.RecentAts = append(user.RecentAts, At{user.Username, contentIdStr, Id_.Hex()})
-				if err = c.Update(bson.M{"username": user.Username}, bson.M{"$set": bson.M{"recentats": user.RecentAts}}); err != nil {
+				u.RecentAts = append(u.RecentAts, At{user.Username, contentIdStr, Id_.Hex()})
+				if err = c.Update(bson.M{"username": u.Username}, bson.M{"$set": bson.M{"recentats": u.RecentAts}}); err != nil {
 					fmt.Println(err)
 				}
 			}

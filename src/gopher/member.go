@@ -5,10 +5,28 @@
 package gopher
 
 import (
+	"encoding/json"
+	"net/http"
+
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
+
+const (
+	at    = "at"
+	reply = "reply"
+)
+
+func returnJson(w http.ResponseWriter, input interface{}) {
+	js, err := json.Marshal(input)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
+}
 
 // 显示最新加入的会员
 // URL: /members
@@ -199,6 +217,42 @@ func memberRepliesHandler(handler Handler) {
 		"replies":    replies,
 		"active":     "members",
 	})
+}
+
+// URL: /member/{username}/clear/{t}
+func memmberNewsClear(handler Handler) {
+	vars := mux.Vars(handler.Request)
+	username := vars["username"]
+	t := vars["t"]
+	res := map[string]interface{}{}
+	user, ok := currentUser(handler)
+	if ok {
+		if user.Username == username {
+			var user User
+			c := handler.DB.C(USERS)
+			c.Find(bson.M{"username": username}).One(&user)
+			if t == at {
+				user.RecentAts = user.RecentAts[:0]
+				c.Update(bson.M{"username": username}, bson.M{"$set": bson.M{"recentats": user.RecentAts}})
+				res["status"] = true
+			} else if t == reply {
+				user.RecentReplies = user.RecentReplies[:0]
+				c.Update(bson.M{"username": username}, bson.M{"$set": bson.M{"recentreplies": user.RecentReplies}})
+				res["status"] = true
+			} else {
+				res["status"] = false
+				res["error"] = "Wrong Type"
+			}
+
+		} else {
+			res["status"] = false
+			res["error"] = "Need authentication"
+		}
+	} else {
+		res["status"] = false
+		res["error"] = "No such User"
+	}
+	returnJson(handler.ResponseWriter, res)
 }
 
 // URL: /member/{username}/comments

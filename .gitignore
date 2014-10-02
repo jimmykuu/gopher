@@ -27,5 +27,6 @@ pkg
 src/github.com
 src/code.google.com
 src/labix.org
+src/gopkg.in/
 .idea
 static/download
