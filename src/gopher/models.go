@@ -33,6 +33,8 @@ const (
 	STATUS              = "status"
 	USERS               = "users"
 	DOWNLOADED_PACKAGES = "downloaded_packages"
+
+	GITHUB_COM = "github.com"
 )
 
 //主题id和评论id，用于定位到专门的评论
@@ -69,10 +71,10 @@ func (ct *CollectTopic) Topic(db *mgo.Database) *Topic {
 // 用户
 type User struct {
 	Id_             bson.ObjectId `bson:"_id"`
-	Username        string
+	Username        string        //如果关联社区帐号，默认使用社区的用户名
 	Password        string
 	Salt            string `bson:"salt"`
-	Email           string
+	Email           string //如果关联社区帐号,默认使用社区的邮箱
 	Avatar          string
 	Website         string
 	Location        string
@@ -92,6 +94,12 @@ type User struct {
 	ValidateCode    string
 	ResetCode       string
 	Index           int
+	AccountRef      string //帐号关联的社区
+	IdRef           string //关联社区的帐号
+	LinkRef         string //关联社区的主页链接
+	OrgRef          string //关联社区的组织或者公司
+	PictureRef      string //关联社区的头像链接
+	Provider        string //关联社区名称,比如 github.com
 }
 
 // 是否是默认头像

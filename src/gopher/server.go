@@ -65,6 +65,7 @@ func StartServer() {
 	http.Handle("/static/", http.FileServer(http.Dir(".")))
 	http.Handle("/get/package", websocket.Handler(getPackageHandler))
 	http.Handle("/captcha/", captcha.Server(captcha.StdWidth, captcha.StdHeight))
+	//http.Handle("/auth/signup", githubHandler)
 	r := mux.NewRouter()
 	for _, route := range routes {
 		r.HandleFunc(route.URL, handlerFun(route))
