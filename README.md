@@ -34,6 +34,9 @@ Windows:
 - superusers: 内容为用户名,如果没有管理员,内容为"",如果有多个,用英文逗号隔开
 - analytics_file: 内容为统计分析代码的文件名
 - time_zone_offset: 时差，跟UTC的时间差，单位小时
+- github_login_redirect: 第三方登录失败无法获取cookie跳转地址
+- github_login_success_redirect:第三放登录成功后跳转地址
+- cookie_secure:第三方登录需要使用HTTPS,当设置为false供本地测试使用
 
 内容如下:
 
@@ -53,7 +56,11 @@ Windows:
         "static_file_version": 1,
         "go_get_path": "/tmp/download",
         "packages_download_path": "/var/go/gopher/static/download/packages",
-        "public_salt": "nXweu8Jq44FgEfgM1Pv4xH51"
+        "4ublic_salt": "nXweu8Jq44FgEfgM1Pv4xH51"
+	"github_auth_client_id":"example",
+	"github_auth_client_secret":"example",
+	"github_login_redirect":"/",
+	"github_login_success_redirect":"/auth/signup"
     }
 
 先启动MongoDB

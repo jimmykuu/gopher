@@ -31,6 +31,7 @@ type ConfigStruct struct {
 	GoGetPath                  string `json:"go_get_path"`
 	PackagesDownloadPath       string `json:"packages_download_path"`
 	PublicSalt                 string `json:"public_salt"`
+	CookieSecure               bool   `json:"cookie_secure"`
 	GithubClientId             string `json:"github_auth_client_id"`
 	GithubClientSecret         string `json:"github_auth_client_secret"`
 	GithubLoginRedirect        string `json:"github_login_redirect"`
@@ -88,6 +89,9 @@ func init() {
 	auth.Config.CookieSecret = []byte(Config.CookieSecret)
 	auth.Config.LoginRedirect = Config.GithubLoginRedirect
 	auth.Config.LoginSuccessRedirect = Config.GithubLoginSuccessRedirect
-	auth.Config.CookieSecure = false
+	auth.Config.CookieSecure = Config.CookieSecure
+	if !auth.Config.CookieSecure {
+		fmt.Println("注意,cookie_secure设置为false,只能在本地环境下测试")
+	}
 	githubHandler = auth.Github(Config.GithubClientId, Config.GithubClientSecret, "user")
 }
