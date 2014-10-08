@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"code.google.com/p/go-uuid/uuid"
+	"github.com/bradrydzewski/go.auth"
 	"github.com/dchest/captcha"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -37,6 +38,20 @@ var defaultAvatars = []string{
 	"gopher_strawberry.jpg",
 	"gopher_teal.jpg",
 }
+
+const (
+	//写成常量防止拼错
+	GITHUB_PICTURE  = "github_picture"
+	GITHUB_ID       = "github_id"
+	GITHUB_LINK     = "github_link"
+	GITHUB_EMAIL    = "github_email"
+	GITHUB_NAME     = "github_name"
+	GITHUB_ORG      = "github_org"
+	GITHUB_PROVIDER = "github_provider"
+)
+
+//init 在config.go下,因为这个文件的init调用比config慢
+var githubHandler *auth.AuthHandler
 
 // 生成users.json字符串
 func generateUsersJson(db *mgo.Database) {
@@ -92,13 +107,106 @@ func currentUser(handler Handler) (*User, bool) {
 	return &user, true
 }
 
+// URL: /auth/login
+
+func authLoginHandler(handler Handler) {
+	fmt.Println("auth_signup")
+	fmt.Println(Config.GithubClientId, Config.GithubClientSecret)
+	githubHandler.ServeHTTP(handler.ResponseWriter, handler.Request)
+}
+
+/*
+因为SecureUser 接受 func(w http.ResponseWriter, r *http.Request, u auth.User)
+所以加一个闭包把handler传进去
+*/
+func wrapAuthHandler(handler Handler) func(w http.ResponseWriter, r *http.Request, u auth.User) {
+	return func(w http.ResponseWriter, r *http.Request, u auth.User) {
+		c := handler.DB.C(USERS)
+		user := User{}
+
+		session, _ := store.Get(r, "user")
+		c.Find(bson.M{"username": u.Id()}).One(&user)
+		//关联github帐号,直接登录
+		if user.Provider == GITHUB_COM {
+			session.Values["username"] = user.Username
+			session.Save(r, w)
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+		}
+		form := wtforms.NewForm(wtforms.NewTextField("username", "用户名", "", wtforms.Required{}),
+			wtforms.NewPasswordField("password", "密码", wtforms.Required{}))
+		session.Values[GITHUB_EMAIL] = u.Email()
+		session.Values[GITHUB_ID] = u.Id()
+		session.Values[GITHUB_LINK] = u.Link()
+		session.Values[GITHUB_NAME] = u.Name()
+		session.Values[GITHUB_ORG] = u.Org()
+		session.Values[GITHUB_PICTURE] = u.Picture()
+		session.Values[GITHUB_PROVIDER] = u.Provider()
+		session.Save(r, w)
+		//关联已有帐号
+		if handler.Request.Method == "POST" {
+			if form.Validate(handler.Request) {
+				user := User{}
+				err := c.Find(bson.M{"username": form.Value("username")}).One(&user)
+				if err != nil {
+					form.AddError("username", "该用户不存在")
+					renderTemplate(handler, "accoun/auth_login.html", BASE, map[string]interface{}{"form": form})
+					return
+				}
+				if user.Password != encryptPassword(form.Value("password"), user.Salt) {
+					form.AddError("password", "密码和用户名不匹配")
+
+					renderTemplate(handler, "account/auth_login.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
+					return
+				}
+				c.UpdateId(user.Id_, bson.M{"$set": bson.M{
+					"emal":       session.Values[GITHUB_EMAIL],
+					"accountref": session.Values[GITHUB_NAME],
+					"username":   session.Values[GITHUB_ID],
+					"idref":      session.Values[GITHUB_ID],
+					"linkref":    session.Values[GITHUB_LINK],
+					"orgref":     session.Values[GITHUB_ORG],
+					"pictureref": session.Values[GITHUB_PICTURE],
+					"provider":   session.Values[GITHUB_PROVIDER],
+				}})
+				delete(session.Values, GITHUB_EMAIL)
+				delete(session.Values, GITHUB_ID)
+				delete(session.Values, GITHUB_LINK)
+				delete(session.Values, GITHUB_NAME)
+				delete(session.Values, GITHUB_ORG)
+				delete(session.Values, GITHUB_PICTURE)
+				delete(session.Values, GITHUB_PROVIDER)
+				session.Values["username"] = u.Name()
+				session.Save(r, w)
+				http.Redirect(handler.ResponseWriter, handler.Request, "/", http.StatusFound)
+			}
+		}
+		renderTemplate(handler, "account/auth_login.html", BASE, map[string]interface{}{"form": form})
+	}
+}
+
+// URL: /auth/signup
+func authSignupHandler(handler Handler) {
+	fn := auth.SecureUser(wrapAuthHandler(handler))
+	fn.ServeHTTP(handler.ResponseWriter, handler.Request)
+}
+
 // URL: /signup
 // 处理用户注册,要求输入用户名,密码和邮箱
 func signupHandler(handler Handler) {
+	var username string
+	var email string
+	session, _ := store.Get(handler.Request, "user")
+	if handler.Request.Method == "GET" {
+		//如果是从新建关联过来的就自动填充字段
+		if session.Values[GITHUB_PROVIDER] == GITHUB_COM {
+			username = session.Values[GITHUB_ID].(string)
+			email = session.Values[GITHUB_EMAIL].(string)
+		}
+	}
 	form := wtforms.NewForm(
-		wtforms.NewTextField("username", "用户名", "", wtforms.Required{}, wtforms.Regexp{Expr: `^[a-zA-Z0-9_]{3,16}$`, Message: "请使用a-z, A-Z, 0-9以及下划线, 长度3-16之间"}),
+		wtforms.NewTextField("username", "用户名", username, wtforms.Required{}, wtforms.Regexp{Expr: `^[a-zA-Z0-9_]{3,16}$`, Message: "请使用a-z, A-Z, 0-9以及下划线, 长度3-16之间"}),
 		wtforms.NewPasswordField("password", "密码", wtforms.Required{}),
-		wtforms.NewTextField("email", "电子邮件", "", wtforms.Required{}, wtforms.Email{}),
+		wtforms.NewTextField("email", "电子邮件", email, wtforms.Required{}, wtforms.Email{}),
 		wtforms.NewTextField("captcha", "验证码", "", wtforms.Required{}),
 		wtforms.NewHiddenField("captchaId", ""),
 	)
@@ -108,6 +216,7 @@ func signupHandler(handler Handler) {
 			// 检查验证码
 			if !captcha.VerifyString(form.Value("captchaId"), form.Value("captcha")) {
 				form.AddError("captcha", "验证码错误")
+				fmt.Println("captcha")
 				form.SetValue("captcha", "")
 
 				renderTemplate(handler, "account/signup.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
@@ -148,21 +257,56 @@ func signupHandler(handler Handler) {
 			validateCode := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 			salt := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 			index := status.UserIndex + 1
-			err = c.Insert(&User{
-				Id_:          id,
-				Username:     username,
-				Password:     encryptPassword(form.Value("password"), salt),
-				Avatar:       defaultAvatars[rand.Intn(len(defaultAvatars))],
-				Salt:         salt,
-				Email:        form.Value("email"),
-				ValidateCode: validateCode,
-				IsActive:     true,
-				JoinedAt:     time.Now(),
-				Index:        index,
-			})
+			if session.Values[GITHUB_PROVIDER] == GITHUB_COM {
+				err = c.Insert(&User{
+					Id_:            id,
+					Username:       username,
+					Password:       encryptPassword(form.Value("password"), salt),
+					Avatar:         defaultAvatars[rand.Intn(len(defaultAvatars))],
+					Salt:           salt,
+					Email:          form.Value("email"),
+					ValidateCode:   validateCode,
+					IsActive:       true,
+					JoinedAt:       time.Now(),
+					Index:          index,
+					Website:        session.Values[GITHUB_LINK].(string),
+					GitHubUsername: session.Values[GITHUB_ID].(string),
+					AccountRef:     session.Values[GITHUB_NAME].(string),
+					IdRef:          session.Values[GITHUB_ID].(string),
+					LinkRef:        session.Values[GITHUB_LINK].(string),
+					OrgRef:         session.Values[GITHUB_ORG].(string),
+					PictureRef:     session.Values[GITHUB_PICTURE].(string),
+					Provider:       session.Values[GITHUB_PROVIDER].(string),
+				})
+				if err != nil {
+					panic(err)
+				} else {
 
-			if err != nil {
-				panic(err)
+					//删除session传过来的默认信息
+					delete(session.Values, GITHUB_EMAIL)
+					delete(session.Values, GITHUB_ID)
+					delete(session.Values, GITHUB_LINK)
+					delete(session.Values, GITHUB_NAME)
+					delete(session.Values, GITHUB_ORG)
+					delete(session.Values, GITHUB_PICTURE)
+					delete(session.Values, GITHUB_PROVIDER)
+				}
+			} else {
+				err = c.Insert(&User{
+					Id_:          id,
+					Username:     username,
+					Password:     encryptPassword(form.Value("password"), salt),
+					Avatar:       defaultAvatars[rand.Intn(len(defaultAvatars))],
+					Salt:         salt,
+					Email:        form.Value("email"),
+					ValidateCode: validateCode,
+					IsActive:     true,
+					JoinedAt:     time.Now(),
+					Index:        index,
+				})
+				if err != nil {
+					panic(err)
+				}
 			}
 
 			c2.Update(nil, bson.M{"$inc": bson.M{"userindex": 1, "usercount": 1}})
@@ -195,7 +339,6 @@ func signupHandler(handler Handler) {
 			return
 		}
 	}
-
 	form.SetValue("captcha", "")
 	renderTemplate(handler, "account/signup.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
 }

@@ -79,6 +79,8 @@ var (
 		{"/admin/book/{id}/edit", Administrator, editBookHandler},
 		{"/admin/book/{id}/delete", Administrator, deleteBookHandler},
 
+		{"/auth/signup", Everyone, authSignupHandler},
+		{"/auth/login", Everyone, authLoginHandler},
 		{"/signup", Everyone, signupHandler},
 		{"/signin", Everyone, signinHandler},
 		{"/signout", Authenticated, signoutHandler},
@@ -112,6 +114,7 @@ var (
 		{"/member/{username}/topics", Everyone, memberTopicsHandler},
 		{"/member/{username}/replies", Everyone, memberRepliesHandler},
 		{"/member/{username}/news", Everyone, memmberNewsHandler},
+		{"/member/{username}/clear/{t}", Authenticated, memmberNewsClear},
 		{"/member/{username}/collect", Everyone, memberTopicsCollectedHandler},
 		{"/follow/{username}", Authenticated, followHandler},
 		{"/unfollow/{username}", Authenticated, unfollowHandler},

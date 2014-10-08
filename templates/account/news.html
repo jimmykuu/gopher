@@ -10,7 +10,11 @@
 {{define "Content"}}
 	<div class="content">
 		<a name="topic"></a>
-		<h4>有新的回复的文章</h4>
+		<h4>有新的回复的文章 
+			{{if  eq .user.Username .username }}
+		       	<a id="reply_clear" class="btn btn-info btn-small">清空</a>
+			{{end}}
+		</h4>
 		<dl class="replies">
 		{{range .comments}}
 			<dd>
@@ -22,12 +26,24 @@
 	</div>
 	<div class="content">
 		<a name="at"></a>
-		<h4>最近被AT</h4>
+		<h4>最近被AT 
+			{{if eq .user.Username .username}}
+			<a id="at_clear" class="btn btn-info btn-small">清空</a>
+			{{end}}
+		</h4>
 		<dl class="replies">
+		{{if eq .user.Username .username}}
 		{{range .ats}}
 			<dd>
 			<a href="/t/{{.ContentId}}#{{.CommentId}}">{{.User}}AT了你</a><br>
 			</dd>
+		{{end}}
+		{{else}}
+		{{range .ats}}
+			<dd>
+			<a href="/t/{{.ContentId}}#{{.CommentId}}">{{.User}}AT了他</a><br>
+			</dd>
+		{{end}}
 		{{end}}
 		</dl>
 	</div>

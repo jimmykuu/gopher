@@ -125,6 +125,28 @@
 	</footer>
 	{{.analyticsCode}}
 </body>
+<script type="text/javascript">
+$(function(){
+		$('#reply_clear').click(function(){
+			var data = {};
+			$.getJSON("/member/{{.username}}/clear/reply",data,function(data,textStatus,jqXHR){
+				console.log(data);
+				if(data.status){
+					location.reload();
+				}
+			})		
+		});
+		$('#at_clear').click(function(){
+			var data = {};
+			$.getJSON("/member/{{.username}}/clear/at",data,function(data,textStatus,jqXHR){
+				console.log(data);
+				if(data.status){
+					location.reload();
+				}
+			})		
+		});
+})
+</script>
 <script type="text/javascript" src="http://gopher.qiniudn.com/static/js/bootstrap.min.js?v3.2.0"></script>
 <script type="text/javascript" src="http://gopher.qiniudn.com/static/js/prettify.js"></script>
 <script type="text/javascript" src="/static/js/jquery.caret.min.js?v=0.0.9"></script>
