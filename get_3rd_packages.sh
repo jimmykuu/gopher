@@ -8,6 +8,7 @@ go get -u -v github.com/gorilla/mux
 go get -u -v github.com/gorilla/sessions
 go get -u -v gopkg.in/mgo.v2
 go get -u -v code.google.com/p/go-uuid/uuid
+go get -u -v code.google.com/p/go.net/websocket
 go get -u -v github.com/jimmykuu/webhelpers
 go get -u -v github.com/jimmykuu/wtforms
 go get -u -v github.com/qiniu/bytes

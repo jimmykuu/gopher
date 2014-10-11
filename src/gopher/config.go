@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"runtime"
+	"log"
 
 	"github.com/bradrydzewski/go.auth"
 )
@@ -46,8 +47,7 @@ var goVersion = runtime.Version()
 func init() {
 	file, err := os.Open("etc/config.json")
 	if err != nil {
-		fmt.Println("配置文件读取失败:", err.Error())
-		os.Exit(1)
+		log.Fatal("配置文件读取失败:", err.Error())
 	}
 
 	defer file.Close()
@@ -57,16 +57,14 @@ func init() {
 	err = dec.Decode(&Config)
 
 	if err != nil {
-		fmt.Println("配置文件解析失败:", err.Error())
-		os.Exit(1)
+		log.Fatal("配置文件解析失败:", err.Error())
 	}
 
 	if Config.AnalyticsFile != "" {
 		content, err := ioutil.ReadFile(Config.AnalyticsFile)
 
 		if err != nil {
-			fmt.Println("统计分析文件没有找到:", err.Error())
-			os.Exit(1)
+			log.Fatal("统计分析文件没有找到:", err.Error())
 		}
 
 		analyticsCode = template.HTML(string(content))
@@ -76,15 +74,13 @@ func init() {
 		content, err := ioutil.ReadFile(Config.ShareCodeFile)
 
 		if err != nil {
-			fmt.Println("分享代码文件没有找到:", err.Error())
-			os.Exit(1)
+			log.Fatal("分享代码文件没有找到:", err.Error())
 		}
 
 		shareCode = template.HTML(string(content))
 	}
 	if Config.GithubClientId == "" || Config.GithubClientSecret == "" {
-		fmt.Println("没有配置github应用的参数")
-		os.Exit(1)
+		log.Fatal("没有配置github应用的参数")
 	}
 	auth.Config.CookieSecret = []byte(Config.CookieSecret)
 	auth.Config.LoginRedirect = Config.GithubLoginRedirect
