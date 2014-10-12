@@ -58,23 +58,28 @@
 
 {{define "RightSide"}}
 <div class="col-md-4 sidebar">
-  <div class="well sidebar-nav">
-	{{if .username}}
-	{{.utils.UserInfo .username .db}}
-	{{.utils.News .username .db}}
-	<hr>
-	<a href="/member/{{.username}}/collect?p=1">收藏</a>
-	{{else}}
-	<h3><small>golang中国</small></h3>
-	<h4><small>致力于打造一个国内Gophers交流和分享的地方</small></h4>
-	<hr>
-	<div align="center">
-	  <a href="/signup" class="btn btn-info">注册</a><!-- 或
-	  <a href="/auth/login" class="btn btn-info">Github登录</a>-->
+  <div class="panel panel-default">
+	<div class="panel-heading">
+	  <h3 class="panel-title">Golang中国</h3>
 	</div>
-	<div class="cleanfix"></div>
-	<div align="center">已注册用户：<a href="/signin">登录</a></div>
-	{{end}}
+	<div class="panel-body">
+	  {{if .username}}
+	  {{.utils.UserInfo .username .db}}
+	  {{.utils.News .username .db}}
+	  <hr>
+	  <a href="/member/{{.username}}/collect?p=1">收藏</a>
+	  {{else}}
+
+	  <h4><small>致力于打造一个国内Gophers交流和分享的地方</small></h4>
+	  <hr>
+	  <div align="center">
+		<a href="/signup" class="btn btn-info">注册</a><!-- 或
+															<a href="/auth/login" class="btn btn-info">Github登录</a>-->
+	  </div>
+	  <div class="cleanfix"></div>
+	  <div align="center">已注册用户：<a href="/signin">登录</a></div>
+	  {{end}}
+	</div>
   </div>
   <a href="/topic/new" class="btn btn-success btn-lg btn-block" style="margin-bottom: 20px;"><i class="glyphicon glyphicon-edit"></i> 发表话题</a>
   {{if .utils.HasAd "frongpage" .db}}
