@@ -2,148 +2,148 @@
 {{define "Breadcrumb"}}{{end}}
 {{define "ContentWidth"}}8{{end}}
 {{define "Content"}}
-	<div class="content">
-		<div>
-			<h3 class="pull-left">欢迎来到Golang中国社区</h3>
-		<ul class="nav nav-tabs pull-right">
-			{{if eq .subActive "latestReply"}}
-				<li class="active"><a href="javascript:;">最近回复</a></li>
-			{{else}}
-				<li><a href="/">最近回复</a></li>
-			{{end}}
-			{{if eq .subActive "latestCreate"}}
-				<li class="active"><a href="javascript:;">最近发布</a></li>
-			{{else}}
-				<li><a href="/topics/latest">最近发布</a></li>
-			{{end}}
-			{{if eq .subActive "noReply"}}
-				<li class="active"><a href="javascript:;">尚未回复</a></li>
-			{{else}}
-				<li><a href="/topics/no_reply">尚未回复</a></li>
-			{{end}}
-		</ul>
-		</div>
-		<div class="clearfix"></div>
-		<dl class="topics">
-		{{range .topics}}
-		    {{$creater := .Creater $.db}}
-		    {{$node := .Node $.db}}
-			<dd>
-            <a href="/member/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;"><img class="img-rounded" src="{{$creater.AvatarImgSrc}}-middle" alt="{{$creater.Username}}"></a>
-				{{if .CommentCount}}
-					<a class="badge pull-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
-				{{end}}
-				<a href="/t/{{.Id_.Hex}}" class="title">{{.Title}}</a>
-				<div class="space"></div>
-				<div class="info" style="margin-left:60px">
-					<a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
-					<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
-					{{if .CommentCount}}
-					    {{$latestReplier := .LatestReplier $.db}}
-						{{$.utils.FormatTime .LatestRepliedAt}} • 最后回复来自 <a href="/member/{{$latestReplier.Username}}">{{$latestReplier.Username}}</a>
-					{{else}}
-						{{$.utils.FormatTime .CreatedAt}}
-					{{end}}
-				</div>
-				<div class="clear"></div>
-			</dd>
+<div class="content">
+  <div>
+	<h3 class="pull-left">欢迎来到Golang中国社区</h3>
+	<ul class="nav nav-tabs pull-right">
+	  {{if eq .subActive "latestReply"}}
+	  <li class="active"><a href="javascript:;">最近回复</a></li>
+	  {{else}}
+	  <li><a href="/">最近回复</a></li>
+	  {{end}}
+	  {{if eq .subActive "latestCreate"}}
+	  <li class="active"><a href="javascript:;">最近发布</a></li>
+	  {{else}}
+	  <li><a href="/topics/latest">最近发布</a></li>
+	  {{end}}
+	  {{if eq .subActive "noReply"}}
+	  <li class="active"><a href="javascript:;">尚未回复</a></li>
+	  {{else}}
+	  <li><a href="/topics/no_reply">尚未回复</a></li>
+	  {{end}}
+	</ul>
+  </div>
+  <div class="clearfix"></div>
+  <dl class="topics">
+	{{range .topics}}
+	{{$creater := .Creater $.db}}
+	{{$node := .Node $.db}}
+	<dd>
+      <a href="/member/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;"><img class="img-rounded" src="{{$creater.AvatarImgSrc}}-middle" alt="{{$creater.Username}}"></a>
+	  {{if .CommentCount}}
+	  <a class="badge pull-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
+	  {{end}}
+	  <a href="/t/{{.Id_.Hex}}" class="title">{{.Title}}</a>
+	  <div class="space"></div>
+	  <div class="info" style="margin-left:60px">
+		<a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
+		<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
+		{{if .CommentCount}}
+		{{$latestReplier := .LatestReplier $.db}}
+		{{$.utils.FormatTime .LatestRepliedAt}} • 最后回复来自 <a href="/member/{{$latestReplier.Username}}">{{$latestReplier.Username}}</a>
+		{{else}}
+		{{$.utils.FormatTime .CreatedAt}}
 		{{end}}
-		</dl>
-		<hr>
-		{{.pagination.Html .page}}
-	</div>
+	  </div>
+	  <div class="clear"></div>
+	</dd>
+	{{end}}
+  </dl>
+  <hr>
+  {{.pagination.Html .page}}
+</div>
 {{end}}
 
 {{define "LeftSide"}}{{end}}
 
 {{define "RightSide"}}
-	<div class="col-md-4 sidebar">
-		<div class="well sidebar-nav">
-			{{if .username}}
-				{{.utils.UserInfo .username .db}}
-				{{.utils.News .username .db}}
-				<hr>
-				<a href="/member/{{.username}}/collect?p=1">收藏</a>
-			{{else}}
-				<h3><small>golang中国</small></h3>
-				<h4><small>致力于打造一个国内Gophers交流和分享的地方</small></h4>
-				<hr>
-				<div align="center">
-					<a href="/signup" class="btn btn-info">注册</a> 或
-					<a href="/auth/login" class="btn btn-info">Github登录</a>
-				</div>
-				<div class="cleanfix"></div>
-				<div align="center">已注册用户：<a href="/signin">登录</a></div>
-			{{end}}
-		</div>
-        <a href="/topic/new" class="btn btn-success btn-lg btn-block" style="margin-bottom: 20px;"><i class="glyphicon glyphicon-edit"></i> 发表话题</a>
-		{{if .utils.HasAd "frongpage" .db}}
-		<div class="panel panel-default">
-		  <div class="panel-heading">
-			<h3 class="panel-title">赞助商链接</h3>
-		  </div>
-		  <div class="panel-body">
-			{{.utils.AdCode "frongpage" .db}}
-		  </div>
-		</div>
-		{{end}}
-		<div class="panel panel-default">
-		  <div class="panel-heading">
-			<h3 class="panel-title">最热节点</h3>
-		  </div>
-          <div class="panel-body">
-			{{range .nodes}}
-			  <a href="/go/{{.Id}}" class="btn">{{.Name}}</a>
-			{{end}}
-          </div>
-          <div class="panel-footer">
-			<a href="/nodes" class="pull-right">所有节点</a>
-			<div class="clearfix"></div>
-		  </div>
-		</div>
-		<div class="panel panel-default">
-		  <div class="panel-heading">
-			<h3 class="panel-title">友情社区</h3>
-		  </div>
-		  <ul class="list-group">
-			{{range .linkExchanges}}
-			  <li class="list-group-item">
-				<a href="{{.URL}}" target="_blank" title="{{.Description}}">
-					{{if .Logo}}
-						<img src="{{.Logo}}" style="max-width: 224px;">
-					{{else}}
-						{{.Name}}
-					{{end}}
-				</a>
-              </li>
-			{{end}}
-		</div>
-		<div class="panel panel-default">
-		  <div class="panel-heading">
-			<h3 class="panel-title">社区状态</h3>
-		  </div>
-			<table width="100%" class="status">
-			    <thead>
-				  <tr>
-					<th>&nbsp;</th>
-					<th></th>
-				  </tr>					
-				</thead>
-				<tbody>
-				<tr>
-					<td class="status-label">注册会员</td>
-					<td class="value">{{.status.UserCount}}</td>
-				</tr>
-				<tr>
-					<td class="status-label">主题</td>
-					<td class="value">{{.status.TopicCount}}</td>
-				</tr>
-				<tr>
-					<td class="status-label">回复</td>
-					<td class="value">{{.status.ReplyCount}}</td>
-				</tr>
-				</tbody>
-			</table>
-		</div>
+<div class="col-md-4 sidebar">
+  <div class="well sidebar-nav">
+	{{if .username}}
+	{{.utils.UserInfo .username .db}}
+	{{.utils.News .username .db}}
+	<hr>
+	<a href="/member/{{.username}}/collect?p=1">收藏</a>
+	{{else}}
+	<h3><small>golang中国</small></h3>
+	<h4><small>致力于打造一个国内Gophers交流和分享的地方</small></h4>
+	<hr>
+	<div align="center">
+	  <a href="/signup" class="btn btn-info">注册</a><!-- 或
+	  <a href="/auth/login" class="btn btn-info">Github登录</a>-->
 	</div>
+	<div class="cleanfix"></div>
+	<div align="center">已注册用户：<a href="/signin">登录</a></div>
+	{{end}}
+  </div>
+  <a href="/topic/new" class="btn btn-success btn-lg btn-block" style="margin-bottom: 20px;"><i class="glyphicon glyphicon-edit"></i> 发表话题</a>
+  {{if .utils.HasAd "frongpage" .db}}
+  <div class="panel panel-default">
+	<div class="panel-heading">
+	  <h3 class="panel-title">赞助商链接</h3>
+	</div>
+	<div class="panel-body">
+	  {{.utils.AdCode "frongpage" .db}}
+	</div>
+  </div>
+  {{end}}
+  <div class="panel panel-default">
+	<div class="panel-heading">
+	  <h3 class="panel-title">最热节点</h3>
+	</div>
+    <div class="panel-body">
+	  {{range .nodes}}
+	  <a href="/go/{{.Id}}" class="btn">{{.Name}}</a>
+	  {{end}}
+    </div>
+    <div class="panel-footer">
+	  <a href="/nodes" class="pull-right">所有节点</a>
+	  <div class="clearfix"></div>
+	</div>
+  </div>
+  <div class="panel panel-default">
+	<div class="panel-heading">
+	  <h3 class="panel-title">友情社区</h3>
+	</div>
+	<ul class="list-group">
+	  {{range .linkExchanges}}
+	  <li class="list-group-item">
+		<a href="{{.URL}}" target="_blank" title="{{.Description}}">
+		  {{if .Logo}}
+		  <img src="{{.Logo}}" style="max-width: 224px;">
+		  {{else}}
+		  {{.Name}}
+		  {{end}}
+		</a>
+      </li>
+	  {{end}}
+  </div>
+  <div class="panel panel-default">
+	<div class="panel-heading">
+	  <h3 class="panel-title">社区状态</h3>
+	</div>
+	<table width="100%" class="status">
+	  <thead>
+		<tr>
+		  <th>&nbsp;</th>
+		  <th></th>
+		</tr>					
+	  </thead>
+	  <tbody>
+		<tr>
+		  <td class="status-label">注册会员</td>
+		  <td class="value">{{.status.UserCount}}</td>
+		</tr>
+		<tr>
+		  <td class="status-label">主题</td>
+		  <td class="value">{{.status.TopicCount}}</td>
+		</tr>
+		<tr>
+		  <td class="status-label">回复</td>
+		  <td class="value">{{.status.ReplyCount}}</td>
+		</tr>
+	  </tbody>
+	</table>
+  </div>
+</div>
 {{end}}
