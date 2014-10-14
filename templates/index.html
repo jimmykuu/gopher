@@ -65,9 +65,10 @@
 	<div class="panel-body">
 	  {{if .username}}
 	  {{.utils.UserInfo .username .db}}
+	  <!--
 	  {{.utils.News .username .db}}
 	  <hr>
-	  <a href="/member/{{.username}}/collect?p=1">收藏</a>
+	  <a href="/member/{{.username}}/collect?p=1">收藏</a>-->
 	  {{else}}
 
 	  <h4><small>致力于打造一个国内Gophers交流和分享的地方</small></h4>
@@ -87,7 +88,7 @@
 	<div class="panel-heading">
 	  <h3 class="panel-title">赞助商链接</h3>
 	</div>
-	<div class="panel-body">
+	<div class="panel-body" style="padding: 9px;">
 	  {{.utils.AdCode "frongpage" .db}}
 	</div>
   </div>

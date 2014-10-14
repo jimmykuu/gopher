@@ -104,7 +104,7 @@ func (u *Utils) UserInfo(username string, db *mgo.Database) template.HTML {
 
 	format := `<div>
         <a href="/member/%s"><img class="gravatar img-rounded" src="%s-middle" style="float:left;"></a>
-        <h3><a href="/member/%s">%s</a><br><small>%s</small></h3>
+        <h4><a href="/member/%s">%s</a><br><small>%s</small></h4>
 	<div class="clearfix">
 	</div>
     </div>`
