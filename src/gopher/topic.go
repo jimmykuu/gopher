@@ -35,6 +35,20 @@ func topicsHandler(handler Handler, conditions bson.M, sort string, url string, 
 
 	c = handler.DB.C(CONTENTS)
 
+	var topTopics []Topic
+
+	if page == 1 {
+		c.Find(bson.M{"is_top": true}).Sort(sort).All(&topTopics)
+
+		var objectIds []bson.ObjectId
+		for _, topic := range topTopics {
+			objectIds = append(objectIds, topic.Id_)
+		}
+		if len(topTopics) > 0 {
+			conditions["_id"] = bson.M{"$not": bson.M{"$in": objectIds}}
+		}
+	}
+
 	pagination := NewPagination(c.Find(conditions).Sort(sort), url, PerPage)
 
 	var topics []Topic
@@ -50,6 +64,8 @@ func topicsHandler(handler Handler, conditions bson.M, sort string, url string, 
 	var linkExchanges []LinkExchange
 	c = handler.DB.C(LINK_EXCHANGES)
 	c.Find(nil).All(&linkExchanges)
+
+	topics = append(topTopics, topics...)
 
 	renderTemplate(handler, "index.html", BASE, map[string]interface{}{
 		"nodes":         hotNodes,

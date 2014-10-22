@@ -269,6 +269,7 @@ type Topic struct {
 	NodeId          bson.ObjectId
 	LatestReplierId string
 	LatestRepliedAt time.Time
+	IsTop           bool `bson:"is_top"` // 置顶
 }
 
 // 主题所属节点

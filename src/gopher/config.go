@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
+	"log"
 	"os"
 	"runtime"
-	"log"
 
 	"github.com/bradrydzewski/go.auth"
 )
