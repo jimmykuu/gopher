@@ -9,7 +9,7 @@
   <title>{{template "Title" .}} - 后台管理</title>
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
-  <link rel="stylesheet" type="text/css" href="/static/css/semantic.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/semantic.min.css?v=0.19.3">
 
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.address/1.6/jquery.address.js"></script>
@@ -44,6 +44,12 @@
             <a class="item" href="/admin/users"><i class="list icon"></i> 列表</a>
         </div>
     </div>
+	<div class="item">
+	  <b>置顶主题</b>
+	  <div class="menu">
+		<a class="item" href="/admin/top/topics"><i class="litt icon"></i> 列表</a>
+	  </div>
+	</div>
     <div class="item">
       <b>节点管理</b>
       <div class="menu">

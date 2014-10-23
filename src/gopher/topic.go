@@ -446,3 +446,24 @@ func deleteTopicHandler(handler Handler) {
 
 	http.Redirect(handler.ResponseWriter, handler.Request, "/", http.StatusFound)
 }
+
+// 列出置顶的主题
+func listTopTopicsHandler(handler Handler) {
+	var topics []Topic
+	c := handler.DB.C(CONTENTS)
+	c.Find(bson.M{"content.type": TypeTopic, "is_top": true}).All(&topics)
+
+	renderTemplate(handler, "/topic/top_list.html", ADMIN, map[string]interface{}{
+		"topics": topics,
+	})
+}
+
+// 取消置顶
+func cancelTopTopicHandler(handler Handler) {
+	vars := mux.Vars(handler.Request)
+	topicId := bson.ObjectIdHex(vars["id"])
+
+	c := handler.DB.C(CONTENTS)
+	c.Update(bson.M{"_id": topicId}, bson.M{"$set": bson.M{"is_top": false}})
+	handler.Redirect("/admin/top/topics")
+}

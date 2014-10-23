@@ -36,6 +36,10 @@ func NewHandler(w http.ResponseWriter, r *http.Request) Handler {
 	}
 }
 
+func (h Handler) Redirect(urlStr string) {
+	http.Redirect(h.ResponseWriter, h.Request, urlStr, http.StatusFound)
+}
+
 type HandlerFunc func(Handler)
 
 type Route struct {
@@ -78,6 +82,8 @@ var (
 		{"/admin/books", Administrator, listBooksHandler},
 		{"/admin/book/{id}/edit", Administrator, editBookHandler},
 		{"/admin/book/{id}/delete", Administrator, deleteBookHandler},
+		{"/admin/top/topics", Administrator, listTopTopicsHandler},
+		{"/admin/topic/{id:[0-9a-f]{24}}/cancel/top", Administrator, cancelTopTopicHandler},
 
 		{"/auth/signup", Everyone, authSignupHandler},
 		{"/auth/login", Everyone, authLoginHandler},
