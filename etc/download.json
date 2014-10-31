@@ -44,7 +44,8 @@
                 "summary": "go1.4beta1 Mac OS X (x86 64-bit) PKG installer",
                 "size": "62 MB",
                 "sha1": "dc0b5805ba117654dd95c84ce7872406380de3d5",
-                "url": "https://storage.googleapis.com/golang/go1.4beta1.darwin-amd64-osx10.8.pkg"
+                "url": "https://storage.googleapis.com/golang/go1.4beta1.darwin-amd64-osx10.8.pkg",
+				"recommended": true
             }, {
                 "filename": "go1.4beta1.darwin-amd64-osx10.8.tar.gz",
                 "summary": "go1.4beta1 Mac OS X (x86 64-bit) tarball",
@@ -74,13 +75,15 @@
                 "summary": "go1.4beta1 Linux (x86 64-bit) tarball",
                 "size": "62 MB",
                 "sha1": "d2712acdaa4469ce2dc57c112a70900667269ca0",
-                "url": "https://storage.googleapis.com/golang/1.4beta1.linux-amd64.tar.gz"
+                "url": "https://storage.googleapis.com/golang/1.4beta1.linux-amd64.tar.gz",
+				"recommended": true
             }, {
                 "filename": "go1.4beta1.src.tar.gz",
                 "summary": "go1.4beta1 (source only)",
                 "size": "11 MB",
                 "sha1": "f2fece0c9f9cdc6e8a85ab56b7f1ffcb57c3e7cd",
-                "url": "https://storage.googleapis.com/golang/go1.4beta1.src.tar.gz"
+                "url": "https://storage.googleapis.com/golang/go1.4beta1.src.tar.gz",
+				"recommended": true
             }, {
                 "filename": "go1.4beta1.windows-386.msi",
                 "summary": "1.4beta13 Windows (x86 32-bit) MSI installer",
@@ -98,7 +101,8 @@
                 "summary": "go1.4beta1 Windows (x86 64-bit) MSI installer",
                 "size": "53 MB",
                 "sha1": "ec3ec78072128d725878404a5ce27bd1c1e7132b",
-                "url": "https://storage.googleapis.com/golang/go1.4beta1.windows-amd64.msi"
+                "url": "https://storage.googleapis.com/golang/go1.4beta1.windows-amd64.msi",
+				"recommended": true
             }, {
                 "filename": "go1.4beta1.windows-amd64.zip",
                 "summary": "go1.4beta1 Windows (x86 64-bit) ZIP archive",
@@ -152,7 +156,8 @@
                 "summary": "go1.3.3 Mac OS X (x86 64-bit) PKG installer",
                 "size": "51 MB",
                 "sha1": "6435e50059fe7fa0d60f1b15aab7f255a61816ce",
-                "url": "https://storage.googleapis.com/golang/go1.3.3.darwin-amd64-osx10.8.pkg"
+                "url": "https://storage.googleapis.com/golang/go1.3.3.darwin-amd64-osx10.8.pkg",
+				"recommended": true
             }, {
                 "filename": "go1.3.3.darwin-amd64-osx10.8.tar.gz",
                 "summary": "go1.3.3 Mac OS X (x86 64-bit) tarball",
@@ -182,13 +187,15 @@
                 "summary": "go1.3.3 Linux (x86 64-bit) tarball",
                 "size": "51 MB",
                 "sha1": "14068fbe349db34b838853a7878621bbd2b24646",
-                "url": "https://storage.googleapis.com/golang/go1.3.3.linux-amd64.tar.gz"
+                "url": "https://storage.googleapis.com/golang/go1.3.3.linux-amd64.tar.gz",
+				"recommended": true
             }, {
                 "filename": "go1.3.3.src.tar.gz",
                 "summary": "go1.3.3 (source only)",
                 "size": "9.6 MB",
                 "sha1": "b54b7deb7b7afe9f5d9a3f5dd830c7dede35393a",
-                "url": "https://storage.googleapis.com/golang/go1.3.3.src.tar.gz"
+                "url": "https://storage.googleapis.com/golang/go1.3.3.src.tar.gz",
+				"recommended": true
             }, {
                 "filename": "go1.3.3.windows-386.msi",
                 "summary": "go1.3.3 Windows (x86 32-bit) MSI installer",
@@ -206,7 +213,8 @@
                 "summary": "go1.3.3 Windows (x86 64-bit) MSI installer",
                 "size": "45 MB",
                 "sha1": "25112a8c4df93dc4009e65eff00bc4ef76f94e46",
-                "url": "https://storage.googleapis.com/golang/go1.3.3.windows-amd64.msi"
+                "url": "https://storage.googleapis.com/golang/go1.3.3.windows-amd64.msi",
+				"recommended": true
             }, {
                 "filename": "go1.3.3.windows-amd64.zip",
                 "summary": "go1.3.3 Windows (x86 64-bit) ZIP archive",

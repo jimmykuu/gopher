@@ -9,11 +9,12 @@ import (
 )
 
 type File struct {
-	Filename string `json:"filename"`
-	Summary  string `json:"summary"`
-	Size     string `json:"size"`
-	SHA1     string `json:"sha1"`
-	URL      string `json:"url"`
+	Filename    string `json:"filename"`
+	Summary     string `json:"summary"`
+	Size        string `json:"size"`
+	SHA1        string `json:"sha1"`
+	URL         string `json:"url"`
+	Recommended bool   `json:"recommended,omitempty"`
 }
 
 type Version struct {
