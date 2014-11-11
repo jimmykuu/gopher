@@ -124,13 +124,7 @@ func newTopicHandler(handler Handler) {
 
 	if handler.Request.Method == "POST" {
 		if form.Validate(handler.Request) {
-			session, _ := store.Get(handler.Request, "user")
-			username, _ := session.Values["username"]
-			username = username.(string)
-
-			user := User{}
-			c = handler.DB.C(USERS)
-			c.Find(bson.M{"username": username}).One(&user)
+			user, _ := currentUser(handler)
 
 			c = handler.DB.C(CONTENTS)
 
