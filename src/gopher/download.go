@@ -5,7 +5,10 @@ package gopher
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 )
 
 type File struct {
@@ -40,4 +43,71 @@ func downloadHandler(handler Handler) {
 		panic(err)
 	}
 	renderTemplate(handler, "download.html", BASE, map[string]interface{}{"versions": versions, "active": "download"})
+}
+
+type LiteIDEFileInfo struct {
+	Filename string
+	Size     int64 // bytes
+}
+
+func (info LiteIDEFileInfo) HumanSize() string {
+	if info.Size < 1024 {
+		return fmt.Sprintf("%d B", info.Size)
+	} else if info.Size < 1024*1024 {
+		return fmt.Sprintf("%d K", info.Size/1024)
+	} else {
+		return fmt.Sprintf("%d M", info.Size/1024/1024)
+	}
+}
+
+type LiteIDEVersionInfo struct {
+	Name  string
+	Files []LiteIDEFileInfo
+}
+
+func downloadLiteIDEHandler(handler Handler) {
+	versions := []LiteIDEVersionInfo{}
+
+	var version LiteIDEVersionInfo
+
+	first := true
+	filepath.Walk("./static/liteide", func(path string, info os.FileInfo, err error) error {
+		if path == "./static/liteide" {
+			return nil
+		}
+
+		temp := strings.Split(path, "/")
+		if len(temp) == 3 {
+			// 版本文件夹
+			if !first {
+				versions = append(versions, version)
+			} else {
+				first = false
+			}
+
+			version = LiteIDEVersionInfo{
+				Name:  info.Name(),
+				Files: []LiteIDEFileInfo{},
+			}
+		} else if len(temp) == 4 {
+			// 文件
+			version.Files = append(version.Files, LiteIDEFileInfo{
+				Filename: info.Name(),
+				Size:     info.Size(),
+			})
+		}
+
+		fmt.Println(path)
+		return nil
+	})
+
+	versions = append(versions, version)
+
+	// 倒序排列
+	count := len(versions)
+	for i := 0; i < count/2; i++ {
+		versions[i], versions[count-i-1] = versions[count-i-1], versions[i]
+	}
+
+	renderTemplate(handler, "download/liteide.html", BASE, map[string]interface{}{"versions": versions, "active": "download"})
 }

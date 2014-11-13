@@ -152,5 +152,6 @@ var (
 
 		{"/download", Everyone, downloadHandler},
 		{"/download/package", Everyone, downloadPackagesHandler},
+		{"/download/liteide", Everyone, downloadLiteIDEHandler},
 	}
 )
