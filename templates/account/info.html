@@ -9,7 +9,11 @@
 {{define "Content"}}
 	{{$user := .utils.AssertUser .user}}
 	<div class="content">
-		<img src="{{$user.AvatarImgSrc}}-large" class="pull-left img-rounded" style="margin-right: 20px;">
+	  {{if $user.Avatar}}
+	  <img src="{{$user.AvatarImgSrc}}-large" class="pull-left img-rounded" style="margin-right: 20px;">
+	  {{else}}
+	  {{$user.AvatarSVG 96}}
+	  {{end}}
 		<h3>{{$user.Username}}</h3>
 		{{if $user.Tagline}}
 			<h3><small>{{$user.Tagline}}</small></h3>

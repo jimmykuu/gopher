@@ -29,7 +29,13 @@
 	{{$creater := .Creater $.db}}
 	{{$node := .Node $.db}}
 	<dd>
-      <a href="/member/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;"><img class="img-rounded" src="{{$creater.AvatarImgSrc}}-middle" alt="{{$creater.Username}}"></a>
+      <a href="/member/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;">
+		{{if $creater.Avatar}}
+		<img class="img-rounded" src="{{$creater.AvatarImgSrc}}-middle" alt="{{$creater.Username}}">
+		{{else}}
+		{{$creater.AvatarSVG 48}}
+		{{end}}
+	  </a>
 	  {{if .CommentCount}}
 	  <a class="badge pull-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
 	  {{end}}

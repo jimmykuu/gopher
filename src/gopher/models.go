@@ -5,7 +5,9 @@
 package gopher
 
 import (
+	"fmt"
 	"html/template"
+	"strings"
 	"time"
 
 	"gopkg.in/mgo.v2"
@@ -36,6 +38,8 @@ const (
 
 	GITHUB_COM = "github.com"
 )
+
+var colors = []string{"#FFCC66", "#66CCFF", "#6666FF", "#FF8000", "#0080FF", "#008040", "#008080"}
 
 //主题id和评论id，用于定位到专门的评论
 type At struct {
@@ -121,6 +125,18 @@ func (u *User) AvatarImgSrc() string {
 	}
 
 	return "http://gopher.qiniudn.com/avatar/" + filename
+}
+
+// 头像的SVG标记
+func (u *User) AvatarSVG(size int) template.HTML {
+	textByte := u.Username[0]
+	color := colors[int(textByte)%len(colors)]
+
+	return template.HTML(fmt.Sprintf(`<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d">
+      <rect x="0" y="0" width="%d" height="%d" rx="6" ry="6"
+      fill="%s" />
+      <text fill="white" x="%dpx" y="%dpx" font-size="30" font-weight="bold" text-anchor="middle" style="dominant-baseline: central;">%s</text>
+    </svg>`, size, size, size, size, color, size/2, size/2, strings.ToUpper(string(textByte))))
 }
 
 // 用户发表的最近10个主题
