@@ -16,7 +16,7 @@
 	<h1>{{$topic.Title}}</h1>
     <div class="btn-group btn-group-sm pull-right">
 	  {{if .username}}
-        {{if .user.IsSuperuser}}
+        {{if .curr_user.IsSuperuser}}
 	      {{if $topic.IsTop}}
 	        <a href="/admin/topic/{{$topic.Id_.Hex}}/cancel/top" class="btn btn-success" title="取消置顶"><i class="glyphicon glyphicon-pushpin"></i></a>
 	      {{else}}
