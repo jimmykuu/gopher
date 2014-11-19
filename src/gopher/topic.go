@@ -452,6 +452,14 @@ func listTopTopicsHandler(handler Handler) {
 	})
 }
 
+// 设置置顶
+func setTopTopicHandler(handler Handler) {
+	topicId := bson.ObjectIdHex(mux.Vars(handler.Request)["id"])
+	c := handler.DB.C(CONTENTS)
+	c.Update(bson.M{"_id": topicId}, bson.M{"$set": bson.M{"is_top": true}})
+	handler.Redirect("/t/" + topicId.Hex())
+}
+
 // 取消置顶
 func cancelTopTopicHandler(handler Handler) {
 	vars := mux.Vars(handler.Request)

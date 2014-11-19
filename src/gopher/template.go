@@ -86,6 +86,7 @@ func renderTemplate(handler Handler, file, baseFile string, data map[string]inte
 		user, ok := currentUser(handler)
 
 		if ok {
+			data["user"] = user
 			data["username"] = user.Username
 			data["isSuperUser"] = user.IsSuperuser
 			data["email"] = user.Email
