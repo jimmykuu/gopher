@@ -136,7 +136,11 @@ func editSiteHandler(handler Handler) {
 		err := c.Find(bson.M{"url": form.Value("url"), "_id": bson.M{"$ne": site.Id_}}).One(&site2)
 		if err == nil {
 			form.AddError("url", "该站点已经有了")
-			renderTemplate(handler, "site/form.html", BASE, map[string]interface{}{"form": form, "action": "/site/" + siteId + "/edit", "title": "编辑"})
+			renderTemplate(handler, "site/form.html", BASE, map[string]interface{}{
+				"form":   form,
+				"action": "/site/" + siteId.Hex() + "/edit",
+				"title":  "编辑",
+			})
 			return
 		}
 
@@ -157,7 +161,7 @@ func editSiteHandler(handler Handler) {
 
 	renderTemplate(handler, "site/form.html", BASE, map[string]interface{}{
 		"form":   form,
-		"action": "/site/" + siteId + "/edit",
+		"action": "/site/" + siteId.Hex() + "/edit",
 		"title":  "编辑",
 		"active": "site",
 	})
