@@ -16,17 +16,24 @@
 	<h1>{{$topic.Title}}</h1>
     <div class="btn-group btn-group-sm pull-right">
 	  {{if .username}}
-	  {{if $topic.CanEdit .username $.db}}
-      <a href="/t/{{$topic.Id_.Hex}}/edit" class="btn btn-default" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>
-	  {{end}}
-	  {{if $topic.CanDelete .username $.db}}
-	  <a href="/t/{{$topic.Id_.Hex}}/delete" class="btn btn-default" title="删除" onclick="return confirm('确定删除吗？');"><i class="glyphicon glyphicon-remove"></i></a>
-	  {{end}}
-	  {{if ne .username $creater.Username}}
-	  {{if $topic.CanCollect .username $.db}}
-	  <a href="/t/{{$topic.Id_.Hex}}/collect" class="btn btn-default" title="收藏"><i class="glyphicon glyphicon-star-empty"></i></a>
-	  {{end}}
-	  {{end}}
+        {{if .curr_user.IsSuperuser}}
+	      {{if $topic.IsTop}}
+	        <a href="/admin/topic/{{$topic.Id_.Hex}}/cancel/top" class="btn btn-success" title="取消置顶"><i class="glyphicon glyphicon-pushpin"></i></a>
+	      {{else}}
+            <a href="/admin/topic/{{$topic.Id_.Hex}}/set/top" class="btn btn-default" title="置顶"><i class="glyphicon glyphicon-pushpin"></i></a>
+	      {{end}}
+	    {{end}}
+	    {{if $topic.CanEdit .username $.db}}
+          <a href="/t/{{$topic.Id_.Hex}}/edit" class="btn btn-default" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>
+	    {{end}}
+	    {{if $topic.CanDelete .username $.db}}
+	    <a href="/t/{{$topic.Id_.Hex}}/delete" class="btn btn-default" title="删除" onclick="return confirm('确定删除吗？');"><i class="glyphicon glyphicon-remove"></i></a>
+	    {{end}}
+	    {{if ne .username $creater.Username}}
+	      {{if $topic.CanCollect .username $.db}}
+	        <a href="/t/{{$topic.Id_.Hex}}/collect" class="btn btn-default" title="收藏"><i class="glyphicon glyphicon-star-empty"></i></a>
+	      {{end}}
+	    {{end}}
 	  {{end}}
 	</div>
 	<div>

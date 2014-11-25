@@ -102,14 +102,21 @@ func (u *Utils) UserInfo(username string, db *mgo.Database) template.HTML {
 	// 检查用户名
 	c.Find(bson.M{"username": username}).One(&user)
 
+	var img string
+	if user.Avatar == "" {
+		img = string(user.AvatarSVG(48))
+	} else {
+		img = fmt.Sprintf(`<img class="gravatar img-rounded" src="%s-middle" style="float:left;">`, user.AvatarImgSrc())
+	}
+
 	format := `<div>
-        <a href="/member/%s"><img class="gravatar img-rounded" src="%s-middle" style="float:left;"></a>
+        <a href="/member/%s">%s</a>
         <h4><a href="/member/%s">%s</a><br><small>%s</small></h4>
 	<div class="clearfix">
 	</div>
     </div>`
 
-	return template.HTML(fmt.Sprintf(format, username, user.AvatarImgSrc(), username, username, user.Tagline))
+	return template.HTML(fmt.Sprintf(format, username, img, username, username, user.Tagline))
 }
 
 func (u *Utils) News(username string, db *mgo.Database) template.HTML {

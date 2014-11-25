@@ -84,6 +84,7 @@ var (
 		{"/admin/book/{id}/delete", Administrator, deleteBookHandler},
 		{"/admin/top/topics", Administrator, listTopTopicsHandler},
 		{"/admin/topic/{id:[0-9a-f]{24}}/cancel/top", Administrator, cancelTopTopicHandler},
+		{"/admin/topic/{id:[0-9a-f]{24}}/set/top", Administrator, setTopTopicHandler},
 
 		{"/auth/signup", Everyone, authSignupHandler},
 		{"/auth/login", Everyone, authLoginHandler},
@@ -152,5 +153,6 @@ var (
 
 		{"/download", Everyone, downloadHandler},
 		{"/download/package", Everyone, downloadPackagesHandler},
+		{"/download/liteide", Everyone, downloadLiteIDEHandler},
 	}
 )

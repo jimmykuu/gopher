@@ -9,7 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"math/rand"
+	// "math/rand"
 	"net/http"
 	"strings"
 	"time"
@@ -193,6 +193,12 @@ func authSignupHandler(handler Handler) {
 // URL: /signup
 // 处理用户注册,要求输入用户名,密码和邮箱
 func signupHandler(handler Handler) {
+	// 如果已经登录了，跳转到首页
+	_, has := currentUser(handler)
+	if has {
+		handler.Redirect("/")
+	}
+
 	var username string
 	var email string
 	session, _ := store.Get(handler.Request, "user")
@@ -262,7 +268,7 @@ func signupHandler(handler Handler) {
 					Id_:            id,
 					Username:       username,
 					Password:       encryptPassword(form.Value("password"), salt),
-					Avatar:         defaultAvatars[rand.Intn(len(defaultAvatars))],
+					Avatar:         "", // defaultAvatars[rand.Intn(len(defaultAvatars))],
 					Salt:           salt,
 					Email:          form.Value("email"),
 					ValidateCode:   validateCode,
@@ -296,7 +302,7 @@ func signupHandler(handler Handler) {
 					Id_:          id,
 					Username:     username,
 					Password:     encryptPassword(form.Value("password"), salt),
-					Avatar:       defaultAvatars[rand.Intn(len(defaultAvatars))],
+					Avatar:       "", // defaultAvatars[rand.Intn(len(defaultAvatars))],
 					Salt:         salt,
 					Email:        form.Value("email"),
 					ValidateCode: validateCode,
@@ -373,6 +379,12 @@ func activateHandler(handler Handler) {
 // URL: /signin
 // 处理用户登录,如果登录成功,设置Cookie
 func signinHandler(handler Handler) {
+	// 如果已经登录了，跳转到首页
+	_, has := currentUser(handler)
+	if has {
+		handler.Redirect("/")
+	}
+
 	next := handler.Request.FormValue("next")
 
 	form := wtforms.NewForm(

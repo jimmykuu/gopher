@@ -124,13 +124,7 @@ func newTopicHandler(handler Handler) {
 
 	if handler.Request.Method == "POST" {
 		if form.Validate(handler.Request) {
-			session, _ := store.Get(handler.Request, "user")
-			username, _ := session.Values["username"]
-			username = username.(string)
-
-			user := User{}
-			c = handler.DB.C(USERS)
-			c.Find(bson.M{"username": username}).One(&user)
+			user, _ := currentUser(handler)
 
 			c = handler.DB.C(CONTENTS)
 
@@ -456,6 +450,14 @@ func listTopTopicsHandler(handler Handler) {
 	renderTemplate(handler, "/topic/top_list.html", ADMIN, map[string]interface{}{
 		"topics": topics,
 	})
+}
+
+// 设置置顶
+func setTopTopicHandler(handler Handler) {
+	topicId := bson.ObjectIdHex(mux.Vars(handler.Request)["id"])
+	c := handler.DB.C(CONTENTS)
+	c.Update(bson.M{"_id": topicId}, bson.M{"$set": bson.M{"is_top": true}})
+	handler.Redirect("/t/" + topicId.Hex())
 }
 
 // 取消置顶
