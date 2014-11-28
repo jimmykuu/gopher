@@ -12,7 +12,7 @@
 	  {{if $user.Avatar}}
 	  <img src="{{$user.AvatarImgSrc}}-large" class="pull-left img-rounded" style="margin-right: 20px;">
 	  {{else}}
-	  {{$user.AvatarSVG 96}}
+	  {{$user.AvatarSVG 96 `class="pull-left"` `style="margin-right: 20px"`}}
 	  {{end}}
 		<h3>{{$user.Username}}</h3>
 		{{if $user.Tagline}}
@@ -73,7 +73,13 @@
 		    {{$creater := .Creater $.db}}
 		    {{$node := .Node $.db}}
 			<dd>
-				<a href="/member/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;"><img class="img-rounded" src="{{$creater.AvatarImgSrc}}-middle"></a>
+			  <a href="/member/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;">
+				{{if $creater.Avatar}}
+				<img src="{{$creater.AvatarImgSrc}}-middle" class="img-rounded">
+				{{else}}
+				{{$creater.AvatarSVG 48}}
+				{{end}}
+			  </a>
 			{{if .CommentCount}}
 			<a class="badge pull-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
 			{{end}}

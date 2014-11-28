@@ -128,15 +128,15 @@ func (u *User) AvatarImgSrc() string {
 }
 
 // 头像的SVG标记
-func (u *User) AvatarSVG(size int) template.HTML {
+func (u *User) AvatarSVG(size int, properties ...string) template.HTML {
 	textByte := u.Username[0]
 	color := colors[int(textByte)%len(colors)]
 
-	return template.HTML(fmt.Sprintf(`<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d">
+	return template.HTML(fmt.Sprintf(`<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" %s>
       <rect x="0" y="0" width="%d" height="%d" rx="6" ry="6"
       fill="%s" />
       <text fill="white" x="%dpx" y="%dpx" font-size="30" font-weight="bold" text-anchor="middle" style="dominant-baseline: central;">%s</text>
-    </svg>`, size, size, size, size, color, size/2, size/2, strings.ToUpper(string(textByte))))
+    </svg>`, size, size, strings.Join(properties, " "), size, size, color, size/2, size/2, strings.ToUpper(string(textByte))))
 }
 
 // 用户发表的最近10个主题

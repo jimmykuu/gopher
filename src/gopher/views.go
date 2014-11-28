@@ -104,9 +104,9 @@ func (u *Utils) UserInfo(username string, db *mgo.Database) template.HTML {
 
 	var img string
 	if user.Avatar == "" {
-		img = string(user.AvatarSVG(48))
+		img = string(user.AvatarSVG(48, "class=\"gravatar\""))
 	} else {
-		img = fmt.Sprintf(`<img class="gravatar img-rounded" src="%s-middle" style="float:left;">`, user.AvatarImgSrc())
+		img = fmt.Sprintf(`<img class="gravatar img-rounded" src="%s-middle" class="gravatar">`, user.AvatarImgSrc())
 	}
 
 	format := `<div>

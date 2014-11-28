@@ -10,7 +10,11 @@
 {{define "Content"}}
 	{{$user := .utils.AssertUser .user}}
 	<div class="content">
-		<img src="{{$user.AvatarImgSrc}}-large" class="pull-left">
+	  {{if $user.Avatar}}
+	  <img src="{{$user.AvatarImgSrc}}-large" class="pull-left">
+	  {{else}}
+	  {{$user.AvatarSVG 96 `class="pull-left"`}}
+	  {{end}}
 		<div class="clearfix"></div>
 		<p></p>
 		<dl>

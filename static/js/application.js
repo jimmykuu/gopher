@@ -17,14 +17,6 @@ function setToTop() {
 }
 
 $(document).ready(function(){
-	$(".dropdown-toggle").on("mouseover", function() {
-		if ($(this).parent().is(".open")) {
-			return;
-		}
-
-		$(this).dropdown("toggle")
-	});
-	
     // make code pretty
     window.prettyPrint && prettyPrint();
 
