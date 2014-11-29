@@ -62,10 +62,10 @@
 	<a name="{{.Id_.Hex}}"></a>
 	<dd id="{{.Id_.Hex}}">
       <a href="/member/{{$commenter.Username}}" class="pull-left" style="margin-right: 10px;">
-		{{if $creater.Avatar}}
-		<img class="img-rounded" src="{{$creater.AvatarImgSrc}}-middle" alt="{{$creater.Username}}">
+		{{if $commenter.Avatar}}
+		<img class="img-rounded" src="{{$commenter.AvatarImgSrc}}-middle" alt="{{$commenter.Username}}">
 		{{else}}
-		{{$creater.AvatarSVG 48}}
+		{{$commenter.AvatarSVG 48}}
 		{{end}}
 	  </a>
 	  <div class="info">
