@@ -1,5 +1,117 @@
 [
 	{
+		"version": "go1.4rc2",
+		"date": "2014-12-02",
+		"files": [
+			{
+                "filename": "go1.4rc2.darwin-386-osx10.6.pkg",
+                "summary": "go1.4rc2 Mac OS X (x86 32-bit) PKG installer",
+                "size": "49 MB",
+                "sha1": "40edb3f2000a3dba73062545794fa3f709c827ad",
+                "url": "https://storage.googleapis.com/golang/go1.4rc2.darwin-386-osx10.6.pkg"
+            }, {
+                "filename": "go1.4rc2.darwin-386-osx10.6.tar.gz",
+                "summary": "go1.4rc2 Mac OS X (x86 32-bit) tarball",
+                "size": "48 MB",
+                "sha1": "98c80b0c30b5ccb48e02b5ed0d4c5047db82fa4f",
+                "url": "https://storage.googleapis.com/golang/go1.4rc2.darwin-386-osx10.6.tar.gz"
+            }, {
+                "filename": "go1.4rc2.darwin-386-osx10.8.pkg",
+                "summary": "go1.4rc2 Mac OS X (x86 32-bit) PKG installer",
+                "size": "49 MB",
+                "sha1": "d8d445c949dae30e29a95de94eadc8758d48061a",
+                "url": "https://storage.googleapis.com/golang/go1.4rc2.darwin-386-osx10.8.pkg"
+            }, {
+                "filename": "go1.4rc2.darwin-386-osx10.8.tar.gz",
+                "summary": "go1.4rc2 Mac OS X (x86 32-bit) tarball",
+                "size": "49 MB",
+                "sha1": "e6b6f970f4c487c256e35e1aa1bd7c4ff0f74cf3",
+                "url": "https://storage.googleapis.com/golang/go1.4rc2.darwin-386-osx10.8.tar.gz"
+            }, {
+                "filename": "go1.4rc2.darwin-amd64-osx10.6.pkg",
+                "summary": "go1.4rc2 Mac OS X (x86 64-bit) PKG installer",
+                "size": "60 MB",
+                "sha1": "9e6e6215cb961dd9d479785299f26fdf79d20970",
+                "url": "https://storage.googleapis.com/golang/go1.4rc2.darwin-amd64-osx10.6.pkg"
+            }, {
+                "filename": "go1.4rc2.darwin-amd64-osx10.6.tar.gz",
+                "summary": "go1.4rc2 Mac OS X (x86 64-bit) tarball",
+                "size": "59 MB",
+                "sha1": "1a8649c1cd13c13dc7820ae02ee2abac3856dd70",
+                "url": "https://storage.googleapis.com/golang/go1.4rc2.darwin-amd64-osx10.6.tar.gz"
+            }, {
+                "filename": "go1.4rc2.darwin-amd64-osx10.8.pkg",
+                "summary": "go1.4rc2 Mac OS X (x86 64-bit) PKG installer",
+                "size": "60 MB",
+                "sha1": "ee6aeec11be5ac15b0206c74293f1173bb3c7a14",
+                "url": "https://storage.googleapis.com/golang/go1.4rc2.darwin-amd64-osx10.8.pkg",
+				"recommended": true
+            }, {
+                "filename": "go1.4rc2.darwin-amd64-osx10.8.tar.gz",
+                "summary": "go1.4rc2 Mac OS X (x86 64-bit) tarball",
+                "size": "60 MB",
+                "sha1": "3769cc4a72cff59f3a3ce3a9d6309d999a749093",
+                "url": "https://storage.googleapis.com/golang/go1.4rc2.darwin-amd64-osx10.8.tar.gz"
+            }, {
+                "filename": "go1.4rc2.freebsd-386.tar.gz",
+                "summary": "go1.4rc2 FreeBSD (x86 32-bit) tarball",
+                "size": "48 MB",
+                "sha1": "a9ebddfce542d82fdd9f27747ec5d5465470ef5d",
+                "url": "https://storage.googleapis.com/golang/go1.4rc2.freebsd-386.tar.gz"
+            }, {
+                "filename": "go1.4rc2.freebsd-amd64.tar.gz",
+                "summary": "go1.4rc2 FreeBSD (x86 64-bit) tarball",
+                "size": "50 MB",
+                "sha1": "3f39c414c006baefaa5ac29f0cd7614e6bb010f3",
+                "url": "https://storage.googleapis.com/golang/go1.4rc2.freebsd-amd64.tar.gz"
+            }, {
+                "filename": "go1.4rc2.linux-386.tar.gz",
+                "summary": "go1.4rc2 Linux (x86 32-bit) tarball",
+                "size": "49 MB",
+                "sha1": "04d2c1d744ebb419738f4a2543621eee46223d91",
+                "url": "https://storage.googleapis.com/golang/go1.4rc2.linux-386.tar.gz"
+            }, {
+                "filename": "go1.4rc2.linux-amd64.tar.gz",
+                "summary": "go1.4rc2 Linux (x86 64-bit) tarball",
+                "size": "61 MB",
+                "sha1": "950f74edbee7e55f4ca5760c19f51fe24de8d05f",
+                "url": "https://storage.googleapis.com/golang/1.4rc2.linux-amd64.tar.gz",
+				"recommended": true
+            }, {
+                "filename": "go1.4rc2.src.tar.gz",
+                "summary": "go1.4rc2 (source only)",
+                "size": "11 MB",
+                "sha1": "270afd320c0b8e3bfa6f5e3b09e61a3917489494",
+                "url": "https://storage.googleapis.com/golang/go1.4rc2.src.tar.gz",
+				"recommended": true
+            }, {
+                "filename": "go1.4rc2.windows-386.msi",
+                "summary": "go1.4rc2 Windows (x86 32-bit) MSI installer",
+                "size": "43 MB",
+                "sha1": "6571af0e97947412f449571dd143a0f3d9827f9f",
+                "url": "https://storage.googleapis.com/golang/go1.4rc2.windows-386.msi"
+            }, {
+                "filename": "go1.4rc2.windows-386.zip",
+                "summary": "go1.4rc2 Windows (x86 32-bit) ZIP archive",
+                "size": "51 MB",
+                "sha1": "8be5274637c7b6d0b1305fc09c5ed5dcf5e58188",
+                "url": "https://storage.googleapis.com/golang/go1.4rc2.windows-386.zip"
+            }, {
+                "filename": "go1.4rc2.windows-amd64.msi",
+                "summary": "go1.4rc2 Windows (x86 64-bit) MSI installer",
+                "size": "52 MB",
+                "sha1": "6ac7e8d99e58be1ba63be1330e1b4e7e438f14b7",
+                "url": "https://storage.googleapis.com/golang/go1.4rc2.windows-amd64.msi",
+				"recommended": true
+            }, {
+                "filename": "go1.4rc2.windows-amd64.zip",
+                "summary": "go1.4rc2 Windows (x86 64-bit) ZIP archive",
+                "size": "63 MB",
+                "sha1": "6c37566760d6ca0482a9840d69578bc45e6029da",
+                "url": "https://storage.googleapis.com/golang/go1.4rc2.windows-amd64.zip"
+            }
+        ]	
+	}, {
 		"version": "go1.4rc1",
 		"date": "2014-11-17",
 		"files": [
