@@ -20,7 +20,7 @@
                 "summary": "go1.4 Mac OS X (x86 32-bit) PKG installer",
                 "size": "49 MB",
                 "sha1": "81534c4eec80729b81b8e5f5889dfc2a3ba37131",
-                "url": "https://storage.googleapis.com/golang/go1.4rc2.darwin-386-osx10.8.pkg"
+                "url": "https://storage.googleapis.com/golang/go1.4.darwin-386-osx10.8.pkg"
             }, {
                 "filename": "go1.4.darwin-386-osx10.8.tar.gz",
                 "summary": "go1.4 Mac OS X (x86 32-bit) tarball",
@@ -89,7 +89,7 @@
                 "summary": "go1.4 Windows (x86 32-bit) MSI installer",
                 "size": "43 MB",
                 "sha1": "b26151702cba760d6eec94214c457bee01f6d859",
-                "url": "https://storage.googleapis.com/golang/go1.4rc2.windows-386.msi"
+                "url": "https://storage.googleapis.com/golang/go1.4.windows-386.msi"
             }, {
                 "filename": "go1.4.windows-386.zip",
                 "summary": "go1.4 Windows (x86 32-bit) ZIP archive",
