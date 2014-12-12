@@ -93,7 +93,7 @@ func editBookHandler(handler Handler) {
 		}
 	}
 
-	renderTemplate(handler, "book/form.html", BASE, map[string]interface{}{
+	renderTemplate(handler, "book/form.html", ADMIN, map[string]interface{}{
 		"book":  book,
 		"form":  form,
 		"isNew": false,
