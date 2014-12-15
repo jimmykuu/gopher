@@ -361,3 +361,10 @@ sup.new {
 	font-size: 10px;
 	background: url(http://gopher.qiniudn.com/static/img/new.png) no-repeat;
 }
+
+.friendly_links a {
+	margin-right: 2em;
+	margin-bottom: 1em;
+	float: left;
+	display: block;
+}

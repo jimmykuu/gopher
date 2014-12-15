@@ -11,7 +11,7 @@
 	<script type="text/javascript" src="http://cdn.staticfile.org/jquery/2.0.3/jquery.min.js"></script>
 	<link rel="stylesheet" href="http://gopher.qiniudn.com/static/css/bootstrap.min.css?v=3.3.0">
 	<link rel="stylesheet" href="http://gopher.qiniudn.com/static/css/wmd.css" type="text/css">
-	<link rel="stylesheet" href="/static/css/style.css?v=6" type="text/css">
+	<link rel="stylesheet" href="/static/css/style.css?v=7" type="text/css">
 	<link rel="stylesheet" href="http://gopher.qiniudn.com/static/css/prettify.css" type="text/css">
     <link rel="stylesheet" href="/static/css/history.css?v=2" type="text/css">
 	<link rel="stylesheet" href="/static/css/jquery.atwho.min.css?v=0.4.11" type="text/css">
@@ -117,16 +117,16 @@
 			<p>Website built by <a href="https://github.com/jimmykuu/gopher" target="_blank" rel="nofollow">Gopher</a>, powered by <a href="http://golang.org/" target="_blank" rel="nofollow">Golang</a>, <a href="http://www.mongodb.org/" target="_blank" rel="nofollow">MongoDB</a>.</p>
 			<p>
 			  Build version {{.goVersion}}.
-			  Based on <a target="_blank" href="http://getbootstrap.com/" rel="nofollow">Bootstrap</a>. 
+			  Based on <a target="_blank" href="http://getbootstrap.com/" rel="nofollow">Bootstrap</a>.
 			  Icons from <a target="_blank" href="http://glyphicons.com/" rel="nofollow">Glyphicons</a>.
 			  {{loadtimes .startTime}}.
 			</p>
-			<p style="vertical-align: middle;">
-				<a href="http://www.cloudwise.com/" target="_blank" rel="nofollow"><img src="http://gopher.qiniudn.com/sponsor/cloudwise-logo.png?imageView2/2/h/46/q/100" alt="云智慧"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a href="http://www.linode.com/?r=2bbf272ff1d5457dfcc269442534b20cae7b7fc4" target="_blank" rel="nofollow"><img src="http://gopher.qiniudn.com/static/img/linode.png" alt="linode"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<a href="http://portal.qiniu.com/signup?code=3lel8p4gwbv4e" target="_blank" rel="nofollow"><img src="http://gopher.qiniudn.com/exchange%2Fqiniu_logo.png?imageView2/2/h/46/100" alt="七牛云存储"></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<p style="vertical-align: middle;" class="friendly_links">
+				<a href="http://www.cloudwise.com/" target="_blank" rel="nofollow"><img src="http://gopher.qiniudn.com/sponsor/cloudwise-logo.png?imageView2/2/h/46/q/100" alt="云智慧"></a>
+				<a href="http://www.linode.com/?r=2bbf272ff1d5457dfcc269442534b20cae7b7fc4" target="_blank" rel="nofollow"><img src="http://gopher.qiniudn.com/static/img/linode.png" alt="linode"></a>
+				<a href="http://portal.qiniu.com/signup?code=3lel8p4gwbv4e" target="_blank" rel="nofollow"><img src="http://gopher.qiniudn.com/exchange%2Fqiniu_logo.png?imageView2/2/h/46/100" alt="七牛云存储"></a>
 				<a href="http://www.lagou.com/" target="_blank" rel="nofollow"><img src="http://www.lagou.com/images/logo.png" alt="拉勾网-最专业的互联网招聘平台"></a>
-				
+				<a href="http://segmentfault.com/" target="_blank" rel="nofollow"><img src="http://77fkk5.com1.z0.glb.clouddn.com/friendly_links/segmentfault.png" alt="SegmentFault"></a>
 			</p>
 		</div>
 	</footer>
@@ -141,7 +141,7 @@ $(function(){
 				if(data.status){
 					location.reload();
 				}
-			})		
+			})
 		});
 		$('#at_clear').click(function(){
 			var data = {};
@@ -150,7 +150,7 @@ $(function(){
 				if(data.status){
 					location.reload();
 				}
-			})		
+			})
 		});
 })
 </script>
