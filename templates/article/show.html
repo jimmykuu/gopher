@@ -33,13 +33,20 @@
 		<dd id="{{.Id_.Hex}}">
 			<span class="label pull-right">#{{$.utils.Index $index}}</span>
 			{{if $.username}}
-				{{if $comment.CanDelete $.username}}
+				{{if $comment.CanDeleteOrEdit $.username $.db}}
 					<a href="/comment/{{.Id_.Hex}}/delete" class="remove label pull-right" title="删除"><i class="icon-white icon-remove"></i></a>
 				{{end}}
 			{{end}}
-			<a href="/member/{{.Creater.Username}}" class="pull-left" style="margin-right: 10px;"><img src="{{.Creater.AvatarImgSrc}}-middle"></a>
+	  		{{$creater := $comment.Creater $.db}}
+			<a href="/member/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;">
+			{{if $creater.Avatar}}
+        		<img class="img-rounded" src="{{$creater.AvatarImgSrc}}-middle" alt="{{$creater.Username}}">
+		    {{else}}
+    		    {{$creater.AvatarSVG 48}}
+			{{end}}
+			</a>
 			<div class="info">
-				<a href="/member/{{.Creater.Username}}"><strong>{{.Creater.Username}}</strong></a> •
+				<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
 				{{$.utils.FormatTime .CreatedAt}}
 			</div>
             <div class="space"></div>
