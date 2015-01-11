@@ -319,11 +319,20 @@ func (cw *ConsoleWriter) Write(p []byte) (n int, err error) {
 		}
 
 		err = websocket.JSON.Send(cw.ws, message)
-	} else {
+	} else if strings.Index(line, "# cd") == 0 {
+		// 出错
 		err = websocket.JSON.Send(cw.ws, Message{
 			Type: "error",
 			Msg:  line,
 		})
+	} else {
+		// 一些输出提示
+		message := Message{
+			Type: "output",
+			Msg:  line,
+		}
+
+		err = websocket.JSON.Send(cw.ws, message)
 	}
 
 	n = len(p)
