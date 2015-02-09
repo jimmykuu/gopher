@@ -77,7 +77,13 @@ func parseTemplate(file, baseFile string, data map[string]interface{}) []byte {
 }
 
 // 渲染模板，并放入一些模板常用变量
-func renderTemplate(handler *Handler, file, baseFile string, data map[string]interface{}) {
+func renderTemplate(handler *Handler, file, baseFile string, datas ...map[string]interface{}) {
+	var data map[string]interface{}
+	if len(datas) == 1 {
+		data = datas[0]
+	} else if len(datas) != 0 {
+		panic("不能传入超过多个data map")
+	}
 	_, isPresent := data["signout"]
 
 	// 如果isPresent==true，说明在执行登出操作

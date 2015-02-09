@@ -1,6 +1,4 @@
-/*
-后台管理
-*/
+//后台管理
 
 package gopher
 
@@ -15,7 +13,7 @@ import (
 // URL: /admin
 // 后台管理首页
 func adminHandler(handler *Handler) {
-	renderTemplate(handler, "admin/index.html", ADMIN, map[string]interface{}{})
+	renderTemplate(handler, "admin/index.html", ADMIN)
 }
 
 // URL: /admin/users
