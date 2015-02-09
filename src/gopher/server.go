@@ -13,6 +13,7 @@ import (
 	"code.google.com/p/go.net/websocket"
 	"github.com/dchest/captcha"
 	"github.com/gorilla/mux"
+	"github.com/justinas/nosurf"
 )
 
 func handlerFun(route Route) http.HandlerFunc {
@@ -71,7 +72,7 @@ func StartServer() {
 		r.HandleFunc(route.URL, handlerFun(route))
 	}
 
-	http.Handle("/", r)
+	http.Handle("/", nosurf.New(r))
 
 	fmt.Println("Server start on:", Config.Port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", Config.Port), nil))

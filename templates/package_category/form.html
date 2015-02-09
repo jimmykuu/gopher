@@ -1,9 +1,10 @@
 {{define "Title"}}{{if .isNew}}添加{{else}}编辑{{end}}包分类{{end}}
 
 {{define "Content"}}
-	<form action="" method="post" class="ui form segment">
-		{{input .form "id"}}
-		{{input .form "name"}}
-		<input type="submit" value="提交" class="ui blue submit button">
-	</form>
+<form action="" method="post" class="ui form segment">
+  <input type="hidden" name="csrf_token" value="{{.token}}">
+  {{input .form "id"}}
+  {{input .form "name"}}
+  <input type="submit" value="提交" class="ui blue submit button">
+</form>
 {{end}}

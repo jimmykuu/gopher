@@ -8,32 +8,33 @@
 {{end}}
 {{define "Content"}}
 	<div class="content">
-		<img src="http://gopher.qiniudn.com/static/img/gopher/talks.png" class="pull-right">
-		<form action="" method="post" class="form-horizontal" role="form">
-			<fieldset>
-				{{.form.RenderInput "next"}}
-                {{.utils.RenderInputH .form "username" 2 6 `placeholder="用户名"`}}
-                {{.utils.RenderInputH .form "password" 2 6 `placeholder="密码"`}}
-				{{.utils.RenderInputH .form "captcha" 2 3}}
-				<div class="form-group">
-				  <div class="col-lg-offset-2 col-lg-3">
-					<a href="javascript:;" onclick="reload();" title="点击更新验证码"><img src="/captcha/{{.captchaId}}.png" id="captcha-img"></a>
-				  </div>				
-				</div>
-			<input type="hidden" name="captchaId" value="{{.captchaId}}">
+	  <img src="http://gopher.qiniudn.com/static/img/gopher/talks.png" class="pull-right">
+	  <form action="" method="post" class="form-horizontal" role="form">
+		<input type="hidden" name="csrf_token" value="{{.token}}">
+		<fieldset>
+		  {{.form.RenderInput "next"}}
+          {{.utils.RenderInputH .form "username" 2 6 `placeholder="用户名"`}}
+          {{.utils.RenderInputH .form "password" 2 6 `placeholder="密码"`}}
+		  {{.utils.RenderInputH .form "captcha" 2 3}}
+		  <div class="form-group">
+			<div class="col-lg-offset-2 col-lg-3">
+			  <a href="javascript:;" onclick="reload();" title="点击更新验证码"><img src="/captcha/{{.captchaId}}.png" id="captcha-img"></a>
+			</div>
+		  </div>
+		  <input type="hidden" name="captchaId" value="{{.captchaId}}">
 
-				<div class="form-group">
-					<div class="col-lg-offset-2 col-lg-6">
-						<input type="submit" class="btn btn-primary" value="登录">
-                        <p>
-                            <br>
-                            <a href="/forgot_password">忘记密码？</a><br>
-                            没有帐号？<a href="/signup" class="btn btn-info">注册</a>
-                        </p>
-					</div>
-				</div>
-			</fieldset>
-		</form>
+		  <div class="form-group">
+			<div class="col-lg-offset-2 col-lg-6">
+			  <input type="submit" class="btn btn-primary" value="登录">
+              <p>
+                <br>
+                <a href="/forgot_password">忘记密码？</a><br>
+                没有帐号？<a href="/signup" class="btn btn-info">注册</a>
+              </p>
+			</div>
+		  </div>
+		</fieldset>
+	  </form>
 	</div>
 <script type="text/javascript">
   function setSrcQuery(e, q) {

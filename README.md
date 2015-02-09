@@ -15,6 +15,7 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 - code.google.com/p/go-uuid/uuid
 - github.com/jimmykuu/webhelpers
 - github.com/jimmykuu/wtforms
+- github.com/justinas/nosurf
 
 ##Install
 
@@ -89,4 +90,3 @@ Copyright (c) 2012-2013
 Released under the MIT license:
 
 - [www.opensource.org/licenses/MIT](http://www.opensource.org/licenses/MIT)
-

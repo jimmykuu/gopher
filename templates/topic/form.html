@@ -9,6 +9,7 @@
 {{define "Content"}}
 <div class="content">
   <form action="" method="post" id="topic-form" role="form">
+	<input type="hidden" name="csrf_token" value="{{.token}}">
 	<fieldset>
 	  {{.form.RenderInput "html"}}
       {{$node := .form.Field "node"}}
@@ -38,7 +39,6 @@
 <script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Converter.js"></script>
 <script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Editor.js"></script>
 <script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Sanitizer.js"></script>
-<script type="text/javascript" src="/static/js/jquery.atwho.min.js"></script>
 <script>
   (function () {
   var converter1 = Markdown.getSanitizingConverter();

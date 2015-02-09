@@ -17,6 +17,7 @@ go get -u -v github.com/qiniu/api
 go get -u -v github.com/dchest/captcha
 go get -u -v github.com/bradrydzewski/go.auth
 go get -u -v github.com/dchest/authcookie
+go get -u -v github.com/justinas/nosurf
 
 export GOPATH="$OLDGOPATH"
 

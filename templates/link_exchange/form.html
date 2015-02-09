@@ -1,10 +1,11 @@
 {{define "Title"}}后台管理：{{if .isNew}}添加{{else}}编辑{{end}}友情链接{{end}}
 {{define "Content"}}
-	<form action="" method="post" class="ui form segment">
-		{{input .form "name"}}
-		{{input .form "url"}}
-		{{input .form "description"}}
-		{{input .form "logo"}}
-		<input type="submit" value="提交" class="ui submit button green">
-	</form>
+<form action="" method="post" class="ui form segment">
+  <input type="hidden" name="csrf_token" value="{{.token}}">
+  {{input .form "name"}}
+  {{input .form "url"}}
+  {{input .form "description"}}
+  {{input .form "logo"}}
+  <input type="submit" value="提交" class="ui submit button green">
+</form>
 {{end}}

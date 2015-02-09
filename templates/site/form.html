@@ -9,19 +9,20 @@
 {{end}}
 {{define "Content"}}
 	<div class="content">
-		<form action="{{.action}}" method="post" class="form-horizontal" role="form">
-			<fieldset>
-				{{.utils.RenderInputH .form "name" 2 10}}
-				{{.utils.RenderInputH .form "url" 2 10 `placeholder="http://或https://"`}}
-				{{.utils.RenderInputH .form "description" 2 10 `rows="4"`}}
-				{{.utils.RenderInputH .form "category" 2 6}}
-				<div class="form-group">
-					<div class="col-lg-offset-2 col-lg-6">
-						<input type="submit" class="btn btn-primary" value="{{.title}}">
-					</div>
-				</div>
-			</fieldset>
-		</form>
+	  <form action="{{.action}}" method="post" class="form-horizontal" role="form">
+		<input type="hidden" name="csrf_token" name="{{.token}}">
+		<fieldset>
+		  {{.utils.RenderInputH .form "name" 2 10}}
+		  {{.utils.RenderInputH .form "url" 2 10 `placeholder="http://或https://"`}}
+		  {{.utils.RenderInputH .form "description" 2 10 `rows="4"`}}
+		  {{.utils.RenderInputH .form "category" 2 6}}
+		  <div class="form-group">
+			<div class="col-lg-offset-2 col-lg-6">
+			  <input type="submit" class="btn btn-primary" value="{{.title}}">
+			</div>
+		  </div>
+		</fieldset>
+	  </form>
 	</div>
 {{end}}
 

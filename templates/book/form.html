@@ -1,16 +1,17 @@
 {{define "Title"}}{{if .isNew}}新建{{else}}编辑{{end}}图书{{end}}
 {{define "Content"}}
-	<form action="" method="post" class="ui form segment">
-		{{input .form "title"}}
-		{{input .form "cover"}}
-		{{input .form "author"}}
-		{{input .form "translator"}}
-		{{input .form "pages"}}
-		{{input .form "language"}}
-		{{input .form "publisher"}}
-		{{input .form "publication_date"}}
-		{{input .form "isbn"}}
-		{{input .form "introduction"}}
-		<input type="submit" value="提交" class="ui submit blue button">
-	</form>
+<form action="" method="post" class="ui form segment">
+  <input type="hidden" name="csrf_token" value="{{.token}}">
+  {{input .form "title"}}
+  {{input .form "cover"}}
+  {{input .form "author"}}
+  {{input .form "translator"}}
+  {{input .form "pages"}}
+  {{input .form "language"}}
+  {{input .form "publisher"}}
+  {{input .form "publication_date"}}
+  {{input .form "isbn"}}
+  {{input .form "introduction"}}
+  <input type="submit" value="提交" class="ui submit blue button">
+</form>
 {{end}}
