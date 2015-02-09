@@ -36,8 +36,14 @@ func adminListUsersHandler(handler *Handler) {
 		message(handler, "页码错误", "页码错误", "error")
 		return
 	}
-
-	query.(*mgo.Query).All(&users)
+	q, ok := query.(*mgo.Query)
+	if !ok {
+		panic("query的类型不是 *mgo.Query")
+	}
+	err = q.All(&users)
+	if err != nil {
+		message(handler, "查询错误", "查询错误", "error")
+	}
 
 	renderTemplate(handler, "admin/users.html", ADMIN, map[string]interface{}{"users": users, "pagination": pagination, "total": pagination.Count(), "page": page})
 }
