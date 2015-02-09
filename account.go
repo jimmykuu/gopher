@@ -105,17 +105,13 @@ func currentUser(handler *Handler) (*User, bool) {
 }
 
 // URL: /auth/login
-
 func authLoginHandler(handler *Handler) {
 	fmt.Println("auth_signup")
 	fmt.Println(Config.GithubClientId, Config.GithubClientSecret)
 	githubHandler.ServeHTTP(handler.ResponseWriter, handler.Request)
 }
 
-/*
-因为SecureUser 接受 func(w http.ResponseWriter, r *http.Request, u auth.User)
-所以加一个闭包把handler传进去
-*/
+// wrapAuthHandler返回符合 go.auth包要求的签名的函数.
 func wrapAuthHandler(handler *Handler) func(w http.ResponseWriter, r *http.Request, u auth.User) {
 	return func(w http.ResponseWriter, r *http.Request, u auth.User) {
 		c := handler.DB.C(USERS)

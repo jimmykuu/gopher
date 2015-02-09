@@ -69,6 +69,7 @@ func getDefaultCode(path string) (code template.HTML) {
 	}
 	return
 }
+
 func configGithubAuth() {
 	if Config.GithubClientId == "" || Config.GithubClientSecret == "" {
 		log.Fatal("没有配置github应用的参数")
