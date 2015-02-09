@@ -202,7 +202,7 @@ func commentJsonHandler(handler *Handler) {
 		"html":     string(comment.Html),
 	}
 
-	renderJson(handler, data)
+	handler.renderJson(data)
 }
 
 // URL: /commeint/:id/edit

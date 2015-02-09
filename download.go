@@ -42,7 +42,7 @@ func downloadHandler(handler *Handler) {
 	if err != nil {
 		panic(err)
 	}
-	renderTemplate(handler, "download.html", BASE, map[string]interface{}{"versions": versions, "active": "download"})
+	handler.renderTemplate("download.html", BASE, map[string]interface{}{"versions": versions, "active": "download"})
 }
 
 type LiteIDEFileInfo struct {
@@ -109,5 +109,5 @@ func downloadLiteIDEHandler(handler *Handler) {
 		versions[i], versions[count-i-1] = versions[count-i-1], versions[i]
 	}
 
-	renderTemplate(handler, "download/liteide.html", BASE, map[string]interface{}{"versions": versions, "active": "download"})
+	handler.renderTemplate("download/liteide.html", BASE, map[string]interface{}{"versions": versions, "active": "download"})
 }

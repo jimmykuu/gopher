@@ -18,7 +18,7 @@ func booksHandler(handler *Handler) {
 
 	var englishBooks []Book
 	c.Find(bson.M{"language": "英文"}).All(&englishBooks)
-	renderTemplate(handler, "book/index.html", BASE, map[string]interface{}{
+	handler.renderTemplate("book/index.html", BASE, map[string]interface{}{
 		"chineseBooks": chineseBooks,
 		"englishBooks": englishBooks,
 		"active":       "books",
@@ -39,7 +39,7 @@ func showBookHandler(handler *Handler) {
 	var book Book
 	c.Find(bson.M{"_id": bson.ObjectIdHex(bookId)}).One(&book)
 
-	renderTemplate(handler, "book/show.html", BASE, map[string]interface{}{
+	handler.renderTemplate("book/show.html", BASE, map[string]interface{}{
 		"book":   book,
 		"active": "books",
 	})
@@ -93,7 +93,7 @@ func editBookHandler(handler *Handler) {
 		}
 	}
 
-	renderTemplate(handler, "book/form.html", ADMIN, map[string]interface{}{
+	handler.renderTemplate("book/form.html", ADMIN, map[string]interface{}{
 		"book":  book,
 		"form":  form,
 		"isNew": false,
@@ -116,7 +116,7 @@ func listBooksHandler(handler *Handler) {
 	var books []Book
 	c.Find(nil).All(&books)
 
-	renderTemplate(handler, "book/list.html", ADMIN, map[string]interface{}{
+	handler.renderTemplate("book/list.html", ADMIN, map[string]interface{}{
 		"books": books,
 	})
 }
@@ -161,7 +161,7 @@ func newBookHandler(handler *Handler) {
 		}
 	}
 
-	renderTemplate(handler, "book/form.html", ADMIN, map[string]interface{}{
+	handler.renderTemplate("book/form.html", ADMIN, map[string]interface{}{
 		"form":  form,
 		"isNew": true,
 	})

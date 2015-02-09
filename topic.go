@@ -67,7 +67,7 @@ func topicsHandler(handler *Handler, conditions bson.M, sort string, url string,
 
 	topics = append(topTopics, topics...)
 
-	renderTemplate(handler, "index.html", BASE, map[string]interface{}{
+	handler.renderTemplate("index.html", BASE, map[string]interface{}{
 		"nodes":         hotNodes,
 		"status":        status,
 		"topics":        topics,
@@ -173,7 +173,7 @@ func newTopicHandler(handler *Handler) {
 		form.SetValue("html", "")
 	}
 
-	renderTemplate(handler, "topic/form.html", BASE, map[string]interface{}{
+	handler.renderTemplate("topic/form.html", BASE, map[string]interface{}{
 		"form":    form,
 		"title":   "新建",
 		"html":    html,
@@ -256,7 +256,7 @@ func editTopicHandler(handler *Handler) {
 		form.SetValue("html", "")
 	}
 
-	renderTemplate(handler, "topic/form.html", BASE, map[string]interface{}{
+	handler.renderTemplate("topic/form.html", BASE, map[string]interface{}{
 		"form":    form,
 		"title":   "编辑",
 		"action":  "/t/" + topicId + "/edit",
@@ -336,7 +336,7 @@ func showTopicHandler(handler *Handler) {
 		}
 	}
 
-	renderTemplate(handler, "topic/show.html", BASE, map[string]interface{}{
+	handler.renderTemplate("topic/show.html", BASE, map[string]interface{}{
 		"topic":  topic,
 		"active": "topic",
 	})
@@ -378,7 +378,7 @@ func topicInNodeHandler(handler *Handler) {
 
 	query.(*mgo.Query).All(&topics)
 
-	renderTemplate(handler, "/topic/list.html", BASE, map[string]interface{}{
+	handler.renderTemplate("/topic/list.html", BASE, map[string]interface{}{
 		"topics": topics,
 		"node":   node,
 		"active": "topic",
@@ -447,7 +447,7 @@ func listTopTopicsHandler(handler *Handler) {
 	c := handler.DB.C(CONTENTS)
 	c.Find(bson.M{"content.type": TypeTopic, "is_top": true}).All(&topics)
 
-	renderTemplate(handler, "/topic/top_list.html", ADMIN, map[string]interface{}{
+	handler.renderTemplate("/topic/top_list.html", ADMIN, map[string]interface{}{
 		"topics": topics,
 	})
 }

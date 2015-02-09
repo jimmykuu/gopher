@@ -15,7 +15,7 @@ func adminListAdsHandler(handler *Handler) {
 	c := handler.DB.C(ADS)
 	c.Find(nil).All(&ads)
 
-	renderTemplate(handler, "admin/ads.html", ADMIN, map[string]interface{}{
+	handler.renderTemplate("admin/ads.html", ADMIN, map[string]interface{}{
 		"ads": ads,
 	})
 }
@@ -37,7 +37,7 @@ func adminNewAdHandler(handler *Handler) {
 
 	if handler.Request.Method == "POST" {
 		if !form.Validate(handler.Request) {
-			renderTemplate(handler, "ad/form.html", ADMIN, map[string]interface{}{
+			handler.renderTemplate("ad/form.html", ADMIN, map[string]interface{}{
 				"form":  form,
 				"isNew": true,
 			})
@@ -60,7 +60,7 @@ func adminNewAdHandler(handler *Handler) {
 		return
 	}
 
-	renderTemplate(handler, "ad/form.html", ADMIN, map[string]interface{}{
+	handler.renderTemplate("ad/form.html", ADMIN, map[string]interface{}{
 		"form":  form,
 		"isNew": true,
 	})
@@ -99,7 +99,7 @@ func adminEditAdHandler(handler *Handler) {
 
 	if handler.Request.Method == "POST" {
 		if !form.Validate(handler.Request) {
-			renderTemplate(handler, "ad/form.html", ADMIN, map[string]interface{}{
+			handler.renderTemplate("ad/form.html", ADMIN, map[string]interface{}{
 				"form":  form,
 				"isNew": false,
 			})
@@ -120,7 +120,7 @@ func adminEditAdHandler(handler *Handler) {
 		return
 	}
 
-	renderTemplate(handler, "ad/form.html", ADMIN, map[string]interface{}{
+	handler.renderTemplate("ad/form.html", ADMIN, map[string]interface{}{
 		"form":  form,
 		"isNew": false,
 	})

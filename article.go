@@ -71,7 +71,7 @@ func newArticleHandler(handler *Handler) {
 		return
 	}
 
-	renderTemplate(handler, "article/form.html", BASE, map[string]interface{}{
+	handler.renderTemplate("article/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"title":  "新建",
 		"action": "/article/new",
@@ -117,7 +117,7 @@ func articlesInCategoryHandler(handler *Handler) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	renderTemplate(handler, "/article/index.html", BASE, map[string]interface{}{
+	handler.renderTemplate("/article/index.html", BASE, map[string]interface{}{
 		"articles": articles,
 		"type":     category.Name,
 	})
@@ -155,7 +155,7 @@ func listArticlesHandler(handler *Handler) {
 
 	query.(*mgo.Query).All(&articles)
 
-	renderTemplate(handler, "article/index.html", BASE, map[string]interface{}{
+	handler.renderTemplate("article/index.html", BASE, map[string]interface{}{
 		"articles":   articles,
 		"pagination": pagination,
 		"page":       page,
@@ -210,7 +210,7 @@ func showArticleHandler(handler *Handler) {
 		return
 	}
 
-	renderTemplate(handler, "article/show.html", BASE, map[string]interface{}{
+	handler.renderTemplate("article/show.html", BASE, map[string]interface{}{
 		"article": article,
 		"active":  "article",
 	})
@@ -282,7 +282,7 @@ func editArticleHandler(handler *Handler) {
 		}
 	}
 
-	renderTemplate(handler, "article/form.html", BASE, map[string]interface{}{
+	handler.renderTemplate("article/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"title":  "编辑",
 		"action": "/a/" + articleId + "/edit",

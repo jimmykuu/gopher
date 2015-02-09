@@ -15,7 +15,7 @@ func adminListPackageCategoriesHandler(handler *Handler) {
 	c := handler.DB.C(PACKAGE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
-	renderTemplate(handler, "admin/package_categories.html", ADMIN, map[string]interface{}{"categories": categories})
+	handler.renderTemplate("admin/package_categories.html", ADMIN, map[string]interface{}{"categories": categories})
 }
 
 // URL: /admin/package_category/new
@@ -28,7 +28,7 @@ func adminNewPackageCategoryHandler(handler *Handler) {
 
 	if handler.Request.Method == "POST" {
 		if !form.Validate(handler.Request) {
-			renderTemplate(handler, "package_category/form.html", ADMIN, map[string]interface{}{"form": form})
+			handler.renderTemplate("package_category/form.html", ADMIN, map[string]interface{}{"form": form})
 			return
 		}
 
@@ -38,7 +38,7 @@ func adminNewPackageCategoryHandler(handler *Handler) {
 
 		if err == nil {
 			form.AddError("name", "该名称已经有了")
-			renderTemplate(handler, "package_category/form.html", ADMIN, map[string]interface{}{"form": form})
+			handler.renderTemplate("package_category/form.html", ADMIN, map[string]interface{}{"form": form})
 			return
 		}
 
@@ -55,7 +55,7 @@ func adminNewPackageCategoryHandler(handler *Handler) {
 		http.Redirect(handler.ResponseWriter, handler.Request, "/admin/package_category/new", http.StatusFound)
 	}
 
-	renderTemplate(handler, "package_category/form.html", ADMIN, map[string]interface{}{
+	handler.renderTemplate("package_category/form.html", ADMIN, map[string]interface{}{
 		"form":  form,
 		"isNew": true,
 	})
@@ -76,7 +76,7 @@ func adminEditPackageCategoryHandler(handler *Handler) {
 
 	if handler.Request.Method == "POST" {
 		if !form.Validate(handler.Request) {
-			renderTemplate(handler, "package_category/form.html", ADMIN, map[string]interface{}{"form": form})
+			handler.renderTemplate("package_category/form.html", ADMIN, map[string]interface{}{"form": form})
 			return
 		}
 
@@ -88,7 +88,7 @@ func adminEditPackageCategoryHandler(handler *Handler) {
 		http.Redirect(handler.ResponseWriter, handler.Request, "/admin/package_categories", http.StatusFound)
 	}
 
-	renderTemplate(handler, "package_category/form.html", ADMIN, map[string]interface{}{
+	handler.renderTemplate("package_category/form.html", ADMIN, map[string]interface{}{
 		"form":  form,
 		"isNew": false,
 	})

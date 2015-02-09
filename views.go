@@ -249,7 +249,7 @@ func (u *Utils) AssertPackage(i interface{}) *Package {
 }
 
 func message(handler *Handler, title string, message string, class string) {
-	renderTemplate(handler, "message.html", BASE, map[string]interface{}{"title": title, "message": template.HTML(message), "class": class})
+	handler.renderTemplate("message.html", BASE, map[string]interface{}{"title": title, "message": template.HTML(message), "class": class})
 }
 
 // 获取链接的页码，默认"?p=1"这种类型
@@ -357,7 +357,7 @@ func init() {
 
 func staticHandler(templateFile string) HandlerFunc {
 	return func(handler *Handler) {
-		renderTemplate(handler, templateFile, BASE, map[string]interface{}{})
+		handler.renderTemplate(templateFile, BASE, map[string]interface{}{})
 	}
 }
 
@@ -454,7 +454,7 @@ func searchHandler(handler *Handler) {
 		println(err.Error())
 	}
 
-	renderTemplate(handler, "search.html", BASE, map[string]interface{}{
+	handler.renderTemplate("search.html", BASE, map[string]interface{}{
 		"q":          q,
 		"topics":     topics,
 		"pagination": pagination,

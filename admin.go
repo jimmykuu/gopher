@@ -13,7 +13,7 @@ import (
 // URL: /admin
 // 后台管理首页
 func adminHandler(handler *Handler) {
-	renderTemplate(handler, "admin/index.html", ADMIN)
+	handler.renderTemplate("admin/index.html", ADMIN)
 }
 
 // URL: /admin/users
@@ -45,7 +45,7 @@ func adminListUsersHandler(handler *Handler) {
 		message(handler, "查询错误", "查询错误", "error")
 	}
 
-	renderTemplate(handler, "admin/users.html", ADMIN, map[string]interface{}{"users": users, "pagination": pagination, "total": pagination.Count(), "page": page})
+	handler.renderTemplate("admin/users.html", ADMIN, map[string]interface{}{"users": users, "pagination": pagination, "total": pagination.Count(), "page": page})
 }
 
 // URL: /admin/user/{userId}/activate

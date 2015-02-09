@@ -19,7 +19,7 @@ func nodesHandler(handler *Handler) {
 	c := handler.DB.C(NODES)
 	c.Find(nil).Sort("-topiccount").All(&nodes)
 
-	renderTemplate(handler, "node/list.html", BASE, map[string]interface{}{"nodes": nodes})
+	handler.renderTemplate("node/list.html", BASE, map[string]interface{}{"nodes": nodes})
 }
 
 // URL: /admin/node/new
@@ -41,7 +41,7 @@ func adminNewNodeHandler(handler *Handler) {
 			if err == nil {
 				form.AddError("id", "该ID已经存在")
 
-				renderTemplate(handler, "node/new.html", ADMIN, map[string]interface{}{"form": form})
+				handler.renderTemplate("node/new.html", ADMIN, map[string]interface{}{"form": form})
 				return
 			}
 
@@ -50,7 +50,7 @@ func adminNewNodeHandler(handler *Handler) {
 			if err == nil {
 				form.AddError("name", "该名称已经存在")
 
-				renderTemplate(handler, "node/new.html", ADMIN, map[string]interface{}{"form": form})
+				handler.renderTemplate("node/new.html", ADMIN, map[string]interface{}{"form": form})
 				return
 			}
 
@@ -69,7 +69,7 @@ func adminNewNodeHandler(handler *Handler) {
 		}
 	}
 
-	renderTemplate(handler, "node/new.html", ADMIN, map[string]interface{}{"form": form})
+	handler.renderTemplate("node/new.html", ADMIN, map[string]interface{}{"form": form})
 }
 
 // URL: /admin/nodes
@@ -78,5 +78,5 @@ func adminListNodesHandler(handler *Handler) {
 	var nodes []Node
 	c := handler.DB.C(NODES)
 	c.Find(nil).All(&nodes)
-	renderTemplate(handler, "admin/nodes.html", ADMIN, map[string]interface{}{"nodes": nodes})
+	handler.renderTemplate("admin/nodes.html", ADMIN, map[string]interface{}{"nodes": nodes})
 }

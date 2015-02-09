@@ -15,7 +15,7 @@ func adminListLinkExchangesHandler(handler *Handler) {
 	var linkExchanges []LinkExchange
 	c.Find(nil).All(&linkExchanges)
 
-	renderTemplate(handler, "admin/link_exchanges.html", ADMIN, map[string]interface{}{
+	handler.renderTemplate("admin/link_exchanges.html", ADMIN, map[string]interface{}{
 		"linkExchanges": linkExchanges,
 	})
 }
@@ -32,7 +32,7 @@ func adminNewLinkExchangeHandler(handler *Handler) {
 
 	if handler.Request.Method == "POST" {
 		if !form.Validate(handler.Request) {
-			renderTemplate(handler, "link_exchange/form.html", ADMIN, map[string]interface{}{
+			handler.renderTemplate("link_exchange/form.html", ADMIN, map[string]interface{}{
 				"form":  form,
 				"isNew": true,
 			})
@@ -45,7 +45,7 @@ func adminNewLinkExchangeHandler(handler *Handler) {
 
 		if err == nil {
 			form.AddError("url", "该URL已经有了")
-			renderTemplate(handler, "link_exchange/form.html", ADMIN, map[string]interface{}{
+			handler.renderTemplate("link_exchange/form.html", ADMIN, map[string]interface{}{
 				"form":  form,
 				"isNew": true,
 			})
@@ -68,7 +68,7 @@ func adminNewLinkExchangeHandler(handler *Handler) {
 		return
 	}
 
-	renderTemplate(handler, "link_exchange/form.html", ADMIN, map[string]interface{}{
+	handler.renderTemplate("link_exchange/form.html", ADMIN, map[string]interface{}{
 		"form":  form,
 		"isNew": true,
 	})
@@ -92,7 +92,7 @@ func adminEditLinkExchangeHandler(handler *Handler) {
 
 	if handler.Request.Method == "POST" {
 		if !form.Validate(handler.Request) {
-			renderTemplate(handler, "link_exchange/form.html", ADMIN, map[string]interface{}{
+			handler.renderTemplate("link_exchange/form.html", ADMIN, map[string]interface{}{
 				"form":  form,
 				"isNew": false,
 			})
@@ -114,7 +114,7 @@ func adminEditLinkExchangeHandler(handler *Handler) {
 		return
 	}
 
-	renderTemplate(handler, "link_exchange/form.html", ADMIN, map[string]interface{}{
+	handler.renderTemplate("link_exchange/form.html", ADMIN, map[string]interface{}{
 		"form":  form,
 		"isNew": false,
 	})

@@ -142,13 +142,13 @@ func wrapAuthHandler(handler *Handler) func(w http.ResponseWriter, r *http.Reque
 				err := c.Find(bson.M{"username": form.Value("username")}).One(&user)
 				if err != nil {
 					form.AddError("username", "该用户不存在")
-					renderTemplate(handler, "accoun/auth_login.html", BASE, map[string]interface{}{"form": form})
+					handler.renderTemplate("accoun/auth_login.html", BASE, map[string]interface{}{"form": form})
 					return
 				}
 				if user.Password != encryptPassword(form.Value("password"), user.Salt) {
 					form.AddError("password", "密码和用户名不匹配")
 
-					renderTemplate(handler, "account/auth_login.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
+					handler.renderTemplate("account/auth_login.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
 					return
 				}
 				c.UpdateId(user.Id_, bson.M{"$set": bson.M{
@@ -173,7 +173,7 @@ func wrapAuthHandler(handler *Handler) func(w http.ResponseWriter, r *http.Reque
 				http.Redirect(handler.ResponseWriter, handler.Request, "/", http.StatusFound)
 			}
 		}
-		renderTemplate(handler, "account/auth_login.html", BASE, map[string]interface{}{"form": form})
+		handler.renderTemplate("account/auth_login.html", BASE, map[string]interface{}{"form": form})
 	}
 }
 
@@ -218,7 +218,7 @@ func signupHandler(handler *Handler) {
 				fmt.Println("captcha")
 				form.SetValue("captcha", "")
 
-				renderTemplate(handler, "account/signup.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
+				handler.renderTemplate("account/signup.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
 				return
 			}
 
@@ -232,7 +232,7 @@ func signupHandler(handler *Handler) {
 				form.AddError("username", "该用户名已经被注册")
 				form.SetValue("captcha", "")
 
-				renderTemplate(handler, "account/signup.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
+				handler.renderTemplate("account/signup.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
 				return
 			}
 
@@ -243,7 +243,7 @@ func signupHandler(handler *Handler) {
 				form.AddError("email", "电子邮件地址已经被注册")
 				form.SetValue("captcha", "")
 
-				renderTemplate(handler, "account/signup.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
+				handler.renderTemplate("account/signup.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
 				return
 			}
 
@@ -339,7 +339,7 @@ func signupHandler(handler *Handler) {
 		}
 	}
 	form.SetValue("captcha", "")
-	renderTemplate(handler, "account/signup.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
+	handler.renderTemplate("account/signup.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
 }
 
 // URL: /activate/{code}
@@ -395,7 +395,7 @@ func signinHandler(handler *Handler) {
 				form.AddError("captcha", "验证码错误")
 				form.SetValue("captcha", "")
 
-				renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
+				handler.renderTemplate("account/signin.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
 				return
 			}
 
@@ -408,7 +408,7 @@ func signinHandler(handler *Handler) {
 				form.AddError("username", "该用户不存在")
 				form.SetValue("captcha", "")
 
-				renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
+				handler.renderTemplate("account/signin.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
 				return
 			}
 
@@ -416,7 +416,7 @@ func signinHandler(handler *Handler) {
 				form.AddError("username", "邮箱没有经过验证,如果没有收到邮件,请联系管理员")
 				form.SetValue("captcha", "")
 
-				renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
+				handler.renderTemplate("account/signin.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
 				return
 			}
 
@@ -424,7 +424,7 @@ func signinHandler(handler *Handler) {
 				form.AddError("password", "密码和用户名不匹配")
 				form.SetValue("captcha", "")
 
-				renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
+				handler.renderTemplate("account/signin.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
 				return
 			}
 
@@ -443,7 +443,7 @@ func signinHandler(handler *Handler) {
 	}
 
 	form.SetValue("captcha", "")
-	renderTemplate(handler, "account/signin.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
+	handler.renderTemplate("account/signin.html", BASE, map[string]interface{}{"form": form, "captchaId": captcha.New()})
 }
 
 // URL: /signout
@@ -452,7 +452,7 @@ func signoutHandler(handler *Handler) {
 	session, _ := store.Get(handler.Request, "user")
 	session.Options = &sessions.Options{MaxAge: -1}
 	session.Save(handler.Request, handler.ResponseWriter)
-	renderTemplate(handler, "account/signout.html", BASE, map[string]interface{}{"signout": true})
+	handler.renderTemplate("account/signout.html", BASE, map[string]interface{}{"signout": true})
 }
 
 func followHandler(handler *Handler) {
@@ -543,7 +543,7 @@ func profileHandler(handler *Handler) {
 			if err == nil && result.Id_ != user.Id_ {
 				profileForm.AddError("email", "电子邮件地址已经被使用")
 
-				renderTemplate(handler, "account/profile.html", BASE, map[string]interface{}{
+				handler.renderTemplate("account/profile.html", BASE, map[string]interface{}{
 					"user":           user,
 					"profileForm":    profileForm,
 					"defaultAvatars": defaultAvatars,
@@ -565,7 +565,7 @@ func profileHandler(handler *Handler) {
 		}
 	}
 
-	renderTemplate(handler, "account/profile.html", BASE, map[string]interface{}{
+	handler.renderTemplate("account/profile.html", BASE, map[string]interface{}{
 		"user":           user,
 		"profileForm":    profileForm,
 		"defaultAvatars": defaultAvatars,
@@ -620,7 +620,7 @@ func forgotPasswordHandler(handler *Handler) {
 		}
 	}
 
-	renderTemplate(handler, "account/forgot_password.html", BASE, map[string]interface{}{"form": form})
+	handler.renderTemplate("account/forgot_password.html", BASE, map[string]interface{}{"form": form})
 }
 
 // URL: /reset/{code}
@@ -663,7 +663,7 @@ func resetPasswordHandler(handler *Handler) {
 		}
 	}
 
-	renderTemplate(handler, "account/reset_password.html", BASE, map[string]interface{}{"form": form, "code": code, "account": user.Username})
+	handler.renderTemplate("account/reset_password.html", BASE, map[string]interface{}{"form": form, "code": code, "account": user.Username})
 }
 
 type Sizer interface {
@@ -728,7 +728,7 @@ func changeAvatarHandler(handler *Handler) {
 		formFile, formHeader, err := handler.Request.FormFile("file")
 		if err != nil {
 			fmt.Println("changeAvatarHandler:", err.Error())
-			renderTemplate(handler, "account/avatar.html", BASE, map[string]interface{}{
+			handler.renderTemplate("account/avatar.html", BASE, map[string]interface{}{
 				"user":  user,
 				"error": "请选择图片上传",
 			})
@@ -740,7 +740,7 @@ func changeAvatarHandler(handler *Handler) {
 		if fileSize > 500*1024 {
 			// > 500K
 			fmt.Printf("upload image size > 500K: %dK\n", fileSize/1024)
-			renderTemplate(handler, "account/avatar.html", BASE, map[string]interface{}{
+			handler.renderTemplate("account/avatar.html", BASE, map[string]interface{}{
 				"user":  user,
 				"error": "图片大小大于500K，请选择500K以内图片上传。",
 			})
@@ -762,7 +762,7 @@ func changeAvatarHandler(handler *Handler) {
 		return
 	}
 
-	renderTemplate(handler, "account/avatar.html", BASE, map[string]interface{}{"user": user})
+	handler.renderTemplate("account/avatar.html", BASE, map[string]interface{}{"user": user})
 }
 
 // URL: /profile/choose_default_avatar
@@ -813,7 +813,7 @@ func changePasswordHandler(handler *Handler) {
 		}
 	}
 
-	renderTemplate(handler, "account/change_password.html", BASE, map[string]interface{}{"form": form})
+	handler.renderTemplate("account/change_password.html", BASE, map[string]interface{}{"form": form})
 }
 
 //  URL: /users.json

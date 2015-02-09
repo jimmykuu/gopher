@@ -77,7 +77,7 @@ func parseTemplate(file, baseFile string, data map[string]interface{}) []byte {
 }
 
 // 渲染模板，并放入一些模板常用变量
-func renderTemplate(handler *Handler, file, baseFile string, datas ...map[string]interface{}) {
+func (handler *Handler) renderTemplate(file, baseFile string, datas ...map[string]interface{}) {
 	var data map[string]interface{}
 	if len(datas) == 1 {
 		data = datas[0]
@@ -120,7 +120,7 @@ func renderTemplate(handler *Handler, file, baseFile string, datas ...map[string
 	handler.ResponseWriter.Write(page)
 }
 
-func renderJson(handler *Handler, data interface{}) {
+func (handler *Handler) renderJson(data interface{}) {
 	b, err := json.Marshal(data)
 	if err != nil {
 		panic(err)

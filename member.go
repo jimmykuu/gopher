@@ -37,7 +37,7 @@ func membersHandler(handler *Handler) {
 
 	membersCount, _ := c.Find(nil).Count()
 
-	renderTemplate(handler, "member/index.html", BASE, map[string]interface{}{
+	handler.renderTemplate("member/index.html", BASE, map[string]interface{}{
 		"newestMembers": newestMembers,
 		"membersCount":  membersCount,
 		"active":        "members",
@@ -68,7 +68,7 @@ func allMembersHandler(handler *Handler) {
 
 	query.(*mgo.Query).All(&members)
 
-	renderTemplate(handler, "member/list.html", BASE, map[string]interface{}{
+	handler.renderTemplate("member/list.html", BASE, map[string]interface{}{
 		"members":    members,
 		"active":     "members",
 		"pagination": pagination,
@@ -92,7 +92,7 @@ func memberInfoHandler(handler *Handler) {
 		return
 	}
 
-	renderTemplate(handler, "account/info.html", BASE, map[string]interface{}{
+	handler.renderTemplate("account/info.html", BASE, map[string]interface{}{
 		"user":   user,
 		"active": "members",
 	})
@@ -118,7 +118,7 @@ func memberTopicsCollectedHandler(handler *Handler) {
 	if err != nil {
 		message(handler, "页码错误", "页码错误", "error")
 	}
-	renderTemplate(handler, "account/collects.html", BASE, map[string]interface{}{
+	handler.renderTemplate("account/collects.html", BASE, map[string]interface{}{
 		"user":       user,
 		"collects":   collects,
 		"pagination": pagination,
@@ -164,7 +164,7 @@ func memberTopicsHandler(handler *Handler) {
 
 	query.(*mgo.Query).All(&topics)
 
-	renderTemplate(handler, "account/topics.html", BASE, map[string]interface{}{
+	handler.renderTemplate("account/topics.html", BASE, map[string]interface{}{
 		"user":       user,
 		"topics":     topics,
 		"pagination": pagination,
@@ -210,7 +210,7 @@ func memberRepliesHandler(handler *Handler) {
 
 	query.(*mgo.Query).All(&replies)
 
-	renderTemplate(handler, "account/replies.html", BASE, map[string]interface{}{
+	handler.renderTemplate("account/replies.html", BASE, map[string]interface{}{
 		"user":       user,
 		"pagination": pagination,
 		"page":       page,
@@ -273,7 +273,7 @@ func memmberNewsHandler(handler *Handler) {
 		return
 	}
 
-	renderTemplate(handler, "account/news.html", BASE, map[string]interface{}{
+	handler.renderTemplate("account/news.html", BASE, map[string]interface{}{
 		"user":     user,
 		"page":     page,
 		"comments": user.RecentReplies,
@@ -314,7 +314,7 @@ func membersInTheSameCityHandler(handler *Handler) {
 
 	query.(*mgo.Query).All(&members)
 
-	renderTemplate(handler, "member/list.html", BASE, map[string]interface{}{
+	handler.renderTemplate("member/list.html", BASE, map[string]interface{}{
 		"members":    members,
 		"active":     "members",
 		"pagination": pagination,

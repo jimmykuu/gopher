@@ -19,7 +19,7 @@ func sitesHandler(handler *Handler) {
 	var categories []SiteCategory
 	c := handler.DB.C(SITE_CATEGORIES)
 	c.Find(nil).All(&categories)
-	renderTemplate(handler, "site/index.html", BASE, map[string]interface{}{
+	handler.renderTemplate("site/index.html", BASE, map[string]interface{}{
 		"categories": categories,
 		"active":     "site",
 	})
@@ -49,7 +49,7 @@ func newSiteHandler(handler *Handler) {
 
 	if handler.Request.Method == "POST" {
 		if !form.Validate(handler.Request) {
-			renderTemplate(handler, "site/form.html", BASE, map[string]interface{}{"form": form, "action": "/site/new", "title": "新建"})
+			handler.renderTemplate("site/form.html", BASE, map[string]interface{}{"form": form, "action": "/site/new", "title": "新建"})
 			return
 		}
 
@@ -58,7 +58,7 @@ func newSiteHandler(handler *Handler) {
 		err := c.Find(bson.M{"url": form.Value("url")}).One(&site)
 		if err == nil {
 			form.AddError("url", "该站点已经有了")
-			renderTemplate(handler, "site/form.html", BASE, map[string]interface{}{"form": form, "action": "/site/new", "title": "新建"})
+			handler.renderTemplate("site/form.html", BASE, map[string]interface{}{"form": form, "action": "/site/new", "title": "新建"})
 			return
 		}
 
@@ -82,7 +82,7 @@ func newSiteHandler(handler *Handler) {
 		return
 	}
 
-	renderTemplate(handler, "site/form.html", BASE, map[string]interface{}{
+	handler.renderTemplate("site/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"action": "/site/new",
 		"title":  "新建",
@@ -136,7 +136,7 @@ func editSiteHandler(handler *Handler) {
 		err := c.Find(bson.M{"url": form.Value("url"), "_id": bson.M{"$ne": site.Id_}}).One(&site2)
 		if err == nil {
 			form.AddError("url", "该站点已经有了")
-			renderTemplate(handler, "site/form.html", BASE, map[string]interface{}{
+			handler.renderTemplate("site/form.html", BASE, map[string]interface{}{
 				"form":   form,
 				"action": "/site/" + siteId.Hex() + "/edit",
 				"title":  "编辑",
@@ -159,7 +159,7 @@ func editSiteHandler(handler *Handler) {
 		return
 	}
 
-	renderTemplate(handler, "site/form.html", BASE, map[string]interface{}{
+	handler.renderTemplate("site/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"action": "/site/" + siteId.Hex() + "/edit",
 		"title":  "编辑",

@@ -14,7 +14,7 @@ func adminListSiteCategoriesHandler(handler *Handler) {
 	c := handler.DB.C(SITE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
-	renderTemplate(handler, "admin/site_categories.html", ADMIN, map[string]interface{}{"categories": categories})
+	handler.renderTemplate("admin/site_categories.html", ADMIN, map[string]interface{}{"categories": categories})
 }
 
 // URL: /admin/site_category/new
@@ -26,7 +26,7 @@ func adminNewSiteCategoryHandler(handler *Handler) {
 
 	if handler.Request.Method == "POST" {
 		if !form.Validate(handler.Request) {
-			renderTemplate(handler, "site_category/new.html", ADMIN, map[string]interface{}{"form": form})
+			handler.renderTemplate("site_category/new.html", ADMIN, map[string]interface{}{"form": form})
 			return
 		}
 
@@ -36,7 +36,7 @@ func adminNewSiteCategoryHandler(handler *Handler) {
 
 		if err == nil {
 			form.AddError("name", "该名称已经有了")
-			renderTemplate(handler, "site_category/new.html", ADMIN, map[string]interface{}{"form": form})
+			handler.renderTemplate("site_category/new.html", ADMIN, map[string]interface{}{"form": form})
 			return
 		}
 
@@ -52,5 +52,5 @@ func adminNewSiteCategoryHandler(handler *Handler) {
 		http.Redirect(handler.ResponseWriter, handler.Request, "/admin/site_category/new", http.StatusFound)
 	}
 
-	renderTemplate(handler, "site_category/new.html", ADMIN, map[string]interface{}{"form": form})
+	handler.renderTemplate("site_category/new.html", ADMIN, map[string]interface{}{"form": form})
 }

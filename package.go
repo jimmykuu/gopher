@@ -33,7 +33,7 @@ func packagesHandler(handler *Handler) {
 	c = handler.DB.C(CONTENTS)
 	c.Find(bson.M{"content.type": TypePackage}).Sort("-content.createdat").Limit(10).All(&latestPackages)
 
-	renderTemplate(handler, "package/index.html", BASE, map[string]interface{}{
+	handler.renderTemplate("package/index.html", BASE, map[string]interface{}{
 		"categories":     categories,
 		"latestPackages": latestPackages,
 		"active":         "package",
@@ -92,7 +92,7 @@ func newPackageHandler(handler *Handler) {
 		http.Redirect(handler.ResponseWriter, handler.Request, "/p/"+id.Hex(), http.StatusFound)
 		return
 	}
-	renderTemplate(handler, "package/form.html", BASE, map[string]interface{}{
+	handler.renderTemplate("package/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"title":  "提交第三方包",
 		"action": "/package/new",
@@ -174,7 +174,7 @@ func editPackageHandler(handler *Handler) {
 	}
 
 	form.SetValue("html", "")
-	renderTemplate(handler, "package/form.html", BASE, map[string]interface{}{
+	handler.renderTemplate("package/form.html", BASE, map[string]interface{}{
 		"form":   form,
 		"title":  "编辑第三方包",
 		"action": "/p/" + packageId + "/edit",
@@ -207,7 +207,7 @@ func listPackagesHandler(handler *Handler) {
 	c = handler.DB.C(PACKAGE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
-	renderTemplate(handler, "package/list.html", BASE, map[string]interface{}{
+	handler.renderTemplate("package/list.html", BASE, map[string]interface{}{
 		"categories": categories,
 		"packages":   packages,
 		"category":   category,
@@ -243,7 +243,7 @@ func showPackageHandler(handler *Handler) {
 	c = handler.DB.C(PACKAGE_CATEGORIES)
 	c.Find(nil).All(&categories)
 
-	renderTemplate(handler, "package/show.html", BASE, map[string]interface{}{
+	handler.renderTemplate("package/show.html", BASE, map[string]interface{}{
 		"package":    package_,
 		"categories": categories,
 		"active":     "package",
@@ -280,7 +280,7 @@ func downloadPackagesHandler(handler *Handler) {
 	var packages []DownloadedPackage
 	c := handler.DB.C(DOWNLOADED_PACKAGES)
 	c.Find(nil).Sort("-count").Limit(20).All(&packages)
-	renderTemplate(handler, "package/download.html", BASE, map[string]interface{}{
+	handler.renderTemplate("package/download.html", BASE, map[string]interface{}{
 		"packages": packages,
 		"active":   "package-download",
 	})
