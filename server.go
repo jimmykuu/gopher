@@ -32,10 +32,16 @@ func handlerFun(route Route) http.HandlerFunc {
 			url += "?" + r.URL.RawQuery
 		}
 		fmt.Println(time.Now().Format("2006-01-02 15:04:05"), url)
-		if route.Permission == Everyone {
+		println("g", route.Permission)
+		if route.Permission&Everyone == Everyone {
 			route.HandlerFunc(handler)
-		} else if route.Permission == Authenticated {
-			_, ok := currentUser(handler)
+		}
+		var (
+			user *User
+			ok   bool
+		)
+		if route.Permission&Authenticated == Authenticated {
+			user, ok = currentUser(handler)
 
 			if !ok {
 				http.Redirect(w, r, "/signin", http.StatusFound)
@@ -43,14 +49,9 @@ func handlerFun(route Route) http.HandlerFunc {
 			}
 
 			route.HandlerFunc(handler)
-		} else if route.Permission == Administrator {
-			user, ok := currentUser(handler)
+		}
 
-			if !ok {
-				http.Redirect(w, r, "/signin", http.StatusFound)
-				return
-			}
-
+		if route.Permission&AdministratorOnly == AdministratorOnly {
 			if !user.IsSuperuser {
 				message(handler, "没有权限", "对不起，你没有权限进行该操作", "error")
 				return

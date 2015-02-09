@@ -106,8 +106,6 @@ func currentUser(handler *Handler) (*User, bool) {
 
 // URL: /auth/login
 func authLoginHandler(handler *Handler) {
-	fmt.Println("auth_signup")
-	fmt.Println(Config.GithubClientId, Config.GithubClientSecret)
 	githubHandler.ServeHTTP(handler.ResponseWriter, handler.Request)
 }
 
