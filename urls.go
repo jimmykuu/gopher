@@ -11,15 +11,6 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
-// Handler 是包含一些请求上下文的结构体.
-type Handler struct {
-	ResponseWriter http.ResponseWriter
-	Request        *http.Request
-	StartTime      time.Time     //接受请求时间
-	Session        *mgo.Session  //会话
-	DB             *mgo.Database //数据库
-}
-
 // NewHandler返回含有请求上下文的Handler.
 func NewHandler(w http.ResponseWriter, r *http.Request) *Handler {
 	session, err := mgo.Dial(Config.DB)
