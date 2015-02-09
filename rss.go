@@ -2,7 +2,7 @@ package gopher
 
 import (
 	"container/list"
-	"fmt"
+	"log"
 	"text/template"
 	"time"
 
@@ -11,28 +11,25 @@ import (
 )
 
 var (
-	//当日内容
-	contents []Topic
-	//缓存
-	cache list.List
-	//最后更新时间
-	latestTime time.Time
+	contents   []Topic   //当日内容
+	cache      list.List //缓存
+	latestTime time.Time //最后更新时间
 )
 
-//今天凌晨零点时间
+// 返回今天凌晨00:00时间
 func Dawn() time.Time {
 	now := time.Now()
 	t := now.Round(24 * time.Hour)
 	if t.After(now) {
 		t = t.AddDate(0, 0, -1)
 	}
+	t = t.Add(-time.Hour * time.Duration(t.Hour()))
 	return t
 }
 
 func init() {
 	latestTime = Dawn()
-	latestTime = latestTime.AddDate(0, 0, -7)
-	//latestTime, _= time.Parse("2006-01-02 15:04:05", "1993-10-01 15:04:04")
+	latestTime = latestTime.AddDate(0, 0, -7) // 初次启动获取最近一周的内容.
 }
 
 var flag bool
@@ -43,17 +40,19 @@ func RssRefresh() {
 		if now.After(latestTime) {
 			session, err := mgo.Dial(Config.DB)
 			if err != nil {
-				panic(err)
-			}
-			c := session.DB("gopher").C("contents")
-			c.Find(bson.M{"content.createdat": bson.M{"$gt": latestTime}}).Sort("-content.createdat").All(&contents)
-			latestTime = now
-			cache.PushBack(contents)
-			if cache.Len() > 7 {
-				cache.Remove(cache.Front())
+				log.Println(err)
+				latestTime = now.Add(time.Hour) //一小时后重新连接.
+				continue
+			} else {
+				c := session.DB("gopher").C("contents")
+				c.Find(bson.M{"content.createdat": bson.M{"$gt": latestTime}}).Sort("-content.createdat").All(&contents)
+				latestTime = now
+				cache.PushBack(contents)
+				if cache.Len() > 7 {
+					cache.Remove(cache.Front())
+				}
 			}
 		}
-
 		time.Sleep(24 * time.Hour)
 	}
 }
@@ -71,7 +70,7 @@ func rssHandler(handler *Handler) {
 
 	t, err := template.ParseFiles("templates/rss.xml")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	rssTopics := getFromCache()
 	handler.ResponseWriter.Header().Set("Content-Type", "application/xml")
@@ -80,5 +79,4 @@ func rssHandler(handler *Handler) {
 		"topics": rssTopics,
 		"utils":  utils,
 	})
-
 }
