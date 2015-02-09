@@ -9,7 +9,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	// "math/rand"
 	"net/http"
 	"strings"
 	"time"
@@ -22,7 +21,7 @@ import (
 	"github.com/jimmykuu/webhelpers"
 	"github.com/jimmykuu/wtforms"
 	. "github.com/qiniu/api/conf"
-	qiniu_io "github.com/qiniu/api/io"
+	qiniuIo "github.com/qiniu/api/io"
 	"github.com/qiniu/api/rs"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -40,7 +39,6 @@ var defaultAvatars = []string{
 }
 
 const (
-	//写成常量防止拼错
 	GITHUB_PICTURE  = "github_picture"
 	GITHUB_ID       = "github_id"
 	GITHUB_LINK     = "github_link"
@@ -70,7 +68,6 @@ func generateUsersJson(db *mgo.Database) {
 	if err != nil {
 		panic(err)
 	}
-
 	usersJson = b
 }
 
@@ -82,7 +79,7 @@ func encryptPassword(password, salt string) string {
 }
 
 // 返回当前用户
-func currentUser(handler Handler) (*User, bool) {
+func currentUser(handler *Handler) (*User, bool) {
 	r := handler.Request
 	session, _ := store.Get(r, "user")
 	username, ok := session.Values["username"]
@@ -109,7 +106,7 @@ func currentUser(handler Handler) (*User, bool) {
 
 // URL: /auth/login
 
-func authLoginHandler(handler Handler) {
+func authLoginHandler(handler *Handler) {
 	fmt.Println("auth_signup")
 	fmt.Println(Config.GithubClientId, Config.GithubClientSecret)
 	githubHandler.ServeHTTP(handler.ResponseWriter, handler.Request)
@@ -119,7 +116,7 @@ func authLoginHandler(handler Handler) {
 因为SecureUser 接受 func(w http.ResponseWriter, r *http.Request, u auth.User)
 所以加一个闭包把handler传进去
 */
-func wrapAuthHandler(handler Handler) func(w http.ResponseWriter, r *http.Request, u auth.User) {
+func wrapAuthHandler(handler *Handler) func(w http.ResponseWriter, r *http.Request, u auth.User) {
 	return func(w http.ResponseWriter, r *http.Request, u auth.User) {
 		c := handler.DB.C(USERS)
 		user := User{}
@@ -185,14 +182,14 @@ func wrapAuthHandler(handler Handler) func(w http.ResponseWriter, r *http.Reques
 }
 
 // URL: /auth/signup
-func authSignupHandler(handler Handler) {
+func authSignupHandler(handler *Handler) {
 	fn := auth.SecureUser(wrapAuthHandler(handler))
 	fn.ServeHTTP(handler.ResponseWriter, handler.Request)
 }
 
 // URL: /signup
 // 处理用户注册,要求输入用户名,密码和邮箱
-func signupHandler(handler Handler) {
+func signupHandler(handler *Handler) {
 	// 如果已经登录了，跳转到首页
 	_, has := currentUser(handler)
 	if has {
@@ -351,7 +348,7 @@ func signupHandler(handler Handler) {
 
 // URL: /activate/{code}
 // 用户根据邮件中的链接进行验证,根据code找到是否有对应的用户,如果有,修改User.IsActive为true
-func activateHandler(handler Handler) {
+func activateHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	code := vars["code"]
 
@@ -378,7 +375,7 @@ func activateHandler(handler Handler) {
 
 // URL: /signin
 // 处理用户登录,如果登录成功,设置Cookie
-func signinHandler(handler Handler) {
+func signinHandler(handler *Handler) {
 	// 如果已经登录了，跳转到首页
 	_, has := currentUser(handler)
 	if has {
@@ -455,14 +452,14 @@ func signinHandler(handler Handler) {
 
 // URL: /signout
 // 用户登出,清除Cookie
-func signoutHandler(handler Handler) {
+func signoutHandler(handler *Handler) {
 	session, _ := store.Get(handler.Request, "user")
 	session.Options = &sessions.Options{MaxAge: -1}
 	session.Save(handler.Request, handler.ResponseWriter)
 	renderTemplate(handler, "account/signout.html", BASE, map[string]interface{}{"signout": true})
 }
 
-func followHandler(handler Handler) {
+func followHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	username := vars["username"]
 
@@ -493,7 +490,7 @@ func followHandler(handler Handler) {
 	http.Redirect(handler.ResponseWriter, handler.Request, "/member/"+user.Username, http.StatusFound)
 }
 
-func unfollowHandler(handler Handler) {
+func unfollowHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	username := vars["username"]
 
@@ -527,7 +524,7 @@ func unfollowHandler(handler Handler) {
 
 // URL /profile
 // 用户设置页面,显示用户设置,用户头像,密码修改
-func profileHandler(handler Handler) {
+func profileHandler(handler *Handler) {
 	user, _ := currentUser(handler)
 
 	profileForm := wtforms.NewForm(
@@ -581,7 +578,7 @@ func profileHandler(handler Handler) {
 
 // URL: /forgot_password
 // 忘记密码,输入用户名和邮箱,如果匹配,发出邮件
-func forgotPasswordHandler(handler Handler) {
+func forgotPasswordHandler(handler *Handler) {
 	form := wtforms.NewForm(
 		wtforms.NewTextField("username", "用户名", "", wtforms.Required{}),
 		wtforms.NewTextField("email", "电子邮件", "", wtforms.Email{}),
@@ -632,7 +629,7 @@ func forgotPasswordHandler(handler Handler) {
 
 // URL: /reset/{code}
 // 用户点击邮件中的链接,根据code找到对应的用户,设置新密码,修改完成后清除code
-func resetPasswordHandler(handler Handler) {
+func resetPasswordHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	code := vars["code"]
 
@@ -704,13 +701,13 @@ func uploadAvatarToQiniu(file io.ReadCloser, contentType string) (filename strin
 
 	key := "avatar/" + filename
 
-	ret := new(qiniu_io.PutRet)
+	ret := new(qiniuIo.PutRet)
 
 	var policy = rs.PutPolicy{
 		Scope: "gopher",
 	}
 
-	err = qiniu_io.Put(
+	err = qiniuIo.Put(
 		nil,
 		ret,
 		policy.Token(nil),
@@ -728,7 +725,7 @@ func uploadAvatarToQiniu(file io.ReadCloser, contentType string) (filename strin
 
 // URL: /profile/avatar
 // 修改头像,提交到七牛云存储
-func changeAvatarHandler(handler Handler) {
+func changeAvatarHandler(handler *Handler) {
 	user, _ := currentUser(handler)
 
 	if handler.Request.Method == "POST" {
@@ -774,7 +771,7 @@ func changeAvatarHandler(handler Handler) {
 
 // URL: /profile/choose_default_avatar
 // 选择默认头像
-func chooseDefaultAvatar(handler Handler) {
+func chooseDefaultAvatar(handler *Handler) {
 	user, _ := currentUser(handler)
 
 	if handler.Request.Method == "POST" {
@@ -791,7 +788,7 @@ func chooseDefaultAvatar(handler Handler) {
 
 // URL: /change_password
 // 修改密码
-func changePasswordHandler(handler Handler) {
+func changePasswordHandler(handler *Handler) {
 	user, _ := currentUser(handler)
 
 	form := wtforms.NewForm(
@@ -825,13 +822,13 @@ func changePasswordHandler(handler Handler) {
 
 //  URL: /users.json
 // 获取所有用户的json列表
-func usersJsonHandler(handler Handler) {
+func usersJsonHandler(handler *Handler) {
 	handler.ResponseWriter.Write(usersJson)
 }
 
 // URl: /profile/avatar/gravatar
 // 从Gravatar获取头像
-func setAvatarFromGravatar(handler Handler) {
+func setAvatarFromGravatar(handler *Handler) {
 	user, _ := currentUser(handler)
 	url := webhelpers.Gravatar(user.Email, 256)
 	resp, err := http.Get(url)

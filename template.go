@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/jimmykuu/wtforms"
-	"github.com/justinas/nosurf"
 )
 
 const (
@@ -78,7 +77,7 @@ func parseTemplate(file, baseFile string, data map[string]interface{}) []byte {
 }
 
 // 渲染模板，并放入一些模板常用变量
-func renderTemplate(handler Handler, file, baseFile string, data map[string]interface{}) {
+func renderTemplate(handler *Handler, file, baseFile string, data map[string]interface{}) {
 	_, isPresent := data["signout"]
 
 	// 如果isPresent==true，说明在执行登出操作
@@ -105,7 +104,6 @@ func renderTemplate(handler Handler, file, baseFile string, data map[string]inte
 	data["startTime"] = handler.StartTime
 	data["db"] = handler.DB
 	data["host"] = Config.Host
-	data["token"] = nosurf.Token(handler.Request)
 
 	_, ok := data["active"]
 	if !ok {

@@ -39,46 +39,37 @@ type ConfigStruct struct {
 	GithubLoginSuccessRedirect string `json:"github_login_success_redirect"`
 }
 
-var Config ConfigStruct
-var analyticsCode template.HTML // 网站统计分析代码
-var shareCode template.HTML     // 分享代码
-var goVersion = runtime.Version()
+var (
+	Config        ConfigStruct
+	analyticsCode template.HTML // 网站统计分析代码
+	shareCode     template.HTML // 分享代码
+	goVersion     = runtime.Version()
+)
 
-func init() {
-	file, err := os.Open("etc/config.json")
+func parseJsonFile(path string, v interface{}) {
+	file, err := os.Open(path)
 	if err != nil {
-		log.Fatal("配置文件读取失败:", err.Error())
+		log.Fatal("配置文件读取失败:", err)
 	}
-
 	defer file.Close()
-
 	dec := json.NewDecoder(file)
-
-	err = dec.Decode(&Config)
-
+	err = dec.Decode(v)
 	if err != nil {
-		log.Fatal("配置文件解析失败:", err.Error())
+		log.Fatal("配置文件解析失败:", err)
 	}
+}
 
-	if Config.AnalyticsFile != "" {
-		content, err := ioutil.ReadFile(Config.AnalyticsFile)
-
+func getDefaultCode(path string) (code template.HTML) {
+	if path != "" {
+		content, err := ioutil.ReadFile(path)
 		if err != nil {
-			log.Fatal("统计分析文件没有找到:", err.Error())
+			log.Fatal("文件 " + path + " 没有找到")
 		}
-
-		analyticsCode = template.HTML(string(content))
+		code = template.HTML(string(content))
 	}
-
-	if Config.ShareCodeFile != "" {
-		content, err := ioutil.ReadFile(Config.ShareCodeFile)
-
-		if err != nil {
-			log.Fatal("分享代码文件没有找到:", err.Error())
-		}
-
-		shareCode = template.HTML(string(content))
-	}
+	return
+}
+func configGithubAuth() {
 	if Config.GithubClientId == "" || Config.GithubClientSecret == "" {
 		log.Fatal("没有配置github应用的参数")
 	}
@@ -90,4 +81,11 @@ func init() {
 		fmt.Println("注意,cookie_secure设置为false,只能在本地环境下测试")
 	}
 	githubHandler = auth.Github(Config.GithubClientId, Config.GithubClientSecret, "user")
+}
+
+func init() {
+	parseJsonFile("etc/config.json", &Config)
+	analyticsCode = getDefaultCode(Config.AnalyticsFile)
+	shareCode = getDefaultCode(Config.ShareCodeFile)
+	configGithubAuth()
 }

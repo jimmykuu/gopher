@@ -2,6 +2,7 @@
 
 Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 
+<<<<<<< HEAD
 ##Requirements
 
 - Go1.2+
@@ -29,6 +30,11 @@ Linux/Unix/OS X:
 Windows:
 
     > get_3rd_packages.bat
+=======
+##Install
+
+    $ go get -v github.com/jimmykuu/gopher/server
+>>>>>>> account 改成指针handler
 
 修改文件 *etc/config.json.default* 为 *etc/config.json* 作为配置文件
 
@@ -58,16 +64,24 @@ Windows:
         "go_get_path": "/tmp/download",
         "packages_download_path": "/var/go/gopher/static/download/packages",
         "4ublic_salt": "nXweu8Jq44FgEfgM1Pv4xH51"
+<<<<<<< HEAD
 	"github_auth_client_id":"example",
 	"github_auth_client_secret":"example",
 	"github_login_redirect":"/",
 	"github_login_success_redirect":"/auth/signup"
+=======
+		"github_auth_client_id":"example",
+		"github_auth_client_secret":"example",
+		"github_login_redirect":"/",
+		"github_login_success_redirect":"/auth/signup"
+>>>>>>> account 改成指针handler
     }
 
 先启动MongoDB
 
 Linux/Unix/OS X:
 
+<<<<<<< HEAD
     $ cd gopher
     $ ./build.sh
     $ ./bin/server
@@ -77,6 +91,13 @@ Windows:
     > cd gopher
     > build.bat
     > bin\server.exe
+=======
+    $ $GOPATH/bin/server
+
+Windows:
+
+    > $GOPATH\bin\server.exe
+>>>>>>> account 改成指针handler
 
 ##Contributors
 
@@ -90,3 +111,7 @@ Copyright (c) 2012-2013
 Released under the MIT license:
 
 - [www.opensource.org/licenses/MIT](http://www.opensource.org/licenses/MIT)
+<<<<<<< HEAD
+=======
+
+>>>>>>> account 改成指针handler
