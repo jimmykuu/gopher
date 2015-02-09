@@ -11,14 +11,16 @@ import (
 	"gopkg.in/mgo.v2"
 )
 
+// Handler 是包含一些请求上下文的结构体.
 type Handler struct {
 	ResponseWriter http.ResponseWriter
 	Request        *http.Request
-	StartTime      time.Time
-	Session        *mgo.Session
-	DB             *mgo.Database
+	StartTime      time.Time     //接受请求时间
+	Session        *mgo.Session  //会话
+	DB             *mgo.Database //数据库
 }
 
+// NewHandler返回含有请求上下文的Handler.
 func NewHandler(w http.ResponseWriter, r *http.Request) *Handler {
 	session, err := mgo.Dial(Config.DB)
 	if err != nil {
@@ -36,18 +38,22 @@ func NewHandler(w http.ResponseWriter, r *http.Request) *Handler {
 	}
 }
 
+// Redirect是重定向的简便方法.
 func (h Handler) Redirect(urlStr string) {
 	http.Redirect(h.ResponseWriter, h.Request, urlStr, http.StatusFound)
 }
 
+// HandlerFunc 是自定义的请求处理函数,接受*Handler作为参数.
 type HandlerFunc func(*Handler)
 
+// Route 是代表对应请求的路由规则以及权限的结构体.
 type Route struct {
 	URL         string
 	Permission  PerType
 	HandlerFunc HandlerFunc
 }
 
+// 路由规则.
 var routes = []Route{
 	{"/", Everyone, indexHandler},
 	{"/about", Everyone, staticHandler("about.html")},
