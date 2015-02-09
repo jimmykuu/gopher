@@ -30,7 +30,7 @@ func returnJson(w http.ResponseWriter, input interface{}) {
 
 // 显示最新加入的会员
 // URL: /members
-func membersHandler(handler Handler) {
+func membersHandler(handler *Handler) {
 	c := handler.DB.C(USERS)
 	var newestMembers []User
 	c.Find(nil).Sort("-joinedat").Limit(40).All(&newestMembers)
@@ -46,7 +46,7 @@ func membersHandler(handler Handler) {
 
 // 显示所有会员
 // URL: /members/all
-func allMembersHandler(handler Handler) {
+func allMembersHandler(handler *Handler) {
 	page, err := getPage(handler.Request)
 
 	if err != nil {
@@ -78,7 +78,7 @@ func allMembersHandler(handler Handler) {
 
 // URL: /member/{username}
 // 显示用户信息
-func memberInfoHandler(handler Handler) {
+func memberInfoHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	username := vars["username"]
 	c := handler.DB.C(USERS)
@@ -100,7 +100,7 @@ func memberInfoHandler(handler Handler) {
 
 // URL: /member/{username}/collect/
 // 用户收集的topic
-func memberTopicsCollectedHandler(handler Handler) {
+func memberTopicsCollectedHandler(handler *Handler) {
 	page, err := getPage(handler.Request)
 	if err != nil {
 		message(handler, "页码错误", "页码错误", "error")
@@ -129,7 +129,7 @@ func memberTopicsCollectedHandler(handler Handler) {
 
 // URL: /member/{username}/topics
 // 用户发表的所有主题
-func memberTopicsHandler(handler Handler) {
+func memberTopicsHandler(handler *Handler) {
 	page, err := getPage(handler.Request)
 
 	if err != nil {
@@ -175,7 +175,7 @@ func memberTopicsHandler(handler Handler) {
 
 // /member/{username}/replies
 // 用户的所有回复
-func memberRepliesHandler(handler Handler) {
+func memberRepliesHandler(handler *Handler) {
 	page, err := getPage(handler.Request)
 
 	if err != nil {
@@ -220,7 +220,7 @@ func memberRepliesHandler(handler Handler) {
 }
 
 // URL: /member/{username}/clear/{t}
-func memmberNewsClear(handler Handler) {
+func memmberNewsClear(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	username := vars["username"]
 	t := vars["t"]
@@ -256,7 +256,7 @@ func memmberNewsClear(handler Handler) {
 }
 
 // URL: /member/{username}/comments
-func memmberNewsHandler(handler Handler) {
+func memmberNewsHandler(handler *Handler) {
 	page, err := getPage(handler.Request)
 	if err != nil {
 		message(handler, "页码错误", "页码错误", "error")
@@ -284,13 +284,13 @@ func memmberNewsHandler(handler Handler) {
 }
 
 // URL: /member/{username}/comments
-func memberAtsHandler(handler Handler) {
+func memberAtsHandler(handler *Handler) {
 	return
 }
 
 // URL: /members/city/{cityName}
 // 同城会员
-func membersInTheSameCityHandler(handler Handler) {
+func membersInTheSameCityHandler(handler *Handler) {
 	page, err := getPage(handler.Request)
 
 	if err != nil {

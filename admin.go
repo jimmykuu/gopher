@@ -14,13 +14,13 @@ import (
 
 // URL: /admin
 // 后台管理首页
-func adminHandler(handler Handler) {
+func adminHandler(handler *Handler) {
 	renderTemplate(handler, "admin/index.html", ADMIN, map[string]interface{}{})
 }
 
 // URL: /admin/users
 // 列出所有用户
-func adminListUsersHandler(handler Handler) {
+func adminListUsersHandler(handler *Handler) {
 	page, err := getPage(handler.Request)
 
 	if err != nil {
@@ -46,7 +46,7 @@ func adminListUsersHandler(handler Handler) {
 
 // URL: /admin/user/{userId}/activate
 // 激活用户
-func adminActivateUserHandler(handler Handler) {
+func adminActivateUserHandler(handler *Handler) {
 	userId := mux.Vars(handler.Request)["userId"]
 
 	c := handler.DB.C(USERS)

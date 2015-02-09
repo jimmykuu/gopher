@@ -26,7 +26,7 @@ type Version struct {
 	Date    string `json:"date"`
 }
 
-func downloadHandler(handler Handler) {
+func downloadHandler(handler *Handler) {
 	file, err := os.Open("etc/download.json")
 	if err != nil {
 		panic(err)
@@ -65,7 +65,7 @@ type LiteIDEVersionInfo struct {
 	Files []LiteIDEFileInfo
 }
 
-func downloadLiteIDEHandler(handler Handler) {
+func downloadLiteIDEHandler(handler *Handler) {
 	versions := []LiteIDEVersionInfo{}
 
 	var version LiteIDEVersionInfo

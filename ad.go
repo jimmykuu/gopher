@@ -10,7 +10,7 @@ import (
 
 // URL: /admin/ads
 // 广告列表
-func adminListAdsHandler(handler Handler) {
+func adminListAdsHandler(handler *Handler) {
 	var ads []AD
 	c := handler.DB.C(ADS)
 	c.Find(nil).All(&ads)
@@ -22,7 +22,7 @@ func adminListAdsHandler(handler Handler) {
 
 // URL: /admin/ad/new
 // 添加广告
-func adminNewAdHandler(handler Handler) {
+func adminNewAdHandler(handler *Handler) {
 	choices := []wtforms.Choice{
 		wtforms.Choice{"frongpage", "首页"},
 		wtforms.Choice{"2cols", "2列宽度"},
@@ -68,7 +68,7 @@ func adminNewAdHandler(handler Handler) {
 
 // URL: /admin/ad/{id}/delete
 // 删除广告
-func adminDeleteAdHandler(handler Handler) {
+func adminDeleteAdHandler(handler *Handler) {
 	id := mux.Vars(handler.Request)["id"]
 
 	c := handler.DB.C(ADS)
@@ -79,7 +79,7 @@ func adminDeleteAdHandler(handler Handler) {
 
 // URL: /admin/ad/{id}/edit
 // 编辑广告
-func adminEditAdHandler(handler Handler) {
+func adminEditAdHandler(handler *Handler) {
 	id := mux.Vars(handler.Request)["id"]
 
 	c := handler.DB.C(ADS)

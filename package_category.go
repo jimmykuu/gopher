@@ -10,7 +10,7 @@ import (
 
 // URL: /admin/package_categories
 // 列出所有的包分类
-func adminListPackageCategoriesHandler(handler Handler) {
+func adminListPackageCategoriesHandler(handler *Handler) {
 	var categories []PackageCategory
 	c := handler.DB.C(PACKAGE_CATEGORIES)
 	c.Find(nil).All(&categories)
@@ -20,7 +20,7 @@ func adminListPackageCategoriesHandler(handler Handler) {
 
 // URL: /admin/package_category/new
 // 新建包分类
-func adminNewPackageCategoryHandler(handler Handler) {
+func adminNewPackageCategoryHandler(handler *Handler) {
 	form := wtforms.NewForm(
 		wtforms.NewTextField("id", "ID", "", wtforms.Required{}),
 		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),
@@ -63,7 +63,7 @@ func adminNewPackageCategoryHandler(handler Handler) {
 
 // URL: /admin/package_category/{id}/edit
 // 修改包分类
-func adminEditPackageCategoryHandler(handler Handler) {
+func adminEditPackageCategoryHandler(handler *Handler) {
 	id := mux.Vars(handler.Request)["id"]
 	c := handler.DB.C(PACKAGE_CATEGORIES)
 	var category PackageCategory

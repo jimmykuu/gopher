@@ -13,7 +13,7 @@ import (
 
 // URL: /nodes
 // 列出所有节点及其详细信息
-func nodesHandler(handler Handler) {
+func nodesHandler(handler *Handler) {
 	var nodes []Node
 
 	c := handler.DB.C(NODES)
@@ -24,7 +24,7 @@ func nodesHandler(handler Handler) {
 
 // URL: /admin/node/new
 // 新建节点
-func adminNewNodeHandler(handler Handler) {
+func adminNewNodeHandler(handler *Handler) {
 	form := wtforms.NewForm(
 		wtforms.NewTextField("id", "ID", "", &wtforms.Required{}),
 		wtforms.NewTextField("name", "名称", "", &wtforms.Required{}),
@@ -74,7 +74,7 @@ func adminNewNodeHandler(handler Handler) {
 
 // URL: /admin/nodes
 // 列出所有的节点
-func adminListNodesHandler(handler Handler) {
+func adminListNodesHandler(handler *Handler) {
 	var nodes []Node
 	c := handler.DB.C(NODES)
 	c.Find(nil).All(&nodes)

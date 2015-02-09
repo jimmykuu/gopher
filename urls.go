@@ -19,7 +19,7 @@ type Handler struct {
 	DB             *mgo.Database
 }
 
-func NewHandler(w http.ResponseWriter, r *http.Request) Handler {
+func NewHandler(w http.ResponseWriter, r *http.Request) *Handler {
 	session, err := mgo.Dial(Config.DB)
 	if err != nil {
 		panic(err)
@@ -27,7 +27,7 @@ func NewHandler(w http.ResponseWriter, r *http.Request) Handler {
 
 	session.SetMode(mgo.Monotonic, true)
 
-	return Handler{
+	return &Handler{
 		ResponseWriter: w,
 		Request:        r,
 		StartTime:      time.Now(),
@@ -40,7 +40,7 @@ func (h Handler) Redirect(urlStr string) {
 	http.Redirect(h.ResponseWriter, h.Request, urlStr, http.StatusFound)
 }
 
-type HandlerFunc func(Handler)
+type HandlerFunc func(*Handler)
 
 type Route struct {
 	URL         string

@@ -23,7 +23,7 @@ import (
 
 // URL: /packages
 // 列出最新的一些第三方包
-func packagesHandler(handler Handler) {
+func packagesHandler(handler *Handler) {
 	var categories []PackageCategory
 
 	c := handler.DB.C(PACKAGE_CATEGORIES)
@@ -42,7 +42,7 @@ func packagesHandler(handler Handler) {
 
 // URL: /package/new
 // 新建第三方包
-func newPackageHandler(handler Handler) {
+func newPackageHandler(handler *Handler) {
 	user, _ := currentUser(handler)
 
 	var categories []PackageCategory
@@ -102,7 +102,7 @@ func newPackageHandler(handler Handler) {
 
 // URL: /package/{packageId}/edit
 // 编辑第三方包
-func editPackageHandler(handler Handler) {
+func editPackageHandler(handler *Handler) {
 	user, _ := currentUser(handler)
 
 	vars := mux.Vars(handler.Request)
@@ -184,7 +184,7 @@ func editPackageHandler(handler Handler) {
 
 // URL: /packages/{categoryId}
 // 根据类别列出包
-func listPackagesHandler(handler Handler) {
+func listPackagesHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	categoryId := vars["categoryId"]
 	c := handler.DB.C(PACKAGE_CATEGORIES)
@@ -217,7 +217,7 @@ func listPackagesHandler(handler Handler) {
 
 // URL: /p/{packageId}
 // 显示第三方包详情
-func showPackageHandler(handler Handler) {
+func showPackageHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 
 	packageId := vars["packageId"]
@@ -252,7 +252,7 @@ func showPackageHandler(handler Handler) {
 
 // URL: /p/{packageId}/delete
 // 删除第三方包
-func deletePackageHandler(handler Handler) {
+func deletePackageHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	packageId := bson.ObjectIdHex(vars["packageId"])
 
@@ -276,7 +276,7 @@ func deletePackageHandler(handler Handler) {
 
 // URL: /download/package
 // 下载第三方包
-func downloadPackagesHandler(handler Handler) {
+func downloadPackagesHandler(handler *Handler) {
 	var packages []DownloadedPackage
 	c := handler.DB.C(DOWNLOADED_PACKAGES)
 	c.Find(nil).Sort("-count").Limit(20).All(&packages)

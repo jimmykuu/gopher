@@ -248,7 +248,7 @@ func (u *Utils) AssertPackage(i interface{}) *Package {
 	return &v
 }
 
-func message(handler Handler, title string, message string, class string) {
+func message(handler *Handler, title string, message string, class string) {
 	renderTemplate(handler, "message.html", BASE, map[string]interface{}{"title": title, "message": template.HTML(message), "class": class})
 }
 
@@ -356,7 +356,7 @@ func init() {
 }
 
 func staticHandler(templateFile string) HandlerFunc {
-	return func(handler Handler) {
+	return func(handler *Handler) {
 		renderTemplate(handler, templateFile, BASE, map[string]interface{}{})
 	}
 }
@@ -388,7 +388,7 @@ func findAts(content string) []string {
 	return users
 }
 
-func searchHandler(handler Handler) {
+func searchHandler(handler *Handler) {
 	p := handler.Request.FormValue("p")
 	page := 1
 

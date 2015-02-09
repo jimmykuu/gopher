@@ -13,7 +13,7 @@ import (
 
 // URL: /comment/{contentId}
 // 评论，不同内容共用一个评论方法
-func commentHandler(handler Handler) {
+func commentHandler(handler *Handler) {
 	if handler.Request.Method != "POST" {
 		return
 	}
@@ -129,7 +129,7 @@ func commentHandler(handler Handler) {
 
 // URL: /comment/{commentId}/delete
 // 删除评论
-func deleteCommentHandler(handler Handler) {
+func deleteCommentHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	var commentId string = vars["commentId"]
 
@@ -185,7 +185,7 @@ func deleteCommentHandler(handler Handler) {
 
 // URL: /comment/:id.json
 // 获取comment的内容
-func commentJsonHandler(handler Handler) {
+func commentJsonHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	var id string = vars["id"]
 
@@ -207,7 +207,7 @@ func commentJsonHandler(handler Handler) {
 
 // URL: /commeint/:id/edit
 // 编辑comment
-func editCommentHandler(handler Handler) {
+func editCommentHandler(handler *Handler) {
 	if handler.Request.Method != "POST" {
 		return
 	}

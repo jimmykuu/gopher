@@ -17,7 +17,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-func topicsHandler(handler Handler, conditions bson.M, sort string, url string, subActive string) {
+func topicsHandler(handler *Handler, conditions bson.M, sort string, url string, subActive string) {
 	page, err := getPage(handler.Request)
 
 	if err != nil {
@@ -81,25 +81,25 @@ func topicsHandler(handler Handler, conditions bson.M, sort string, url string, 
 
 // URL: /
 // 网站首页,列出按回帖时间倒序排列的第一页
-func indexHandler(handler Handler) {
+func indexHandler(handler *Handler) {
 	topicsHandler(handler, bson.M{"content.type": TypeTopic}, "-latestrepliedat", "/", "latestReply")
 }
 
 // URL: /topics/latest
 // 最新发布的主题，按照发布时间倒序排列
-func latestTopicsHandler(handler Handler) {
+func latestTopicsHandler(handler *Handler) {
 	topicsHandler(handler, bson.M{"content.type": TypeTopic}, "-content.createdat", "/topics/latest", "latestCreate")
 }
 
 // URL: /topics/no_reply
 // 无人回复的主题，按照发布时间倒序排列
-func noReplyTopicsHandler(handler Handler) {
+func noReplyTopicsHandler(handler *Handler) {
 	topicsHandler(handler, bson.M{"content.type": TypeTopic, "content.commentcount": 0}, "-content.createdat", "/topics/no_reply", "noReply")
 }
 
 // URL: /topic/new
 // 新建主题
-func newTopicHandler(handler Handler) {
+func newTopicHandler(handler *Handler) {
 	nodeId := mux.Vars(handler.Request)["node"]
 
 	var nodes []Node
@@ -185,7 +185,7 @@ func newTopicHandler(handler Handler) {
 
 // URL: /t/{topicId}/edit
 // 编辑主题
-func editTopicHandler(handler Handler) {
+func editTopicHandler(handler *Handler) {
 	user, _ := currentUser(handler)
 
 	topicId := bson.ObjectIdHex(mux.Vars(handler.Request)["topicId"])
@@ -268,7 +268,7 @@ func editTopicHandler(handler Handler) {
 
 // URL: /t/{topicId}
 // 根据主题的ID,显示主题的信息及回复
-func showTopicHandler(handler Handler) {
+func showTopicHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	topicId := vars["topicId"]
 	c := handler.DB.C(CONTENTS)
@@ -344,7 +344,7 @@ func showTopicHandler(handler Handler) {
 
 // URL: /go/{node}
 // 列出节点下所有的主题
-func topicInNodeHandler(handler Handler) {
+func topicInNodeHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	nodeId := vars["node"]
 	c := handler.DB.C(NODES)
@@ -387,7 +387,7 @@ func topicInNodeHandler(handler Handler) {
 
 // URL: /t/{topicId}/collect/
 // 将主题收藏至当前用户的收藏夹
-func collectTopicHandler(handler Handler) {
+func collectTopicHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	topicId := vars["topicId"]
 	t := time.Now()
@@ -405,7 +405,7 @@ func collectTopicHandler(handler Handler) {
 
 // URL: /t/{topicId}/delete
 // 删除主题
-func deleteTopicHandler(handler Handler) {
+func deleteTopicHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	topicId := bson.ObjectIdHex(vars["topicId"])
 
@@ -442,7 +442,7 @@ func deleteTopicHandler(handler Handler) {
 }
 
 // 列出置顶的主题
-func listTopTopicsHandler(handler Handler) {
+func listTopTopicsHandler(handler *Handler) {
 	var topics []Topic
 	c := handler.DB.C(CONTENTS)
 	c.Find(bson.M{"content.type": TypeTopic, "is_top": true}).All(&topics)
@@ -453,7 +453,7 @@ func listTopTopicsHandler(handler Handler) {
 }
 
 // 设置置顶
-func setTopTopicHandler(handler Handler) {
+func setTopTopicHandler(handler *Handler) {
 	topicId := bson.ObjectIdHex(mux.Vars(handler.Request)["id"])
 	c := handler.DB.C(CONTENTS)
 	c.Update(bson.M{"_id": topicId}, bson.M{"$set": bson.M{"is_top": true}})
@@ -461,7 +461,7 @@ func setTopTopicHandler(handler Handler) {
 }
 
 // 取消置顶
-func cancelTopTopicHandler(handler Handler) {
+func cancelTopTopicHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	topicId := bson.ObjectIdHex(vars["id"])
 

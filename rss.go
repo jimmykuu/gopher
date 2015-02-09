@@ -67,7 +67,7 @@ func getFromCache() []Topic {
 	return topics
 }
 
-func rssHandler(handler Handler) {
+func rssHandler(handler *Handler) {
 
 	t, err := template.ParseFiles("templates/rss.xml")
 	if err != nil {

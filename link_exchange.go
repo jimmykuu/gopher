@@ -10,7 +10,7 @@ import (
 
 // URL: /admin/link_exchanges
 // 友情链接列表
-func adminListLinkExchangesHandler(handler Handler) {
+func adminListLinkExchangesHandler(handler *Handler) {
 	c := handler.DB.C(LINK_EXCHANGES)
 	var linkExchanges []LinkExchange
 	c.Find(nil).All(&linkExchanges)
@@ -22,7 +22,7 @@ func adminListLinkExchangesHandler(handler Handler) {
 
 // ULR: /admin/link_exchange/new
 // 增加友链
-func adminNewLinkExchangeHandler(handler Handler) {
+func adminNewLinkExchangeHandler(handler *Handler) {
 	form := wtforms.NewForm(
 		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),
 		wtforms.NewTextField("url", "URL", "", wtforms.Required{}, wtforms.URL{}),
@@ -76,7 +76,7 @@ func adminNewLinkExchangeHandler(handler Handler) {
 
 // URL: /admin/link_exchange/{linkExchangeId}/edit
 // 编辑友情链接
-func adminEditLinkExchangeHandler(handler Handler) {
+func adminEditLinkExchangeHandler(handler *Handler) {
 	linkExchangeId := mux.Vars(handler.Request)["linkExchangeId"]
 
 	c := handler.DB.C(LINK_EXCHANGES)
@@ -122,7 +122,7 @@ func adminEditLinkExchangeHandler(handler Handler) {
 
 // URL: /admin/link_exchange/{linkExchangeId}/delete
 // 删除友情链接
-func adminDeleteLinkExchangeHandler(handler Handler) {
+func adminDeleteLinkExchangeHandler(handler *Handler) {
 	linkExchangeId := mux.Vars(handler.Request)["linkExchangeId"]
 
 	c := handler.DB.C(LINK_EXCHANGES)

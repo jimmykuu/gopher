@@ -9,7 +9,7 @@ import (
 
 // URL: /admin/article_categories
 // 列出所有的文章分类
-func adminListArticleCategoriesHandler(handler Handler) {
+func adminListArticleCategoriesHandler(handler *Handler) {
 	var categories []SiteCategory
 	c := handler.DB.C(ARTICLE_CATEGORIES)
 	c.Find(nil).All(&categories)
@@ -19,7 +19,7 @@ func adminListArticleCategoriesHandler(handler Handler) {
 
 // URL: /admin/article_category/new
 // 新建文章分类
-func adminNewArticleCategoryHandler(handler Handler) {
+func adminNewArticleCategoryHandler(handler *Handler) {
 	form := wtforms.NewForm(
 		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),
 	)

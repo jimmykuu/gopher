@@ -18,7 +18,7 @@ import (
 
 // URL: /article/new
 // 新建文章
-func newArticleHandler(handler Handler) {
+func newArticleHandler(handler *Handler) {
 	var categories []ArticleCategory
 	c := handler.DB.C(ARTICLE_CATEGORIES)
 	c.Find(nil).All(&categories)
@@ -82,7 +82,7 @@ func newArticleHandler(handler Handler) {
 // URL: /article/go/{categoryId}
 // 文章分类列表
 
-func articlesInCategoryHandler(handler Handler) {
+func articlesInCategoryHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	categoryId := vars["categoryId"]
 
@@ -125,7 +125,7 @@ func articlesInCategoryHandler(handler Handler) {
 
 // URL: /articles
 // 列出所有文章
-func listArticlesHandler(handler Handler) {
+func listArticlesHandler(handler *Handler) {
 	page, err := getPage(handler.Request)
 
 	if err != nil {
@@ -165,7 +165,7 @@ func listArticlesHandler(handler Handler) {
 
 // URL: /a{articleId}/redirect
 // 转到原文链接
-func redirectArticleHandler(handler Handler) {
+func redirectArticleHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	articleId := vars["articleId"]
 
@@ -191,7 +191,7 @@ func redirectArticleHandler(handler Handler) {
 
 // URL: /a/{articleId}
 // 显示文章
-func showArticleHandler(handler Handler) {
+func showArticleHandler(handler *Handler) {
 	vars := mux.Vars(handler.Request)
 	articleId := vars["articleId"]
 
@@ -218,7 +218,7 @@ func showArticleHandler(handler Handler) {
 
 // URL: /a/{articleId}/edit
 // 编辑主题
-func editArticleHandler(handler Handler) {
+func editArticleHandler(handler *Handler) {
 	user, _ := currentUser(handler)
 
 	articleId := mux.Vars(handler.Request)["articleId"]
@@ -292,7 +292,7 @@ func editArticleHandler(handler Handler) {
 
 // URL: /a/{articleId}/delete
 // 删除文章
-func deleteArticleHandler(handler Handler) {
+func deleteArticleHandler(handler *Handler) {
 	user, _ := currentUser(handler)
 
 	vars := mux.Vars(handler.Request)

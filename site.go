@@ -15,7 +15,7 @@ import (
 
 // URL: /sites
 // 酷站首页,列出所有分类及站点
-func sitesHandler(handler Handler) {
+func sitesHandler(handler *Handler) {
 	var categories []SiteCategory
 	c := handler.DB.C(SITE_CATEGORIES)
 	c.Find(nil).All(&categories)
@@ -27,7 +27,7 @@ func sitesHandler(handler Handler) {
 
 // URL: /site/new
 // 提交站点
-func newSiteHandler(handler Handler) {
+func newSiteHandler(handler *Handler) {
 	user, _ := currentUser(handler)
 
 	var categories []SiteCategory
@@ -92,7 +92,7 @@ func newSiteHandler(handler Handler) {
 
 // URL: /site/{siteId}/edit
 // 修改提交过的站点信息,提交者自己或者管理员可以修改
-func editSiteHandler(handler Handler) {
+func editSiteHandler(handler *Handler) {
 	user, _ := currentUser(handler)
 
 	siteId := bson.ObjectIdHex(mux.Vars(handler.Request)["siteId"])
@@ -169,7 +169,7 @@ func editSiteHandler(handler Handler) {
 
 // URL: /site/{siteId}/delete
 // 删除站点,提交者自己或者管理员可以删除
-func deleteSiteHandler(handler Handler) {
+func deleteSiteHandler(handler *Handler) {
 	user, _ := currentUser(handler)
 
 	siteId := bson.ObjectIdHex(mux.Vars(handler.Request)["siteId"])

@@ -114,7 +114,7 @@ func renderTemplate(handler *Handler, file, baseFile string, data map[string]int
 	handler.ResponseWriter.Write(page)
 }
 
-func renderJson(handler Handler, data interface{}) {
+func renderJson(handler *Handler, data interface{}) {
 	b, err := json.Marshal(data)
 	if err != nil {
 		panic(err)

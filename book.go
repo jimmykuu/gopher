@@ -11,7 +11,7 @@ import (
 
 // URL: /books
 // 图书列表
-func booksHandler(handler Handler) {
+func booksHandler(handler *Handler) {
 	c := handler.DB.C(BOOKS)
 	var chineseBooks []Book
 	c.Find(bson.M{"language": "中文"}).All(&chineseBooks)
@@ -27,7 +27,7 @@ func booksHandler(handler Handler) {
 
 // URL: /book/{id}
 // 显示图书详情
-func showBookHandler(handler Handler) {
+func showBookHandler(handler *Handler) {
 	bookId := mux.Vars(handler.Request)["id"]
 
 	if !bson.IsObjectIdHex(bookId) {
@@ -47,7 +47,7 @@ func showBookHandler(handler Handler) {
 
 // URL: /admin/book/{id}/edit
 // 编辑图书
-func editBookHandler(handler Handler) {
+func editBookHandler(handler *Handler) {
 	bookId := mux.Vars(handler.Request)["id"]
 
 	c := handler.DB.C(BOOKS)
@@ -102,7 +102,7 @@ func editBookHandler(handler Handler) {
 
 // URL: /book/{id}/delete
 // 删除图书
-func deleteBookHandler(handler Handler) {
+func deleteBookHandler(handler *Handler) {
 	id := mux.Vars(handler.Request)["id"]
 
 	c := handler.DB.C(BOOKS)
@@ -111,7 +111,7 @@ func deleteBookHandler(handler Handler) {
 	handler.ResponseWriter.Write([]byte("true"))
 }
 
-func listBooksHandler(handler Handler) {
+func listBooksHandler(handler *Handler) {
 	c := handler.DB.C(BOOKS)
 	var books []Book
 	c.Find(nil).All(&books)
@@ -121,7 +121,7 @@ func listBooksHandler(handler Handler) {
 	})
 }
 
-func newBookHandler(handler Handler) {
+func newBookHandler(handler *Handler) {
 	form := wtforms.NewForm(
 		wtforms.NewTextField("title", "书名", "", wtforms.Required{}),
 		wtforms.NewTextField("cover", "封面", "", wtforms.Required{}),
