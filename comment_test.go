@@ -52,17 +52,18 @@ func Post(url string, data interface{}) (*http.Request, error) {
 		return nil, fmt.Errorf("data type %#v is not supported.", reflect.TypeOf(data))
 	}
 }
-
 func TestCommentAt(t *testing.T) {
 
 	db, _ := mgo.Dial(Config.DB)
 
 	//插入一条主题,一个回复.
 	//和两个用户.
+
 	topicId := bson.NewObjectId()
 	contentId := bson.NewObjectId()
 	nodeId := bson.NewObjectId()
 	userId := bson.NewObjectId()
+	commenterId := bson.NewObjectId()
 
 	//　插入主题
 	contentsC := db.DB("gopher").C(CONTENTS)
@@ -84,7 +85,7 @@ func TestCommentAt(t *testing.T) {
 	//  插入用户
 	usersC := db.DB("gopher").C(USERS)
 	usersC.Insert(bson.M{"_id": userId, "username": "user"})
-	usersC.Insert(bson.M{"username": "commenter"})
+	usersC.Insert(bson.M{"_id": commenterId, "username": "commenter"})
 	usersC.Insert(bson.M{"username": "3rd_user"})
 	defer func() {
 		usersC.Remove(bson.M{"username": "commenter"})
@@ -105,7 +106,7 @@ func TestCommentAt(t *testing.T) {
 
 	defer func() {
 		c := db.DB("gopher").C(COMMENTS)
-		c.Remove(bson.M{"createdby": "commenter"})
+		c.Remove(bson.M{"createdby": commenterId})
 	}()
 
 	t.Log(res.Code)
