@@ -23,7 +23,9 @@ type Handler struct {
 
 // 渲染模板，并放入一些模板常用变量
 func (handler *Handler) renderTemplate(file, baseFile string, datas ...map[string]interface{}) {
-	var data map[string]interface{}
+
+	// TODO:增加playground.
+	var data = make(map[string]interface{})
 	if len(datas) == 1 {
 		data = datas[0]
 	} else if len(datas) != 0 {
@@ -60,7 +62,6 @@ func (handler *Handler) renderTemplate(file, baseFile string, datas ...map[strin
 	if !ok {
 		data["active"] = ""
 	}
-
 	page := parseTemplate(file, baseFile, data)
 	handler.ResponseWriter.Write(page)
 }

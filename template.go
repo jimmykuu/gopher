@@ -52,7 +52,6 @@ var funcMaps = template.FuncMap{
 func parseTemplate(file, baseFile string, data map[string]interface{}) []byte {
 	var buf bytes.Buffer
 	t := template.New(file).Funcs(funcMaps)
-
 	baseBytes, err := ioutil.ReadFile("templates/" + baseFile)
 	if err != nil {
 		panic(err)
@@ -61,13 +60,11 @@ func parseTemplate(file, baseFile string, data map[string]interface{}) []byte {
 	if err != nil {
 		panic(err)
 	}
-
 	t, err = t.ParseFiles("templates/" + file)
 	if err != nil {
 		panic(err)
 	}
 	err = t.Execute(&buf, data)
-
 	if err != nil {
 		panic(err)
 	}
