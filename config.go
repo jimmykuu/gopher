@@ -2,7 +2,6 @@ package gopher
 
 import (
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"io/ioutil"
 	"os"
@@ -78,7 +77,7 @@ func configGithubAuth() {
 	auth.Config.LoginSuccessRedirect = Config.GithubLoginSuccessRedirect
 	auth.Config.CookieSecure = Config.CookieSecure
 	if !auth.Config.CookieSecure {
-		fmt.Println("注意,cookie_secure设置为false,只能在本地环境下测试")
+		logger.Println("注意,cookie_secure设置为false,只能在本地环境下测试")
 	}
 	githubHandler = auth.Github(Config.GithubClientId, Config.GithubClientSecret, "user")
 }

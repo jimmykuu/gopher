@@ -9,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"code.google.com/p/go.net/websocket"
 	"github.com/dchest/captcha"
@@ -17,7 +16,7 @@ import (
 )
 
 var (
-	logger = log.New(os.Stdout, "GOPHER", log.LstdFlags)
+	logger = log.New(os.Stdout, "[gopher]:", log.LstdFlags)
 )
 
 func handlerFun(route Route) http.HandlerFunc {
@@ -36,7 +35,7 @@ func handlerFun(route Route) http.HandlerFunc {
 		if r.URL.RawQuery != "" {
 			url += "?" + r.URL.RawQuery
 		}
-		fmt.Println(time.Now().Format("2006-01-02 15:04:05"), url)
+		logger.Println(url)
 		if route.Permission&Everyone == Everyone {
 			route.HandlerFunc(handler)
 		}
