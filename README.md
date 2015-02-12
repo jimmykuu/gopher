@@ -4,7 +4,8 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 
 ##Install
 
-    $ go get -v github.com/jimmykuu/gopher/server
+    $ go get github.com/jimmykuu/gopher/server
+
 
 修改文件 *etc/config.json.default* 为 *etc/config.json* 作为配置文件
 
@@ -40,9 +41,14 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 		"github_login_success_redirect":"/auth/signup"
     }
 
-先启动MongoDB
+需要先启动MongoDB
 
     $GOPATH/bin/server
+
+或者:
+	
+	$ go build -o binary github.com/jimmykuu/gopher/server
+	$ ./binary
 
 ##Contributors
 
