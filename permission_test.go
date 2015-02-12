@@ -31,7 +31,7 @@ func TestPermission(t *testing.T) {
 	res := httptest.NewRecorder()
 	req, err := http.NewRequest("GET", Config.Host+"/topic/new", nil)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 	r.ServeHTTP(res, req)
 	if res.Code != http.StatusFound || res.Header().Get("Location") != "/signin" {
@@ -40,7 +40,7 @@ func TestPermission(t *testing.T) {
 
 	req, err = http.NewRequest("GET", Config.Host+"/admin/nodes", nil)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 	db.DB("gopher").C(USERS).Insert(bson.M{"username": "没有中文名"})
 	session, _ := store.Get(req, "user")

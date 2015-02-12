@@ -19,9 +19,7 @@ func commentHandler(handler *Handler) {
 	}
 
 	user, _ := currentUser(handler)
-
-	vars := mux.Vars(handler.Request)
-	contentIdStr := vars["contentId"]
+	contentIdStr := handler.param("contentId")
 	contentId := bson.ObjectIdHex(contentIdStr)
 
 	var temp map[string]interface{}
@@ -46,7 +44,6 @@ func commentHandler(handler *Handler) {
 	c.Update(bson.M{"_id": contentId}, bson.M{"$inc": bson.M{"content.commentcount": 1}})
 
 	content := handler.Request.FormValue("content")
-
 	html := handler.Request.FormValue("html")
 	html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
 
@@ -63,7 +60,6 @@ func commentHandler(handler *Handler) {
 		CreatedBy: user.Id_,
 		CreatedAt: now,
 	})
-
 	if type_ == TypeTopic {
 		// 修改最后回复用户Id和时间
 		c = handler.DB.C(CONTENTS)
@@ -72,29 +68,24 @@ func commentHandler(handler *Handler) {
 		// 修改中的回复数量
 		c = handler.DB.C(STATUS)
 		c.Update(nil, bson.M{"$inc": bson.M{"replycount": 1}})
-		/*mark ggaaooppeenngg*/
-		//修改用户的最近回复
-
+		// 修改对应用户的最近at.
 		c = handler.DB.C(USERS)
-		//查找评论中at的用户,并且更新recentAts
-		users := findAts(content)
-		for _, v := range users {
-			var u User
-			err := c.Find(bson.M{"username": v}).One(&u)
+		usernames := findAts(content)
+		for _, name := range usernames {
+			u, err := getUserByName(c, name)
 			if err != nil {
-				fmt.Println(err)
-			} else {
-				u.RecentAts = append(u.RecentAts, At{user.Username, contentIdStr, Id_.Hex()})
-				if err = c.Update(bson.M{"username": u.Username}, bson.M{"$set": bson.M{"recentats": u.RecentAts}}); err != nil {
-					fmt.Println(err)
-				}
+				logger.Println(err)
+				continue
+			}
+			if user.Username != u.Username {
+				u.AtBy(c, user.Username, contentIdStr, Id_.Hex())
 			}
 		}
 
-		//修改用户的最近回复
-		//该最近回复提醒通过url被点击的时候会被disactive
-		//更新最近的评论
-		//自己的评论就不提示了
+		//  修改用户的最近回复
+		//  该最近回复提醒通过url被点击的时候会被disactive
+		//  更新最近的评论
+		//  自己的评论就不提示了
 		tempTitle := temp2["title"].(string)
 
 		if contentCreator.Hex() != user.Id_.Hex() {
@@ -125,6 +116,11 @@ func commentHandler(handler *Handler) {
 	}
 
 	http.Redirect(handler.ResponseWriter, handler.Request, url, http.StatusFound)
+}
+
+// delete at by ajax.
+func deleteAt(handler *Handler) {
+
 }
 
 // URL: /comment/{commentId}/delete

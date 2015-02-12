@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
-	"log"
 	"os"
 	"runtime"
 
@@ -49,13 +48,13 @@ var (
 func parseJsonFile(path string, v interface{}) {
 	file, err := os.Open(path)
 	if err != nil {
-		log.Fatal("配置文件读取失败:", err)
+		logger.Fatal("配置文件读取失败:", err)
 	}
 	defer file.Close()
 	dec := json.NewDecoder(file)
 	err = dec.Decode(v)
 	if err != nil {
-		log.Fatal("配置文件解析失败:", err)
+		logger.Fatal("配置文件解析失败:", err)
 	}
 }
 
@@ -63,7 +62,7 @@ func getDefaultCode(path string) (code template.HTML) {
 	if path != "" {
 		content, err := ioutil.ReadFile(path)
 		if err != nil {
-			log.Fatal("文件 " + path + " 没有找到")
+			logger.Fatal("文件 " + path + " 没有找到")
 		}
 		code = template.HTML(string(content))
 	}
@@ -72,7 +71,7 @@ func getDefaultCode(path string) (code template.HTML) {
 
 func configGithubAuth() {
 	if Config.GithubClientId == "" || Config.GithubClientSecret == "" {
-		log.Fatal("没有配置github应用的参数")
+		logger.Fatal("没有配置github应用的参数")
 	}
 	auth.Config.CookieSecret = []byte(Config.CookieSecret)
 	auth.Config.LoginRedirect = Config.GithubLoginRedirect

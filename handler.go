@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2"
 )
 
@@ -64,6 +65,17 @@ func (handler *Handler) renderTemplate(file, baseFile string, datas ...map[strin
 	handler.ResponseWriter.Write(page)
 }
 
+// param 返回在url中name的值.
+func (handler *Handler) param(name string) string {
+	return mux.Vars(handler.Request)[name]
+}
+
+// 重定向.
+func (handler *Handler) redirect(urlStr string, code int) {
+	http.Redirect(handler.ResponseWriter, handler.Request, urlStr, code)
+}
+
+// 返回json数据.
 func (handler *Handler) renderJson(data interface{}) {
 	b, err := json.Marshal(data)
 	if err != nil {

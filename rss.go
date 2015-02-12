@@ -2,7 +2,6 @@ package gopher
 
 import (
 	"container/list"
-	"log"
 	"text/template"
 	"time"
 
@@ -40,7 +39,7 @@ func RssRefresh() {
 		if now.After(latestTime) {
 			session, err := mgo.Dial(Config.DB)
 			if err != nil {
-				log.Println(err)
+				logger.Println(err)
 				latestTime = now.Add(time.Hour) //一小时后重新连接.
 				continue
 			} else {
@@ -70,7 +69,7 @@ func rssHandler(handler *Handler) {
 
 	t, err := template.ParseFiles("templates/rss.xml")
 	if err != nil {
-		log.Println(err)
+		logger.Println(err)
 	}
 	rssTopics := getFromCache()
 	handler.ResponseWriter.Header().Set("Content-Type", "application/xml")

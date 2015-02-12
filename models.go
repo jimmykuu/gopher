@@ -5,6 +5,7 @@
 package gopher
 
 import (
+	"errors"
 	"fmt"
 	"html/template"
 	"strings"
@@ -106,6 +107,29 @@ type User struct {
 	Provider        string //关联社区名称,比如 github.com
 }
 
+// 增加最近被@
+func (u *User) AtBy(c *mgo.Collection, username, contentIdStr, commentIdStr string) error {
+	if username == "" || contentIdStr == "" || commentIdStr == "" {
+		return errors.New("string parameters can not be empty string")
+	}
+
+	if len(u.RecentAts) == 0 {
+		var user User
+		err := c.Find(bson.M{"username": u.Username}).One(&user)
+		if err != nil {
+			return err
+		}
+		u = &user
+	}
+
+	u.RecentAts = append(u.RecentAts, At{username, contentIdStr, commentIdStr})
+	err := c.Update(bson.M{"username": u.Username}, bson.M{"$set": bson.M{"recentats": u.RecentAts}})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // 是否是默认头像
 func (u *User) IsDefaultAvatar(avatar string) bool {
 	filename := u.Avatar
@@ -179,6 +203,17 @@ func (u *User) IsFans(who string) bool {
 	}
 
 	return false
+}
+
+// getUserByName
+func getUserByName(c *mgo.Collection, name string) (*User, error) {
+	u := new(User)
+	err := c.Find(bson.M{"username": name}).One(u)
+	if err != nil {
+		return nil, err
+	}
+	return u, nil
+
 }
 
 // 节点

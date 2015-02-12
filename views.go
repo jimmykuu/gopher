@@ -376,11 +376,9 @@ func getPage(r *http.Request) (page int, err error) {
 	return
 }
 
-//mark gga
-//提取评论中被at的用户名
+//  提取评论中被at的用户名
 func findAts(content string) []string {
-	regAt := regexp.MustCompile(`@(\S*) `)
-	allAts := regAt.FindAllStringSubmatch(content, -1)
+	allAts := regexp.MustCompile(`@(\S*) `).FindAllStringSubmatch(content, -1)
 	var users []string
 	for _, v := range allAts {
 		users = append(users, v[1])

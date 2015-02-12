@@ -8,11 +8,16 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"code.google.com/p/go.net/websocket"
 	"github.com/dchest/captcha"
 	"github.com/gorilla/mux"
+)
+
+var (
+	logger = log.New(os.Stdout, "GOPHER", log.LstdFlags)
 )
 
 func handlerFun(route Route) http.HandlerFunc {
@@ -32,7 +37,6 @@ func handlerFun(route Route) http.HandlerFunc {
 			url += "?" + r.URL.RawQuery
 		}
 		fmt.Println(time.Now().Format("2006-01-02 15:04:05"), url)
-		println("g", route.Permission)
 		if route.Permission&Everyone == Everyone {
 			route.HandlerFunc(handler)
 		}
@@ -61,7 +65,6 @@ func handlerFun(route Route) http.HandlerFunc {
 		}
 	}
 }
-
 func StartServer() {
 	http.Handle("/static/", http.FileServer(http.Dir(".")))
 	http.Handle("/get/package", websocket.Handler(getPackageHandler))
@@ -74,6 +77,6 @@ func StartServer() {
 
 	http.Handle("/", r)
 
-	fmt.Println("Server start on:", Config.Port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", Config.Port), nil))
+	logger.Println("Server start on:", Config.Port)
+	logger.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", Config.Port), nil))
 }

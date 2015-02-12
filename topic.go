@@ -17,6 +17,9 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+//  用于测试
+var testParam func() = func() {}
+
 func topicsHandler(handler *Handler, conditions bson.M, sort string, url string, subActive string) {
 	page, err := getPage(handler.Request)
 
@@ -269,6 +272,7 @@ func editTopicHandler(handler *Handler) {
 // URL: /t/{topicId}
 // 根据主题的ID,显示主题的信息及回复
 func showTopicHandler(handler *Handler) {
+	testParam()
 	vars := mux.Vars(handler.Request)
 	topicId := vars["topicId"]
 	c := handler.DB.C(CONTENTS)
@@ -283,7 +287,8 @@ func showTopicHandler(handler *Handler) {
 	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": TypeTopic}).One(&topic)
 
 	if err != nil {
-		panic(err)
+		logger.Println(err)
+		http.NotFound(handler.ResponseWriter, handler.Request)
 		return
 	}
 
