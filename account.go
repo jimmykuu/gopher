@@ -132,6 +132,7 @@ func wrapAuthHandler(handler *Handler) func(w http.ResponseWriter, r *http.Reque
 		session.Values[GITHUB_PICTURE] = u.Picture()
 		session.Values[GITHUB_PROVIDER] = u.Provider()
 		session.Save(r, w)
+
 		//关联已有帐号
 		if handler.Request.Method == "POST" {
 			if form.Validate(handler.Request) {
@@ -247,42 +248,26 @@ func signupHandler(handler *Handler) {
 			validateCode := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 			salt := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 			index := status.UserIndex + 1
+			u := &User{
+				Id_:          id,
+				Username:     username,
+				Password:     encryptPassword(form.Value("password"), salt),
+				Avatar:       "", // defaultAvatars[rand.Intn(len(defaultAvatars))],
+				Salt:         salt,
+				Email:        form.Value("email"),
+				ValidateCode: validateCode,
+				IsActive:     true,
+				JoinedAt:     time.Now(),
+				Index:        index,
+			}
 			if session.Values[GITHUB_PROVIDER] == GITHUB_COM {
-				u := &User{
-					Id_:          id,
-					Username:     username,
-					Password:     encryptPassword(form.Value("password"), salt),
-					Avatar:       "", // defaultAvatars[rand.Intn(len(defaultAvatars))],
-					Salt:         salt,
-					Email:        form.Value("email"),
-					ValidateCode: validateCode,
-					IsActive:     true,
-					JoinedAt:     time.Now(),
-					Index:        index,
-				}
-				u.GetGithubValues(s)
-				err = c.Insert(u)
-				if err != nil {
-					panic(err)
-				} else {
-					deleteGithubValues(session)
-				}
-			} else {
-				err = c.Insert(&User{
-					Id_:          id,
-					Username:     username,
-					Password:     encryptPassword(form.Value("password"), salt),
-					Avatar:       "", // defaultAvatars[rand.Intn(len(defaultAvatars))],
-					Salt:         salt,
-					Email:        form.Value("email"),
-					ValidateCode: validateCode,
-					IsActive:     true,
-					JoinedAt:     time.Now(),
-					Index:        index,
-				})
-				if err != nil {
-					panic(err)
-				}
+				u.GetGithubValues(session)
+				defer deleteGithubValues(session)
+			}
+			err = c.Insert(u)
+			if err != nil {
+				logger.Println(err)
+				return
 			}
 
 			c2.Update(nil, bson.M{"$inc": bson.M{"userindex": 1, "usercount": 1}})

@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gorilla/sessions"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -141,7 +142,7 @@ func (u *User) IsDefaultAvatar(avatar string) bool {
 }
 
 // 插入github注册的用户
-func (u *User) GetGithubValues(s *session.Sessions) {
+func (u *User) GetGithubValues(session *sessions.Session) {
 	u.Website = session.Values[GITHUB_LINK].(string)
 	u.GitHubUsername = session.Values[GITHUB_ID].(string)
 	u.AccountRef = session.Values[GITHUB_NAME].(string)
@@ -154,7 +155,7 @@ func (u *User) GetGithubValues(s *session.Sessions) {
 }
 
 // 删除通过session传的默认信息
-func deleteGithubValues(s *session.Sessions) {
+func deleteGithubValues(session *sessions.Session) {
 	// 删除session传过来的默认信息
 	delete(session.Values, GITHUB_EMAIL)
 	delete(session.Values, GITHUB_ID)
