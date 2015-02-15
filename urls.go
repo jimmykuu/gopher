@@ -8,8 +8,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/ggaaooppeenngg/util"
-
 	"gopkg.in/mgo.v2"
 )
 
@@ -49,10 +47,7 @@ type Route struct {
 func fileHandler(w http.ResponseWriter, req *http.Request) {
 	url := req.Method + " " + req.URL.Path
 	logger.Println(url)
-
 	filePath := req.URL.Path[1:]
-	logger.Printf(filePath)
-	logger.Println(util.IsExist(filePath))
 	http.ServeFile(w, req, filePath)
 }
 
