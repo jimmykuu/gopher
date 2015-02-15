@@ -140,6 +140,31 @@ func (u *User) IsDefaultAvatar(avatar string) bool {
 	return filename == avatar
 }
 
+// 插入github注册的用户
+func (u *User) GetGithubValues(s *session.Sessions) {
+	u.Website = session.Values[GITHUB_LINK].(string)
+	u.GitHubUsername = session.Values[GITHUB_ID].(string)
+	u.AccountRef = session.Values[GITHUB_NAME].(string)
+	u.IdRef = session.Values[GITHUB_ID].(string)
+	u.LinkRef = session.Values[GITHUB_LINK].(string)
+	u.OrgRef = session.Values[GITHUB_ORG].(string)
+	u.PictureRef = session.Values[GITHUB_PICTURE].(string)
+	u.Provider = session.Values[GITHUB_PROVIDER].(string)
+
+}
+
+// 删除通过session传的默认信息
+func deleteGithubValues(s *session.Sessions) {
+	// 删除session传过来的默认信息
+	delete(session.Values, GITHUB_EMAIL)
+	delete(session.Values, GITHUB_ID)
+	delete(session.Values, GITHUB_LINK)
+	delete(session.Values, GITHUB_NAME)
+	delete(session.Values, GITHUB_ORG)
+	delete(session.Values, GITHUB_PICTURE)
+	delete(session.Values, GITHUB_PROVIDER)
+}
+
 // 头像的图片地址
 func (u *User) AvatarImgSrc() string {
 	// 如果没有设置头像，用默认头像

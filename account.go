@@ -109,12 +109,11 @@ func authLoginHandler(handler *Handler) {
 	githubHandler.ServeHTTP(handler.ResponseWriter, handler.Request)
 }
 
-// wrapAuthHandler返回符合 go.auth包要求的签名的函数.
+// wrapAuthHandler返回符合 go.auth包要求签名的函数.
 func wrapAuthHandler(handler *Handler) func(w http.ResponseWriter, r *http.Request, u auth.User) {
 	return func(w http.ResponseWriter, r *http.Request, u auth.User) {
 		c := handler.DB.C(USERS)
 		user := User{}
-
 		session, _ := store.Get(r, "user")
 		c.Find(bson.M{"username": u.Id()}).One(&user)
 		//关联github帐号,直接登录
@@ -159,13 +158,7 @@ func wrapAuthHandler(handler *Handler) func(w http.ResponseWriter, r *http.Reque
 					"pictureref": session.Values[GITHUB_PICTURE],
 					"provider":   session.Values[GITHUB_PROVIDER],
 				}})
-				delete(session.Values, GITHUB_EMAIL)
-				delete(session.Values, GITHUB_ID)
-				delete(session.Values, GITHUB_LINK)
-				delete(session.Values, GITHUB_NAME)
-				delete(session.Values, GITHUB_ORG)
-				delete(session.Values, GITHUB_PICTURE)
-				delete(session.Values, GITHUB_PROVIDER)
+				deleteGithubValues(session)
 				session.Values["username"] = u.Name()
 				session.Save(r, w)
 				http.Redirect(handler.ResponseWriter, handler.Request, "/", http.StatusFound)
@@ -255,38 +248,24 @@ func signupHandler(handler *Handler) {
 			salt := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 			index := status.UserIndex + 1
 			if session.Values[GITHUB_PROVIDER] == GITHUB_COM {
-				err = c.Insert(&User{
-					Id_:            id,
-					Username:       username,
-					Password:       encryptPassword(form.Value("password"), salt),
-					Avatar:         "", // defaultAvatars[rand.Intn(len(defaultAvatars))],
-					Salt:           salt,
-					Email:          form.Value("email"),
-					ValidateCode:   validateCode,
-					IsActive:       true,
-					JoinedAt:       time.Now(),
-					Index:          index,
-					Website:        session.Values[GITHUB_LINK].(string),
-					GitHubUsername: session.Values[GITHUB_ID].(string),
-					AccountRef:     session.Values[GITHUB_NAME].(string),
-					IdRef:          session.Values[GITHUB_ID].(string),
-					LinkRef:        session.Values[GITHUB_LINK].(string),
-					OrgRef:         session.Values[GITHUB_ORG].(string),
-					PictureRef:     session.Values[GITHUB_PICTURE].(string),
-					Provider:       session.Values[GITHUB_PROVIDER].(string),
-				})
+				u := &User{
+					Id_:          id,
+					Username:     username,
+					Password:     encryptPassword(form.Value("password"), salt),
+					Avatar:       "", // defaultAvatars[rand.Intn(len(defaultAvatars))],
+					Salt:         salt,
+					Email:        form.Value("email"),
+					ValidateCode: validateCode,
+					IsActive:     true,
+					JoinedAt:     time.Now(),
+					Index:        index,
+				}
+				u.GetGithubValues(s)
+				err = c.Insert(u)
 				if err != nil {
 					panic(err)
 				} else {
-
-					//删除session传过来的默认信息
-					delete(session.Values, GITHUB_EMAIL)
-					delete(session.Values, GITHUB_ID)
-					delete(session.Values, GITHUB_LINK)
-					delete(session.Values, GITHUB_NAME)
-					delete(session.Values, GITHUB_ORG)
-					delete(session.Values, GITHUB_PICTURE)
-					delete(session.Values, GITHUB_PROVIDER)
+					deleteGithubValues(session)
 				}
 			} else {
 				err = c.Insert(&User{
