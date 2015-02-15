@@ -64,18 +64,26 @@ func handlerFun(route Route) http.HandlerFunc {
 		}
 	}
 }
+
 func StartServer() {
-	http.Handle("/static/", http.FileServer(http.Dir(".")))
+
+	//http.Handle("/static/", http.FileServer(http.Dir(".")))
 	http.Handle("/get/package", websocket.Handler(getPackageHandler))
 	http.Handle("/captcha/", captcha.Server(captcha.StdWidth, captcha.StdHeight))
-	//http.Handle("/auth/signup", githubHandler)
+
 	r := mux.NewRouter()
 	for _, route := range routes {
 		r.HandleFunc(route.URL, handlerFun(route))
 	}
-
+	r.PathPrefix("/static/").HandlerFunc(fileHandler)
 	http.Handle("/", r)
 
 	logger.Println("Server start on:", Config.Port)
-	logger.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", Config.Port), nil))
+	// http server
+	err := http.ListenAndServeTLS(fmt.Sprintf(":%d", Config.Port), "cert.pem", "key.pem", nil)
+	//err := http.ListenAndServe(fmt.Sprintf(":%d", Config.Port), nil)
+	if err != nil {
+		logger.Fatal(err)
+	}
+
 }

@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/ggaaooppeenngg/util"
+
 	"gopkg.in/mgo.v2"
 )
 
@@ -44,8 +46,19 @@ type Route struct {
 	HandlerFunc HandlerFunc
 }
 
+func fileHandler(w http.ResponseWriter, req *http.Request) {
+	url := req.Method + " " + req.URL.Path
+	logger.Println(url)
+
+	filePath := req.URL.Path[1:]
+	logger.Printf(filePath)
+	logger.Println(util.IsExist(filePath))
+	http.ServeFile(w, req, filePath)
+}
+
 // 路由规则.
 var routes = []Route{
+
 	{"/", Everyone, indexHandler},
 	{"/about", Everyone, staticHandler("about.html")},
 	{"/faq", Everyone, staticHandler("faq.html")},

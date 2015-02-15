@@ -43,7 +43,17 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 
 需要先启动MongoDB
 
-    $GOPATH/bin/server
+生成私钥和证书,会在当前目录生成`key.pem`和`cert.pem`
+	
+	go run $GOROOT/src/crypto/tls/generate_cert.go --host 域名
+
+Linux/Unix/OS X:
+
+    $ $GOPATH/bin/server
+
+Windows:
+
+    > $GOPATH\bin\server.exe
 
 或者:
 	
