@@ -5,6 +5,7 @@ package gopher
 
 import (
 	"encoding/json"
+	"html/template"
 	"net/http"
 	"time"
 
@@ -14,17 +15,31 @@ import (
 
 // Handler 是包含一些请求上下文的结构体.
 type Handler struct {
-	ResponseWriter http.ResponseWriter
-	Request        *http.Request
-	StartTime      time.Time     //接受请求时间
-	Session        *mgo.Session  //会话
-	DB             *mgo.Database //数据库
+	http.ResponseWriter
+	*http.Request
+	*mgo.Session               //会话
+	StartTime    time.Time     //接受请求时间
+	DB           *mgo.Database //数据库
+}
+
+// 只用file作模板的简易渲染
+func (handler *Handler) render(file string, datas ...map[string]interface{}) {
+	var data = make(map[string]interface{})
+	if len(datas) == 1 {
+		data = datas[0]
+	} else if len(datas) != 0 {
+		panic("不能传入超过多个data map")
+	}
+	tpl, err := template.ParseFiles(file)
+	if err != nil {
+		panic(err)
+	}
+	tpl.Execute(handler.ResponseWriter, data)
 }
 
 // 渲染模板，并放入一些模板常用变量
 func (handler *Handler) renderTemplate(file, baseFile string, datas ...map[string]interface{}) {
 
-	// TODO:增加playground.
 	var data = make(map[string]interface{})
 	if len(datas) == 1 {
 		data = datas[0]
