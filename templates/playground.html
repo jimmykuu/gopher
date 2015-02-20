@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Go游乐场</title>
+		<link rel="stylesheet" href="/static/css/play.css">
+	</head>
+	<body>
+		<div id="banner">
+			<div id="head">Go游乐场</div>
+			<div id="controls">
+				<input type="button" value="运行" id="run">
+				<input type="button" value="格式化" id="fmt">
+				<div id="importsBox">
+					<label>
+						<input type="checkbox" id="imports" checked="checked">导入</label>
+				</div>
+				<input type="button" value="分享" id="share">
+				<input type="text" id="shareURL" style="display:none">
+			</div>
+		</div>
+		<div id="wrap">
+			<div class="linedtextarea">
+				<textarea spellcheck="false" >package main</textarea>
+			</div>
+		</div>
+		<div id="output">
+			<pre>Hello world!</pre>
+		</div>
+	</body>
+</html>
