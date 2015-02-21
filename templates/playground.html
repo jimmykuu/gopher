@@ -3,6 +3,7 @@
 	<head>
 		<title>Go游乐场</title>
 		<link rel="stylesheet" href="/static/css/play.css">
+		<script type="text/javascript" src="http://cdn.staticfile.org/jquery/2.0.3/jquery.min.js"></script>
 	</head>
 	<body>
 		<div id="banner">
@@ -20,11 +21,51 @@
 		</div>
 		<div id="wrap">
 			<div class="linedtextarea">
-				<textarea spellcheck="false" >package main</textarea>
+				<textarea spellcheck="false" id="code">package main
+import "fmt"
+func main(){
+	fmt.Println("这个游乐场可以用于重现和分享Go代码.")
+}</textarea>
 			</div>
 		</div>
 		<div id="output">
-			<pre>Hello world!</pre>
+			<pre id="response">Hello world!</pre>
 		</div>
 	</body>
+	<script type="text/javascript">
+	// console 重定向
+	(function(){
+		var oldLog = console.log;
+
+		console.log = function(message){
+			$("#response").text(message);
+			oldLog.apply(console,arguments);
+		};
+	})();
+
+	var socket = new WebSocket("ws://localhost:8888/playsocket");
+	socket.onopen = function(event){
+		$( "#run" ).click(function(){
+			cmd = {
+				Command:"run",
+				Content:"",
+			}
+			cmd.Content = $("#code").text();
+			socket.send(JSON.stringify(cmd));
+		});
+		window.onunload = function(){
+			cmd = {
+				Command:"close",
+			}
+			socket.send(JSON.stringify(cmd));
+		};
+	}
+
+	socket.onmessage = function(event){
+		var data = JSON.parse(event.data);
+		var ret = data.Content;
+		eval(ret);
+	}
+
+	</script>
 </html>

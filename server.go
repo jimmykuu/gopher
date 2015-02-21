@@ -80,8 +80,8 @@ func StartServer() {
 
 	logger.Println("Server start on:", Config.Port)
 	// http server
-	err := http.ListenAndServeTLS(fmt.Sprintf(":%d", Config.Port), "cert.pem", "key.pem", nil)
-	//err := http.ListenAndServe(fmt.Sprintf(":%d", Config.Port), nil)
+	// err := http.ListenAndServeTLS(fmt.Sprintf(":%d", Config.Port), "cert.pem", "key.pem", nil)
+	err := http.ListenAndServe(fmt.Sprintf(":%d", Config.Port), nil)
 	if err != nil {
 		logger.Fatal(err)
 	}
