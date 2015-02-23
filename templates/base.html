@@ -10,7 +10,7 @@
 	<title>{{template "Title" .}} - Golang中国</title>
 	<script type="text/javascript" src="http://cdn.staticfile.org/jquery/2.0.3/jquery.min.js"></script>
 	<link rel="stylesheet" href="http://gopher.qiniudn.com/static/css/bootstrap.min.css?v=3.3.0">
-	<link rel="stylesheet" href="http://gopher.qiniudn.com/static/css/wmd.css" type="text/css">
+	<link rel="stylesheet" href="http//gopher.qiniudn.com/static/css/wmd.css" type="text/css">
 	<link rel="stylesheet" href="/static/css/style.css?v=7" type="text/css">
 	<link rel="stylesheet" href="http://gopher.qiniudn.com/static/css/prettify.css" type="text/css">
     <link rel="stylesheet" href="/static/css/history.css?v=2" type="text/css">
@@ -69,6 +69,7 @@
 					<li{{if eq .active "package"}} class="active"{{end}}><a href="/packages">第三方包</a></li>
 					<li{{if eq .active "members"}} class="active"{{end}}><a href="/members">会员</a></li>
                     <li{{if eq .active "books"}} class="active"{{end}}><a href="/books">图书</a></li>
+					<li><a href="/play">游乐场</a></li>
 					<li><a href="http://tour.golangtc.com" target="_blank" rel="nofollow">Go 指南</a></li>
 					<li><a href="http://godoc.golangtc.com" target="_blank" rel="nofollow">GoDoc</a></li>
 					<li class="dropdown">
@@ -123,11 +124,11 @@
 			  {{loadtimes .startTime}}.
 			</p>
 			<p style="vertical-align: middle;" class="friendly_links">
-				<a href="http://www.cloudwise.com/" target="_blank" rel="nofollow"><img src="http://gopher.qiniudn.com/sponsor/cloudwise-logo.png?imageView2/2/h/46/q/100" alt="云智慧"></a>
-				<a href="http://www.linode.com/?r=2bbf272ff1d5457dfcc269442534b20cae7b7fc4" target="_blank" rel="nofollow"><img src="http://gopher.qiniudn.com/static/img/linode.png" alt="linode"></a>
-				<a href="http://portal.qiniu.com/signup?code=3lel8p4gwbv4e" target="_blank" rel="nofollow"><img src="http://gopher.qiniudn.com/exchange%2Fqiniu_logo.png?imageView2/2/h/46/100" alt="七牛云存储"></a>
-				<a href="http://www.lagou.com/" target="_blank" rel="nofollow"><img src="http://www.lagou.com/images/logo.png" alt="拉勾网-最专业的互联网招聘平台"></a>
-				<a href="http://segmentfault.com/" target="_blank" rel="nofollow"><img src="http://77fkk5.com1.z0.glb.clouddn.com/friendly_links/segmentfault.png" alt="SegmentFault"></a>
+				<a href="http://www.cloudwise.com/" target="_blank" rel="nofollow"><img src="https://gopher.qiniudn.com/sponsor/cloudwise-logo.png?imageView2/2/h/46/q/100" alt="云智慧"></a>
+				<a href="http://www.linode.com/?r=2bbf272ff1d5457dfcc269442534b20cae7b7fc4" target="_blank" rel="nofollow"><img src="https://gopher.qiniudn.com/static/img/linode.png" alt="linode"></a>
+				<a href="http://portal.qiniu.com/signup?code=3lel8p4gwbv4e" target="_blank" rel="nofollow"><img src="https://gopher.qiniudn.com/exchange%2Fqiniu_logo.png?imageView2/2/h/46/100" alt="七牛云存储"></a>
+				<a href="http://www.lagou.com/" target="_blank" rel="nofollow"><img src="https://www.lagou.com/images/logo.png" alt="拉勾网-最专业的互联网招聘平台"></a>
+				<a href="http://segmentfault.com/" target="_blank" rel="nofollow"><img src="https://77fkk5.com1.z0.glb.clouddn.com/friendly_links/segmentfault.png" alt="SegmentFault"></a>
 			</p>
 		</div>
 	</footer>
@@ -155,8 +156,8 @@ $(function(){
 		});
 })
 </script>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/bootstrap.min.js?v3.3.0"></script>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/prettify.js"></script>
+<script type="text/javascript" src="https://gopher.qiniudn.com/static/js/bootstrap.min.js?v3.3.0"></script>
+<script type="text/javascript" src="https://gopher.qiniudn.com/static/js/prettify.js"></script>
 <script type="text/javascript" src="/static/js/jquery.caret.min.js?v=0.0.9"></script>
 <script type="text/javascript" src="/static/js/jquery.atwho.min.js?v=0.4.11"></script>
 <script type="text/javascript" src="/static/js/application.js?v={{.staticFileVersion}}"></script>

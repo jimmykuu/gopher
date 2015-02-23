@@ -46,11 +46,7 @@ func playGroundHandler(handler *Handler) {
 			if err != nil {
 				logger.Println(err)
 			}
-		} else {
-			// new id embedded in the page
-			id = bson.NewObjectId().Hex()
 		}
-
 		handler.render("templates/playground.html", map[string]interface{}{
 			"Code":   content,
 			"CodeId": id,
@@ -83,11 +79,14 @@ func init() {
 
 func buildGoCode(input string, buf *bytes.Buffer) error {
 	err := Lib.Build(strings.NewReader(input), buf, buildOptions)
+	if err != nil {
+		return err
+	}
 	output := buf.Bytes()
 	output = output[13 : len(output)-2] // len( "use strict"\n ) == 11 and final ";\n"
 	buf.Reset()
 	io.Copy(buf, bytes.NewReader(output))
-	return err
+	return nil
 }
 
 // socket 处理主体
@@ -95,6 +94,7 @@ func playWebSocket(handler *Handler) func(ws *websocket.Conn) {
 	return func(ws *websocket.Conn) {
 		cmd := new(Command)
 		for {
+
 			err := websocket.JSON.Receive(ws, cmd)
 			if err != nil {
 				logger.Println(err)
@@ -106,7 +106,7 @@ func playWebSocket(handler *Handler) func(ws *websocket.Conn) {
 			}
 
 			if cmd.Command == SHARE {
-				id := bson.ObjectIdHex(cmd.Id)
+				id := bson.NewObjectId()
 				code := &Code{
 					Id_:     id,
 					Content: cmd.Content,
@@ -122,6 +122,7 @@ func playWebSocket(handler *Handler) func(ws *websocket.Conn) {
 				}
 				websocket.JSON.Send(ws, Res{
 					Command: SHARE,
+					Content: id.Hex(),
 				})
 			}
 
@@ -130,10 +131,12 @@ func playWebSocket(handler *Handler) func(ws *websocket.Conn) {
 				err := buildGoCode(cmd.Content, &buf)
 				if err != nil {
 					err = websocket.JSON.Send(ws, Res{
-						Err: err.Error(),
+						Command: RUN,
+						Err:     err.Error(),
 					})
 				} else {
 					err = websocket.JSON.Send(ws, Res{
+						Command: RUN,
 						Content: buf.String(),
 					})
 				}
@@ -142,6 +145,7 @@ func playWebSocket(handler *Handler) func(ws *websocket.Conn) {
 					break
 				}
 			}
+
 		}
 	}
 }

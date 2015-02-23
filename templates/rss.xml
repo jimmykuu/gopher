@@ -2,14 +2,14 @@
 <rss version="2.0">
   <channel>
     <title><![CDATA[golangtc.com - golang中国社区]]></title>
-    <link>http://golangtc.com/</link>
+    <link>https://golangtc.com/</link>
     <description><![CDATA[golangtc.com - golang中国社区]]></description>
     <lastBuildDate>{{.utils.FormatDate .date}}</lastBuildDate>
     <pubDate>{{.utils.FormatDate .date}}</pubDate>
     <language>zh-CN</language>
     <image>
-      <link>http://golangtc.com/</link>
-      <url>http://gopher.qiniudn.com/static/img/golang-china.png?v=14</url>
+      <link>https://golangtc.com/</link>
+      <url>https://gopher.qiniudn.com/static/img/golang-china.png?v=14</url>
       <title><![CDATA[golangtc - golang中国社区]]></title>
     </image>
 	{{range $t := .topics }}
