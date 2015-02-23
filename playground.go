@@ -13,9 +13,10 @@ import (
 type CMD string
 
 const (
-	RUN   CMD = "run"
-	CLOSE CMD = "close"
-	SHARE CMD = "share"
+	RUN    CMD = "run"
+	CLOSE  CMD = "close"
+	SHARE  CMD = "share"
+	UPDATE CMD = "update"
 )
 
 type Command struct {
@@ -103,6 +104,29 @@ func playWebSocket(handler *Handler) func(ws *websocket.Conn) {
 
 			if cmd.Command == CLOSE {
 				break
+			}
+			if cmd.Command == UPDATE {
+				println("update")
+				var id = bson.ObjectIdHex(cmd.Id)
+
+				code := &Code{
+					Id_: id,
+				}
+				err := code.Update(handler.DB, bson.M{
+					"content": cmd.Content,
+				})
+				if err != nil {
+					logger.Println(err)
+					websocket.JSON.Send(ws, Res{
+						Command: SHARE,
+						Err:     err.Error(),
+					})
+					break
+				}
+				websocket.JSON.Send(ws, Res{
+					Command: SHARE,
+					Content: id.Hex(),
+				})
 			}
 
 			if cmd.Command == SHARE {

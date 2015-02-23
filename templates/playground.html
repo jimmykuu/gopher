@@ -26,31 +26,43 @@ func main(){
 	// console 重定向
 	(function(){
 		var oldLog = console.log;
-
 		console.log = function(message){
 			$("#response").css("color","black");
-			$("#response").text(message);
+			var output = $("#response").html();
+			var message = message.replace(/\n/g,"<br>");
+			$("#response").html(output+message);
 			oldLog.apply(console,arguments);
 		};
 	})();
+
+	function setURL(id){
+		console.log(id);
+		var url = "{{.Host}}"+"/play/"+id;
+		$("#shareURL").val(url);
+		$("#shareURL").select();
+	};
 
 	var socket = new WebSocket("ws://localhost:8888/playsocket");
 	socket.onopen = function(event){
 
 		// 分享代码
 		$( "#share" ).click(function(){
-			$("#shareURL").css("display","inline-block");
 			var id = "{{.CodeId}}";
 			if(id!==""){
-				var url = "{{.Host}}"+"/play/"+id;
-				$("#shareURL").val(url);
-				$("#shareURL").select();
+				// 更新代码
+				alert("update");
+				var cmd = {
+					Command:"update",
+					Id:id,
+					Content:$("#code").val(),
+				}	
+				socket.send(JSON.stringify(cmd));
 			}else{
+				alert("share");
 				//　提交新的代码.
-				var code = $("#code").text();
 				var cmd = {
 					Command:"share",
-					Content:code,
+					Content:$("#code").val(),
 				}	
 				socket.send(JSON.stringify(cmd));
 			}
@@ -58,13 +70,14 @@ func main(){
 
 		// 运行代码
 		$( "#run" ).click(function(){
-			var code  = $("#code").val();
 			var cmd = {
 				Command:"run",
-				Content:code,
+				Content:$("#code").val(),
 			}
+			$("#response").text("excuting...");
 			socket.send(JSON.stringify(cmd));
 		});
+
 		window.onunload = function(){
 			var cmd = {
 				Command:"close",
@@ -72,32 +85,33 @@ func main(){
 			socket.send(JSON.stringify(cmd));
 		};
 	}
-
+	
 	socket.onmessage = function(event){
 		var data = JSON.parse(event.data);
-
 		if(data.Command == "run"){
 			if(data.Err){
 				var err = data.Err;
 				$("#response").css("color","red");
 				$("#response").text(err);
-				//alert(err);
 			}else{
+				$("#response").text("");
 				var ret = data.Content;
 				eval(ret);
 			}
 		}
 
-		if(data.Command == "share"){
+		if(data.Command == "share" ||
+		   data.Command == "update"){
 			if(data.Err){
-			//alert("存在错误:\n"+data.Err);
+				$("#response").css("color","red");
+				$("#response").text("存在错误:\n"+data.Err);
 			}else{
+				$("#shareURL").css("display","inline-block");
 				var url = "{{.Host}}"+"/play/"+data.Content;
 				$("#shareURL").val(url);
 				$("#shareURL").select();
 			}
 		}
-
 	}
 	</script>
 </html>
