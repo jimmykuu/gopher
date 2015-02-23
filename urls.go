@@ -159,5 +159,7 @@ var routes = []Route{
 	{"/download/package", Everyone, downloadPackagesHandler},
 	{"/download/liteide", Everyone, downloadLiteIDEHandler},
 	{"/play", Everyone, playGroundHandler},
+	{"/play/{id:[0-9a-f]{24}}", Everyone, playGroundHandler},
+	{"/play/share", Everyone, shareCodeHandler},
 	{"/playsocket", Everyone, playSocketHandler},
 }

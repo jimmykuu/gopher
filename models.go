@@ -36,6 +36,7 @@ const (
 	SITES               = "sites"
 	STATUS              = "status"
 	USERS               = "users"
+	CODE                = "code"
 	DOWNLOADED_PACKAGES = "downloaded_packages"
 
 	GITHUB_COM = "github.com"
@@ -267,7 +268,7 @@ type Content struct {
 }
 
 func (c *Content) Creater(db *mgo.Database) *User {
-	c_ := db.C("users")
+	c_ := db.C(USERS)
 	user := User{}
 	c_.Find(bson.M{"_id": c.CreatedBy}).One(&user)
 
@@ -279,7 +280,7 @@ func (c *Content) Updater(db *mgo.Database) *User {
 		return nil
 	}
 
-	c_ := db.C("users")
+	c_ := db.C(USERS)
 	user := User{}
 	c_.Find(bson.M{"_id": bson.ObjectIdHex(c.UpdatedBy)}).One(&user)
 

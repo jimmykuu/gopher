@@ -93,3 +93,11 @@ body {
 	font-family: Menlo, Courier New, monospace;
 	font-size: 11pt;
 }
+
+#shareURL{
+	width: 350px;
+	font-size: 16px;
+	border: 1px solid #ccc;
+	background: #eee;
+	color: black;
+}

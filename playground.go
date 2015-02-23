@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	Lib "github.com/go-on/gopherjslib"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type CMD string
@@ -14,14 +15,17 @@ type CMD string
 const (
 	RUN   CMD = "run"
 	CLOSE CMD = "close"
+	SHARE CMD = "share"
 )
 
 type Command struct {
 	Command CMD
+	Id      string
 	Content string // 内容
 }
 
 type Res struct {
+	Command CMD    //
 	Content string // 相应内容
 	Err     string // 错误
 }
@@ -29,17 +33,42 @@ type Res struct {
 // Playground 的静态请求
 func playGroundHandler(handler *Handler) {
 	if handler.Method != "POST" {
-		handler.render("templates/playground.html")
+		id := handler.param("id")
+
+		var (
+			code    *Code
+			err     error
+			content string = "这是Go语言游乐场,可以用来分享代码"
+		)
+		if id != "" {
+			code, err = GetCodeById(id, handler.DB)
+			content = code.Content
+			if err != nil {
+				logger.Println(err)
+			}
+		} else {
+			// new id embedded in the page
+			id = bson.NewObjectId().Hex()
+		}
+
+		handler.render("templates/playground.html", map[string]interface{}{
+			"Code":   content,
+			"CodeId": id,
+			"Host":   Config.Host,
+		})
 		return
 	}
+}
+
+// share code
+func shareCodeHandler(handler *Handler) {
 
 }
 
 // 封装websocket
 func playSocketHandler(handler *Handler) {
-	websocket.Handler(playWebSocket).
-		ServeHTTP(handler.ResponseWriter,
-		handler.Request)
+	websocket.Handler(playWebSocket(handler)).
+		ServeHTTP(handler.ResponseWriter, handler.Request)
 }
 
 // 封装错误输出
@@ -62,32 +91,56 @@ func buildGoCode(input string, buf *bytes.Buffer) error {
 }
 
 // socket 处理主体
-func playWebSocket(ws *websocket.Conn) {
-	cmd := new(Command)
-	for {
-		err := websocket.JSON.Receive(ws, cmd)
-		if err != nil {
-			logger.Println(err)
-			break
-		}
-		if cmd.Command == "close" {
-			break
-		}
-		if cmd.Command == "run" {
-			var buf bytes.Buffer
-			err := buildGoCode(cmd.Content, &buf)
-			if err != nil {
-				err = websocket.JSON.Send(ws, Res{
-					Err: err.Error(),
-				})
-			} else {
-				err = websocket.JSON.Send(ws, Res{
-					Content: buf.String(),
-				})
-			}
+func playWebSocket(handler *Handler) func(ws *websocket.Conn) {
+	return func(ws *websocket.Conn) {
+		cmd := new(Command)
+		for {
+			err := websocket.JSON.Receive(ws, cmd)
 			if err != nil {
 				logger.Println(err)
 				break
+			}
+
+			if cmd.Command == CLOSE {
+				break
+			}
+
+			if cmd.Command == SHARE {
+				id := bson.ObjectIdHex(cmd.Id)
+				code := &Code{
+					Id_:     id,
+					Content: cmd.Content,
+				}
+				err := code.Save(handler.DB)
+				if err != nil {
+					logger.Println(err)
+					websocket.JSON.Send(ws, Res{
+						Command: SHARE,
+						Err:     err.Error(),
+					})
+					break
+				}
+				websocket.JSON.Send(ws, Res{
+					Command: SHARE,
+				})
+			}
+
+			if cmd.Command == RUN {
+				var buf bytes.Buffer
+				err := buildGoCode(cmd.Content, &buf)
+				if err != nil {
+					err = websocket.JSON.Send(ws, Res{
+						Err: err.Error(),
+					})
+				} else {
+					err = websocket.JSON.Send(ws, Res{
+						Content: buf.String(),
+					})
+				}
+				if err != nil {
+					logger.Println(err)
+					break
+				}
 			}
 		}
 	}
