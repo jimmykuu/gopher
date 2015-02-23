@@ -36,10 +36,20 @@ func main(){
 	})();
 
 	function setURL(id){
-		console.log(id);
+		$("#shareURL").css("display","inline-block");
 		var url = "{{.Host}}"+"/play/"+id;
 		$("#shareURL").val(url);
 		$("#shareURL").select();
+	};
+
+	function alarm(message){
+		$("#response").css("color","red");
+		$("#response").text(message);
+	};
+
+	function print(message){
+		$("#response").css("color","black");
+		$("#response").text(message);
 	};
 
 	var socket = new WebSocket("ws://localhost:8888/playsocket");
@@ -50,7 +60,6 @@ func main(){
 			var id = "{{.CodeId}}";
 			if(id!==""){
 				// 更新代码
-				alert("update");
 				var cmd = {
 					Command:"update",
 					Id:id,
@@ -58,7 +67,6 @@ func main(){
 				}	
 				socket.send(JSON.stringify(cmd));
 			}else{
-				alert("share");
 				//　提交新的代码.
 				var cmd = {
 					Command:"share",
@@ -74,7 +82,7 @@ func main(){
 				Command:"run",
 				Content:$("#code").val(),
 			}
-			$("#response").text("excuting...");
+			print("excuting...")
 			socket.send(JSON.stringify(cmd));
 		});
 
@@ -85,14 +93,14 @@ func main(){
 			socket.send(JSON.stringify(cmd));
 		};
 	}
-	
+
+	//　响应处理	
 	socket.onmessage = function(event){
 		var data = JSON.parse(event.data);
 		if(data.Command == "run"){
 			if(data.Err){
 				var err = data.Err;
-				$("#response").css("color","red");
-				$("#response").text(err);
+				alarm(err);
 			}else{
 				$("#response").text("");
 				var ret = data.Content;
@@ -103,15 +111,12 @@ func main(){
 		if(data.Command == "share" ||
 		   data.Command == "update"){
 			if(data.Err){
-				$("#response").css("color","red");
-				$("#response").text("存在错误:\n"+data.Err);
+				alarm("存在错误:\n"+data.Err);
 			}else{
-				$("#shareURL").css("display","inline-block");
-				var url = "{{.Host}}"+"/play/"+data.Content;
-				$("#shareURL").val(url);
-				$("#shareURL").select();
+				setURL(data.Content);
 			}
 		}
 	}
+
 	</script>
 </html>
