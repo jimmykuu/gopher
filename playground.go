@@ -2,6 +2,7 @@ package gopher
 
 import (
 	"bytes"
+	"go/format"
 	"golang.org/x/net/websocket"
 	"io"
 	"strings"
@@ -17,6 +18,7 @@ const (
 	CLOSE  CMD = "close"
 	SHARE  CMD = "share"
 	UPDATE CMD = "update"
+	FMT    CMD = "fmt"
 )
 
 type Command struct {
@@ -128,7 +130,24 @@ func playWebSocket(handler *Handler) func(ws *websocket.Conn) {
 					Content: id.Hex(),
 				})
 			}
-
+			if cmd.Command == FMT {
+				out, err := format.Source([]byte(cmd.Content))
+				if err != nil {
+					err = websocket.JSON.Send(ws, Res{
+						Command: FMT,
+						Err:     err.Error(),
+					})
+				} else {
+					err = websocket.JSON.Send(ws, Res{
+						Command: FMT,
+						Content: string(out),
+					})
+				}
+				if err != nil {
+					logger.Println(err)
+					break
+				}
+			}
 			if cmd.Command == SHARE {
 				id := bson.NewObjectId()
 				code := &Code{
