@@ -2,6 +2,7 @@ package gopher
 
 import (
 	"bytes"
+	//"fmt"
 	"go/format"
 	"golang.org/x/net/websocket"
 	"io"
@@ -41,7 +42,14 @@ func playGroundHandler(handler *Handler) {
 		var (
 			code    *Code
 			err     error
-			content string = "这是Go语言游乐场,可以用来分享代码"
+			content string = `package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("这个游乐场可以用于重现和分享Go代码.")
+}
+`
 		)
 		if id != "" {
 			code, err = GetCodeById(id, handler.DB)
@@ -148,6 +156,7 @@ func playWebSocket(handler *Handler) func(ws *websocket.Conn) {
 					break
 				}
 			}
+
 			if cmd.Command == SHARE {
 				id := bson.NewObjectId()
 				code := &Code{

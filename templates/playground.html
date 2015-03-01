@@ -14,11 +14,7 @@
 		</div>
 		<div id="wrap">
 			<div class="linedtextarea">
-				<textarea spellcheck="false" id="code">package main
-import "fmt"
-func main(){
-	fmt.Println("这个游乐场可以用于重现和分享Go代码.")
-}</textarea>
+				<textarea spellcheck="false" id="code">{{.Code}}</textarea>
 			</div>
 		</div>
 		<div id="output">
@@ -26,19 +22,19 @@ func main(){
 		</div>
 	</body>
 	<script type="text/javascript">
-		// console 重定向
+	// console 重定向
 	(function(){
 		var oldLog = console.log;
 		console.log = function(message){
-			$("#response").css("color","black");
-			var output = $("#response").html();
-			var message = message.replace(/\n/g,"<br>");
+			var output = $("#response").text();
+			var message = message+"\n";
+
 			$("#response").html(output+message);
 			oldLog.apply(console,arguments);
 		};
 	})();
 
-	//　编辑区可以使用tab.
+	// 编辑区可以使用tab.
 	$(document).delegate('textarea', 'keydown', function(e) { 
 		var keyCode = e.keyCode || e.which; 
 
@@ -96,7 +92,7 @@ func main(){
 				}	
 				socket.send(JSON.stringify(cmd));
 			}else{
-				//　提交新的代码.
+				// 提交新的代码.
 				var cmd = {
 					Command:"share",
 					Content:$("#code").val(),
@@ -123,7 +119,7 @@ func main(){
 		};
 	}
 
-	//　响应处理	
+	// 响应处理	
 	socket.onmessage = function(event){
 
 		var data = JSON.parse(event.data);
@@ -139,11 +135,10 @@ func main(){
 		}
 
 		if(data.Command == "fmt"){
-			// BUG:点第二次不会format
 			if(data.Err){
 				alarm("存在错误:\n"+data.Err);
 			}else{
-				$("#code").text(data.Content);
+				$("#code").val(data.Content);
 			}
 		}
 
