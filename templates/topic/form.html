@@ -9,7 +9,6 @@
 {{define "Content"}}
 <div class="content">
   <form action="" method="post" id="topic-form" role="form">
-	<input type="hidden" name="csrf_token" value="{{.token}}">
 	<fieldset>
 	  {{.form.RenderInput "html"}}
       {{$node := .form.Field "node"}}

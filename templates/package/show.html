@@ -64,7 +64,6 @@
 	{{if .username}}
 		<div id="reply">
 		  <form action="/comment/{{$package.Id_.Hex}}" method="post" id="reply-form" role="form">
-			<input type="hidden" name="csrf_token" value="{{.token}}">
 			<fieldset>
 			  <input type="hidden" name="html" id="html">
 			  <div class="form-group">

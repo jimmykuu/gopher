@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/jimmykuu/wtforms"
-	"github.com/justinas/nosurf"
 )
 
 const (
@@ -105,7 +104,6 @@ func renderTemplate(handler Handler, file, baseFile string, data map[string]inte
 	data["startTime"] = handler.StartTime
 	data["db"] = handler.DB
 	data["host"] = Config.Host
-	data["token"] = nosurf.Token(handler.Request)
 
 	_, ok := data["active"]
 	if !ok {

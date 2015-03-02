@@ -91,7 +91,6 @@
 {{if .username}}
 <div id="reply">
   <form action="/comment/{{$topic.Id_.Hex}}" method="post" class="form-vertical" id="reply-form" role="form">
-	<input type="hidden" name="csrf_token" value="{{.token}}">
 	<fieldset>
 	  <input type="hidden" name="html" id="html">
 	  <div class="form-group">
@@ -195,7 +194,6 @@
 		<form action="" method="post" class="form-vertical" id="edit-comment-form" role="form">
           <div id="myTabContent" class="tab-content">
 			<div class="tab-pane fade in active" id="comment">
-			  <input type="hidden" name="csrf_token" value="{{.token}}">
 			  <input type="hidden" name="html" id="comment-html">
 			  <div class="form-group">
 				<textarea class="form-control" name="content" id="comment-markdown" rows="10"></textarea>

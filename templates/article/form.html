@@ -9,7 +9,6 @@
 {{define "Content"}}
 	<div class="content">
 	  <form action="{{.action}}" method="post" id="article-form" role="form">
-		<input type="hidden" name="csrf_token" value="{{.token}}">
 			{{$html := .form.Field "html"}}
 			{{$html.RenderInput}}
 			{{.utils.RenderInput .form "title"}}

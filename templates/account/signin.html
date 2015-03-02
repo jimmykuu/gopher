@@ -10,7 +10,6 @@
 	<div class="content">
 	  <img src="http://gopher.qiniudn.com/static/img/gopher/talks.png" class="pull-right">
 	  <form action="" method="post" class="form-horizontal" role="form">
-		<input type="hidden" name="csrf_token" value="{{.token}}">
 		<fieldset>
 		  {{.form.RenderInput "next"}}
           {{.utils.RenderInputH .form "username" 2 6 `placeholder="用户名"`}}

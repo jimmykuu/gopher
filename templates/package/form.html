@@ -9,7 +9,6 @@
 {{define "Content"}}
 <div class="content">
   <form action="{{.action}}" method="post" id="package-form" role="form">
-	<input type="hidden" name="csrf_token" value="{{.token}}">
 	<fieldset>
 	  <input type="hidden" name="html" id="html">
 	  {{.utils.RenderInput .form "category_id"}}

@@ -1,7 +1,6 @@
 {{define "Title"}}后台管理：{{if .isNew}}添加{{else}}编辑{{end}}友情链接{{end}}
 {{define "Content"}}
 <form action="" method="post" class="ui form segment">
-  <input type="hidden" name="csrf_token" value="{{.token}}">
   {{input .form "name"}}
   {{input .form "url"}}
   {{input .form "description"}}

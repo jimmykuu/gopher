@@ -1,7 +1,6 @@
 {{define "Title"}}新建节点{{end}}
 {{define "Content"}}
 <form action="/admin/node/new" method="post" class="ui form segment">
-  <input type="hidden" name="csrf_token" value="{{.token}}">
   {{input .form "id"}}
   {{input .form "name"}}
   {{input .form "description"}}

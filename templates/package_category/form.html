@@ -2,7 +2,6 @@
 
 {{define "Content"}}
 <form action="" method="post" class="ui form segment">
-  <input type="hidden" name="csrf_token" value="{{.token}}">
   {{input .form "id"}}
   {{input .form "name"}}
   <input type="submit" value="提交" class="ui blue submit button">

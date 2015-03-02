@@ -59,7 +59,6 @@
 	{{if .username}}
 		<div id="reply">
 		  <form action="/comment/{{$article.Id_.Hex}}" method="post" id="reply-form" role="form">
-			<input type="hidden" name="csrf_token" value="{{.token}}">
 			<fieldset>
 			  <input type="hidden" name="html" id="html">
 			  <label for="wmd-input">评论</label>

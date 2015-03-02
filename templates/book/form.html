@@ -1,7 +1,6 @@
 {{define "Title"}}{{if .isNew}}新建{{else}}编辑{{end}}图书{{end}}
 {{define "Content"}}
 <form action="" method="post" class="ui form segment">
-  <input type="hidden" name="csrf_token" value="{{.token}}">
   {{input .form "title"}}
   {{input .form "cover"}}
   {{input .form "author"}}

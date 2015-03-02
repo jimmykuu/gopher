@@ -2,7 +2,6 @@
 {{define "Content"}}
 <h1 class="ui header">新建站点分类</h1>
 <form action="/admin/site_category/new" method="post" class="ui form segment">
-  <input type="hidden" name="csrf_token" value="{{.token}}">
   {{input .form "name"}}
   <input type="submit" class="ui blue submit button" value="新建">
 </form>
