@@ -36,26 +36,26 @@
 		<ul class="list-unstyled">
 			{{if $user.Location}}
 			<li>
-				<img src="http://gopher.qiniudn.com/static/img/icon-location.png">
-				<a href="/members/city/{{$user.Location}}">{{$user.Location}}</a>
+			  <i class="fa fa-map-marker"></i>
+			  <a href="/members/city/{{$user.Location}}">{{$user.Location}}</a>
 			</li>
 			{{end}}
 			{{if $user.Website}}
 			<li>
-				<img src="http://gopher.qiniudn.com/static/img/icon-website.png">
-				<a href="{{.utils.Url $user.Website}}" target="_blank">{{$user.Website}}</a>
+			  <i class="fa fa-globe"></i>
+			  <a href="{{.utils.Url $user.Website}}" target="_blank">{{$user.Website}}</a>
 			</li>
 			{{end}}
 			{{if $user.Weibo}}
 			<li>
-				<img src="http://gopher.qiniudn.com/static/img/icon-weibo.png">
-				<a href="http://weibo.com/{{$user.Weibo}}" target="_blank">http://weibo.com/{{$user.Weibo}}</a>
+			  <i class="fa fa-weibo"></i>
+			  <a href="http://weibo.com/{{$user.Weibo}}" target="_blank">http://weibo.com/{{$user.Weibo}}</a>
 			</li>
 			{{end}}
 			{{if $user.GitHubUsername}}
 			<li>
-				<img src="http://gopher.qiniudn.com/static/img/icon-github.png">
-				<a href="https://github.com/{{$user.GitHubUsername}}" target="_blank">https://github.com/{{$user.GitHubUsername}}</a>
+			  <i class="fa fa-github"></i>
+			  <a href="https://github.com/{{$user.GitHubUsername}}" target="_blank">https://github.com/{{$user.GitHubUsername}}</a>
 			</li>
 			{{end}}
 		</ul>
