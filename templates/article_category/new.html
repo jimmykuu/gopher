@@ -1,9 +1,23 @@
 {{define "Title"}}新建文章分类{{end}}
 {{define "Content"}}
+<<<<<<< HEAD
+<<<<<<< HEAD
 <h1 class="ui header">新建文章分类</h1>
 <form action="/admin/article_category/new" method="post" class="ui form segment">
   <input type="hidden" name="csrf_token" value="{{.token}}">
   {{input .form "name"}}
   <input type="submit" value="新建" class="ui blue submit button">
 </form>
+=======
+=======
+>>>>>>> 评论at
+	<h1 class="ui header">新建文章分类</h1>
+	<form action="/admin/article_category/new" method="post" class="ui form segment">
+		{{input .form "name"}}
+		<input type="submit" value="新建" class="ui blue submit button">
+	</form>
+<<<<<<< HEAD
+>>>>>>> account 改成指针handler
+=======
+>>>>>>> 评论at
 {{end}}

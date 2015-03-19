@@ -30,3 +30,5 @@ src/labix.org
 src/gopkg.in/
 .idea
 static/download
+cert.pem
+key.pem

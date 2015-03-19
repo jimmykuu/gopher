@@ -1,5 +1,5 @@
 body {
-	background: url(/static/img/ricepaper.png);
+	background-color: #F8F8F8;
 	padding-bottom: 40px;
 }
 
@@ -32,6 +32,10 @@ dl.site dt {
 	padding: 0;
 	margin-right: 40px;
 	margin-left: 2px;
+}
+
+.navbar-default {
+	background-color: #F9F9F9;
 }
 
 .sidebar-nav {
@@ -243,6 +247,7 @@ header nav li a:hover {
 
 .content h3 {
 	font-size: 20px;
+	margin-top:10px;
 }
 
 dl.site dd {

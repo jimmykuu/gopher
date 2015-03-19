@@ -2,33 +2,10 @@
 
 Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 
-##Requirements
-
-- Go1.2+
-- MongoDB
-- github.com/gorilla/mux
-- github.com/gorilla/sessions
-- github.com/qiniu/bytes
-- github.com/qiniu/rpc
-- github.com/qiniu/api
-- labix.org/v2/mgo
-- code.google.com/p/go-uuid/uuid
-- github.com/jimmykuu/webhelpers
-- github.com/jimmykuu/wtforms
-- github.com/justinas/nosurf
-
 ##Install
 
-    $ git clone git://github.com/jimmykuu/gopher.git
-    $ cd gopher
+    $ go get github.com/jimmykuu/gopher/server
 
-Linux/Unix/OS X:
-
-    $ ./get_3rd_packages.sh
-
-Windows:
-
-    > get_3rd_packages.bat
 
 修改文件 *etc/config.json.default* 为 *etc/config.json* 作为配置文件
 
@@ -58,25 +35,30 @@ Windows:
         "go_get_path": "/tmp/download",
         "packages_download_path": "/var/go/gopher/static/download/packages",
         "4ublic_salt": "nXweu8Jq44FgEfgM1Pv4xH51"
-	"github_auth_client_id":"example",
-	"github_auth_client_secret":"example",
-	"github_login_redirect":"/",
-	"github_login_success_redirect":"/auth/signup"
+		"github_auth_client_id":"example",
+		"github_auth_client_secret":"example",
+		"github_login_redirect":"/",
+		"github_login_success_redirect":"/auth/signup"
     }
 
-先启动MongoDB
+需要先启动MongoDB
+
+生成私钥和证书,会在当前目录生成`key.pem`和`cert.pem`
+	
+	go run $GOROOT/src/crypto/tls/generate_cert.go --host 域名
 
 Linux/Unix/OS X:
 
-    $ cd gopher
-    $ ./build.sh
-    $ ./bin/server
+    $ $GOPATH/bin/server
 
 Windows:
 
-    > cd gopher
-    > build.bat
-    > bin\server.exe
+    > $GOPATH\bin\server.exe
+
+或者:
+	
+	$ go build -o binary github.com/jimmykuu/gopher/server
+	$ ./binary
 
 ##Contributors
 
