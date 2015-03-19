@@ -1,0 +1,156 @@
+<!DOCTYPE html> <html> <head> <title>Go游乐场</title> <link rel="stylesheet" href="/static/css/play.css"> <script type="text/javascript" src="http://cdn.staticfile.org/jquery/2.0.3/jquery.min.js"></script> </head> <body> <div id="banner"> <div id="head">Go游乐场</div>
+			<div id="controls">
+				<input type="button" value="运行" id="run">
+				<input type="button" value="格式化" id="fmt">
+				<!--
+				<div id="importsBox">
+					<label>
+						<input type="checkbox" id="imports" checked="checked">导入</label>
+				</div>
+				-->
+				 <input type="button" value="分享" id="share">
+				<input type="text" id="shareURL" style="display:none">
+			</div>
+		</div>
+		<div id="wrap">
+			<div class="linedtextarea">
+				<textarea spellcheck="false" id="code">{{.Code}}</textarea>
+			</div>
+		</div>
+		<div id="output">
+			<pre id="response"></pre>
+		</div>
+	</body>
+	<script type="text/javascript">
+	// console 重定向
+	(function(){
+		var oldLog = console.log;
+		console.log = function(message){
+			var output = $("#response").text();
+			var message = message+"\n";
+
+			$("#response").html(output+message);
+			oldLog.apply(console,arguments);
+		};
+	})();
+
+	// 编辑区可以使用tab.
+	$(document).delegate('textarea', 'keydown', function(e) { 
+		var keyCode = e.keyCode || e.which; 
+
+		if (keyCode == 9) { 
+			e.preventDefault(); 
+			var start = $(this).get(0).selectionStart;
+			var end = $(this).get(0).selectionEnd;
+			// set textarea value to: text before caret + tab + text after caret
+			$(this).val($(this).val().substring(0, start)
+						+ "\t"
+						+ $(this).val().substring(end));
+			// put caret at right position again
+			$(this).get(0).selectionStart = 
+			$(this).get(0).selectionEnd = start + 1;
+		} 
+	});
+
+	function setURL(id){
+		$("#shareURL").css("display","inline-block");
+		var url = "{{.Host}}"+"/play/"+id;
+		$("#shareURL").val(url);
+		$("#shareURL").select();
+	};
+
+	function alarm(message){
+		$("#response").css("color","red");
+		$("#response").text(message);
+	};
+
+	function print(message){
+		$("#response").css("color","black");
+		$("#response").text(message);
+	};
+
+	var socket = new WebSocket("ws://localhost:8888/playsocket");
+	socket.onopen = function(event){
+		// 代码格式化
+		$( "#fmt" ).click(function(){
+			var cmd = {
+				Command:"fmt",
+				Content:$("#code").val(),
+			}
+			socket.send(JSON.stringify(cmd));
+		});
+
+		// 分享代码
+		$( "#share" ).click(function(){
+			var id = "{{.CodeId}}";
+			if(id!==""){
+				// 更新代码
+				var cmd = {
+					Command:"update",
+					Id:id,
+					Content:$("#code").val(),
+				}	
+				socket.send(JSON.stringify(cmd));
+			}else{
+				// 提交新的代码.
+				var cmd = {
+					Command:"share",
+					Content:$("#code").val(),
+				}	
+				socket.send(JSON.stringify(cmd));
+			}
+		});
+
+		// 运行代码
+		$( "#run" ).click(function(){
+			var cmd = {
+				Command:"run",
+				Content:$("#code").val(),
+			}
+			print("excuting...")
+			socket.send(JSON.stringify(cmd));
+		});
+
+		window.onunload = function(){
+			var cmd = {
+				Command:"close",
+			}
+			socket.send(JSON.stringify(cmd));
+		};
+	}
+
+	// 响应处理	
+	socket.onmessage = function(event){
+
+		var data = JSON.parse(event.data);
+		if(data.Command == "run"){
+			if(data.Err){
+				var err = data.Err;
+				alarm(err);
+			}else{
+				$("#response").text("");
+				var ret = data.Content;
+				eval(ret);
+			}
+		}
+
+		if(data.Command == "fmt"){
+			if(data.Err){
+				alarm("存在错误:\n"+data.Err);
+			}else{
+				$("#code").val(data.Content);
+			}
+		}
+
+		if(data.Command == "share" ||
+		   data.Command == "update"){
+			if(data.Err){
+				alarm("存在错误:\n"+data.Err);
+			}else{
+				setURL(data.Content);
+			}
+		}
+	}
+
+	</script>
+</html>

@@ -34,6 +34,10 @@ dl.site dt {
 	margin-left: 2px;
 }
 
+.navbar-default {
+	background-color: #F9F9F9;
+}
+
 .sidebar-nav {
 	padding: 8px;
 }
@@ -243,6 +247,7 @@ header nav li a:hover {
 
 .content h3 {
 	font-size: 20px;
+	margin-top:10px;
 }
 
 dl.site dd {
