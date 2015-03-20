@@ -75,10 +75,10 @@ func StartServer() {
 	for _, route := range routes {
 		r.HandleFunc(route.URL, handlerFun(route))
 	}
+
 	r.PathPrefix("/static/").HandlerFunc(fileHandler)
 	http.Handle("/", r)
 
-	http.Handle("/", r)
 	logger.Println("Server start on:", Config.Port)
 	// http server
 	// err := http.ListenAndServeTLS(fmt.Sprintf(":%d", Config.Port), "cert.pem", "key.pem", nil)

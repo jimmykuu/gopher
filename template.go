@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"strings"
 	"time"
+	"encoding/json"
 
 	"github.com/jimmykuu/wtforms"
 )
@@ -79,7 +80,7 @@ func renderTemplate(handler Handler, file, baseFile string, data map[string]inte
 	// 如果isPresent==true，说明在执行登出操作
 	if !isPresent {
 		// 加入用户信息
-		user, ok := currentUser(handler)
+		user, ok := currentUser(&handler)
 
 		if ok {
 			data["curr_user"] = user
