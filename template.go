@@ -2,12 +2,12 @@ package gopher
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"io/ioutil"
 	"strings"
 	"time"
-	"encoding/json"
 
 	"github.com/jimmykuu/wtforms"
 )
