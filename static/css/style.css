@@ -122,7 +122,11 @@ footer {
 }
 
 header {
-	margin-bottom: 20px;
+	margin-bottom: 10px;
+}
+
+.navbar {
+	margin-bottom: 10px;
 }
 
 .brand {
