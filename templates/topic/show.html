@@ -225,6 +225,13 @@
 	</div>
   </div>
   <a href="/topic/new" class="btn btn-success btn-lg btn-block" style="margin-bottom: 20px;"><i class="glyphicon glyphicon-edit"></i> 发表话题</a>
+  {{if .utils.HasAd "frongpage" .db}}
+  <div class="panel panel-default">
+	<div class="panel-body" style="padding: 9px;">
+	  {{.utils.AdCode "frongpage" .db}}
+	</div>
+  </div>
+  {{end}}
   <div class="panel panel-default">
 	<div class="panel-heading">
 	  <h3 class="panel-title">作者其它话题</h3>
@@ -237,15 +244,5 @@
 	  </ul>
 	</div>
   </div>
-  {{if .utils.HasAd "frongpage" .db}}
-  <div class="panel panel-default">
-	<div class="panel-heading">
-	  <h3 class="panel-title">赞助商链接</h3>
-	</div>
-	<div class="panel-body" style="padding: 9px;">
-	  {{.utils.AdCode "frongpage" .db}}
-	</div>
-  </div>
-  {{end}}
 </div>
 {{end}}
