@@ -24,7 +24,7 @@ func adminListAdsHandler(handler *Handler) {
 // 添加广告
 func adminNewAdHandler(handler *Handler) {
 	choices := []wtforms.Choice{
-		wtforms.Choice{"frongpage", "首页"},
+		wtforms.Choice{"frontpage", "首页"},
 		wtforms.Choice{"2cols", "2列宽度"},
 		wtforms.Choice{"3cols", "3列宽度"},
 		wtforms.Choice{"4cols", "4列宽度"},
@@ -87,7 +87,7 @@ func adminEditAdHandler(handler *Handler) {
 	c.Find(bson.M{"_id": bson.ObjectIdHex(id)}).One(&ad)
 
 	choices := []wtforms.Choice{
-		wtforms.Choice{"frongpage", "首页"},
+		wtforms.Choice{"frontpage", "首页"},
 		wtforms.Choice{"3cols", "3列宽度"},
 		wtforms.Choice{"4cols", "4列宽度"},
 	}
