@@ -86,10 +86,13 @@
 	</div>
   </div>
   <a href="/topic/new" class="btn btn-success btn-lg btn-block" style="margin-bottom: 20px;"><i class="glyphicon glyphicon-edit"></i> 发表话题</a>
-  {{if .utils.HasAd "frontpage" .db}}
-  <div class="panel panel-default">
-	<div class="panel-body" style="padding: 9px;">
-	  {{.utils.AdCode "frontpage" .db}}
+  {{$ads := ads "frontpage" .db}}
+  {{if $ads}}
+  <div class="panel panel-default" id="ads">
+	<div class="panel-body">
+	  {{range $ads}}
+	  {{html .Code}}
+	  {{end}}
 	</div>
   </div>
   {{end}}

@@ -5,10 +5,8 @@
 package gopher
 
 import (
-	"crypto/md5"
 	"fmt"
 	"html/template"
-	"io"
 	"net/http"
 	"os"
 	"regexp"
@@ -47,36 +45,10 @@ func (u *Utils) Url(url string) string {
 	return "http://" + url
 }
 
-/*
-for 循环作用域找不到这个工具
-*/
-func (u *Utils) StaticUrl(path string) string {
-
-	version, ok := fileVersion[path]
-	if ok {
-		return "/static/" + path + "?v=" + version
-	}
-
-	file, err := os.Open("static/" + path)
-
-	if err != nil {
-		return "/static/" + path
-	}
-
-	h := md5.New()
-
-	_, err = io.Copy(h, file)
-
-	version = fmt.Sprintf("%x", h.Sum(nil))[:5]
-
-	fileVersion[path] = version
-
-	return "/static/" + path + "?v=" + version
-}
-
 func (u *Utils) Index(index int) int {
 	return index + 1
 }
+
 func (u *Utils) FormatDate(t time.Time) string {
 	return t.Format(time.RFC822)
 }
@@ -207,20 +179,6 @@ func (u *Utils) RenderInputH(form wtforms.Form, fieldStr string, labelWidth, inp
 			field.RenderInput(inputAttrs2...),
 			field.RenderErrors(),
 		))
-}
-
-func (u *Utils) HasAd(position string, db *mgo.Database) bool {
-	c := db.C(ADS)
-	count, _ := c.Find(bson.M{"position": position}).Limit(1).Count()
-	return count == 1
-}
-
-func (u *Utils) AdCode(position string, db *mgo.Database) template.HTML {
-	c := db.C(ADS)
-	var ad AD
-	c.Find(bson.M{"position": position}).Limit(1).One(&ad)
-
-	return template.HTML(ad.Code)
 }
 
 func (u *Utils) AssertUser(i interface{}) *User {

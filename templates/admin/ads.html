@@ -1,41 +1,45 @@
 {{define "Title"}}后台管理：广告{{end}}
 {{define "Content"}}
-	<p><a href="/admin/ad/new" class="ui green icon button"><i class="add icon"></i> 添加</a></p>
-	<table class="ui table segment">
-	<thead>
-		<tr>
-			<th>位置</th>
-			<th>名称</th>
-			<th width="200">预览</th>
-			<th width="60"></th>
-		</tr>
-	</thead>
-	<tbody>
+<p><a href="/admin/ad/new" class="ui green icon button"><i class="add icon"></i> 添加</a></p>
+<table class="ui table segment">
+  <thead>
+	<tr>
+	  <th>序号</th>
+	  <th>位置</th>
+	  <th>名称</th>
+	  <th width="200">预览</th>
+	  <th width="160"></th>
+	</tr>
+  </thead>
+  <tbody>
 	{{range .ads}}
-		<tr id="ad-{{.Id_.Hex}}">
-			<td>{{.Position}}</td>
-			<td>{{.Name}}</td>
-			<td>{{$.utils.HTML .Code}}</td>
-			<td>
-				<a href="/admin/ad/{{.Id_.Hex}}/edit" class="ui mini blue icon button" title="编辑"><i class="edit icon"></i></a>
-				<a href="javascript:;" class="ui mini red icon button remove-ad" title="删除" ad_id="{{.Id_.Hex}}"><i class="remove icon"></i></a>
-			</td>
-		</tr>
+	<tr id="ad-{{.Id_.Hex}}">
+	  <td>{{.Index}}</td>
+	  <td>{{.Position}}</td>
+	  <td>{{.Name}}</td>
+	  <td>{{$.utils.HTML .Code}}</td>
+	  <td>
+		<div class="ui icon buttons">
+		  <a href="/admin/ad/{{.Id_.Hex}}/edit" class="mini ui blue button" title="编辑"><i class="edit icon"></i></a>
+		  <a href="javascript:;" class="mini ui red button" title="删除" ad_id="{{.Id_.Hex}}"><i class="remove icon"></i></a>
+		</div>
+	  </td>
+	</tr>
 	{{end}}
-	</tbody>
-	</table>
-	<script type="text/javascript">
-		$("a.remove-ad").click(function () {
-			if (confirm("确定删除吗？")) {
-				var id = $(this).attr("ad_id");
-				$.getJSON('/admin/ad/' + id +'/delete', function(data) {
-					if (data) {
-						$("tr#ad-" + id).fadeOut("slow", function () {
-							$("tr#ad-" + id).remove();
-						});
-					};
-				});
-			}
-		});
-	</script>
+  </tbody>
+</table>
+<script type="text/javascript">
+  $("a.remove-ad").click(function () {
+    if (confirm("确定删除吗？")) {
+      var id = $(this).attr("ad_id");
+      $.getJSON('/admin/ad/' + id +'/delete', function(data) {
+        if (data) {
+          $("tr#ad-" + id).fadeOut("slow", function () {
+            $("tr#ad-" + id).remove();
+          });
+        };
+      });
+    }
+  });
+</script>
 {{end}}

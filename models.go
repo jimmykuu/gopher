@@ -526,6 +526,7 @@ type AD struct {
 	Position string        `bson:"position"`
 	Name     string        `bson:"name"`
 	Code     string        `bson:"code"`
+	Index    int           `bons:"index"`
 }
 
 type Book struct {

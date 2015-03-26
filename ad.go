@@ -2,6 +2,7 @@ package gopher
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/jimmykuu/wtforms"
@@ -13,7 +14,7 @@ import (
 func adminListAdsHandler(handler *Handler) {
 	var ads []AD
 	c := handler.DB.C(ADS)
-	c.Find(nil).All(&ads)
+	c.Find(nil).Sort("index").All(&ads)
 
 	handler.renderTemplate("admin/ads.html", ADMIN, map[string]interface{}{
 		"ads": ads,
@@ -32,6 +33,7 @@ func adminNewAdHandler(handler *Handler) {
 	form := wtforms.NewForm(
 		wtforms.NewSelectField("position", "位置", choices, "", wtforms.Required{}),
 		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),
+		wtforms.NewTextField("index", "序号", "", wtforms.Required{}),
 		wtforms.NewTextArea("code", "代码", "", wtforms.Required{}),
 	)
 
@@ -45,11 +47,22 @@ func adminNewAdHandler(handler *Handler) {
 		}
 
 		c := handler.DB.C(ADS)
-		err := c.Insert(&AD{
+		index, err := strconv.Atoi(form.Value("index"))
+		if err != nil {
+			form.AddError("index", "请输入正确的数字")
+			handler.renderTemplate("ad/form.html", ADMIN, map[string]interface{}{
+				"form":  form,
+				"isNew": true,
+			})
+			return
+		}
+
+		err = c.Insert(&AD{
 			Id_:      bson.NewObjectId(),
 			Position: form.Value("position"),
 			Name:     form.Value("name"),
 			Code:     form.Value("code"),
+			Index:    index,
 		})
 
 		if err != nil {
@@ -94,6 +107,7 @@ func adminEditAdHandler(handler *Handler) {
 	form := wtforms.NewForm(
 		wtforms.NewSelectField("position", "位置", choices, ad.Position, wtforms.Required{}),
 		wtforms.NewTextField("name", "名称", ad.Name, wtforms.Required{}),
+		wtforms.NewTextField("index", "序号", strconv.Itoa(ad.Index), wtforms.Required{}),
 		wtforms.NewTextArea("code", "代码", ad.Code, wtforms.Required{}),
 	)
 
@@ -106,10 +120,21 @@ func adminEditAdHandler(handler *Handler) {
 			return
 		}
 
-		err := c.Update(bson.M{"_id": ad.Id_}, bson.M{"$set": bson.M{
+		index, err := strconv.Atoi(form.Value("index"))
+		if err != nil {
+			form.AddError("index", "请输入正确的数字")
+
+			handler.renderTemplate("ad/form.html", ADMIN, map[string]interface{}{
+				"form":  form,
+				"isNew": false,
+			})
+			return
+		}
+		err = c.Update(bson.M{"_id": ad.Id_}, bson.M{"$set": bson.M{
 			"position": form.Value("position"),
 			"name":     form.Value("name"),
 			"code":     form.Value("code"),
+			"index":    index,
 		}})
 
 		if err != nil {

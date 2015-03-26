@@ -377,3 +377,12 @@ sup.new {
 	float: left;
 	display: block;
 }
+
+#ads .panel-body {
+	padding: 9px 9px 0 9px;
+}
+
+#ads a {
+	display: block;
+	margin-bottom: 9px;
+}
