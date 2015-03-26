@@ -45,19 +45,16 @@ func handlerFun(route Route) http.HandlerFunc {
 		)
 		if route.Permission&Authenticated == Authenticated {
 			user, ok = currentUser(handler)
-
 			if !ok {
 				http.Redirect(w, r, "/signin", http.StatusFound)
 				return
 			}
 
-			route.HandlerFunc(handler)
-		}
-
-		if route.Permission&AdministratorOnly == AdministratorOnly {
-			if !user.IsSuperuser {
-				message(handler, "没有权限", "对不起，你没有权限进行该操作", "error")
-				return
+			if route.Permission&AdministratorOnly == AdministratorOnly {
+				if !user.IsSuperuser {
+					message(handler, "没有权限", "对不起，你没有权限进行该操作", "error")
+					return
+				}
 			}
 
 			route.HandlerFunc(handler)
