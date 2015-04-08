@@ -16,6 +16,7 @@ import (
 	"code.google.com/p/go-uuid/uuid"
 	"github.com/bradrydzewski/go.auth"
 	"github.com/dchest/captcha"
+	"github.com/deferpanic/deferclient/deferclient"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/jimmykuu/webhelpers"
@@ -53,6 +54,8 @@ var githubHandler *auth.AuthHandler
 
 // 生成users.json字符串
 func generateUsersJson(db *mgo.Database) {
+	defer deferclient.Persist()
+
 	var users []User
 	c := db.C(USERS)
 	err := c.Find(nil).All(&users)

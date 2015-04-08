@@ -82,7 +82,10 @@ func playSocketHandler(handler *Handler) {
 func catch(err error) {
 }
 
-var buildOptions = new(Lib.Options)
+var buildOptions = &Lib.Options{
+	GOROOT: "/usr/local/go",
+	GOPATH: "/Users/jimmykuu/working/go/gopher",
+}
 
 func init() {
 	buildOptions.Minify = false

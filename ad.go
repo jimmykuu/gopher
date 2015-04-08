@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/deferpanic/deferclient/deferclient"
 	"github.com/gorilla/mux"
 	"github.com/jimmykuu/wtforms"
 	"gopkg.in/mgo.v2/bson"
@@ -24,6 +25,8 @@ func adminListAdsHandler(handler *Handler) {
 // URL: /admin/ad/new
 // 添加广告
 func adminNewAdHandler(handler *Handler) {
+	defer deferclient.Persist()
+
 	choices := []wtforms.Choice{
 		wtforms.Choice{"frontpage", "首页"},
 		wtforms.Choice{"2cols", "2列宽度"},
@@ -93,6 +96,8 @@ func adminDeleteAdHandler(handler *Handler) {
 // URL: /admin/ad/{id}/edit
 // 编辑广告
 func adminEditAdHandler(handler *Handler) {
+	defer deferclient.Persist()
+
 	id := mux.Vars(handler.Request)["id"]
 
 	c := handler.DB.C(ADS)

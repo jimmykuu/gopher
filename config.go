@@ -35,6 +35,7 @@ type ConfigStruct struct {
 	GithubClientSecret         string `json:"github_auth_client_secret"`
 	GithubLoginRedirect        string `json:"github_login_redirect"`
 	GithubLoginSuccessRedirect string `json:"github_login_success_redirect"`
+	DeferPanicApiKey           string `json:"deferpanic_api_key"`
 }
 
 var (
@@ -80,11 +81,4 @@ func configGithubAuth() {
 		logger.Println("注意,cookie_secure设置为false,只能在本地环境下测试")
 	}
 	githubHandler = auth.Github(Config.GithubClientId, Config.GithubClientSecret, "user")
-}
-
-func init() {
-	parseJsonFile("etc/config.json", &Config)
-	analyticsCode = getDefaultCode(Config.AnalyticsFile)
-	shareCode = getDefaultCode(Config.ShareCodeFile)
-	configGithubAuth()
 }

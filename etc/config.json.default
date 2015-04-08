@@ -20,5 +20,6 @@
 	"github_auth_client_secret": "5b8de98c93711c3b837498faf9bccdacb8f272c0",
 	"github_login_redirect": "/",
 	"github_login_success_redirect": "/auth/signup",
-	"cookie_secure": false
+	"cookie_secure": false,
+	"deferpanic_api_key": ""
 }

@@ -20,7 +20,7 @@ const (
 )
 
 var funcMaps = template.FuncMap{
-	"html": func (text string) template.HTML {
+	"html": func(text string) template.HTML {
 		return template.HTML(text)
 	},
 	"input": func(form wtforms.Form, fieldStr string) template.HTML {
@@ -52,7 +52,7 @@ var funcMaps = template.FuncMap{
 	"loadtimes": func(startTime time.Time) string {
 		return fmt.Sprintf("%dms", time.Now().Sub(startTime)/1000000)
 	},
-	"ads": func (position string, db *mgo.Database) []AD {
+	"ads": func(position string, db *mgo.Database) []AD {
 		c := db.C(ADS)
 		var ads []AD
 		c.Find(bson.M{"position": position}).Sort("index").All(&ads)
@@ -60,7 +60,6 @@ var funcMaps = template.FuncMap{
 		return ads
 	},
 }
-
 
 // 解析模板
 func parseTemplate(file, baseFile string, data map[string]interface{}) []byte {
