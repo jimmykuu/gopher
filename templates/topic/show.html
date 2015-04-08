@@ -37,7 +37,7 @@
 	  {{end}}
 	</div>
 	<div>
-	  由 <a href="/member/{{$creater.Username}}">{{$creater.Username}}</a> 在 {{.utils.FormatTime $topic.CreatedAt }} 发布 {{$topic.Hits}} 次点击
+	  由 <a href="/member/{{$creater.Username}}">{{$creater.Username}}</a> 在 {{formattime $topic.CreatedAt }} 发布 {{$topic.Hits}} 次点击
 	</div>
     {{.shareCode}}
     <div class="clearfix"></div>
@@ -48,7 +48,7 @@
     {{if $updater}}
     <hr>
     <div class="alert alert-success">
-      {{$updater.Username}} 于 {{.utils.FormatTime $topic.UpdatedAt }} 修改
+      {{$updater.Username}} 于 {{formattime $topic.UpdatedAt }} 修改
     </div>
     {{end}}
   </div>
@@ -69,7 +69,7 @@
 		{{end}}
 	  </a>
 	  <div class="info">
-		<span class="label label-default pull-right">#{{$.utils.Index $index}}</span>
+		<span class="label label-default pull-right">#{{add $index 1}}</span>
 		{{if $.username}}
 		{{if $reply.CanDeleteOrEdit $.username $.db}}
 		<div class="btn-group btn-group-xs pull-right" style="margin-right: 1em;">
@@ -79,7 +79,7 @@
 		{{end}}
 		{{end}}
 		<a href="/member/{{$commenter.Username}}"><strong>{{$commenter.Username}}</strong></a> •
-		{{$.utils.FormatTime .CreatedAt}}
+		{{formattime .CreatedAt}}
 	  </div>
 	  <div class="space"></div>
 	  <div class="reply-content">{{.Html}}</div>

@@ -24,9 +24,9 @@
 					<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> • 
 					{{if .CommentCount}}
 					    {{$latestReplier := .LatestReplier $.db}}
-						{{$.utils.FormatTime .LatestRepliedAt}} • 最后回复来自 <a href="/member/{{$latestReplier.Username}}">{{$latestReplier.Username}}</a>
+						{{formattime .LatestRepliedAt}} • 最后回复来自 <a href="/member/{{$latestReplier.Username}}">{{$latestReplier.Username}}</a>
 					{{else}}
-						{{$.utils.FormatTime .CreatedAt}}
+						{{formattime .CreatedAt}}
 					{{end}}
 				</div>
 				<div class="clear"></div>

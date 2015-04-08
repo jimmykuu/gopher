@@ -32,7 +32,7 @@
 
 					<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
                     <a href="/a/{{.Id_.Hex}}">{{if .CommentCount}} {{.CommentCount}} {{end}}评论</a> •
-					{{$.utils.FormatTime .CreatedAt}} 提交 • 来自 <a href="{{.OriginalUrl}}" target="_blank">{{.OriginalSource}}</a>
+					{{formattime .CreatedAt}} 提交 • 来自 <a href="{{.OriginalUrl}}" target="_blank">{{.OriginalSource}}</a>
 				</div>
 			</dd>
 		{{end}}

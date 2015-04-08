@@ -12,7 +12,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gorilla/sessions"
 	"github.com/jimmykuu/webhelpers"
@@ -33,37 +32,6 @@ var (
 )
 
 type Utils struct {
-}
-
-// 没有http://开头的增加http://
-func (u *Utils) Url(url string) string {
-	if strings.HasPrefix(url, "http://") {
-		return url
-	}
-
-	return "http://" + url
-}
-
-func (u *Utils) Index(index int) int {
-	return index + 1
-}
-
-func (u *Utils) FormatDate(t time.Time) string {
-	return t.Format(time.RFC822)
-}
-func (u *Utils) FormatTime(t time.Time) string {
-	now := time.Now()
-	duration := now.Sub(t)
-	if duration.Seconds() < 60 {
-		return fmt.Sprintf("刚刚")
-	} else if duration.Minutes() < 60 {
-		return fmt.Sprintf("%.0f 分钟前", duration.Minutes())
-	} else if duration.Hours() < 24 {
-		return fmt.Sprintf("%.0f 小时前", duration.Hours())
-	}
-
-	t = t.Add(time.Hour * time.Duration(Config.TimeZoneOffset))
-	return t.Format("2006-01-02 15:04")
 }
 
 func (u *Utils) UserInfo(username string, db *mgo.Database) template.HTML {
@@ -112,11 +80,6 @@ func (u *Utils) Truncate(html template.HTML, length int) string {
 
 func (u *Utils) HTML(str string) template.HTML {
 	return template.HTML(str)
-}
-
-// \n => <br>
-func (u *Utils) Br(str string) template.HTML {
-	return template.HTML(strings.Replace(str, "\n", "<br>", -1))
 }
 
 func (u *Utils) RenderInput(form wtforms.Form, fieldStr string, inputAttrs ...string) template.HTML {

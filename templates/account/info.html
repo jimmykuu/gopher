@@ -18,7 +18,7 @@
 		{{if $user.Tagline}}
 			<h3><small>{{$user.Tagline}}</small></h3>
 		{{end}}
-		<h4><small>Golang China 第 {{$user.Index}} 号会员，加入于 {{.utils.FormatTime $user.JoinedAt}}</small></h4>
+		<h4><small>Golang China 第 {{$user.Index}} 号会员，加入于 {{formattime $user.JoinedAt}}</small></h4>
 		<!--
 		{{if .username}}
 			{{if $user.IsFollowedBy .username | not}}
@@ -43,7 +43,7 @@
 			{{if $user.Website}}
 			<li>
 			  <i class="fa fa-globe"></i>
-			  <a href="{{.utils.Url $user.Website}}" target="_blank">{{$user.Website}}</a>
+			  <a href="{{url $user.Website}}" target="_blank">{{$user.Website}}</a>
 			</li>
 			{{end}}
 			{{if $user.Weibo}}
@@ -90,10 +90,10 @@
 					<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
 					{{if .CommentCount}}
 					    {{$latestReplier := .LatestReplier $.db}}
-						{{$.utils.FormatTime .LatestRepliedAt}} •
+						{{formattime .LatestRepliedAt}} •
 						最后回复来自 <a href="/member/{{$latestReplier.Username}}">{{$latestReplier.Username}}</a>
 					{{else}}
-						{{$.utils.FormatTime .CreatedAt}}
+						{{formattime .CreatedAt}}
 					{{end}}
 				</div>
 				<div class="clear"></div>
@@ -113,7 +113,7 @@
 		<div class="reply">
 			<span>
 				回复了 <a href="/member/{{$creater.Username}}">{{$creater.Username}}</a> 创建的主题: <a href="/t/{{$topic.Id_.Hex}}">{{$topic.Title}}</a>
-			<span class="pull-right">{{$.utils.FormatTime .CreatedAt}}</span>
+			<span class="pull-right">{{formattime .CreatedAt}}</span>
 			</span>
 			<div>
 				{{.Html}}

@@ -4,8 +4,8 @@
     <title><![CDATA[golangtc.com - golang中国社区]]></title>
     <link>https://golangtc.com/</link>
     <description><![CDATA[golangtc.com - golang中国社区]]></description>
-    <lastBuildDate>{{.utils.FormatDate .date}}</lastBuildDate>
-    <pubDate>{{.utils.FormatDate .date}}</pubDate>
+    <lastBuildDate>{{formatdate .date}}</lastBuildDate>
+    <pubDate>{{formatdate .date}}</pubDate>
     <language>zh-CN</language>
     <image>
       <link>https://golangtc.com/</link>

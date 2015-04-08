@@ -30,7 +30,7 @@
 	  <div class="info">
 		<a class="label label-info" href="/packages/{{$category.Id}}">{{$category.Name}}</a> •
 		<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
-		{{$.utils.FormatTime .CreatedAt}} 提交
+		{{formattime .CreatedAt}} 提交
 	  </div>
 	  <div class="space"></div>
 	  <p class="muted">

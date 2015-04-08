@@ -35,7 +35,7 @@
   <ul>
 	<li><strong>类别：</strong><a href="/packages/{{$category.Id}}">{{$category.Name}}</a></li>
 	<li><strong>URL：</strong><a href="{{.package.Url}}" target="_blank">{{.package.Url}}</a></li>
-	<li><strong>收录时间：</strong>{{.utils.FormatTime .package.CreatedAt}}</li>
+	<li><strong>收录时间：</strong>{{formattime .package.CreatedAt}}</li>
   </ul>
 </div>
 {{$package := .utils.AssertPackage .package}}
@@ -46,7 +46,7 @@
 	{{range $index, $reply := $package.Comments .db}}
 	{{$commenter := .Creater $.db}}
 	<dd id="{{.Id_.Hex}}">
-	  <span class="label pull-right">#{{$.utils.Index $index}}</span>
+	  <span class="label label-default pull-right">#{{add $index 1}}</span>
 	  {{if $.username}}
 	  {{if $reply.CanDeleteOrEdit $.username $.db}}
 	  <!--
@@ -59,7 +59,7 @@
 	  <a href="/" class="pull-left" style="margin-right: 10px;"><img src="{{$commenter.AvatarImgSrc}}-middle" class="img-rounded"></a>
 	  <div class="info">
 		<a href="/member/{{$commenter.Username}}"><strong>{{$commenter.Username}}</strong></a> •
-		{{$.utils.FormatTime .CreatedAt}}
+		{{formattime .CreatedAt}}
 	  </div>
 	  <div class="space"></div>
 	  <div class="reply-content">{{.Html}}</div>
