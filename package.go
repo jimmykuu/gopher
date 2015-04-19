@@ -460,7 +460,7 @@ func getPackageUrlHandler(handler *Handler) {
 		tarFilename := strings.Replace(packageName, "/", ".", -1) + ".tar"
 
 		// 检查是否存在
-		_, err = os.Stat(tarFilename)
+		_, err = os.Stat(filepath.Join("static", "download", "packages", tarFilename))
 		if err != nil {
 			handler.notFound()
 			return
