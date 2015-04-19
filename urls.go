@@ -147,6 +147,7 @@ var routes = []Route{
 
 	{"/packages", Everyone, packagesHandler},
 	{"/package/new", Authenticated, newPackageHandler},
+	{"/package", Everyone, getPackageUrlHandler},
 	{"/packages/{categoryId}", Everyone, listPackagesHandler},
 	{"/p/{packageId}", Everyone, showPackageHandler},
 	{"/p/{packageId}/edit", Authenticated, editPackageHandler},

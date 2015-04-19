@@ -445,3 +445,35 @@ func getPackageHandler(ws *websocket.Conn) {
 		break
 	}
 }
+
+// URL: /package/get?name=github.com/jimmykuu/webhelpers
+// 返回第三方包压缩包的下载地址
+func getPackageUrlHandler(handler *Handler) {
+	packageName := handler.Request.FormValue("name")
+	fmt.Println(packageName)
+
+	c := handler.DB.C(DOWNLOADED_PACKAGES)
+	err := c.Find(bson.M{"name": packageName}).One(nil)
+
+	if err == nil {
+		// 找到压缩包并返回下载链接
+		tarFilename := strings.Replace(packageName, "/", ".", -1) + ".tar"
+
+		// 检查是否存在
+		_, err = os.Stat(tarFilename)
+		if err != nil {
+			handler.notFound()
+			return
+		}
+
+		handler.renderText(filepath.Join(Config.Host, "static", "download", "packages", tarFilename))
+	} else {
+		c.Insert(&DownloadedPackage{
+			Name:  packageName,
+			Count: 0,
+		})
+
+		handler.notFound()
+	}
+
+}

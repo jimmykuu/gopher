@@ -100,3 +100,12 @@ func (handler *Handler) renderJson(data interface{}) {
 	handler.ResponseWriter.Header().Set("Content-Type", "application/json")
 	handler.ResponseWriter.Write(b)
 }
+
+// 返回文本数据
+func (handler *Handler) renderText(text string) {
+	handler.ResponseWriter.Write([]byte(text))
+}
+
+func (handler *Handler) notFound() {
+	http.NotFound(handler.ResponseWriter, handler.Request)
+}
