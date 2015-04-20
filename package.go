@@ -446,18 +446,17 @@ func getPackageHandler(ws *websocket.Conn) {
 	}
 }
 
-// URL: /package/get?name=github.com/jimmykuu/webhelpers
+// URL: /package?name=github.com/jimmykuu/webhelpers
 // 返回第三方包压缩包的下载地址
 func getPackageUrlHandler(handler *Handler) {
 	packageName := handler.Request.FormValue("name")
-	fmt.Println(packageName)
 
 	c := handler.DB.C(DOWNLOADED_PACKAGES)
 	err := c.Find(bson.M{"name": packageName}).One(nil)
 
 	if err == nil {
 		// 找到压缩包并返回下载链接
-		tarFilename := strings.Replace(packageName, "/", ".", -1) + ".tar"
+		tarFilename := strings.Replace(packageName, "/", ".", -1) + ".tar.gz"
 
 		// 检查是否存在
 		_, err = os.Stat(filepath.Join("static", "download", "packages", tarFilename))
@@ -466,7 +465,7 @@ func getPackageUrlHandler(handler *Handler) {
 			return
 		}
 
-		handler.renderText(filepath.Join(Config.Host, "static", "download", "packages", tarFilename))
+		handler.renderText(Config.Host + "/static/download/packages/" + tarFilename)
 	} else {
 		c.Insert(&DownloadedPackage{
 			Name:  packageName,
