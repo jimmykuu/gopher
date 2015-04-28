@@ -386,3 +386,11 @@ sup.new {
 	display: block;
 	margin-bottom: 9px;
 }
+
+.links {
+	padding: 1em;
+}
+
+.links a{
+	margin-right: 20px;
+}

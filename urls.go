@@ -51,13 +51,13 @@ func fileHandler(w http.ResponseWriter, req *http.Request) {
 	http.ServeFile(w, req, filePath)
 }
 
-// 路由规则.
+// 路由规则
 var routes = []Route{
-
 	{"/", Everyone, indexHandler},
 	{"/about", Everyone, staticHandler("about.html")},
 	{"/faq", Everyone, staticHandler("faq.html")},
 	{"/timeline", Everyone, staticHandler("timeline.html")},
+	{"/link", Everyone, linksHandler},
 	{"/search", Everyone, searchHandler},
 	{"/users.json", Everyone, usersJsonHandler},
 

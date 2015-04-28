@@ -135,3 +135,14 @@ func adminDeleteLinkExchangeHandler(handler *Handler) {
 
 	handler.ResponseWriter.Write([]byte("true"))
 }
+
+// URL: /link
+// 友情链接
+func linksHandler(handler *Handler) {
+	var links []LinkExchange
+	c := handler.DB.C(LINK_EXCHANGES)
+	c.Find(nil).All(&links)
+	handler.renderTemplate("link_exchange/all.html", BASE, map[string]interface{}{
+		"links": links,
+	})
+}
