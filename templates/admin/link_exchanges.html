@@ -1,47 +1,55 @@
 {{define "Title"}}后台管理：友情链接{{end}}
 {{define "Content"}}
-	<p><a href="/admin/link_exchange/new" class="ui icon blue button"><i class="add icon"></i> 添加</a></p>
-	<table class="ui table segment">
-	<thead>
-		<tr>
-			<th>名称</th>
-			<th>URL</th>
-			<th>描述</th>
-			<th>Logo</th>
-			<th width="60"></th>
-		</tr>
-	</thead>
-	<tbody>
+<p><a href="/admin/link_exchange/new" class="ui icon blue button"><i class="add icon"></i> 添加</a></p>
+<table class="ui compact table">
+  <thead>
+	<tr>
+	  <th></th>
+	  <th>名称</th>
+	  <th>URL</th>
+	  <th>描述</th>
+	  <th>Logo</th>
+	  <th width="60"></th>
+	</tr>
+  </thead>
+  <tbody>
 	{{range .linkExchanges}}
-		<tr id="link_exchange-{{.Id_.Hex}}">
-			<td>{{.Name}}</td>
-			<td>{{.URL}}</td>
-			<td>{{.Description}}</td>
-			<td>
-				{{if .Logo}}
-					<img src="{{.Logo}}">
-				{{end}}
-			</td>
-			<td>
-				<a href="/admin/link_exchange/{{.Id_.Hex}}/edit" class="ui mini blue icon button" title="编辑"><i class="edit icon"></i></a>
-				<a href="javascript:;" class="ui mini red icon button remove-link_exchange" title="删除" link_exchange_id="{{.Id_.Hex}}"><i class="remove icon"></i></a>
-			</td>
-		</tr>
+	<tr id="link_exchange-{{.Id_.Hex}}">
+	  <td>
+		{{if .IsOnHome}}
+		<i class="large green home icon"></i>
+		{{end}}
+	  </td>
+	  <td>{{.Name}}</td>
+	  <td>{{.URL}}</td>
+	  <td>{{.Description}}</td>
+	  <td>
+		{{if .Logo}}
+		<img src="{{.Logo}}">
+		{{end}}
+	  </td>
+	  <td width="100">
+		<div class="ui mini icon buttons">
+		  <a href="/admin/link_exchange/{{.Id_.Hex}}/edit" class="ui blue button" title="编辑"><i class="edit icon"></i></a>
+		  <a href="javascript:;" class="ui red button remove-link_exchange" title="删除" link_exchange_id="{{.Id_.Hex}}"><i class="remove icon"></i></a>
+		</div>
+	  </td>
+	</tr>
 	{{end}}
-	</tbody>
-	</table>
-	<script type="text/javascript">
-		$("a.remove-link_exchange").click(function () {
-			if (confirm("确定删除吗？")) {
-				var id = $(this).attr("link_exchange_id");
-				$.getJSON('/admin/link_exchange/' + id +'/delete', function(data) {
-					if (data) {
-						$("tr#link_exchange-" + id).fadeOut("slow", function () {
-							$("tr#link_exchange-" + id).remove();
-						});
-					};
-				});
-			}
-		});
-	</script>
+  </tbody>
+</table>
+<script type="text/javascript">
+  $("a.remove-link_exchange").click(function () {
+    if (confirm("确定删除吗？")) {
+      var id = $(this).attr("link_exchange_id");
+      $.getJSON('/admin/link_exchange/' + id +'/delete', function(data) {
+        if (data) {
+          $("tr#link_exchange-" + id).fadeOut("slow", function () {
+            $("tr#link_exchange-" + id).remove();
+          });
+        };
+      });
+    }
+  });
+</script>
 {{end}}

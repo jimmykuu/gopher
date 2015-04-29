@@ -519,6 +519,7 @@ type LinkExchange struct {
 	URL         string        `bson:"url"`
 	Description string        `bson:"description"`
 	Logo        string        `bson:"logo"`
+	IsOnHome    bool          `bson:"is_on_home"`
 }
 
 type AD struct {

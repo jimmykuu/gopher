@@ -61,6 +61,7 @@ func adminNewLinkExchangeHandler(handler *Handler) {
 			URL:         form.Value("url"),
 			Description: form.Value("description"),
 			Logo:        form.Value("logo"),
+			IsOnHome:    handler.Request.FormValue("is_on_home") == "on",
 		})
 
 		if err != nil {
@@ -98,8 +99,9 @@ func adminEditLinkExchangeHandler(handler *Handler) {
 	if handler.Request.Method == "POST" {
 		if !form.Validate(handler.Request) {
 			handler.renderTemplate("link_exchange/form.html", ADMIN, map[string]interface{}{
-				"form":  form,
-				"isNew": false,
+				"linkExchange": linkExchange,
+				"form":         form,
+				"isNew":        false,
 			})
 			return
 		}
@@ -109,6 +111,7 @@ func adminEditLinkExchangeHandler(handler *Handler) {
 			"url":         form.Value("url"),
 			"description": form.Value("description"),
 			"logo":        form.Value("logo"),
+			"is_on_home":  handler.Request.FormValue("is_on_home") == "on",
 		}})
 
 		if err != nil {
@@ -120,8 +123,9 @@ func adminEditLinkExchangeHandler(handler *Handler) {
 	}
 
 	handler.renderTemplate("link_exchange/form.html", ADMIN, map[string]interface{}{
-		"form":  form,
-		"isNew": false,
+		"linkExchange": linkExchange,
+		"form":         form,
+		"isNew":        false,
 	})
 }
 

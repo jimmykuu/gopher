@@ -5,6 +5,22 @@
   {{input .form "url"}}
   {{input .form "description"}}
   {{input .form "logo"}}
+  <div class="field">
+    <div class="ui checkbox">
+      <input type="checkbox" name="is_on_home"
+			 {{if not .isNew}}
+			   {{if .linkExchange.IsOnHome}} checked{{end}}
+			 {{end}}
+	>
+      <label>在首页显示</label>
+    </div>
+  </div>
+  <div class="ui hidden divider"></div>
   <input type="submit" value="提交" class="ui submit button green">
 </form>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('.ui.checkbox').checkbox();
+  });
+</script>
 {{end}}

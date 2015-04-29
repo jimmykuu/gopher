@@ -66,7 +66,7 @@ func topicsHandler(handler *Handler, conditions bson.M, sort string, url string,
 
 	var linkExchanges []LinkExchange
 	c = handler.DB.C(LINK_EXCHANGES)
-	c.Find(nil).All(&linkExchanges)
+	c.Find(bson.M{"is_on_home": true}).All(&linkExchanges)
 
 	topics = append(topTopics, topics...)
 
