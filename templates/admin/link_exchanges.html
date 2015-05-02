@@ -5,6 +5,7 @@
   <thead>
 	<tr>
 	  <th></th>
+	  <th></th>
 	  <th>名称</th>
 	  <th>URL</th>
 	  <th>描述</th>
@@ -15,6 +16,11 @@
   <tbody>
 	{{range .linkExchanges}}
 	<tr id="link_exchange-{{.Id_.Hex}}">
+	  <td>
+		{{if .IsOnBottom}}
+		<i class="large green arrow down icon"></i>
+		{{end}}
+	  </td>
 	  <td>
 		{{if .IsOnHome}}
 		<i class="large green home icon"></i>
