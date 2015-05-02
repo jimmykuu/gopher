@@ -68,8 +68,10 @@
 		$("#response").css("color","black");
 		$("#response").text(message);
 	};
-
-	var socket = new WebSocket("ws://localhost:8888/playsocket");
+	var host = {{.Host}}
+	host = host.replace("http://","ws://");
+	// TODO: 在配置中添加websocket的host.
+	var socket = new WebSocket(host+"/playsocket");
 	socket.onopen = function(event){
 		// 代码格式化
 		$( "#fmt" ).click(function(){
