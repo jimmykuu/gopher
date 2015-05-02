@@ -46,7 +46,7 @@
 		<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
 		{{if .CommentCount}}
 		{{$latestReplier := .LatestReplier $.db}}
-		{{formattime .LatestRepliedAt}} • 最后回复来自 <a href="/member/{{$latestReplier.Username}}">{{$latestReplier.Username}}</a>
+		<time datetime="{{.LatestRepliedAt.Format "2006-01-02 15:04:05"}}" title="{{.LatestRepliedAt.Format "2006-01-02 15:04:05"}}">{{formattime .LatestRepliedAt}}</time> • 最后回复来自 <a href="/member/{{$latestReplier.Username}}">{{$latestReplier.Username}}</a>
 		{{else}}
 		{{formattime .CreatedAt}}
 		{{end}}
