@@ -35,11 +35,11 @@
 	})();
 
 	// 编辑区可以使用tab.
-	$(document).delegate('textarea', 'keydown', function(e) { 
-		var keyCode = e.keyCode || e.which; 
+	$(document).delegate('textarea', 'keydown', function(e) {
+		var keyCode = e.keyCode || e.which;
 
-		if (keyCode == 9) { 
-			e.preventDefault(); 
+		if (keyCode == 9) {
+			e.preventDefault();
 			var start = $(this).get(0).selectionStart;
 			var end = $(this).get(0).selectionEnd;
 			// set textarea value to: text before caret + tab + text after caret
@@ -47,9 +47,9 @@
 						+ "\t"
 						+ $(this).val().substring(end));
 			// put caret at right position again
-			$(this).get(0).selectionStart = 
+			$(this).get(0).selectionStart =
 			$(this).get(0).selectionEnd = start + 1;
-		} 
+		}
 	});
 
 	function setURL(id){
@@ -68,8 +68,9 @@
 		$("#response").css("color","black");
 		$("#response").text(message);
 	};
-	var host = {{.Host}}
+	var host = {{.Host}};
 	host = host.replace("http://","ws://");
+	console.log(host);
 	// TODO: 在配置中添加websocket的host.
 	var socket = new WebSocket(host+"/playsocket");
 	socket.onopen = function(event){
@@ -91,14 +92,14 @@
 					Command:"update",
 					Id:id,
 					Content:$("#code").val(),
-				}	
+				}
 				socket.send(JSON.stringify(cmd));
 			}else{
 				// 提交新的代码.
 				var cmd = {
 					Command:"share",
 					Content:$("#code").val(),
-				}	
+				}
 				socket.send(JSON.stringify(cmd));
 			}
 		});
@@ -121,7 +122,7 @@
 		};
 	}
 
-	// 响应处理	
+	// 响应处理
 	socket.onmessage = function(event){
 
 		var data = JSON.parse(event.data);
