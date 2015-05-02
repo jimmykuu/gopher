@@ -91,6 +91,10 @@ var funcMaps = template.FuncMap{
 		t = t.Add(time.Hour * time.Duration(Config.TimeZoneOffset))
 		return t.Format("2006-01-02 15:04")
 	},
+	"formatdatetime": func(t time.Time) string {
+		// 格式化时间成 2006-01-02 15:04:05
+		return t.Add(time.Hour * time.Duration(Config.TimeZoneOffset)).Format("2006-01-02 15:04:05")
+	},
 	"nl2br": func(text string) template.HTML {
 		return template.HTML(strings.Replace(text, "\n", "<br>", -1))
 	},
