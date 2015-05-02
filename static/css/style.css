@@ -376,6 +376,7 @@ sup.new {
 	margin-bottom: 1em;
 	float: left;
 	display: block;
+	height: 46px;
 }
 
 #ads .panel-body {

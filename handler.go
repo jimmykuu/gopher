@@ -11,6 +11,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // Handler 是包含一些请求上下文的结构体.
@@ -71,6 +72,12 @@ func (handler *Handler) renderTemplate(file, baseFile string, datas ...map[strin
 	data["startTime"] = handler.StartTime
 	data["db"] = handler.DB
 	data["host"] = Config.Host
+
+	var linksOnBottom []LinkExchange
+	c := handler.DB.C(LINK_EXCHANGES)
+	c.Find(bson.M{"is_on_bottom": true}).All(&linksOnBottom)
+
+	data["linksOnBottom"] = linksOnBottom
 
 	_, ok := data["active"]
 	if !ok {

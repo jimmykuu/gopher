@@ -62,6 +62,7 @@ func adminNewLinkExchangeHandler(handler *Handler) {
 			Description: form.Value("description"),
 			Logo:        form.Value("logo"),
 			IsOnHome:    handler.Request.FormValue("is_on_home") == "on",
+			IsOnBottom:  handler.Request.FormValue("is_on_bottom") == "on",
 		})
 
 		if err != nil {
@@ -107,11 +108,12 @@ func adminEditLinkExchangeHandler(handler *Handler) {
 		}
 
 		err := c.Update(bson.M{"_id": linkExchange.Id_}, bson.M{"$set": bson.M{
-			"name":        form.Value("name"),
-			"url":         form.Value("url"),
-			"description": form.Value("description"),
-			"logo":        form.Value("logo"),
-			"is_on_home":  handler.Request.FormValue("is_on_home") == "on",
+			"name":         form.Value("name"),
+			"url":          form.Value("url"),
+			"description":  form.Value("description"),
+			"logo":         form.Value("logo"),
+			"is_on_home":   handler.Request.FormValue("is_on_home") == "on",
+			"is_on_bottom": handler.Request.FormValue("is_on_bottom") == "on",
 		}})
 
 		if err != nil {

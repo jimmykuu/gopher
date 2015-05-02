@@ -519,7 +519,8 @@ type LinkExchange struct {
 	URL         string        `bson:"url"`
 	Description string        `bson:"description"`
 	Logo        string        `bson:"logo"`
-	IsOnHome    bool          `bson:"is_on_home"`
+	IsOnHome    bool          `bson:"is_on_home"`   // 是否在首页右侧显示
+	IsOnBottom  bool          `bson:"is_on_bottom"` // 是否在底部显示
 }
 
 type AD struct {
