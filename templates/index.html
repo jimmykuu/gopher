@@ -48,7 +48,7 @@
 		{{$latestReplier := .LatestReplier $.db}}
 		<time datetime="{{formatdatetime .LatestRepliedAt}}" title="{{formatdatetime .LatestRepliedAt}}">{{formattime .LatestRepliedAt}}</time> • 最后回复来自 <a href="/member/{{$latestReplier.Username}}">{{$latestReplier.Username}}</a>
 		{{else}}
-		{{formattime .CreatedAt}}
+		<time datetime="{{formatdatetime .CreatedAt}}" title="{{formatdatetime .CreatedAt}}">{{formattime .CreatedAt}}</time>
 		{{end}}
 	  </div>
 	  <div class="clear"></div>
