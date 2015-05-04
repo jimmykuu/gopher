@@ -43,9 +43,8 @@ func commentHandler(handler *Handler) {
 
 	c.Update(bson.M{"_id": contentId}, bson.M{"$inc": bson.M{"content.commentcount": 1}})
 
-	content := handler.Request.FormValue("content")
-	html := handler.Request.FormValue("html")
-	html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
+	markdown := handler.Request.FormValue("editormd-markdown-doc")
+	html := handler.Request.FormValue("editormd-html-code")
 
 	Id_ := bson.NewObjectId()
 	now := time.Now()
@@ -55,7 +54,7 @@ func commentHandler(handler *Handler) {
 		Id_:       Id_,
 		Type:      type_,
 		ContentId: contentId,
-		Markdown:  content,
+		Markdown:  markdown,
 		Html:      template.HTML(html),
 		CreatedBy: user.Id_,
 		CreatedAt: now,
@@ -70,7 +69,7 @@ func commentHandler(handler *Handler) {
 		c.Update(nil, bson.M{"$inc": bson.M{"replycount": 1}})
 		// 修改对应用户的最近at.
 		c = handler.DB.C(USERS)
-		usernames := findAts(content)
+		usernames := findAts(markdown)
 		for _, name := range usernames {
 			u, err := getUserByName(c, name)
 			if err != nil {

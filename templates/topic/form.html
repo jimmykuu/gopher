@@ -1,5 +1,5 @@
 {{define "Title"}}{{.title}}主题{{end}}
-{{define "ContentWidth"}}8{{end}}
+{{define "ContentWidth"}}9{{end}}
 {{define "Breadcrumb"}}
 <ul class="breadcrumb">
   <li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
@@ -7,10 +7,10 @@
 </ul>
 {{end}}
 {{define "Content"}}
+<link rel="stylesheet" href="http://gopher.qiniudn.com/static/editor.md-1.4.2/css/editormd.min.css">
 <div class="content">
   <form action="" method="post" id="topic-form" role="form">
 	<fieldset>
-	  {{.form.RenderInput "html"}}
       {{$node := .form.Field "node"}}
       <div class="form-group">
         {{$node.RenderLabel}}
@@ -19,48 +19,38 @@
       {{$title := .form.Field "title"}}
       <div class="form-group">
         {{$title.RenderLabel}}
-        {{$title.RenderInput `class="form-control"` `rows="4"`}}
+        {{$title.RenderInput `class="form-control"` `rows="4"` `placeholder="请输入主题标题，注意文字长度，如果标题能够表达完整内容，正文可以为空"`}}
       </div>
 	  <div class="form-group">
-		<div class="wmd-panel">
-		  <div id="wmd-button-bar"></div>
-		  <textarea class="wmd-input col-md-12" id="wmd-input" name="content" rows="20" placeholder="支持Markdown，为了给查看主题的读者一个更好的阅读体验，请参考右侧的编写指南，尤其是有代码的时候，编辑框下部还有实时预览。">{{.content}}</textarea>
+		<div id="editormd">
+          <textarea style="display:none;">{{.form.Value "editormd-markdown-doc"}}</textarea>
 		</div>
 	  </div>
-	  <div class="form-group">
-		<label>预览</label>
-		<div id="wmd-preview" class="wmd-panel wmd-preview">{{.html}}</div>
-	  </div>
+
 	  <input type="submit" class="btn btn-primary" value="{{.title}}">
 	</fieldset>
   </form>
 </div>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Converter.js"></script>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Editor.js"></script>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Sanitizer.js"></script>
-<script>
-  (function () {
-  var converter1 = Markdown.getSanitizingConverter();
-  var editor1 = new Markdown.Editor(converter1);
-  editor1.run();
-  })();
-
-  $('#topic-form').submit(function () {
-  $('#html').val($('#wmd-preview').html());
-
-  return true;
-  });
-
-  $("#wmd-input").atwho({
-  at: "@",
-  data: {{.usernames}}
-  });
-</script>
+<script type="text/javascript" src="http://gopher.qiniudn.com/static/editor.md-1.4.2/editormd.min.js"></script>
+  <script type="text/javascript">
+	var editor;
+    $(function() {
+      editor = editormd("editormd", {
+        height: 400,
+        path: "http://gopher.qiniudn.com/static/editor.md-1.4.2/lib/",
+	    placeholder: "Mardkown，提交前请查看预览格式是否正确",
+        toolbarIcons: function() {
+          return ["undo", "redo", "|", "bold", "italic", "quote", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "link", "reference-link", "image", "code", "preformatted-text", "code-block", "|", "goto-line", "watch", "preview", "fullscreen", "|", "help", "info"]
+        },
+	    saveHTMLToTextarea: true
+      });
+    });
+  </script>
 {{end}}
 
 {{define "LeftSide"}}{{end}}
 {{define "RightSide"}}
-<div class="col-md-4 sidebar">
+<div class="col-md-3 sidebar">
   <div class="panel panel-default">
 	<div class="panel-heading">
       <h3 class="panel-title">请在创建主题时考虑：</h3>
@@ -71,23 +61,6 @@
 		<li><strong>提问型主题：</strong>请用准确的语言描述你遇到的问题，如果问题足够在标题中写完，那么正文是不用填写的，在正文中写 RT 是完全没有必要的。</li>
 		<li><strong>分享型主题：</strong>欢迎你在这里分享你在网上看到的有关Go语言的信息或你自己的经验/心得/代码/作品，请不要分享社会新闻。</li>
 		<li>主题内容使用Markdown格式，请参考下面的Markdown格式说明</li>
-      </ul>
-	</div>
-  </div>
-  <div class="panel panel-default">
-	<div class="panel-heading">
-      <h3 class="panel-title">Markdown格式说明</h3>
-	</div>
-	<div class="panel-body">
-      <ul>
-		<li><strong>粗体</strong><code>**粗体**</code></li>
-		<li><i>斜体</i><code>*斜体*</code></li>
-		<li>http://www.example.com/自动加连接</li>
-		<li><code>![img alt](http://foo.com/bar.jpg)</code>显示图片
-		<li><code>`println("Hello Golang")`</code>单行代码</li>
-		<li>用<code>&lt;pre&gt;&lt;/pre&gt;</code>标签写多行代码</li>
-		<li>缩进4个空格也可以写多行代码</li>
-		<li><a href="http://wowubuntu.com/markdown/" target="_blank">完整参考</a></li>
       </ul>
 	</div>
   </div>

@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -116,14 +115,11 @@ func newTopicHandler(handler *Handler) {
 	}
 
 	form := wtforms.NewForm(
-		wtforms.NewHiddenField("html", ""),
 		wtforms.NewSelectField("node", "节点", choices, nodeId, &wtforms.Required{}),
 		wtforms.NewTextArea("title", "标题", "", &wtforms.Required{}),
-		wtforms.NewTextArea("content", "内容", ""),
+		wtforms.NewTextArea("editormd-markdown-doc", "内容", ""),
+		wtforms.NewTextArea("editormd-html-code", "HTML", ""),
 	)
-
-	var content string
-	var html template.HTML
 
 	if handler.Request.Method == "POST" {
 		if form.Validate(handler.Request) {
@@ -135,17 +131,14 @@ func newTopicHandler(handler *Handler) {
 
 			now := time.Now()
 
-			html2 := form.Value("html")
-			html2 = strings.Replace(html2, "<pre>", `<pre class="prettyprint linenums">`, -1)
-
 			nodeId := bson.ObjectIdHex(form.Value("node"))
 			err := c.Insert(&Topic{
 				Content: Content{
 					Id_:       id_,
 					Type:      TypeTopic,
 					Title:     form.Value("title"),
-					Markdown:  form.Value("content"),
-					Html:      template.HTML(html2),
+					Markdown:  form.Value("editormd-markdown-doc"),
+					Html:      template.HTML(form.Value("editormd-html-code")),
 					CreatedBy: user.Id_,
 					CreatedAt: now,
 				},
@@ -170,17 +163,11 @@ func newTopicHandler(handler *Handler) {
 			http.Redirect(handler.ResponseWriter, handler.Request, "/t/"+id_.Hex(), http.StatusFound)
 			return
 		}
-
-		content = form.Value("content")
-		html = template.HTML(form.Value("html"))
-		form.SetValue("html", "")
 	}
 
 	handler.renderTemplate("topic/form.html", BASE, map[string]interface{}{
 		"form":    form,
 		"title":   "新建",
-		"html":    html,
-		"content": content,
 		"action":  "/topic/new",
 		"active":  "topic",
 	})
@@ -218,27 +205,21 @@ func editTopicHandler(handler *Handler) {
 	}
 
 	form := wtforms.NewForm(
-		wtforms.NewHiddenField("html", ""),
 		wtforms.NewSelectField("node", "节点", choices, topic.NodeId.Hex(), &wtforms.Required{}),
 		wtforms.NewTextArea("title", "标题", topic.Title, &wtforms.Required{}),
-		wtforms.NewTextArea("content", "内容", topic.Markdown),
+		wtforms.NewTextArea("editormd-markdown-doc", "内容", topic.Markdown),
+		wtforms.NewTextArea("editormd-html-code", "html", ""),
 	)
-
-	content := topic.Markdown
-	html := topic.Html
 
 	if handler.Request.Method == "POST" {
 		if form.Validate(handler.Request) {
-			html2 := form.Value("html")
-			html2 = strings.Replace(html2, "<pre>", `<pre class="prettyprint linenums">`, -1)
-
 			nodeId := bson.ObjectIdHex(form.Value("node"))
 			c = handler.DB.C(CONTENTS)
 			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{
 				"nodeid":            nodeId,
 				"content.title":     form.Value("title"),
-				"content.markdown":  form.Value("content"),
-				"content.html":      template.HTML(html2),
+				"content.markdown":  form.Value("editormd-markdown-doc"),
+				"content.html":      template.HTML(form.Value("editormd-html-code")),
 				"content.updatedat": time.Now(),
 				"content.updatedby": user.Id_.Hex(),
 			}})
@@ -253,18 +234,12 @@ func editTopicHandler(handler *Handler) {
 			http.Redirect(handler.ResponseWriter, handler.Request, "/t/"+topic.Id_.Hex(), http.StatusFound)
 			return
 		}
-
-		content = form.Value("content")
-		html = template.HTML(form.Value("html"))
-		form.SetValue("html", "")
 	}
 
 	handler.renderTemplate("topic/form.html", BASE, map[string]interface{}{
 		"form":    form,
 		"title":   "编辑",
 		"action":  "/t/" + topicId + "/edit",
-		"html":    html,
-		"content": content,
 		"active":  "topic",
 	})
 }
