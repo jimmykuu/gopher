@@ -92,7 +92,6 @@
 <div id="reply">
   <form action="/comment/{{$topic.Id_.Hex}}" method="post" class="form-vertical" id="reply-form" role="form">
 	<fieldset>
-	  <input type="hidden" name="html" id="html">
 	  <div class="form-group">
 		<label>新回复</label>
 		<div id="editormd">
@@ -104,7 +103,7 @@
   </form>
 </div>
 
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/editor.md-1.4.2/editormd.min.js"></script>
+<script type="text/javascript" src="http://gopher.qiniudn.com/static/editor.md-1.4.2/editormd.min.js?1"></script>
   <script type="text/javascript">
 	var editor;
     $(function() {
