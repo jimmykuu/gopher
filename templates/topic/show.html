@@ -60,7 +60,6 @@
   <dl class="replies">
 	{{range $index, $reply := $topic.Comments .db}}
 	{{$commenter := .Creater $.db}}
-	<a name="{{.Id_.Hex}}"></a>
 	<dd id="{{.Id_.Hex}}">
       <a href="/member/{{$commenter.Username}}" class="pull-left" style="margin-right: 10px;">
 		{{if $commenter.Avatar}}

@@ -166,10 +166,10 @@ func newTopicHandler(handler *Handler) {
 	}
 
 	handler.renderTemplate("topic/form.html", BASE, map[string]interface{}{
-		"form":    form,
-		"title":   "新建",
-		"action":  "/topic/new",
-		"active":  "topic",
+		"form":   form,
+		"title":  "新建",
+		"action": "/topic/new",
+		"active": "topic",
 	})
 }
 
@@ -237,10 +237,10 @@ func editTopicHandler(handler *Handler) {
 	}
 
 	handler.renderTemplate("topic/form.html", BASE, map[string]interface{}{
-		"form":    form,
-		"title":   "编辑",
-		"action":  "/t/" + topicId + "/edit",
-		"active":  "topic",
+		"form":   form,
+		"title":  "编辑",
+		"action": "/t/" + topicId + "/edit",
+		"active": "topic",
 	})
 }
 
