@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -111,7 +110,6 @@ func commentHandler(handler *Handler) {
 				}
 			}
 		}
-
 	}
 
 	http.Redirect(handler.ResponseWriter, handler.Request, url, http.StatusFound)
@@ -194,7 +192,6 @@ func commentJsonHandler(handler *Handler) {
 
 	data := map[string]string{
 		"markdown": comment.Markdown,
-		"html":     string(comment.Html),
 	}
 
 	handler.renderJson(data)
@@ -221,14 +218,12 @@ func editCommentHandler(handler *Handler) {
 		return
 	}
 
-	content := handler.Request.FormValue("content")
-
-	html := handler.Request.FormValue("html")
-	html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
+	markdown := handler.Request.FormValue("editormd-edit-markdown-doc")
+	html := handler.Request.FormValue("editormd-edit-html-code")
 
 	c.Update(bson.M{"_id": bson.ObjectIdHex(id)}, bson.M{"$set": bson.M{
-		"markdown":  content,
-		"html":      html,
+		"markdown":  markdown,
+		"html":      template.HTML(html),
 		"updatedby": user.Id_.Hex(),
 		"updatedat": time.Now(),
 	}})

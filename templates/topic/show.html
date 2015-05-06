@@ -105,7 +105,7 @@
 
 <script type="text/javascript" src="http://gopher.qiniudn.com/static/editor.md-1.4.2/editormd.min.js?1"></script>
   <script type="text/javascript">
-	var editor;
+	var editor, editor_edit;
     $(function() {
       editor = editormd("editormd", {
         height: 400,
@@ -116,45 +116,33 @@
         },
 	    saveHTMLToTextarea: true
       });
+
+	  $('.edit-comment').click(function () {
+        var commentId = $(this).attr('comment-id');
+        $.getJSON("/comment/" + commentId + ".json", function (data) {
+          $('#edit-comment-form').attr('action', '/comment/' + commentId + '/edit');
+	      $('#myModal').on('shown.bs.modal', function (e) {
+	        if (editor_edit) {
+	          editor_edit.setMarkdown(data.markdown);
+	        } else {
+	          editor_edit = editormd("editormd-edit", {
+	            markdown: data.markdown,
+                height: 400,
+	            path: "http://gopher.qiniudn.com/static/editor.md-1.4.2/lib/",
+	            placeholder: "",
+	            toolbarIcons: function() {
+                  return ["undo", "redo", "|", "bold", "italic", "quote", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "link", "reference-link", "image", "code", "preformatted-text", "code-block", "|", "goto-line", "watch", "preview", "fullscreen", "|", "help", "info"]
+                },
+	            saveHTMLToTextarea: true
+	          });
+	        }
+          });
+
+	      $('#myModal').modal({});
+	    });
+      });
     });
   </script>
-
-<script type="text/javascript">
-  $(document).ready(function () {
-  $('#edit-comment-form').submit(function () {
-  var markdown = $('#comment-markdown').val().trim();
-  if (markdown == '') {
-  return false;
-  }
-  var converter = new Markdown.Converter();
-  var html = converter.makeHtml(markdown);
-  $('#comment-html').val(html);
-
-  return true;
-  });
-
-  $('#myTab a').click(function (e) {
-  e.preventDefault();
-  $(this).tab('show');
-  });
-
-  $('#myTab a[href="#preview"]').on('shown.bs.tab', function (e) {
-  var markdown = $('#comment-markdown').val();
-  var converter = new Markdown.Converter();
-  var html = converter.makeHtml(markdown);
-  $('#preview-content').html(html);
-  });
-
-  $('.edit-comment').click(function () {
-  var commentId = $(this).attr('comment-id');
-  $.getJSON("/comment/" + commentId + ".json", function (data) {
-  $('#edit-comment-form').attr('action', '/comment/' + commentId + '/edit');
-  $('#comment-markdown').val(data.markdown);
-  $('#myModal').modal({});
-  });
-  });
-  });
-</script>
 {{else}}
 <div class="content" style="padding: 2em;">
   需要 <a href="/signin" class="btn btn-primary">登录</a> 后方可回复, 如果你还没有账号你可以 <a href="/signup" class="btn btn-danger">注册</a> 一个帐号。
@@ -169,26 +157,15 @@
         <h4 class="modal-title" id="myModalLabel">编辑评论</h4>
       </div>
       <div class="modal-body">
-		<ul id="myTab" class="nav nav-tabs" role="tablist">
-		  <li class="active"><a role="" data-toggle="tab" href="#comment">回复</a></li>
-		  <li><a role="tab" data-toggle="rab" href="#preview">预览</a></li>
-		</ul>
 		<form action="" method="post" class="form-vertical" id="edit-comment-form" role="form">
-          <div id="myTabContent" class="tab-content">
-			<div class="tab-pane fade in active" id="comment">
-			  <input type="hidden" name="html" id="comment-html">
-			  <div class="form-group">
-				<textarea class="form-control" name="content" id="comment-markdown" rows="10"></textarea>
-			  </div>
+		  <div class="form-group">
+			<div id="editormd-edit">
+			  <textarea style="display: none;" id="comment-markdown"></textarea>
 			</div>
-			<div class="tab-pane fade" id="preview">
-			  <div id="preview-content" class="wmd-panel wmd-preview" style="overflow: auto; max-height: 240px;">
-			  </div>
-			</div>
-			<button type="submit" class="btn btn-info">提交</button>
 		  </div>
-		</form>
-      </div>
+		  <button type="submit" class="btn btn-info">提交</button>
+	  </div>
+	  </form>
     </div>
   </div>
 </div>
