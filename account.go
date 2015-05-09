@@ -21,7 +21,6 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/jimmykuu/webhelpers"
 	"github.com/jimmykuu/wtforms"
-	. "github.com/qiniu/api/conf"
 	qiniuIo "github.com/qiniu/api/io"
 	"github.com/qiniu/api/rs"
 	"gopkg.in/mgo.v2"
@@ -656,9 +655,6 @@ func uploadAvatarToQiniu(file io.ReadCloser, contentType string) (filename strin
 
 	// 文件名：32位uuid，不带减号和后缀组成
 	filename = strings.Replace(uuid.NewUUID().String(), "-", "", -1) + filenameExtension
-
-	ACCESS_KEY = Config.QiniuAccessKey
-	SECRET_KEY = Config.QiniuSecretKey
 
 	key := "avatar/" + filename
 

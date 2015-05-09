@@ -163,4 +163,6 @@ var routes = []Route{
 	{"/play/{id:[0-9a-f]{24}}", Everyone, playGroundHandler},
 	{"/play/share", Everyone, shareCodeHandler},
 	{"/playsocket", Everyone, playSocketHandler},
+
+	{"/upload/image", Authenticated, uploadImageHandler},
 }

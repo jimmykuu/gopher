@@ -7,6 +7,7 @@ import (
 
 	"github.com/deferpanic/deferclient/deferclient"
 	"github.com/gorilla/sessions"
+	. "github.com/qiniu/api/conf"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -86,4 +87,7 @@ func init() {
 	if Config.DeferPanicApiKey != "" {
 		deferclient.Token = Config.DeferPanicApiKey
 	}
+
+	ACCESS_KEY = Config.QiniuAccessKey
+	SECRET_KEY = Config.QiniuSecretKey
 }
