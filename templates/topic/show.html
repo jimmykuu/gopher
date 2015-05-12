@@ -9,7 +9,7 @@
 </ul>
 {{end}}
 {{define "Content"}}
-<link rel="stylesheet" href="http://gopher.qiniudn.com/static/lib/editor.md-1.4.3/css/editormd.min.css">
+<link rel="stylesheet" href="http://gopher.qiniudn.com/static/lib/editor.md-1.4.4/css/editormd.min.css">
 {{$topic := .utils.AssertTopic .topic}}
 {{$creater := $topic.Creater .db}}
 <div class="content">
@@ -103,10 +103,12 @@
   </form>
 </div>
 
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/lib/editor.md-1.4.3/editormd.min.js?1"></script>
+<script type="text/javascript" src="http://gopher.qiniudn.com/static/lib/editor.md-1.4.4/editormd.min.js?1"></script>
   <script type="text/javascript">
 	var editor, editor_edit;
     $(function() {
+	  $('#submit').attr('disabled', true);
+
       editor = editormd("editormd", {
         height: 400,
 	    autoFocus: false,
@@ -117,8 +119,11 @@
         },
         saveHTMLToTextarea: true,
         imageUpload: true,
-        imageFormats : ["jpg", "jpeg", "gif", "png"],
-        imageUploadURL : "/upload/image"
+        imageFormats: ["jpg", "jpeg", "gif", "png"],
+        imageUploadURL: "/upload/image",
+	    onchange: function() {
+	      $('#submit').attr('disabled', this.getMarkdown().trim() == "");
+	    }
       });
 
 	  $('.edit-comment').click(function () {
@@ -138,10 +143,13 @@
 	            toolbarIcons: function() {
                   return ["undo", "redo", "|", "bold", "italic", "quote", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "link", "reference-link", "image", "code", "preformatted-text", "code-block", "|", "goto-line", "watch", "preview", "fullscreen", "|", "help", "info"]
                 },
-            saveHTMLToTextarea: true,
-		    imageUpload: true,
-	        imageFormats : ["jpg", "jpeg", "gif", "png"],
-            imageUploadURL : "/upload/image"
+                saveHTMLToTextarea: true,
+		        imageUpload: true,
+	            imageFormats: ["jpg", "jpeg", "gif", "png"],
+                imageUploadURL: "/upload/image",
+                onchange: function() {
+                  $('#edit-submit').attr('disabled', this.getMarkdown().trim() == "");
+	            }
 	          });
 	        }
           });
@@ -171,7 +179,7 @@
 			  <textarea style="display: none;" id="comment-markdown"></textarea>
 			</div>
 		  </div>
-		  <button type="submit" class="btn btn-info">提交</button>
+		  <button type="submit" class="btn btn-info" id="edit-submit">提交</button>
 	  </div>
 	  </form>
     </div>

@@ -16,6 +16,7 @@ import (
 	"strings"
 
 	"code.google.com/p/go-uuid/uuid"
+	"github.com/deferpanic/deferclient/deferclient"
 	"github.com/gorilla/sessions"
 	"github.com/jimmykuu/webhelpers"
 	"github.com/jimmykuu/wtforms"
@@ -342,6 +343,8 @@ func editorMdUploadImageResult(success int, url, message string) []byte {
 // URL: /upload/image
 // 编辑器上传图片，接收后上传到七牛
 func uploadImageHandler(handler *Handler) {
+	defer deferclient.Persist()
+
 	file, header, err := handler.Request.FormFile("editormd-image-file")
 	if err != nil {
 		panic(err)
