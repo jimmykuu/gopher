@@ -58,6 +58,26 @@
   <hr>
   {{.pagination.Html .page}}
 </div>
+<div class="panel panel-default">
+  <div class="panel-heading">
+	<h3 class="panel-title">节点导航</h3>
+  </div>
+  <div class="panel-body">
+	{{range .nodes}}
+	<a href="/go/{{.Id}}" class="btn">{{.Name}}</a>
+	{{end}}
+  </div>
+</div>
+<div class="panel panel-default">
+  <div class="panel-heading">
+	<h3 class="panel-title">热门城市</h3>
+  </div>
+  <div class="panel-body">
+	{{range .cities}}
+	<a href="/members/city/{{.Name}}" class="btn">{{.Name}}</a>
+	{{end}}
+  </div>
+</div>
 {{end}}
 
 {{define "LeftSide"}}{{end}}
@@ -96,20 +116,6 @@
 	</div>
   </div>
   {{end}}
-  <div class="panel panel-default">
-	<div class="panel-heading">
-	  <h3 class="panel-title">最热节点</h3>
-	</div>
-    <div class="panel-body">
-	  {{range .nodes}}
-	  <a href="/go/{{.Id}}" class="btn">{{.Name}}</a>
-	  {{end}}
-    </div>
-    <div class="panel-footer">
-	  <a href="/nodes" class="pull-right">所有节点</a>
-	  <div class="clearfix"></div>
-	</div>
-  </div>
   <div class="panel panel-default">
 	<div class="panel-heading">
 	  <h3 class="panel-title">友情社区</h3>

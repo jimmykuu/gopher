@@ -72,7 +72,6 @@ func (ct *CollectTopic) Topic(db *mgo.Database) *Topic {
 		return nil
 	}
 	return &topic
-
 }
 
 // 用户
@@ -88,19 +87,19 @@ type User struct {
 	Tagline         string
 	Bio             string
 	Twitter         string
-	Weibo           string
-	GitHubUsername  string
-	JoinedAt        time.Time
+	Weibo           string    // 微博
+	GitHubUsername  string    // GitHub 用户名
+	JoinedAt        time.Time // 加入时间
 	Follow          []string
 	Fans            []string
 	RecentReplies   []Reply        //存储的是最近回复的主题的objectid.hex
 	RecentAts       []At           //存储的是最近评论被AT的主题的objectid.hex
 	TopicsCollected []CollectTopic //用户收藏的topic数组
-	IsSuperuser     bool
+	IsSuperuser     bool           // 是否是超级用户
 	IsActive        bool
 	ValidateCode    string
 	ResetCode       string
-	Index           int
+	Index           int    // 第几个加入社区
 	AccountRef      string //帐号关联的社区
 	IdRef           string //关联社区的帐号
 	LinkRef         string //关联社区的主页链接

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"sort"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -19,7 +20,18 @@ import (
 //  用于测试
 var testParam func() = func() {}
 
-func topicsHandler(handler *Handler, conditions bson.M, sort string, url string, subActive string) {
+type City struct {
+	Name        string `bson:"_id"`
+	MemberCount int    `bson:"count"`
+}
+
+type ByCount []City
+
+func (a ByCount) Len() int           { return len(a) }
+func (a ByCount) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByCount) Less(i, j int) bool { return a[i].MemberCount > a[j].MemberCount }
+
+func topicsHandler(handler *Handler, conditions bson.M, sortBy string, url string, subActive string) {
 	page, err := getPage(handler.Request)
 
 	if err != nil {
@@ -27,9 +39,9 @@ func topicsHandler(handler *Handler, conditions bson.M, sort string, url string,
 		return
 	}
 
-	var hotNodes []Node
+	var nodes []Node
 	c := handler.DB.C(NODES)
-	c.Find(bson.M{"topiccount": bson.M{"$gt": 0}}).Sort("-topiccount").Limit(10).All(&hotNodes)
+	c.Find(bson.M{"topiccount": bson.M{"$gt": 0}}).Sort("-topiccount").All(&nodes)
 
 	var status Status
 	c = handler.DB.C(STATUS)
@@ -40,7 +52,7 @@ func topicsHandler(handler *Handler, conditions bson.M, sort string, url string,
 	var topTopics []Topic
 
 	if page == 1 {
-		c.Find(bson.M{"is_top": true}).Sort(sort).All(&topTopics)
+		c.Find(bson.M{"is_top": true}).Sort(sortBy).All(&topTopics)
 
 		var objectIds []bson.ObjectId
 		for _, topic := range topTopics {
@@ -51,7 +63,7 @@ func topicsHandler(handler *Handler, conditions bson.M, sort string, url string,
 		}
 	}
 
-	pagination := NewPagination(c.Find(conditions).Sort(sort), url, PerPage)
+	pagination := NewPagination(c.Find(conditions).Sort(sortBy), url, PerPage)
 
 	var topics []Topic
 
@@ -69,8 +81,36 @@ func topicsHandler(handler *Handler, conditions bson.M, sort string, url string,
 
 	topics = append(topTopics, topics...)
 
+	c = handler.DB.C(USERS)
+
+	var cities []City
+	c.Pipe([]bson.M{bson.M{
+		"$group": bson.M{
+			"_id":   "$location",
+			"count": bson.M{"$sum": 1},
+		},
+	}}).All(&cities)
+
+	sort.Sort(ByCount(cities))
+
+	var hotCities []City
+
+	count := 0
+	for _, city := range cities {
+		if city.Name != "" {
+			hotCities = append(hotCities, city)
+
+			count += 1
+		}
+
+		if count == 10 {
+			break
+		}
+	}
+
 	handler.renderTemplate("index.html", BASE, map[string]interface{}{
-		"nodes":         hotNodes,
+		"nodes":         nodes,
+		"cities":        hotCities,
 		"status":        status,
 		"topics":        topics,
 		"linkExchanges": linkExchanges,
