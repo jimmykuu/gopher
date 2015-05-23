@@ -387,23 +387,9 @@ func getPackageHandler(ws *websocket.Conn) {
 			}
 			websocket.JSON.Send(ws, message)
 
-			cmd := exec.Command("tar", "-cf", filepath.Join(Config.PackagesDownloadPath, tarFilename), packageName)
+			cmd := exec.Command("tar", "czf", filepath.Join(Config.PackagesDownloadPath, tarFilename), "--exclude-vcs", packageName)
 
-			fmt.Println(strings.Join([]string{"tar", "-cf", filepath.Join(Config.PackagesDownloadPath, tarFilename), packageName}, " "))
 			cmd.Dir = filepath.Join(Config.GoGetPath, "src")
-			err = cmd.Run()
-			if err != nil {
-				panic(err)
-			}
-
-			message = Message{
-				Type: "command",
-				Msg:  fmt.Sprintf("gzip -f %s.tar\n", strings.Replace(packageName, "/", ".", -1)),
-			}
-			websocket.JSON.Send(ws, message)
-
-			cmd = exec.Command("gzip", "-f", tarFilename)
-			cmd.Dir = Config.PackagesDownloadPath
 			err = cmd.Run()
 			if err != nil {
 				panic(err)
