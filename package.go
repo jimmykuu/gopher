@@ -380,7 +380,7 @@ func getPackageHandler(ws *websocket.Conn) {
 
 		// 压缩
 		for _, packageName := range writer.packages {
-			tarFilename := strings.Replace(packageName, "/", ".", -1) + ".tar"
+			tarFilename := strings.Replace(packageName, "/", ".", -1) + ".tar.gz"
 			message := Message{
 				Type: "command",
 				Msg:  fmt.Sprintf("tar %s %s", tarFilename, packageName),
