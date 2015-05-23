@@ -3,7 +3,6 @@ package gopher
 import (
 	"net/http"
 
-	"github.com/deferpanic/deferclient/deferclient"
 	"github.com/jimmykuu/wtforms"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -21,7 +20,7 @@ func adminListArticleCategoriesHandler(handler *Handler) {
 // URL: /admin/article_category/new
 // 新建文章分类
 func adminNewArticleCategoryHandler(handler *Handler) {
-	defer deferclient.Persist()
+	defer dps.Persist()
 
 	form := wtforms.NewForm(
 		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),

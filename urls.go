@@ -165,4 +165,6 @@ var routes = []Route{
 	{"/playsocket", Everyone, playSocketHandler},
 
 	{"/upload/image", Authenticated, uploadImageHandler},
+
+	//{"/api/v1/topics", Everyone, apiTopicsHandler},
 }

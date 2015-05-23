@@ -3,7 +3,6 @@ package gopher
 import (
 	"net/http"
 
-	"github.com/deferpanic/deferclient/deferclient"
 	"github.com/gorilla/mux"
 	"github.com/jimmykuu/wtforms"
 	"gopkg.in/mgo.v2/bson"
@@ -24,7 +23,7 @@ func adminListLinkExchangesHandler(handler *Handler) {
 // ULR: /admin/link_exchange/new
 // 增加友链
 func adminNewLinkExchangeHandler(handler *Handler) {
-	defer deferclient.Persist()
+	defer dps.Persist()
 
 	form := wtforms.NewForm(
 		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),
@@ -82,7 +81,7 @@ func adminNewLinkExchangeHandler(handler *Handler) {
 // URL: /admin/link_exchange/{linkExchangeId}/edit
 // 编辑友情链接
 func adminEditLinkExchangeHandler(handler *Handler) {
-	defer deferclient.Persist()
+	defer dps.Persist()
 
 	linkExchangeId := mux.Vars(handler.Request)["linkExchangeId"]
 

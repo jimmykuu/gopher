@@ -15,7 +15,6 @@ import (
 	"time"
 
 	"code.google.com/p/go.net/websocket"
-	"github.com/deferpanic/deferclient/deferclient"
 	"github.com/gorilla/mux"
 	"github.com/jimmykuu/wtforms"
 	"gopkg.in/mgo.v2"
@@ -344,7 +343,7 @@ func (cw *ConsoleWriter) Write(p []byte) (n int, err error) {
 // URL: ws://.../get/package
 // 和页面WebSocket通信
 func getPackageHandler(ws *websocket.Conn) {
-	defer deferclient.Persist()
+	defer dps.Persist()
 	defer ws.Close()
 
 	var err error
@@ -389,6 +388,8 @@ func getPackageHandler(ws *websocket.Conn) {
 			websocket.JSON.Send(ws, message)
 
 			cmd := exec.Command("tar", "-cf", filepath.Join(Config.PackagesDownloadPath, tarFilename), packageName)
+
+			fmt.Println(strings.Join([]string{"tar", "-cf", filepath.Join(Config.PackagesDownloadPath, tarFilename), packageName}, " "))
 			cmd.Dir = filepath.Join(Config.GoGetPath, "src")
 			err = cmd.Run()
 			if err != nil {

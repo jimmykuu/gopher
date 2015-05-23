@@ -9,8 +9,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/deferpanic/deferclient/deferclient"
 )
 
 type File struct {
@@ -29,7 +27,7 @@ type Version struct {
 }
 
 func downloadHandler(handler *Handler) {
-	defer deferclient.Persist()
+	defer dps.Persist()
 
 	file, err := os.Open("etc/download.json")
 	if err != nil {

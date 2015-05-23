@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/deferpanic/deferclient/deferclient"
+	"github.com/deferpanic/deferclient/deferstats"
 	"github.com/gorilla/sessions"
 	. "github.com/qiniu/api/conf"
 	"gopkg.in/mgo.v2"
@@ -85,7 +85,7 @@ func init() {
 	generateUsersJson(db)
 
 	if Config.DeferPanicApiKey != "" {
-		deferclient.Token = Config.DeferPanicApiKey
+		dps = deferstats.NewClient(Config.DeferPanicApiKey)
 	}
 
 	ACCESS_KEY = Config.QiniuAccessKey

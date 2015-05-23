@@ -7,7 +7,6 @@ package gopher
 import (
 	"net/http"
 
-	"github.com/deferpanic/deferclient/deferclient"
 	"github.com/jimmykuu/wtforms"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -26,7 +25,7 @@ func nodesHandler(handler *Handler) {
 // URL: /admin/node/new
 // 新建节点
 func adminNewNodeHandler(handler *Handler) {
-	defer deferclient.Persist()
+	defer dps.Persist()
 
 	form := wtforms.NewForm(
 		wtforms.NewTextField("id", "ID", "", &wtforms.Required{}),

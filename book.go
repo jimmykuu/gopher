@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/deferpanic/deferclient/deferclient"
 	"github.com/gorilla/mux"
 	"github.com/jimmykuu/wtforms"
 	"gopkg.in/mgo.v2/bson"
@@ -49,7 +48,7 @@ func showBookHandler(handler *Handler) {
 // URL: /admin/book/{id}/edit
 // 编辑图书
 func editBookHandler(handler *Handler) {
-	defer deferclient.Persist()
+	defer dps.Persist()
 
 	bookId := mux.Vars(handler.Request)["id"]
 
@@ -125,7 +124,7 @@ func listBooksHandler(handler *Handler) {
 }
 
 func newBookHandler(handler *Handler) {
-	defer deferclient.Persist()
+	defer dps.Persist()
 
 	form := wtforms.NewForm(
 		wtforms.NewTextField("title", "书名", "", wtforms.Required{}),
