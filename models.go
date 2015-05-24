@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
-	"strings"
 	"time"
 
 	"github.com/gorilla/sessions"
@@ -167,26 +166,13 @@ func deleteGithubValues(session *sessions.Session) {
 }
 
 // 头像的图片地址
-func (u *User) AvatarImgSrc() string {
+func (u *User) AvatarImgSrc(size int) string {
 	// 如果没有设置头像，用默认头像
-	filename := u.Avatar
-	if filename == "" {
-		filename = DefaultAvatar
+	if u.Avatar == "" {
+		return fmt.Sprintf("http://identicon.relucks.org/%s?size=%d", u.Username, size)
 	}
 
-	return "http://gopher.qiniudn.com/avatar/" + filename
-}
-
-// 头像的SVG标记
-func (u *User) AvatarSVG(size int, properties ...string) template.HTML {
-	textByte := u.Username[0]
-	color := colors[int(textByte)%len(colors)]
-
-	return template.HTML(fmt.Sprintf(`<svg xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" %s>
-      <rect x="0" y="0" width="%d" height="%d" rx="6" ry="6"
-      fill="%s" />
-      <text fill="white" x="%dpx" y="%dpx" font-size="30" font-weight="bold" text-anchor="middle" style="dominant-baseline: central;">%s</text>
-    </svg>`, size, size, strings.Join(properties, " "), size, size, color, size/2, size/2, strings.ToUpper(string(textByte))))
+	return fmt.Sprintf("http://gopher.qiniudn.com/avatar/%s?imageView2/2/w/%d/h/%d/q/100", u.Avatar, size, size)
 }
 
 // 用户发表的最近10个主题

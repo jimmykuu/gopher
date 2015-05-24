@@ -1,36 +1,32 @@
 {{define "Title"}}{{if .city}}{{.city}}的{{end}}所有会员{{end}}
 {{define "ContentWidth"}}10{{end}}
 {{define "Breadcrumb"}}
-	<ul class="breadcrumb">
-		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
-		{{if .city}}
-			<li><a href="/members/all">所有会员</a></li>
-			<li class="active">{{.city}}</li>
-		{{else}}
-			<li class="active">所有会员</li>
-		{{end}}
-	</ul>
+<ul class="breadcrumb">
+  <li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
+  {{if .city}}
+  <li><a href="/members/all">所有会员</a></li>
+  <li class="active">{{.city}}</li>
+  {{else}}
+  <li class="active">所有会员</li>
+  {{end}}
+</ul>
 {{end}}
 {{define "Content"}}
-	<div class="content">
-		<h3><small>{{if .city}}{{.city}}的{{end}}所有会员</small></h3>
-		<ul class="members clearfix">
-			{{range .members}}
-			<li>
-			  <a href="/member/{{.Username}}">
-				{{if .Avatar}}
-				<img src="{{.AvatarImgSrc}}-middle" class="img-rounded">
-				{{else}}
-				{{.AvatarSVG 48}}
-				{{end}}
-			  </a>
-				<a href="/member/{{.Username}}">{{.Username}}</a>
-			</li>
-			{{end}}
-		</ul>
-		<div class="clearfix"></div>
-		{{.pagination.Html .page}}
-	</div>
+<div class="content">
+  <h3><small>{{if .city}}{{.city}}的{{end}}所有会员</small></h3>
+  <ul class="members clearfix">
+	{{range .members}}
+	<li>
+	  <a href="/member/{{.Username}}">
+		<img src="{{.AvatarImgSrc 48}}" class="img-rounded">
+	  </a>
+	  <a href="/member/{{.Username}}">{{.Username}}</a>
+	</li>
+	{{end}}
+  </ul>
+  <div class="clearfix"></div>
+  {{.pagination.Html .page}}
+</div>
 {{end}}
 
 {{define "LeftSide"}}{{end}}

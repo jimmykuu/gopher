@@ -30,11 +30,7 @@
 	{{$node := .Node $.db}}
 	<dd>
       <a href="/member/{{$creater.Username}}" class="pull-left" style="margin-right: 10px;">
-		{{if $creater.Avatar}}
-		<img class="img-rounded" src="{{$creater.AvatarImgSrc}}-middle" alt="{{$creater.Username}}">
-		{{else}}
-		{{$creater.AvatarSVG 48}}
-		{{end}}
+		<img class="img-rounded" src="{{$creater.AvatarImgSrc 48}}" alt="{{$creater.Username}}">
 	  </a>
 	  {{if .CommentCount}}
 	  <a class="badge pull-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>

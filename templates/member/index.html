@@ -16,11 +16,7 @@
 			{{range .newestMembers}}
 			<li>
 			  <a href="/member/{{.Username}}">
-				{{if .Avatar}}
-				<img src="{{.AvatarImgSrc}}-middle" class="img-rounded">
-				{{else}}
-				{{.AvatarSVG 48}}
-				{{end}}
+				<img src="{{.AvatarImgSrc 48}}" class="img-rounded">
 			  </a>
 				<a href="/member/{{.Username}}">{{.Username}}</a>
 			</li>

@@ -80,12 +80,12 @@
 <div class="content">
   <h4 id="avatar"><small>头像</small></h4>
   <hr>
-  <p>golang.tc使用<a href="http://www.qiniutek.com/" target="_blank">七牛云存储</a>来提供头像服务.</p>
+  <p>使用<a href="http://www.qiniu.com/" target="_blank">七牛云存储</a>和 <a href="http://identicon.relucks.org/" target="_blank">Identicon</a> 提供头像服务.</p>
   <p>
 	当前头像
-	<img class="img-rounded" src="{{.user.AvatarImgSrc}}-large">
-	<img class="img-rounded" src="{{.user.AvatarImgSrc}}-middle">
-	<img class="img-rounded" src="{{.user.AvatarImgSrc}}-small">
+	<img class="img-rounded" src="{{.user.AvatarImgSrc 96}}">
+	<img class="img-rounded" src="{{.user.AvatarImgSrc 48}}">
+	<img class="img-rounded" src="{{.user.AvatarImgSrc 24}}">
   </p>
   <p>
 	<br>

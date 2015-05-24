@@ -62,11 +62,7 @@
 	{{$commenter := .Creater $.db}}
 	<dd id="{{.Id_.Hex}}">
       <a href="/member/{{$commenter.Username}}" class="pull-left" style="margin-right: 10px;">
-		{{if $commenter.Avatar}}
-		<img class="img-rounded" src="{{$commenter.AvatarImgSrc}}-middle" alt="{{$commenter.Username}}">
-		{{else}}
-		{{$commenter.AvatarSVG 48}}
-		{{end}}
+		<img class="img-rounded" src="{{$commenter.AvatarImgSrc 48}}" alt="{{$commenter.Username}}">
 	  </a>
 	  <div class="info">
 		<span class="label label-default pull-right">#{{add $index 1}}</span>

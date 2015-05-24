@@ -1,44 +1,40 @@
 {{define "Title"}}{{.user.Username}} 创建的全部主题{{end}}
 {{define "ContentWidth"}}9{{end}}
 {{define "Breadcrumb"}}
-	<ul class="breadcrumb">
-		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
-		<li><a href="/member/{{.user.Username}}">{{.user.Username}}</a></li>
-		<li class="active">全部主题</li>
-	</ul>
+<ul class="breadcrumb">
+  <li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
+  <li><a href="/member/{{.user.Username}}">{{.user.Username}}</a></li>
+  <li class="active">全部主题</li>
+</ul>
 {{end}}
 {{define "Content"}}
-	{{$user := .utils.AssertUser .user}}
-	<div class="content">
-	  {{if $user.Avatar}}
-	  <img src="{{$user.AvatarImgSrc}}-large" class="pull-left">
-	  {{else}}
-	  {{$user.AvatarSVG 96 `class="pull-left"`}}
-	  {{end}}
-		<div class="clearfix"></div>
-		<p></p>
-		<dl>
-		{{range .topics}}
-		    {{$node := .Node $.db}}
-		    {{$creater := .Creater $.db}}
-			<dd class="topic">
-            {{if .CommentCount}}
-                <a class="badge pull-right" href="/t/{{.Id_.Hex}}">{{.CommentCount}}</a>
-            {{end}}
-				<a href="/t/{{.Id_.Hex}}" class="title">{{.Title}}</a>
-				<div class="space"></div>
-				<span>
-					<a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> • 
-					<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> • 
-					{{formattime .CreatedAt}}
-				</span>
-				<div class="clearfix"></div>
-			</dd>
-		{{end}}
-		</dl>
-		<hr>
-		{{.pagination.Html .page}}
-	</div>
+{{$user := .utils.AssertUser .user}}
+<div class="content">
+  <img src="{{$user.AvatarImgSrc 96}}" class="pull-left">
+  <div class="clearfix"></div>
+  <p></p>
+  <dl>
+	{{range .topics}}
+	{{$node := .Node $.db}}
+	{{$creater := .Creater $.db}}
+	<dd class="topic">
+      {{if .CommentCount}}
+      <a class="badge pull-right" href="/t/{{.Id_.Hex}}">{{.CommentCount}}</a>
+      {{end}}
+	  <a href="/t/{{.Id_.Hex}}" class="title">{{.Title}}</a>
+	  <div class="space"></div>
+	  <span>
+		<a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
+		<a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
+		{{formattime .CreatedAt}}
+	  </span>
+	  <div class="clearfix"></div>
+	</dd>
+	{{end}}
+  </dl>
+  <hr>
+  {{.pagination.Html .page}}
+</div>
 {{end}}
 
 {{define "LeftSide"}}{{end}}
