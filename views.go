@@ -5,8 +5,6 @@
 package gopher
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -313,27 +311,6 @@ func searchHandler(handler *Handler) {
 	})
 }
 
-func editorMdUploadImageResult(success int, url, message string) []byte {
-	result := map[string]interface{}{
-		"success": success,
-	}
-
-	if success == 0 {
-		result["message"] = message
-	} else if success == 1 {
-		result["url"] = url
-	} else {
-		panic(errors.New("错误的返回代码，只能 0 | 1"))
-	}
-
-	b, err := json.Marshal(result)
-	if err != nil {
-		panic(err)
-	}
-
-	return b
-}
-
 // URL: /upload/image
 // 编辑器上传图片，接收后上传到七牛
 func uploadImageHandler(handler *Handler) {
@@ -359,8 +336,10 @@ func uploadImageHandler(handler *Handler) {
 	}
 
 	if filenameExtension == "" {
-		handler.ResponseWriter.Header().Set("Content-Type", "text/html")
-		handler.ResponseWriter.Write(editorMdUploadImageResult(0, "", "不支持的文件格式，请上传 jpg/png/gif 图片"))
+		handler.renderJson(map[string]interface{}{
+			"success": 0,
+			"message": "不支持的文件格式，请上传 jpg/png/gif 图片",
+		})
 		return
 	}
 
@@ -387,12 +366,16 @@ func uploadImageHandler(handler *Handler) {
 	if err != nil {
 		panic(err)
 
-		handler.ResponseWriter.Header().Set("Content-Type", "text/html")
-		handler.ResponseWriter.Write(editorMdUploadImageResult(0, "", "图片上传到七牛失败"))
+		handler.renderJson(map[string]interface{}{
+			"success": 0,
+			"message": "图片上传到七牛失败",
+		})
 
 		return
 	}
 
-	handler.ResponseWriter.Header().Set("Content-Type", "text/html")
-	handler.ResponseWriter.Write(editorMdUploadImageResult(1, "http://gopher.qiniudn.com/"+key, ""))
+	handler.renderJson(map[string]interface{}{
+		"success": 1,
+		"url":     "http://gopher.qiniudn.com/" + key,
+	})
 }

@@ -9,7 +9,7 @@
 </ul>
 {{end}}
 {{define "Content"}}
-<link rel="stylesheet" href="http://gopher.qiniudn.com/static/lib/editor.md-1.4.4/css/editormd.min.css">
+<link rel="stylesheet" href="http://gopher.qiniudn.com/static/lib/editor.md-1.4.4-2/css/editormd.min.css">
 {{$topic := .utils.AssertTopic .topic}}
 {{$creater := $topic.Creater .db}}
 <div class="content">
@@ -99,7 +99,7 @@
   </form>
 </div>
 
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/lib/editor.md-1.4.4/editormd.min.js?1"></script>
+<script type="text/javascript" src="http://gopher.qiniudn.com/static/lib/editor.md-1.4.4-2/editormd.min.js?1"></script>
   <script type="text/javascript">
 	var editor, editor_edit;
     $(function() {
@@ -108,7 +108,7 @@
       editor = editormd("editormd", {
         height: 400,
 	    autoFocus: false,
-        path: "http://gopher.qiniudn.com/static/lib/editor.md-1.4.3/lib/",
+        path: "http://gopher.qiniudn.com/static/lib/editor.md-1.4.4-2/lib/",
 	    placeholder: "Mardkown，提交前请查看预览格式是否正确",
         toolbarIcons: function() {
           return ["undo", "redo", "|", "bold", "italic", "quote", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "link", "reference-link", "image", "code", "preformatted-text", "code-block", "|", "goto-line", "watch", "preview", "fullscreen", "|", "help", "info"]
@@ -134,7 +134,7 @@
 	            markdown: data.markdown,
                 height: 400,
 	            autoFocus: false,
-	            path: "http://gopher.qiniudn.com/static/lib/editor.md-1.4.3/lib/",
+	            path: "http://gopher.qiniudn.com/static/lib/editor.md-1.4.4-2/lib/",
 	            placeholder: "",
 	            toolbarIcons: function() {
                   return ["undo", "redo", "|", "bold", "italic", "quote", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "link", "reference-link", "image", "code", "preformatted-text", "code-block", "|", "goto-line", "watch", "preview", "fullscreen", "|", "help", "info"]
