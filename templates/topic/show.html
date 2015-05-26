@@ -103,7 +103,9 @@
   <script type="text/javascript">
 	var editor, editor_edit;
     $(function() {
-	  $('#submit').attr('disabled', true);
+      $('#submit').attr('disabled', true);
+
+      editormd.urls.atLinkBase = "/member/";
 
       editor = editormd("editormd", {
         height: 400,
