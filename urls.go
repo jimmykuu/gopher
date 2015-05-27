@@ -166,5 +166,5 @@ var routes = []Route{
 
 	{"/upload/image", Authenticated, uploadImageHandler},
 
-	//{"/api/v1/topics", Everyone, apiTopicsHandler},
+	{"/api/v1/topics", Everyone, apiTopicsHandler},
 }
