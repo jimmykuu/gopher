@@ -4,6 +4,7 @@ package gopher
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2"
@@ -13,7 +14,38 @@ import (
 // URL: /admin
 // 后台管理首页
 func adminHandler(handler *Handler) {
-	handler.renderTemplate("admin/index.html", ADMIN)
+	now := time.Now()
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	c := handler.DB.C(USERS)
+
+	newUserCount, err := c.Find(bson.M{"joinedat": bson.M{"$gt": today}}).Count()
+	if err != nil {
+		panic(err)
+	}
+
+	totalUserCount, err := c.Find(nil).Count()
+	if err != nil {
+		panic(err)
+	}
+
+	c = handler.DB.C(CONTENTS)
+	newTopicCount, err := c.Find(bson.M{"content.createdat": bson.M{"$gt": today}}).Count()
+	if err != nil {
+		panic(err)
+	}
+
+	c = handler.DB.C(COMMENTS)
+	newCommentCount, err := c.Find(bson.M{"createdat": bson.M{"$gt": today}}).Count()
+	if err != nil {
+		panic(err)
+	}
+
+	handler.renderTemplate("admin/index.html", ADMIN, map[string]interface{}{
+		"newUserCount":    newUserCount,
+		"newTopicCount":   newTopicCount,
+		"newCommentCount": newCommentCount,
+		"totalUserCount":  totalUserCount,
+	})
 }
 
 // URL: /admin/users

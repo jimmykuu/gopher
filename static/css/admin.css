@@ -142,6 +142,16 @@ body {
   background-color: #FAFAFA;
 }
 
+#statistic .card .header {
+	font-size: 3em;
+	color: white;
+	font-weight: normal;
+}
+
+#statistic .card .description {
+	color: #eeeeee;
+}
+
 /*******************************
           Responsive
 *******************************/
