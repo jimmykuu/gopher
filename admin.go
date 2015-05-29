@@ -16,6 +16,7 @@ import (
 func adminHandler(handler *Handler) {
 	now := time.Now()
 	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)
+	today = today.Add(-time.Duration(Config.TimeZoneOffset) * time.Hour)
 	c := handler.DB.C(USERS)
 
 	newUserCount, err := c.Find(bson.M{"joinedat": bson.M{"$gt": today}}).Count()
