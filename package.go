@@ -358,7 +358,7 @@ func getPackageHandler(ws *websocket.Conn) {
 
 		fmt.Println("received back from client:", name)
 
-		cmd := exec.Command("/usr/local/go", "get", "-u", "-v", name)
+		cmd := exec.Command("/usr/local/go/bin/go", "get", "-u", "-v", name)
 		cmd.Env = os.Environ()[:]
 		cmd.Env = append(cmd.Env, "GOPATH="+Config.GoGetPath)
 
