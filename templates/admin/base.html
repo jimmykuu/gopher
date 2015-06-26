@@ -7,9 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <!-- Site Properities -->
   <title>{{template "Title" .}} - 后台管理</title>
-  <link rel="stylesheet" type="text/css" href="http://gopher.qiniudn.com/static/lib/Semantic-UI-1.12.2/semantic.min.css">
+  <link rel="stylesheet" type="text/css" href="http://gopher.qiniudn.com/static/lib/Semantic-UI-1.12.3/semantic.min.css">
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
-  <script src="http://gopher.qiniudn.com/static/lib/Semantic-UI-1.12.2/semantic.min.js"></script>
+  <script src="http://gopher.qiniudn.com/static/lib/Semantic-UI-1.12.3/semantic.min.js"></script>
   <link rel="stylesheet" type="text/css" href="/static/css/admin.css?v=2">
   <script type="text/javascript" charset="utf-8">
   </script>
@@ -22,13 +22,16 @@
 <body id="admin">
   <div class="ui fixed transparent main top menu">
     <div class="container">
-      <a class="launch item" href="/"><i class="icon home layout"></i> 首页</a>
+      <a>Golang 中国后台管理</a>
       <div class="right menu">
           <a class="item" href="/signout">退出</a>
       </div>
     </div>
   </div>
-  <div class="ui very thin vertical labeled icon sidebar fixed menu visible active" style="top: 38px;">
+  <div class="ui very thin vertical labeled sidebar fixed menu visible active" style="top: 38px;">
+	<div class="header item">
+	  基础数据管理
+	</div>
 	<a class="item" href="/admin/users">
 	  <i class="users icon"></i>
 	  用户

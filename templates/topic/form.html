@@ -7,7 +7,6 @@
 </ul>
 {{end}}
 {{define "Content"}}
-<link rel="stylesheet" href="http://gopher.qiniudn.com/static/lib/editor.md-1.4.4-2/css/editormd.min.css">
 <div class="content">
   <form action="" method="post" id="topic-form" role="form">
 	<fieldset>
@@ -27,15 +26,16 @@
 		</div>
 	  </div>
 
-	  <input type="submit" class="btn btn-primary" value="{{.title}}">
+	  <input type="submit" id="submit" class="btn btn-primary" value="{{.title}}">
 	</fieldset>
   </form>
 </div>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/lib/editor.md-1.4.4-2/editormd.min.js?1"></script>
-  <script type="text/javascript">
-	var editor;
-    $(function() {
-	  editormd.urls.atLinkBase = "/member/";
+<script type="text/javascript">
+  var editor;
+  $(function() {
+	editormd.urls.atLinkBase = "/member/";
+	editor = createEditorMd("editormd", "#submit");
+	/*
       editor = editormd("editormd", {
         autoFocus: false,
 	    height: 400,
@@ -48,9 +48,9 @@
 	    imageUpload: true,
 	    imageFormats : ["jpg", "jpeg", "gif", "png"],
         imageUploadURL : "/upload/image"
-      });
-    });
-  </script>
+      });*/
+  });
+</script>
 {{end}}
 
 {{define "LeftSide"}}{{end}}
