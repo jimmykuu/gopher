@@ -3,6 +3,17 @@ body {
 	padding-bottom: 40px;
 }
 
+ul.top a {
+	padding-top: 0!important;
+	padding-bottom: 0!important;
+	color: #2F81D6;
+	text-decoration: underline;
+}
+
+ul.top a:hover {
+	text-decoration: underline;
+}
+
 a {
 	color: #778087;
 }
