@@ -19,13 +19,11 @@
   }
   </style>
 </head>
-<body id="admin">
+<body>
   <div class="ui fixed transparent main top menu">
-    <div class="container">
-      <a>Golang 中国后台管理</a>
-      <div class="right menu">
-          <a class="item" href="/signout">退出</a>
-      </div>
+    <div class="header item">Golang 中国后台管理</div>
+    <div class="right menu">
+      <a class="item" href="/signout">退出</a>
     </div>
   </div>
   <div class="ui very thin vertical labeled sidebar fixed menu visible active" style="top: 38px;">
@@ -65,7 +63,7 @@
       广告
 	</a>
   </div>
-  <div id="content" style="position: relative; margin-left: 100px; padding-left: 20px; padding-right: 20px;">
+  <div id="content" style="position: relative; margin-left: 225px; padding-left: 20px; padding-right: 20px;">
 	<div class="ui grid">
       <div class="column">
         {{template "Content" .}}

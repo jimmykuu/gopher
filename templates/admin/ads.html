@@ -21,7 +21,7 @@
 	  <td>
 		<div class="ui mini icon buttons">
 		  <a href="/admin/ad/{{.Id_.Hex}}/edit" class="ui blue button" title="编辑"><i class="edit icon"></i></a>
-		  <a href="javascript:;" class="ui red button" title="删除" ad_id="{{.Id_.Hex}}"><i class="remove icon"></i></a>
+		  <a href="javascript:;" class="ui remove red button" title="删除" ad_id="{{.Id_.Hex}}"><i class="remove icon"></i></a>
 		</div>
 	  </td>
 	</tr>
@@ -29,7 +29,7 @@
   </tbody>
 </table>
 <script type="text/javascript">
-  $("a.remove-ad").click(function () {
+  $("a.remove").click(function () {
     if (confirm("确定删除吗？")) {
       var id = $(this).attr("ad_id");
       $.getJSON('/admin/ad/' + id +'/delete', function(data) {
