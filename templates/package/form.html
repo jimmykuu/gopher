@@ -15,34 +15,20 @@
 	  {{.utils.RenderInput .form "name"}}
 	  {{.utils.RenderInput .form "url" `placeholder="http://或https://"`}}
 	  <div class="form-group">
-		<div class="wmd-panel">
-		  <label for="wmd-input">描述</label>
-		  <div id="wmd-button-bar"></div>
-		  <textarea class="wmd-input form-control" id="wmd-input" name="description" rows="20">{{.form.Value "description"}}</textarea>
+		<div id="editormd">
+          <textarea style="display:none;">{{.form.Value "editormd-markdown-doc"}}</textarea>
 		</div>
 	  </div>
-	  <div class="form-group">
-		<label>预览</label>
-		<div id="wmd-preview" class="wmd-panel wmd-preview"></div>
-	  </div>
-	  <input type="submit" class="btn btn-primary" value="{{.title}}">
+	  <input type="submit" id="submit" class="btn btn-primary" value="{{.title}}">
 	</fieldset>
 	</form>
 </div>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Converter.js"></script>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Editor.js"></script>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Sanitizer.js"></script>
 <script>
-	(function () {
-		var converter1 = Markdown.getSanitizingConverter();
-		var editor1 = new Markdown.Editor(converter1);
-		editor1.run();
-	})();
-
-	$('#package-form').submit(function () {
-		$('#html').val($('#wmd-preview').html());
-		return true;
-	});
+  var editor;
+  $(function() {
+	editormd.urls.atLinkBase = "/member/";
+	editor = createEditorMd("editormd", "#submit");
+  });
 </script>
 {{end}}
 

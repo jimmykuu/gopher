@@ -61,21 +61,21 @@ func newPackageHandler(handler *Handler) {
 		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),
 		wtforms.NewSelectField("category_id", "分类", choices, ""),
 		wtforms.NewTextField("url", "网址", "", wtforms.Required{}, wtforms.URL{}),
-		wtforms.NewTextArea("description", "描述", "", wtforms.Required{}),
+		wtforms.NewTextArea("editormd-markdown-doc", "内容", ""),
+		wtforms.NewTextArea("editormd-html-code", "HTML", ""),
 	)
 
 	if handler.Request.Method == "POST" && form.Validate(handler.Request) {
 		c = handler.DB.C(CONTENTS)
 		id := bson.NewObjectId()
 		categoryId := bson.ObjectIdHex(form.Value("category_id"))
-		html := form.Value("html")
-		html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
+		html := form.Value("editormd-html-code")
 		c.Insert(&Package{
 			Content: Content{
 				Id_:       id,
 				Type:      TypePackage,
 				Title:     form.Value("name"),
-				Markdown:  form.Value("description"),
+				Markdown:  form.Value("editormd-markdown-doc"),
 				Html:      template.HTML(html),
 				CreatedBy: user.Id_,
 				CreatedAt: time.Now(),
@@ -143,19 +143,19 @@ func editPackageHandler(handler *Handler) {
 		wtforms.NewTextField("name", "名称", package_.Title, wtforms.Required{}),
 		wtforms.NewSelectField("category_id", "分类", choices, package_.CategoryId.Hex()),
 		wtforms.NewTextField("url", "网址", package_.Url, wtforms.Required{}, wtforms.URL{}),
-		wtforms.NewTextArea("description", "描述", package_.Markdown, wtforms.Required{}),
+		wtforms.NewTextArea("editormd-markdown-doc", "内容", package_.Markdown),
+		wtforms.NewTextArea("editormd-html-code", "HTML", ""),
 	)
 
 	if handler.Request.Method == "POST" && form.Validate(handler.Request) {
 		c = handler.DB.C(CONTENTS)
 		categoryId := bson.ObjectIdHex(form.Value("category_id"))
-		html := form.Value("html")
-		html = strings.Replace(html, "<pre>", `<pre class="prettyprint linenums">`, -1)
+		html := form.Value("editormd-html-code")
 		c.Update(bson.M{"_id": package_.Id_}, bson.M{"$set": bson.M{
 			"categoryid":        categoryId,
 			"url":               form.Value("url"),
 			"content.title":     form.Value("name"),
-			"content.markdown":  form.Value("description"),
+			"content.markdown":  form.Value("editormd-markdown-doc"),
 			"content.html":      template.HTML(html),
 			"content.updateDBy": user.Id_.Hex(),
 			"content.updatedat": time.Now(),
