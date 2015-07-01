@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jimmykuu/webhelpers"
 	"github.com/jimmykuu/wtforms"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -97,6 +98,9 @@ var funcMaps = template.FuncMap{
 	},
 	"nl2br": func(text string) template.HTML {
 		return template.HTML(strings.Replace(text, "\n", "<br>", -1))
+	},
+	"truncate": func(text string, length int, indicator string) string {
+		return webhelpers.Truncate(text, length, indicator)
 	},
 }
 
