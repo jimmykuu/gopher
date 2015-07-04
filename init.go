@@ -7,7 +7,7 @@ import (
 
 	"github.com/deferpanic/deferclient/deferstats"
 	"github.com/gorilla/sessions"
-	. "github.com/qiniu/api/conf"
+	. "github.com/qiniu/api.v6/conf"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

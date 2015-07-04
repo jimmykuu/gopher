@@ -35,7 +35,7 @@
 	  {{if .CommentCount}}
 	  <a class="badge pull-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
 	  {{end}}
-	  <a href="/t/{{.Id_.Hex}}" class="title">{{truncate .Title 100 "..."}}{{if .IsTop}} <span class="glyphicon glyphicon-pushpin"></span>{{end}}</a>
+	  <a href="/t/{{.Id_.Hex}}" class="title">{{truncate .Title 80 "..."}}{{if .IsTop}} <span class="glyphicon glyphicon-pushpin"></span>{{end}}</a>
 	  <div class="space"></div>
 	  <div class="info" style="margin-left:60px">
 		<a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •

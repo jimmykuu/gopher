@@ -18,8 +18,8 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/jimmykuu/webhelpers"
 	"github.com/jimmykuu/wtforms"
-	qiniuIo "github.com/qiniu/api/io"
-	"github.com/qiniu/api/rs"
+	qiniuIo "github.com/qiniu/api.v6/io"
+	"github.com/qiniu/api.v6/rs"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

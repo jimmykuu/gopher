@@ -20,8 +20,8 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/jimmykuu/webhelpers"
 	"github.com/jimmykuu/wtforms"
-	qiniuIo "github.com/qiniu/api/io"
-	"github.com/qiniu/api/rs"
+	qiniuIo "github.com/qiniu/api.v6/io"
+	"github.com/qiniu/api.v6/rs"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -82,7 +82,9 @@ func encryptPassword(password, salt string) string {
 // 返回当前用户
 func currentUser(handler *Handler) (*User, bool) {
 	r := handler.Request
+
 	session, _ := store.Get(r, "user")
+
 	username, ok := session.Values["username"]
 
 	if !ok {
@@ -276,21 +278,6 @@ func signupHandler(handler *Handler) {
 			// 重新生成users.json字符串
 			generateUsersJson(handler.DB)
 
-			// 发送邮件
-			/*
-							subject := "欢迎加入Golang 中国"
-							message2 := `欢迎加入Golang 中国。请访问下面地址激活你的帐户。
-
-				<a href="%s/activate/%s">%s/activate/%s</a>
-
-				如果你没有注册，请忽略这封邮件。
-
-				©2012 Golang 中国`
-							message2 = fmt.Sprintf(message2, config["host"], validateCode, config["host"], validateCode)
-							sendMail(subject, message2, []string{form.Value("email")})
-
-							message(w, r, "注册成功", "请查看你的邮箱进行验证，如果收件箱没有，请查看垃圾邮件，如果还没有，请给jimmykuu@126.com发邮件，告知你的用户名。", "success")
-			*/
 			// 注册成功后设成登录状态
 			session, _ := store.Get(handler.Request, "user")
 			session.Values["username"] = username

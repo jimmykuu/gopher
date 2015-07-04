@@ -360,7 +360,7 @@ func getPackageHandler(ws *websocket.Conn) {
 
 		cmd := exec.Command("/usr/local/go/bin/go", "get", "-u", "-v", name)
 		cmd.Env = os.Environ()[:]
-		cmd.Env = append(cmd.Env, "GOPATH="+Config.GoGetPath)
+		cmd.Env = append(cmd.Env, "GOROOT=/usr/local/go", "GOPATH="+Config.GoGetPath)
 
 		writer := NewConsoleWriter(ws)
 

@@ -93,11 +93,27 @@
 	<br>
   </p>
   <ul class="nav nav-tabs" id="avatar-tab" style="margin-bottom: 15px;">
-	<li class="active"><a href="#default">选择默认头像</a></li>
-	<li><a href="#upload">上传头像</a></li>
+	<li class="active"><a href="#upload">上传头像</a></li>
+	<li><a href="#default">选择默认头像</a></li>
   </ul>
   <div class="tab-content">
-	<div id="default" class="tab-pane fade active in row-fluid">
+    <div id="upload" class="tab-pane active fade in">
+	  <form action="/profile/avatar" method="post" enctype="multipart/form-data" class="form-horizontal">
+		<div class="form-group">
+		  <label class="control-label col-lg-2" for="file">选择图片文件</label>
+		  <div class="col-lg-10">
+			<input type="file" name="file" id="file">
+			<span class="help-block">支持 500K 以内的 jpg/png 文件</span>
+		  </div>
+		</div>
+        <div class="form-group">
+          <div class="col-lg-offset-2 col-lg-10">
+            <button type="submit" class="btn btn-success">上传新头像</button>
+          </div>
+        </div>
+	  </form>
+	</div>
+	<div id="default" class="tab-pane fade row-fluid">
 	  <form action="/profile/choose_default_avatar" method="post">
         <div class="form-group">
 		  <ul class="list-inline">
@@ -116,22 +132,6 @@
 			  <button type="submit" class="btn btn-success">选择头像</button>
 			</div>
 		  </div>
-        </div>
-	  </form>
-	</div>
-	<div id="upload" class="tab-pane fade">
-	  <form action="/profile/avatar" method="post" enctype="multipart/form-data" class="form-horizontal">
-		<div class="form-group">
-		  <label class="control-label col-lg-2" for="file">选择图片文件</label>
-		  <div class="col-lg-10">
-			<input type="file" name="file" id="file">
-			<span class="help-block">支持500K以内的jpg/png文件</span>
-		  </div>
-		</div>
-        <div class="form-group">
-          <div class="col-lg-offset-2 col-lg-10">
-            <button type="submit" class="btn btn-success">上传新头像</button>
-          </div>
         </div>
 	  </form>
 	</div>
