@@ -15,7 +15,6 @@ import (
 func init() {
 	parseJsonFile("etc/config.json", &Config)
 	analyticsCode = getDefaultCode(Config.AnalyticsFile)
-	shareCode = getDefaultCode(Config.ShareCodeFile)
 	configGithubAuth()
 
 	if Config.DB == "" {

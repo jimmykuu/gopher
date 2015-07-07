@@ -150,7 +150,6 @@ func renderTemplate(handler Handler, file, baseFile string, data map[string]inte
 	data["utils"] = utils
 
 	data["analyticsCode"] = analyticsCode
-	data["shareCode"] = shareCode
 	data["staticFileVersion"] = Config.StaticFileVersion
 	data["goVersion"] = goVersion
 	data["startTime"] = handler.StartTime

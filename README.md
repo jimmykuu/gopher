@@ -10,7 +10,7 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 - github.com/gorilla/sessions
 - github.com/qiniu/bytes
 - github.com/qiniu/rpc
-- github.com/qiniu/api
+- github.com/qiniu/api.v6
 - labix.org/v2/mgo
 - code.google.com/p/go-uuid/uuid
 - github.com/jimmykuu/webhelpers
@@ -51,12 +51,12 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
         "static_file_version": 1,
         "go_get_path": "/tmp/download",
         "packages_download_path": "/var/go/gopher/static/download/packages",
-        "public_salt": ""
+        "public_salt": "",
 		"github_auth_client_id": "example",
 		"github_auth_client_secret": "example",
 		"github_login_redirect": "/",
 		"github_login_success_redirect": "/auth/signup",
-		"deferpanic_api_key": "",
+		"deferpanic_api_key": ""
     }
 
 需要先启动MongoDB
