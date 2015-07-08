@@ -1,5 +1,55 @@
 [
-	{
+    {
+		"version": "go1.5beta1",
+		"date": "2015-07-08",
+		"files": [
+			{
+                "filename": "go1.5beta1.darwin-amd64.tar.gz",
+                "summary": "go1.5beta1 Mac OS X (x86 64-bit) tarball",
+                "size": "82.9 MB",
+                "sha1": "0f2b23d5bcd6245db62017f8a931e0a5fb692b47",
+                "url": "https://storage.googleapis.com/golang/go1.5beta1.darwin-amd64.tar.gz"
+            }, {
+                "filename": "go1.5beta1.linux-386.tar.gz",
+                "summary": "go1.5beta1 Linux (x86 32-bit) tarball",
+                "size": "77.9 MB",
+                "sha1": "a88da6f1edd8f6c999de7c61cb0a0f7aaf41d2b1",
+                "url": "https://storage.googleapis.com/golang/go1.5beta1.linux-386.tar.gz"
+            }, {
+                "filename": "go1.5beta1.freebsd-amd64.tar.gz",
+                "summary": "go1.5beta1 FreeBSD (x86 64-bit) tarball",
+                "size": "83 MB",
+                "sha1": "11cca68952a940d89fd43f82615c685b946b0b5f",
+                "url": "https://storage.googleapis.com/golang/go1.5beta1.freebsd-amd64.tar.gz"
+            }, {
+                "filename": "go1.5beta1.linux-amd64.tar.gz",
+                "summary": "go Linux (x86 64-bit) tarball",
+                "size": "83.8 MB",
+                "sha1": "6f42b6ee7e126b14dca5965ecfbff7c586027c1f",
+                "url": "https://storage.googleapis.com/golang/go1.5beta1.linux-amd64.tar.gz",
+                "recommended": true
+            }, {
+                "filename": "go1.5beta1.src.tar.gz",
+                "summary": "go1.5beta1 (source only)",
+                "size": "12.4 MB",
+                "sha1": "4ba487b7297cc96b712df0c4e65dafb603cc60a7",
+                "url": "https://storage.googleapis.com/golang/go1.5beta1.src.tar.gz",
+				"recommended": true
+            }, {
+                "filename": "go1.5beta1.windows-386.zip",
+                "summary": "go1.5beta1 Windows (x86 32-bit) ZIP archive",
+                "size": "78.4 MB",
+                "sha1": "a126525822e8fb8f1ccaa0be0e6a3ee8f8e41b17",
+                "url": "https://storage.googleapis.com/golang/go1.5beta1.windows-386.zip"
+            }, {
+                "filename": "go1.5beta1.windows-amd64.zip",
+                "summary": "go1.5beta1 Windows (x86 64-bit) ZIP archive",
+                "size": "87.2 MB",
+                "sha1": "e9a213603e672b816e915329ec15b9264e851801",
+                "url": "https://storage.googleapis.com/golang/go1.5beta1.windows-amd64.zip"
+            }
+        ]
+	}, {
 		"version": "go1.4.2",
 		"date": "2015-02-18",
 		"files": [
