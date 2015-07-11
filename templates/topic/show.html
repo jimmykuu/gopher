@@ -98,26 +98,26 @@
 </div>
 
   <script type="text/javascript">
-	var editor, editor_edit;
+	  var editor, editor_edit;
     $(function() {
       $('#submit').attr('disabled', true);
 
-	  editor = createEditorMd("editormd", "#submit");
+      editor = createEditorMd("editormd", "#submit");
 
-	  $('.edit-comment').click(function () {
+      $('.edit-comment').click(function () {
         var commentId = $(this).attr('comment-id');
         $.getJSON("/comment/" + commentId + ".json", function (data) {
           $('#edit-comment-form').attr('action', '/comment/' + commentId + '/edit');
-	      $('#myModal').on('shown.bs.modal', function (e) {
-	        if (editor_edit) {
-	          editor_edit.setMarkdown(data.markdown);
-	        } else {
-	          editor_edit = createEditorMd("editormd-edit", "#edit-submit", data.markdown);
-	        }
+	        $('#myModal').on('shown.bs.modal', function (e) {
+	          if (editor_edit) {
+	            editor_edit.setMarkdown(data.markdown);
+	          } else {
+	            editor_edit = createEditorMd("editormd-edit", "#edit-submit", data.markdown);
+	          }
           });
 
-	      $('#myModal').modal({});
-	    });
+	        $('#myModal').modal({});
+        });
       });
     });
   </script>

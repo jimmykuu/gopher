@@ -49,4 +49,7 @@ $(document).ready(function(){
     });
 
     setToTop();
+    
+    $('pre').addClass("prettyprint linenums");
+    prettyPrint();
 });
