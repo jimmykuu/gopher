@@ -12,8 +12,7 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="http://gopher.qiniudn.com/static/lib/editor.md-1.5.0/css/editormd.min.css">
-	<link rel="stylesheet" href="/static/css/style.css?v=13" type="text/css">
-	<link rel="stylesheet" href="http://gopher.qiniudn.com/static/css/jquery.atwho.min.css?v=0.4.11" type="text/css">
+	<link rel="stylesheet" href="/static/css/style.css?v=14" type="text/css">
 	<link rel="shortcut icon" href="http://gopher.qiniudn.com/static/favicon.ico">
 </head>
 <body>
@@ -148,31 +147,7 @@
 	</footer>
 	{{.analyticsCode}}
 </body>
-<script type="text/javascript">
-$(function(){
-		$('#reply_clear').click(function(){
-			var data = {};
-			$.getJSON("/member/{{.username}}/clear/reply",data,function(data,textStatus,jqXHR){
-				console.log(data);
-				if(data.status){
-					location.reload();
-				}
-			})
-		});
-		$('#at_clear').click(function(){
-			var data = {};
-			$.getJSON("/member/{{.username}}/clear/at",data,function(data,textStatus,jqXHR){
-				console.log(data);
-				if(data.status){
-					location.reload();
-				}
-			})
-		});
-})
-</script>
 <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/jquery.caret.min.js?v=0.0.9"></script>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/jquery.atwho.min.js?v=0.4.11"></script>
 <script type="text/javascript" src="http://gopher.qiniudn.com/static/lib/editor.md-1.5.0/editormd.min.js"></script>
-<script type="text/javascript" src="/static/js/application.js?v=22"></script>
+<script type="text/javascript" src="/static/js/application.js?v=23"></script>
 </html>

@@ -406,3 +406,7 @@ sup.new {
 .links a{
 	margin-right: 20px;
 }
+
+.editormd-preview-container pre code {
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace!important; 
+}

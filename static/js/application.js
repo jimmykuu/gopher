@@ -43,13 +43,8 @@ $(document).ready(function(){
 
     $("[data-toggle=popover]").popover();
 
-    $('.wmd-input').atwho({
-        at: "@",
-        data: 'http://www.golangtc.com/users.json'
-    });
-
     setToTop();
     
-    $('pre').addClass("prettyprint linenums");
+    $('.editormd-preview-container pre').addClass("prettyprint linenums");
     prettyPrint();
 });

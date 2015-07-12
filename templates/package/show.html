@@ -28,7 +28,7 @@
 	{{.shareCode}}
 	<div class="clearfix"></div>
   </div>
-  <div class="body">
+  <div class="body editormd-preview-container">
 	{{.package.Html}}
   </div>
   <hr>
@@ -39,7 +39,7 @@
   </ul>
 </div>
 {{$package := .utils.AssertPackage .package}}
-<div id="replies" class="content">
+<div id="replies" class="content editormd-preview-container">
   <span>{{.package.CommentCount}} 回复</span>
   <hr>
   <dl class="replies">
@@ -71,50 +71,25 @@
 
 {{if .username}}
 <div id="reply">
-  <form action="/comment/{{$package.Id_.Hex}}" method="post" id="reply-form" role="form">
-	<fieldset>
-	  <input type="hidden" name="html" id="html">
-	  <div class="form-group">
-		<label for="wmd-input">新回复</label>
-		<div class="wmd-panel">
-		  <div id="wmd-button-bar"></div>
-		  <textarea class="wmd-input form-control" id="wmd-input" name="content" rows="6"></textarea>
-		</div>
-	  </div>
-	  <div class="form-group">
-		<label>预览</label>
-		<div id="wmd-preview" class="wmd-panel wmd-preview"></div>
-	  </div>
-	  <input type="submit" class="btn btn-primary" value="回复" id="submit" disabled>
-	</fieldset>
+  <form action="/comment/{{$package.Id_.Hex}}" method="post" class="form-vertical" id="reply-form" role="form">
+    <fieldset>
+      <div class="form-group">
+        <label>新回复</label>
+        <div class="editormd">
+          <textarea style="display: none;"></textarea>
+        </div>
+      </div>
+      <input type="submit" class="btn btn-primary" value="回复" id="submit" disabled>
+    </fieldset>
   </form>
 </div>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Converter.js"></script>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Editor.js"></script>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/Markdown.Sanitizer.js"></script>
-<script type="text/javascript" src="http://gopher.qiniudn.com/static/js/jquery.textchange.min.js"></script>
 <script>
-  (function () {
-  var converter1 = Markdown.getSanitizingConverter();
-  var editor1 = new Markdown.Editor(converter1);
-  editor1.run();
-  })();
-
-  $('#wmd-input').bind('hastext', function () {
-  $('#submit').attr('disabled', false);
-  });
-
-  $('#wmd-input').bind('notext', function () {
-  $('#submit').attr('disabled', true);
-  });
-
-  $('#reply-form').submit(function () {
-  $("#html").val($('#wmd-preview').html());
-  if ($('#wmd-input').val().trim() == '') {
-  $('#submit').attr('disabled', true);
-  return false;
-  }
-  return true;
+  var editor;
+  
+  $(function () {
+    $('#submit').attr('disabled', true);
+    
+    editor = createEditorMd("editormd", "#submit");
   });
 </script>
 {{else}}

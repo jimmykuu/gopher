@@ -41,7 +41,7 @@
 	  </div>
     <div class="clearfix"></div>
   </div>
-  <div class="body">
+  <div class="body editormd-preview-container">
     {{$topic.Html}}
     {{$updater := $topic.Updater .db}}
     {{if $updater}}
@@ -55,7 +55,7 @@
 <div id="replies" class="content">
   <span>{{$topic.CommentCount}} 回复</span>
   <hr>
-  <dl class="replies">
+  <dl class="replies editormd-preview-container">
 	{{range $index, $reply := $topic.Comments .db}}
 	{{$commenter := .Creater $.db}}
 	<dd id="{{.Id_.Hex}}">
