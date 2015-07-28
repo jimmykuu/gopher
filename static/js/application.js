@@ -44,7 +44,10 @@ $(document).ready(function(){
     $("[data-toggle=popover]").popover();
 
     setToTop();
-    
+
     $('.editormd-preview-container pre').addClass("prettyprint linenums");
     prettyPrint();
+
+    $('.content .body a').attr('target', '_blank');
+    $('.reply-content a ').attr('target', '_blank');
 });
