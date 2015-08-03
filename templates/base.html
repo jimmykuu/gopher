@@ -12,7 +12,7 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="http://gopher.qiniudn.com/static/lib/editor.md-1.5.0/css/editormd.min.css">
-	<link rel="stylesheet" href="/static/css/style.css?v=15" type="text/css">
+	<link rel="stylesheet" href="/static/css/style.css?v=16" type="text/css">
 	<link rel="shortcut icon" href="http://gopher.qiniudn.com/static/favicon.ico">
 </head>
 <body>
@@ -23,35 +23,39 @@
 			</ul>
 		</div>
 		<div class="container">
-			<a class="brand" href="/"><img src="http://gopher.qiniudn.com/logo/golangtc.png?imageView2/2/h/60/q/100" alt="Golang中国"></a>
-			{{if .username}}
-			<ul class="nav navbar-nav pull-right" style="margin-top: 1em;">
-				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-						我的空间
-						<b class="caret"></b>
-					</a>
-                    <ul class="dropdown-menu" role="menu">
-						<li><a href="/profile"><i class="glyphicon glyphicon-cog"></i> 设置</a></li>
-						<li><a href="/change_password"><i class="glyphicon glyphicon-edit"></i> 修改密码</a></li>
-						{{if .isSuperUser}}
-							<li><a href="/admin"><i class="glyphicon glyphicon-wrench"></i> 管理</a></li>
-						{{end}}
-						<li class="divider"></li>
-						<li><a href="/signout"><i class="glyphicon glyphicon-off"></i> 登出</a></li>
-					</ul>
-				</li>
-			</ul>
-			{{end}}
-			<div class="pull-right" style="margin-top: 24px;">
-				<div style="height: 5px;"></div>
+				<a class="brand" href="/"><img src="http://gopher.qiniudn.com/logo/golangtc.png?imageView2/2/h/60/q/100" alt="Golang中国"></a>
+				<div class="bar">
+					{{$ads := ads "top0" .db}}
+						{{range $ads}}
+		  				{{html .Code}}
+					{{end}}
+				</div>
 				{{if .username}}
-					{{.username}}，你好 &nbsp;&nbsp;
+					<ul class="nav navbar-nav pull-right" style="margin-top: 1em;">
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+								我的空间
+								<b class="caret"></b>
+							</a>
+                    		<ul class="dropdown-menu" role="menu">
+								<li><a href="/profile"><i class="glyphicon glyphicon-cog"></i> 设置</a></li>
+								<li><a href="/change_password"><i class="glyphicon glyphicon-edit"></i> 修改密码</a></li>
+								{{if .isSuperUser}}
+									<li><a href="/admin"><i class="glyphicon glyphicon-wrench"></i> 管理</a></li>
+								{{end}}
+								<li class="divider"></li>
+								<li><a href="/signout"><i class="glyphicon glyphicon-off"></i> 登出</a></li>
+							</ul>
+						</li>
+					</ul>
 				{{else}}
-					<a href="/signin">登录</a> <span class="divider">|</span>
-					<a href="/signup">注册</a>
+					<div class="pull-right" style="margin-top: 24px;">
+						<div style="height: 5px;"></div>
+							<a href="/signin">登录</a> <span class="divider">|</span>
+							<a href="/signup">注册</a>
+						</div>
+					</div>
 				{{end}}
-			</div>
 		</div>
 	</header>
 	{{$ads := ads "top" .db}}

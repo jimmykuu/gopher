@@ -152,6 +152,12 @@ header {
 .brand {
 	float: left;
 	margin-top: 10px;
+	margin-right: 20px;
+}
+
+header .bar {
+	float: left;
+	margin-top: 10px;
 }
 
 header h1 {
