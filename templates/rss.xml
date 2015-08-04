@@ -9,7 +9,7 @@
     <language>zh-CN</language>
     <image>
       <link>https://golangtc.com/</link>
-      <url>https://gopher.qiniudn.com/static/img/golang-china.png?v=14</url>
+      <url>https://77fkk5.com1.z0.glb.clouddn.com/static/img/golang-china.png?v=14</url>
       <title><![CDATA[golangtc - golang中国社区]]></title>
     </image>
 	{{range $t := .topics }}

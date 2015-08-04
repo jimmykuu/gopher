@@ -376,6 +376,6 @@ func uploadImageHandler(handler *Handler) {
 
 	handler.renderJson(map[string]interface{}{
 		"success": 1,
-		"url":     "http://gopher.qiniudn.com/" + key,
+		"url":     "http://77fkk5.com1.z0.glb.clouddn.com/" + key,
 	})
 }

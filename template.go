@@ -102,6 +102,20 @@ var funcMaps = template.FuncMap{
 	"truncate": func(text string, length int, indicator string) string {
 		return webhelpers.Truncate(text, length, indicator)
 	},
+	"include": func(filename string, data map[string]interface{}) template.HTML {
+		// 加载局部模板，从 templates 中去寻找
+		var buf bytes.Buffer
+		t, err := template.ParseFiles("templates/" + filename)
+		if err != nil {
+			panic(err)
+		}
+		err = t.Execute(&buf, data)
+		if err != nil {
+			panic(err)
+		}
+
+		return template.HTML(buf.Bytes())
+	},
 }
 
 // 解析模板

@@ -1,0 +1,65 @@
+{{define "Title"}}用户中心{{end}}
+{{define "ContentWidth"}}9{{end}}
+{{define "Breadcrumb"}}{{end}}
+{{define "Content"}}
+<div class="content">
+	<ul class="nav nav-tabs" id="avatar-tab" style="margin-bottom: 15px;">
+    <li class="active"><a href="#upload">上传头像</a></li>
+    <li><a href="#default">选择默认头像</a></li>
+    <li><a href="#gravatar">从 Gravatar 获取</a></li>
+  </ul>
+  <div class="tab-content">
+    <div id="upload" class="tab-pane fade active in">
+      <form action="/user_center/upload_avatar" method="post" enctype="multipart/form-data" class="form-horizontal">
+		    <div class="form-group">
+		      <label class="control-label col-lg-2" for="file">选择图片文件</label>
+		        <div class="col-lg-10">
+              <input type="file" name="file" id="file">
+              <span class="help-block">支持 500K 以内的 jpg/png 文件</span>
+            </div>
+        </div>
+        <div class="form-group">
+          <div class="col-lg-offset-2 col-lg-10">
+            <button type="submit" class="btn btn-success">上传新头像</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div id="default" class="tab-pane fade row-fluid">
+      <form action="/user_center/choose_avatar" method="post">
+        <div class="form-group">
+          <ul class="list-inline">
+            {{range .defaultAvatars}}
+              <li>
+                <label>
+                  <input type="radio" name="defaultAvatars" value="{{.}}"{{if $.curr_user.IsDefaultAvatar .}} checked{{end}}>
+                    <img class="img-rounded" src="http://77fkk5.com1.z0.glb.clouddn.com/avatar/{{.}}-middle">
+                  </label>
+              </li>
+            {{end}}
+          </ul>
+          <div class="control-group">
+            <div class="controls">
+              <button type="submit" class="btn btn-success">选择头像</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div id="gravatar" class="tab-pane fade">
+      <a href="/user_center/get_gravatar" class="btn btn-success">获取</a>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  $('#avatar-tab a').click(function (e) {
+    e.preventDefault();
+    $(this).tab('show');
+  });
+</script>
+{{end}}
+
+{{define "LeftSide"}}
+  {{include "user_center/sidebar.html" .}}
+{{end}}
+{{define "RightSide"}}{{end}}
