@@ -284,7 +284,7 @@ func signupHandler(handler *Handler) {
 			session.Save(handler.Request, handler.ResponseWriter)
 
 			// 跳到修改用户信息页面
-			http.Redirect(handler.ResponseWriter, handler.Request, "/profile", http.StatusFound)
+			handler.redirect("/user_center/edit_info", http.StatusFound)
 			return
 		}
 	}
