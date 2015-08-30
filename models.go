@@ -153,6 +153,11 @@ func (u *User) GetGithubValues(session *sessions.Session) {
 
 }
 
+// 检查密码是否正确
+func (u User) CheckPassword(password string) bool {
+	return u.Password == encryptPassword(password, u.Salt)
+}
+
 // 删除通过session传的默认信息
 func deleteGithubValues(session *sessions.Session) {
 	// 删除session传过来的默认信息

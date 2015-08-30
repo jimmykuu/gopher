@@ -194,8 +194,7 @@ func changePasswordHandler(handler *Handler) {
 
 	if handler.Request.Method == "POST" && form.Validate(handler.Request) {
 		if form.Value("new_password") == form.Value("confirm_password") {
-			currentPassword := encryptPassword(form.Value("current_password"), user.Password)
-			if currentPassword == user.Password {
+			if user.CheckPassword(form.Value("current_password")) {
 				c := handler.DB.C(USERS)
 				salt := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 				c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{

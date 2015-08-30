@@ -370,7 +370,7 @@ func signinHandler(handler *Handler) {
 				return
 			}
 
-			if user.Password != encryptPassword(form.Value("password"), user.Salt) {
+			if !user.CheckPassword(form.Value("password")) {
 				form.AddError("password", "密码和用户名不匹配")
 				form.SetValue("captcha", "")
 
