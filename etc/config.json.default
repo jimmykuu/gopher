@@ -21,5 +21,7 @@
 	"github_login_redirect": "/",
 	"github_login_success_redirect": "/auth/signup",
 	"cookie_secure": false,
-	"deferpanic_api_key": ""
+	"deferpanic_api_key": "",
+    "gt_captcha_id": "geetest captcha id",
+    "gt_private_key": "geetest private key"
 }

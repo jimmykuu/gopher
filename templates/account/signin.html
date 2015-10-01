@@ -12,45 +12,31 @@
 	  <form action="" method="post" class="form-horizontal" role="form">
 		<fieldset>
 		  {{.form.RenderInput "next"}}
-          {{.utils.RenderInputH .form "username" 2 6 `placeholder="用户名"`}}
-          {{.utils.RenderInputH .form "password" 2 6 `placeholder="密码"`}}
-		  {{.utils.RenderInputH .form "captcha" 2 3}}
+      {{.utils.RenderInputH .form "username" 2 6 `placeholder="用户名"`}}
+      {{.utils.RenderInputH .form "password" 2 6 `placeholder="密码"`}}
+      <div class="form-group{{if .captchaErr}} has-error{{end}}">
+        <label class="col-lg-2 control-label">验证码</label>
+        <div class="col-lg-6">
+          <script type="text/javascript" src="{{.gtUrl}}"></script>
+          {{if .captchaErr}}
+            <span class="help-block">验证码错误</span>
+          {{end}}
+        </div>
+      </div>
 		  <div class="form-group">
-			<div class="col-lg-offset-2 col-lg-3">
-			  <a href="javascript:;" onclick="reload();" title="点击更新验证码"><img src="/captcha/{{.captchaId}}.png" id="captcha-img"></a>
-			</div>
-		  </div>
-		  <input type="hidden" name="captchaId" value="{{.captchaId}}">
-
-		  <div class="form-group">
-			<div class="col-lg-offset-2 col-lg-6">
-			  <input type="submit" class="btn btn-primary" value="登录">
-              <p>
-                <br>
-                <a href="/forgot_password">忘记密码？</a><br>
-                没有帐号？<a href="/signup" class="btn btn-info">注册</a>
-              </p>
-			</div>
+			 <div class="col-lg-offset-2 col-lg-6">
+			   <input type="submit" class="btn btn-primary" value="登录">
+         <p>
+           <br>
+           <a href="/forgot_password">忘记密码？</a><br>
+           没有帐号？<a href="/signup" class="btn btn-info">注册</a>
+         </p>
+			 </div>
 		  </div>
 		</fieldset>
 	  </form>
 	</div>
-<script type="text/javascript">
-  function setSrcQuery(e, q) {
-    var src  = e.src;
-    var p = src.indexOf('?');
-    if (p >= 0) {
-      src = src.substr(0, p);
-    }
-    e.src = src + "?" + q
-  }
-
-  function reload() {
-    setSrcQuery(document.getElementById('captcha-img'), "reload=" + (new Date()).getTime());
-  }
-</script>
 {{end}}
 
 {{define "LeftSide"}}{{end}}
-
 {{define "RightSide"}}{{end}}

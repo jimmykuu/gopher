@@ -1,8 +1,8 @@
-#Gopher
+# Gopher
 
 Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 
-##Requirements
+## Requirements
 
 - Go1.2+
 - MongoDB
@@ -15,9 +15,10 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 - code.google.com/p/go-uuid/uuid
 - github.com/jimmykuu/webhelpers
 - github.com/jimmykuu/wtforms
+- github.com/jimmykuu/gt-go-sdk
 - github.com/deferpanic/deferclient/deferclient
 
-##Install
+## Install
 
     $ go get github.com/jimmykuu/gopher/server
 
@@ -31,7 +32,8 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 - github_login_success_redirect: 第三放登录成功后跳转地址
 - cookie_secure: 第三方登录需要使用HTTPS，当设置为false供本地测试使用
 - deferpanic_api_key: deferpanic.com的Api Key，用于监控panic
-
+- gt_captcha_id: geetest.com 服务的 id
+- gt_private_key: geetest.com 服务的 key
 
 内容如下:
 
@@ -56,14 +58,12 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 		"github_auth_client_secret": "example",
 		"github_login_redirect": "/",
 		"github_login_success_redirect": "/auth/signup",
-		"deferpanic_api_key": ""
+		"deferpanic_api_key": "",
+        "gt_captcha_id": "",
+        "gt_private_key": ""
     }
 
 需要先启动MongoDB
-
-生成私钥和证书,会在当前目录生成`key.pem`和`cert.pem`
-
-	go run $GOROOT/src/crypto/tls/generate_cert.go --host 域名
 
 Linux/Unix/OS X:
 
@@ -78,12 +78,13 @@ Windows:
 	$ go build -o binary github.com/jimmykuu/gopher/server
 	$ ./binary
 
-##Contributors
+**注意**：*etc* 和 *static* 目录需要在可执行文件同一个目录下，可以通过软链或者复制到同一个目录下。
+
+## Contributors
 
 - [Contributors](https://github.com/jimmykuu/gopher/graphs/contributors)
 
-
-##License
+## License
 
 Copyright (c) 2012-2015
 

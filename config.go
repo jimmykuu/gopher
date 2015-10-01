@@ -35,6 +35,8 @@ type ConfigStruct struct {
 	GithubLoginRedirect        string `json:"github_login_redirect"`
 	GithubLoginSuccessRedirect string `json:"github_login_success_redirect"`
 	DeferPanicApiKey           string `json:"deferpanic_api_key"`
+	GtCaptchaId                string `json:"gt_captcha_id"`
+	GtPrivateKey               string `json:"gt_private_key"`
 }
 
 var (
