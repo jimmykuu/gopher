@@ -78,7 +78,7 @@ Windows:
 	$ go build -o binary github.com/jimmykuu/gopher/server
 	$ ./binary
 
-**注意**：*etc* 和 *static* 目录需要在可执行文件同一个目录下，可以通过软链或者复制到同一个目录下。
+**注意**：*etc*，*static*，*templates* 目录需要在可执行文件同一个目录下，可以通过软链或者复制到同一个目录下。
 
 ## Contributors
 
