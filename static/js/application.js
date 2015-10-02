@@ -22,7 +22,7 @@ function createEditorMd(divId, submitId, markdown) {
 		markdown: markdown,
 	    autoFocus: false,
         path: "http://77fkk5.com1.z0.glb.clouddn.com/static/lib/editor.md-1.5.0/lib/",
-	    placeholder: "Mardkown，提交前请查看预览格式是否正确",
+	    placeholder: "Markdown，提交前请查看预览格式是否正确",
         toolbarIcons: function() {
           return ["undo", "redo", "|", "bold", "italic", "quote", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "link", "reference-link", "image", "code", "preformatted-text", "code-block", "|", "goto-line", "watch", "preview", "fullscreen", "|", "help", "info"]
         },

@@ -13,7 +13,7 @@ import (
 	"strconv"
 	"strings"
 
-	"code.google.com/p/go-uuid/uuid"
+	"github.com/pborman/uuid"
 	"github.com/deferpanic/deferclient/deferstats"
 	"github.com/gorilla/sessions"
 	"github.com/jimmykuu/webhelpers"
