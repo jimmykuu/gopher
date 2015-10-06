@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"code.google.com/p/go-uuid/uuid"
+	"github.com/pborman/uuid"
 	"github.com/jimmykuu/webhelpers"
 	"github.com/jimmykuu/wtforms"
 	"gopkg.in/mgo.v2/bson"
