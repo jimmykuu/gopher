@@ -59,7 +59,22 @@ var funcMaps = template.FuncMap{
 		var ads []AD
 		c.Find(bson.M{"position": position}).Sort("index").All(&ads)
 
-		return ads
+		count := len(ads)
+
+		if count <= 1 {
+			return ads
+		}
+
+		dayIndex := time.Now().YearDay() % count
+
+		var sortAds = make([]AD, count)
+		// 根据当天是一年的内第几天排序，每个广告都有机会排第一个
+
+		for i, ad := range ads {
+			sortAds[(i+count-dayIndex)%count] = ad
+		}
+
+		return sortAds
 	},
 	"url": func(url string) string {
 		// 没有http://或https://开头的增加http://
