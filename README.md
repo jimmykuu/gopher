@@ -17,6 +17,7 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 - github.com/jimmykuu/wtforms
 - github.com/jimmykuu/gt-go-sdk
 - github.com/deferpanic/deferclient/deferclient
+- golang.org/x/net/websocket
 
 ## Install
 

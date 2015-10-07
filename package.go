@@ -14,9 +14,9 @@ import (
 	"strings"
 	"time"
 
-	"code.google.com/p/go.net/websocket"
 	"github.com/gorilla/mux"
 	"github.com/jimmykuu/wtforms"
+	"golang.org/x/net/websocket"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )

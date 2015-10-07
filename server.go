@@ -10,8 +10,8 @@ import (
 	"net/http"
 	"os"
 
-	"code.google.com/p/go.net/websocket"
 	"github.com/gorilla/mux"
+	"golang.org/x/net/websocket"
 )
 
 var (
