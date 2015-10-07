@@ -13,11 +13,11 @@ import (
 	"strconv"
 	"strings"
 
-	"code.google.com/p/go-uuid/uuid"
 	"github.com/deferpanic/deferclient/deferstats"
 	"github.com/gorilla/sessions"
 	"github.com/jimmykuu/webhelpers"
 	"github.com/jimmykuu/wtforms"
+	"github.com/pborman/uuid"
 	qiniuIo "github.com/qiniu/api.v6/io"
 	"github.com/qiniu/api.v6/rs"
 	"gopkg.in/mgo.v2"
