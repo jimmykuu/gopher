@@ -427,7 +427,7 @@ sup.new {
 }
 
 .left.sidebar {
-		position: relative;
+	position: relative;
     z-index: 1000;
     display: block;
     overflow-x: hidden;
@@ -435,13 +435,17 @@ sup.new {
 }
 
 .left.sidebar .avatar {
-		margin-right: 10px;
+	margin-right: 10px;
 }
 
 .left.sidebar .info h4 {
-		overflow: hidden;
+	overflow: hidden;
 }
 
 div.list-group-item.heading {
-		background-color: #f5f5f5;
+	background-color: #f5f5f5;
+}
+
+.editormd-fullscreen {
+    z-index: 100;
 }
