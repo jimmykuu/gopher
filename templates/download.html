@@ -21,7 +21,7 @@
 	  <div class="panel-heading">
 		<h4 class="panel-title">
 		  <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapse{{$index}}">
-			{{$version.Version}}({{$version.Date}})
+			{{$version.Name}}
 		  </a>
 		</h4>
 	  </div>
@@ -30,19 +30,16 @@
 		  <table class="table table-striped table-hover table-condensed">
 			<thead>
 			  <th>Filename</th>
-			  <th>Summary + Labels</th>
 			  <th>Size</th>
 			  <th>Download</th>
 			</thead>
 			<tbody>
 			  {{range $version.Files}}
-			  <tr{{if .Recommended}} class="success"{{end}}>
+			  <tr>
 				<td>{{.Filename}}</td>
-				<td>{{.Summary}}</td>
-				<td>{{.Size}}</td>
+				<td>{{.HumanSize}}</td>
 				<td>
-				  <a href="{{.URL}}" class="btn btn-xs btn-primary">官方下载</a>
-				  <a href="/static/go/{{.Filename}}" class="btn btn-xs btn-info">本地下载</a>
+				  <a href="/static/go/{{$version.Name}}/{{.Filename}}" class="btn btn-xs btn-info">本地下载</a>
 				</td>
 			  </tr>
 			  {{end}}

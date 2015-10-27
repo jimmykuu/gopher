@@ -159,7 +159,7 @@ var routes = []Route{
 	{"/books", Everyone, booksHandler},
 	{"/book/{id}", Everyone, showBookHandler},
 
-	{"/download", Everyone, downloadHandler},
+	{"/download", Everyone, downloadGoHandler},
 	{"/download/package", Everyone, downloadPackagesHandler},
 	{"/download/liteide", Everyone, downloadLiteIDEHandler},
 	{"/play", Everyone, playGroundHandler},

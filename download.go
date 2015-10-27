@@ -4,7 +4,6 @@
 package gopher
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -26,33 +25,12 @@ type Version struct {
 	Date    string `json:"date"`
 }
 
-func downloadHandler(handler *Handler) {
-	defer dps.Persist()
-
-	file, err := os.Open("etc/download.json")
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
-	dec := json.NewDecoder(file)
-
-	var versions []Version
-
-	err = dec.Decode(&versions)
-
-	if err != nil {
-		panic(err)
-	}
-	handler.renderTemplate("download.html", BASE, map[string]interface{}{"versions": versions, "active": "download"})
-}
-
-type LiteIDEFileInfo struct {
+type FileInfo struct {
 	Filename string
 	Size     int64 // bytes
 }
 
-func (info LiteIDEFileInfo) HumanSize() string {
+func (info FileInfo) HumanSize() string {
 	if info.Size < 1024 {
 		return fmt.Sprintf("%d B", info.Size)
 	} else if info.Size < 1024*1024 {
@@ -62,19 +40,19 @@ func (info LiteIDEFileInfo) HumanSize() string {
 	}
 }
 
-type LiteIDEVersionInfo struct {
+type VersionInfo struct {
 	Name  string
-	Files []LiteIDEFileInfo
+	Files []FileInfo
 }
 
-func downloadLiteIDEHandler(handler *Handler) {
-	versions := []LiteIDEVersionInfo{}
+func getVersions(downloadPath string) []VersionInfo {
+	versions := []VersionInfo{}
 
-	var version LiteIDEVersionInfo
+	var version VersionInfo
 
 	first := true
-	filepath.Walk("./static/liteide", func(path string, info os.FileInfo, err error) error {
-		if path == "./static/liteide" {
+	filepath.Walk(downloadPath, func(path string, info os.FileInfo, err error) error {
+		if path == downloadPath {
 			return nil
 		}
 
@@ -87,19 +65,18 @@ func downloadLiteIDEHandler(handler *Handler) {
 				first = false
 			}
 
-			version = LiteIDEVersionInfo{
+			version = VersionInfo{
 				Name:  info.Name(),
-				Files: []LiteIDEFileInfo{},
+				Files: []FileInfo{},
 			}
 		} else if len(temp) == 4 {
 			// 文件
-			version.Files = append(version.Files, LiteIDEFileInfo{
+			version.Files = append(version.Files, FileInfo{
 				Filename: info.Name(),
 				Size:     info.Size(),
 			})
 		}
 
-		fmt.Println(path)
 		return nil
 	})
 
@@ -111,5 +88,19 @@ func downloadLiteIDEHandler(handler *Handler) {
 		versions[i], versions[count-i-1] = versions[count-i-1], versions[i]
 	}
 
-	handler.renderTemplate("download/liteide.html", BASE, map[string]interface{}{"versions": versions, "active": "download"})
+	return versions
+}
+
+func downloadGoHandler(handler *Handler) {
+	handler.renderTemplate("download.html", BASE, map[string]interface{}{
+		"versions": getVersions("./static/go"),
+		"active":   "download",
+	})
+}
+
+func downloadLiteIDEHandler(handler *Handler) {
+	handler.renderTemplate("download/liteide.html", BASE, map[string]interface{}{
+		"versions": getVersions("./static/liteide"),
+		"active":   "download",
+	})
 }
