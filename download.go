@@ -45,19 +45,24 @@ type VersionInfo struct {
 	Files []FileInfo
 }
 
-func getVersions(downloadPath string) []VersionInfo {
+// 获取版本信息
+// downloadPaht: 下载路径
+// categoryLength: 分类路径
+func getVersions(downloadPath string, categoryLength int) []VersionInfo {
+	fileLength := categoryLength + 1
 	versions := []VersionInfo{}
 
 	var version VersionInfo
 
 	first := true
 	filepath.Walk(downloadPath, func(path string, info os.FileInfo, err error) error {
+		fmt.Println(path)
 		if path == downloadPath {
 			return nil
 		}
 
 		temp := strings.Split(path, "/")
-		if len(temp) == 3 {
+		if len(temp) == categoryLength {
 			// 版本文件夹
 			if !first {
 				versions = append(versions, version)
@@ -69,7 +74,7 @@ func getVersions(downloadPath string) []VersionInfo {
 				Name:  info.Name(),
 				Files: []FileInfo{},
 			}
-		} else if len(temp) == 4 {
+		} else if len(temp) == fileLength {
 			// 文件
 			version.Files = append(version.Files, FileInfo{
 				Filename: info.Name(),
@@ -93,14 +98,14 @@ func getVersions(downloadPath string) []VersionInfo {
 
 func downloadGoHandler(handler *Handler) {
 	handler.renderTemplate("download.html", BASE, map[string]interface{}{
-		"versions": getVersions("./static/go"),
+		"versions": getVersions("/data/gopher/static/go", 4),
 		"active":   "download",
 	})
 }
 
 func downloadLiteIDEHandler(handler *Handler) {
 	handler.renderTemplate("download/liteide.html", BASE, map[string]interface{}{
-		"versions": getVersions("./static/liteide"),
+		"versions": getVersions("./static/liteide", 3),
 		"active":   "download",
 	})
 }
