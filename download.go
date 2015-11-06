@@ -98,7 +98,7 @@ func getVersions(downloadPath string, categoryLength int) []VersionInfo {
 
 func downloadGoHandler(handler *Handler) {
 	handler.renderTemplate("download.html", BASE, map[string]interface{}{
-		"versions": getVersions("/data/gopher/static/go", 4),
+		"versions": getVersions("/data/gopher/static/go", 6),
 		"active":   "download",
 	})
 }
