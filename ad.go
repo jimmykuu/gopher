@@ -30,6 +30,7 @@ func adminNewAdHandler(handler *Handler) {
 		wtforms.Choice{"top0", "最顶部"},
 		wtforms.Choice{"top", "顶部"},
 		wtforms.Choice{"frontpage", "首页"},
+		wtforms.Choice{"content", "主题内"},
 		wtforms.Choice{"2cols", "2列宽度"},
 		wtforms.Choice{"3cols", "3列宽度"},
 		wtforms.Choice{"4cols", "4列宽度"},
@@ -109,6 +110,7 @@ func adminEditAdHandler(handler *Handler) {
 		wtforms.Choice{"top0", "最顶部"},
 		wtforms.Choice{"top", "顶部"},
 		wtforms.Choice{"frontpage", "首页"},
+		wtforms.Choice{"content", "主题内"},
 		wtforms.Choice{"3cols", "3列宽度"},
 		wtforms.Choice{"4cols", "4列宽度"},
 	}

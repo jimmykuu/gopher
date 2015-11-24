@@ -449,3 +449,10 @@ div.list-group-item.heading {
 .editormd-fullscreen {
     z-index: 100;
 }
+
+#content-bar a {
+    display: block;
+    width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+}

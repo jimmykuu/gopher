@@ -50,6 +50,13 @@
       {{$updater.Username}} 于 {{formattime $topic.UpdatedAt }} 修改
     </div>
     {{end}}
+
+    {{$ads := ads "content" .db}}
+    {{if $ads}}
+      <div id="content-bar">
+	     {{html (index $ads 0).Code}}
+      </div>
+    {{end}}
   </div>
 </div>
 <div id="replies" class="content">
