@@ -30,7 +30,7 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 - analytics_file: 内容为统计分析代码的文件名
 - time_zone_offset: 时差，跟UTC的时间差，单位小时
 - github_login_redirect: 第三方登录失败无法获取cookie跳转地址
-- github_login_success_redirect: 第三放登录成功后跳转地址
+- github_login_success_redirect: 第三方登录成功后跳转地址
 - cookie_secure: 第三方登录需要使用HTTPS，当设置为false供本地测试使用
 - deferpanic_api_key: deferpanic.com的Api Key，用于监控panic
 - gt_captcha_id: geetest.com 服务的 id
