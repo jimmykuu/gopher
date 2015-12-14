@@ -20,7 +20,7 @@
 			<dl class="site">
 			{{range $sites}}
 				<dt id="site-{{.Id_.Hex}}">
-					<img src="https://plus.google.com/_/favicon?domain={{.Url}}"><a href="{{.Url}}" target="_blank">{{.Title}}</a>
+					<img src="http://statics.dnspod.cn/proxy_favicon/_/favicon?domain={{.TrimUrlHttpPrefix}}"><a href="{{.Url}}" target="_blank">{{.Title}}</a>
 					{{if $.username}}
 						{{if .CanEdit $.username $.db}}
 							<a class="btn btn-xs btn-info pull-right" href="/site/{{.Id_.Hex}}/edit" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>
