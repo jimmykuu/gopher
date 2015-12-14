@@ -26,6 +26,7 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 
 复制文件 *etc/config.json.default* 并改名为 *etc/config.json* 作为配置文件
 
+- sendmail_path: 配置为 "/usr/sbin/sendmail -i -t" 表示使用 sendmail 来发送邮件，否则使用 SMTP 配置来发送邮件
 - superusers: 内容为用户名,如果没有管理员,内容为"",如果有多个,用英文逗号隔开
 - analytics_file: 内容为统计分析代码的文件名
 - time_zone_offset: 时差，跟UTC的时间差，单位小时
@@ -43,6 +44,7 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
         "port": 8888,
         "db": "localhost:27017",
         "cookie_secret": "05e0ba2eca9411e18155109add4b8aac",
+        "sendmail_path": "",
         "smtp_username": "username@example.com",
         "smtp_password": "password",
         "smtp_host": "smtp.example.com",

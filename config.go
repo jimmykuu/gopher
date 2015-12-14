@@ -15,6 +15,7 @@ type ConfigStruct struct {
 	Port                       int    `json:"port"`
 	DB                         string `json:"db"`
 	CookieSecret               string `json:"cookie_secret"`
+	SendMailPath               string `json:"sendmail_path"`
 	SmtpUsername               string `json:"smtp_username"`
 	SmtpPassword               string `json:"smtp_password"`
 	SmtpHost                   string `json:"smtp_host"`
