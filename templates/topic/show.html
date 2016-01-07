@@ -53,7 +53,7 @@
 
     {{$ads := ads "content" .db}}
     {{if $ads}}
-      <div id="content-bar">
+      <div id="content-bar" style="margin-top: 80px">
 	     {{html (index $ads 0).Code}}
       </div>
     {{end}}
