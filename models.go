@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
+	"strings"
 	"time"
 
 	"github.com/gorilla/sessions"
@@ -408,6 +409,10 @@ type Site struct {
 	Id_        bson.ObjectId `bson:"_id"`
 	Url        string
 	CategoryId bson.ObjectId
+}
+
+func (s *Site) TrimUrlHttpPrefix() string {
+	return strings.TrimPrefix(s.Url, "http://")
 }
 
 // 文章分类
