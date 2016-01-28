@@ -20,7 +20,7 @@
 		<div class="container">
 			<ul class="nav navbar-nav pull-right top">
 				<li><a href="http://www.jiankongbao.com/labs/http" target="_blank">免费性能测试</a></li>
-                <li><a href="http://click.aliyun.com/m/1621/" target="_blank">云产品免费体验入口</a></li>
+        <li><a href="http://click.aliyun.com/m/1621/" target="_blank">云产品免费体验入口</a></li>
 			</ul>
 		</div>
 		<div class="container">
@@ -38,8 +38,9 @@
 								我的空间
 								<b class="caret"></b>
 							</a>
-                    		<ul class="dropdown-menu" role="menu">
+              <ul class="dropdown-menu" role="menu">
 								<li><a href="/user_center"><i class="glyphicon glyphicon-user"></i> 用户中心</a></li>
+                <li><a href="/member/{{.username}}/collect"><i class="glyphicon glyphicon-star"></i> 我的收藏夹</a></li>
 								<li><a href="/user_center/change_password"><i class="glyphicon glyphicon-edit"></i> 修改密码</a></li>
 								{{if .isSuperUser}}
 									<li><a href="/admin"><i class="glyphicon glyphicon-wrench"></i> 管理</a></li>
