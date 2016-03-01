@@ -7,7 +7,10 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
+
+	"github.com/mcuadros/go-version"
 )
 
 type File struct {
@@ -45,18 +48,24 @@ type VersionInfo struct {
 	Files []FileInfo
 }
 
+type ByVersion []VersionInfo
+
+func (a ByVersion) Len() int           { return len(a) }
+func (a ByVersion) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByVersion) Less(i, j int) bool { return version.Compare(a[i].Name, a[j].Name, "<") }
+
 // 获取版本信息
 // downloadPaht: 下载路径
 // categoryLength: 分类路径
-func getVersions(downloadPath string, categoryLength int) []VersionInfo {
+func getVersions(downloadPath string) []VersionInfo {
+	downloadPath, _ = filepath.Abs(downloadPath)
+	categoryLength := len(strings.Split(downloadPath, "/")) + 1
 	fileLength := categoryLength + 1
 	versions := []VersionInfo{}
-
 	var version VersionInfo
 
 	first := true
 	filepath.Walk(downloadPath, func(path string, info os.FileInfo, err error) error {
-		fmt.Println(path)
 		if path == downloadPath {
 			return nil
 		}
@@ -86,26 +95,22 @@ func getVersions(downloadPath string, categoryLength int) []VersionInfo {
 	})
 
 	versions = append(versions, version)
-
 	// 倒序排列
-	count := len(versions)
-	for i := 0; i < count/2; i++ {
-		versions[i], versions[count-i-1] = versions[count-i-1], versions[i]
-	}
+	sort.Sort(sort.Reverse(ByVersion(versions)))
 
 	return versions
 }
 
 func downloadGoHandler(handler *Handler) {
 	handler.renderTemplate("download.html", BASE, map[string]interface{}{
-		"versions": getVersions("/data/gopher/static/go", 6),
+		"versions": getVersions(Config.GoDownloadPath),
 		"active":   "download",
 	})
 }
 
 func downloadLiteIDEHandler(handler *Handler) {
 	handler.renderTemplate("download/liteide.html", BASE, map[string]interface{}{
-		"versions": getVersions("./static/liteide", 3),
+		"versions": getVersions(Config.GoDownloadPath),
 		"active":   "download",
 	})
 }

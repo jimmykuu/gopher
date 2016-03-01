@@ -38,6 +38,8 @@ type ConfigStruct struct {
 	DeferPanicApiKey           string `json:"deferpanic_api_key"`
 	GtCaptchaId                string `json:"gt_captcha_id"`
 	GtPrivateKey               string `json:"gt_private_key"`
+	GoDownloadPath             string `json:"go_download_path"`
+	LiteIDEDownloadPath        string `json:"liteide_download_path"`
 }
 
 var (

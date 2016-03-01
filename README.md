@@ -36,6 +36,8 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 - deferpanic_api_key: deferpanic.com的Api Key，用于监控panic
 - gt_captcha_id: geetest.com 服务的 id
 - gt_private_key: geetest.com 服务的 key
+- go_download_path: 存放下载的 Go 文件目录
+- liteide_download_path: 存放下载的 LiteIDE 文件目录
 
 内容如下:
 
@@ -63,7 +65,9 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 		"github_login_success_redirect": "/auth/signup",
 		"deferpanic_api_key": "",
         "gt_captcha_id": "",
-        "gt_private_key": ""
+        "gt_private_key": "",
+        "go_download_path": "",
+        "litedide_download_path": ""
     }
 
 需要先启动MongoDB
