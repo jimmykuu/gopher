@@ -110,7 +110,7 @@ func downloadGoHandler(handler *Handler) {
 
 func downloadLiteIDEHandler(handler *Handler) {
 	handler.renderTemplate("download/liteide.html", BASE, map[string]interface{}{
-		"versions": getVersions(Config.GoDownloadPath),
+		"versions": getVersions(Config.LiteIDEDownloadPath),
 		"active":   "download",
 	})
 }
