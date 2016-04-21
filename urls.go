@@ -98,6 +98,7 @@ var routes = []Route{
 	{"/activate/{code}", Everyone, activateHandler},
 	{"/forgot_password", Everyone, forgotPasswordHandler},
 	{"/reset/{code}", Everyone, resetPasswordHandler},
+	{"/user/blocked", Authenticated, blockedHandler},
 
 	{"/user_center", Authenticated, userCenterHandler},
 	{"/user_center/change_avatar", Authenticated, changeAvatarHandler},

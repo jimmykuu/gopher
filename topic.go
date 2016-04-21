@@ -142,6 +142,12 @@ func noReplyTopicsHandler(handler *Handler) {
 // URL: /topic/new
 // 新建主题
 func newTopicHandler(handler *Handler) {
+	user, _ := currentUser(handler)
+	if user.IsBlocked {
+		handler.Redirect("/user/blocked")
+		return
+	}
+
 	nodeId := mux.Vars(handler.Request)["node"]
 
 	var nodes []Node
@@ -163,8 +169,6 @@ func newTopicHandler(handler *Handler) {
 
 	if handler.Request.Method == "POST" {
 		if form.Validate(handler.Request) {
-			user, _ := currentUser(handler)
-
 			c = handler.DB.C(CONTENTS)
 
 			id_ := bson.NewObjectId()

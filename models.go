@@ -97,6 +97,7 @@ type User struct {
 	TopicsCollected []CollectTopic //用户收藏的topic数组
 	IsSuperuser     bool           // 是否是超级用户
 	IsActive        bool
+	IsBlocked       bool `bson:"is_blocked"` // 是否被禁止发帖,回帖
 	ValidateCode    string
 	ResetCode       string
 	Index           int    // 第几个加入社区

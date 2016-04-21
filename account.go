@@ -648,3 +648,9 @@ func uploadAvatarToQiniu(file io.ReadCloser, contentType string) (filename strin
 func usersJsonHandler(handler *Handler) {
 	handler.ResponseWriter.Write(usersJson)
 }
+
+// URL: /user/blocked
+// 提示被禁言标志
+func blockedHandler(handler *Handler) {
+	handler.renderTemplate("account/blocked.html", BASE, map[string]interface{}{})
+}
