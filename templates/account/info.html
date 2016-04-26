@@ -11,6 +11,13 @@
 <div class="content">
   <img src="{{$user.AvatarImgSrc 96}}" class="pull-left img-rounded" style="margin-right: 20px;">
   <h3>{{$user.Username}}</h3>
+	{{if $.curr_user.IsSuperuser}}
+	  {{if $user.IsBlocked}}
+			<span class="label label-danger">已禁言</span>
+	  {{else}}
+			<a href="/account/{{$user.Username}}/block" class="btn btn-danger btn-xs" title="禁言"><i class="fa fa-hand-paper-o"></i></a>
+	  {{end}}
+	{{end}}
   {{if $user.Tagline}}
   <h3><small>{{$user.Tagline}}</small></h3>
   {{end}}

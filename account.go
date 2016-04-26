@@ -654,3 +654,14 @@ func usersJsonHandler(handler *Handler) {
 func blockedHandler(handler *Handler) {
 	handler.renderTemplate("account/blocked.html", BASE, map[string]interface{}{})
 }
+
+// URL: /account/{username}/block
+// 设置某个账户为禁言
+func blockAccountHandler(handler *Handler) {
+	username := mux.Vars(handler.Request)["username"]
+
+	c := handler.DB.C(USERS)
+	c.Update(bson.M{"username": username}, bson.M{"$set": bson.M{"is_blocked": true}})
+
+	handler.Redirect("/member/" + username)
+}
