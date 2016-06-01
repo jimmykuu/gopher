@@ -18,6 +18,12 @@ func commentHandler(handler *Handler) {
 	}
 
 	user, _ := currentUser(handler)
+
+	if user.IsBlocked {
+		handler.Redirect("/user/blocked")
+		return
+	}
+
 	contentIdStr := handler.param("contentId")
 	contentId := bson.ObjectIdHex(contentIdStr)
 
