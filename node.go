@@ -25,8 +25,6 @@ func nodesHandler(handler *Handler) {
 // URL: /admin/node/new
 // 新建节点
 func adminNewNodeHandler(handler *Handler) {
-	defer dps.Persist()
-
 	form := wtforms.NewForm(
 		wtforms.NewTextField("id", "ID", "", &wtforms.Required{}),
 		wtforms.NewTextField("name", "名称", "", &wtforms.Required{}),

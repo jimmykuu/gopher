@@ -48,8 +48,6 @@ func showBookHandler(handler *Handler) {
 // URL: /admin/book/{id}/edit
 // 编辑图书
 func editBookHandler(handler *Handler) {
-	defer dps.Persist()
-
 	bookId := mux.Vars(handler.Request)["id"]
 
 	c := handler.DB.C(BOOKS)
@@ -124,8 +122,6 @@ func listBooksHandler(handler *Handler) {
 }
 
 func newBookHandler(handler *Handler) {
-	defer dps.Persist()
-
 	form := wtforms.NewForm(
 		wtforms.NewTextField("title", "书名", "", wtforms.Required{}),
 		wtforms.NewTextField("cover", "封面", "", wtforms.Required{}),

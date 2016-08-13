@@ -21,8 +21,6 @@ func adminListPackageCategoriesHandler(handler *Handler) {
 // URL: /admin/package_category/new
 // 新建包分类
 func adminNewPackageCategoryHandler(handler *Handler) {
-	defer dps.Persist()
-
 	form := wtforms.NewForm(
 		wtforms.NewTextField("id", "ID", "", wtforms.Required{}),
 		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),

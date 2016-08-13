@@ -24,8 +24,6 @@ func adminListAdsHandler(handler *Handler) {
 // URL: /admin/ad/new
 // 添加广告
 func adminNewAdHandler(handler *Handler) {
-	defer dps.Persist()
-
 	choices := []wtforms.Choice{
 		wtforms.Choice{"top0", "最顶部"},
 		wtforms.Choice{"top", "顶部"},
@@ -98,8 +96,6 @@ func adminDeleteAdHandler(handler *Handler) {
 // URL: /admin/ad/{id}/edit
 // 编辑广告
 func adminEditAdHandler(handler *Handler) {
-	defer dps.Persist()
-
 	id := mux.Vars(handler.Request)["id"]
 
 	c := handler.DB.C(ADS)

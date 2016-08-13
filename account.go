@@ -52,8 +52,6 @@ var githubHandler *auth.AuthHandler
 
 // 生成users.json字符串
 func generateUsersJson(db *mgo.Database) {
-	defer dps.Persist()
-
 	var users []User
 	c := db.C(USERS)
 	err := c.Find(nil).All(&users)

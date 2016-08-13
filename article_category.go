@@ -20,8 +20,6 @@ func adminListArticleCategoriesHandler(handler *Handler) {
 // URL: /admin/article_category/new
 // 新建文章分类
 func adminNewArticleCategoryHandler(handler *Handler) {
-	defer dps.Persist()
-
 	form := wtforms.NewForm(
 		wtforms.NewTextField("name", "名称", "", wtforms.Required{}),
 	)

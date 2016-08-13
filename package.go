@@ -343,7 +343,6 @@ func (cw *ConsoleWriter) Write(p []byte) (n int, err error) {
 // URL: ws://.../get/package
 // 和页面WebSocket通信
 func getPackageHandler(ws *websocket.Conn) {
-	defer dps.Persist()
 	defer ws.Close()
 
 	var err error
