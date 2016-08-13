@@ -124,7 +124,7 @@ func setAvatarFromGravatar(handler *Handler) {
 	c := handler.DB.C(USERS)
 	c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"avatar": filename}})
 
-	http.Redirect(handler.ResponseWriter, handler.Request, "/profile#avatar", http.StatusFound)
+	http.Redirect(handler.ResponseWriter, handler.Request, "/user_center/change_avatar", http.StatusFound)
 }
 
 // URL /user_center/edit_info

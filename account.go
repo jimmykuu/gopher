@@ -356,6 +356,7 @@ func signinHandler(handler *Handler) {
 			if !geeTest.Validate(form.Value("geetest_challenge"), form.Value("geetest_validate"), form.Value("geetest_seccode")) {
 				handler.renderTemplate("account/signin.html", BASE, map[string]interface{}{
 					"form":       form,
+					"gtUrl":      geeTest.EmbedURL(),
 					"captchaErr": true,
 				})
 				return
