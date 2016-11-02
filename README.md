@@ -2,6 +2,10 @@
 
 Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 
+## 重构计划
+
+该分支『2.0』开始使用(Tango)[https://github.com/lunny/tango] 进行重构。
+
 ## Requirements
 
 - Go1.2+
