@@ -1,20 +1,20 @@
-package gopher
+package main
 
 import (
 	"fmt"
 	"os"
 	"strings"
 
-	"github.com/gorilla/sessions"
 	. "github.com/qiniu/api.v6/conf"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+
+	"github.com/jimmykuu/gopher/models"
 )
 
 func init() {
 	parseJsonFile("etc/config.json", &Config)
 	analyticsCode = getDefaultCode(Config.AnalyticsFile)
-	configGithubAuth()
 
 	if Config.DB == "" {
 		fmt.Println("数据库地址还没有配置,请到config.json内配置db字段.")
@@ -23,26 +23,26 @@ func init() {
 
 	session, err := mgo.Dial(Config.DB)
 	if err != nil {
-		panic(err)
 		fmt.Println("MongoDB连接失败:", err.Error())
-		os.Exit(1)
+		panic(err)
 	}
 
 	session.SetMode(mgo.Monotonic, true)
 
 	db := session.DB("gopher")
 
-	store = sessions.NewCookieStore([]byte(Config.CookieSecret))
+	models.DB = Config.DB
+	models.PublicSalt = Config.PublicSalt
 
 	utils = &Utils{}
 
 	// 如果没有status,创建
-	var status Status
-	c := db.C(STATUS)
+	var status models.Status
+	c := db.C(models.STATUS)
 	err = c.Find(nil).One(&status)
 
 	if err != nil {
-		c.Insert(&Status{
+		c.Insert(&models.Status{
 			Id_:        bson.NewObjectId(),
 			UserCount:  0,
 			TopicCount: 0,
@@ -64,8 +64,8 @@ func init() {
 		fmt.Println("你没有设置超级账户,请在config.json中的superusers中设置,如有多个账户,用逗号分开")
 	}
 
-	c = db.C(USERS)
-	var users []User
+	c = db.C(models.USERS)
+	var users []models.User
 	c.Find(bson.M{"issuperuser": true}).All(&users)
 
 	// 如果mongodb中的超级用户不在配置文件中,取消超级用户
@@ -79,9 +79,6 @@ func init() {
 	for _, username := range superusers {
 		c.Update(bson.M{"username": username, "issuperuser": false}, bson.M{"$set": bson.M{"issuperuser": true}})
 	}
-
-	// 生成users.json字符串
-	generateUsersJson(db)
 
 	ACCESS_KEY = Config.QiniuAccessKey
 	SECRET_KEY = Config.QiniuSecretKey

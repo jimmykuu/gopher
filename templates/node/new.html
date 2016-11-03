@@ -1,9 +1,0 @@
-{{define "Title"}}新建节点{{end}}
-{{define "Content"}}
-<form action="/admin/node/new" method="post" class="ui form segment">
-  {{input .form "id"}}
-  {{input .form "name"}}
-  {{input .form "description"}}
-  <input type="submit" class="ui blue submit button">
-</form>
-{{end}}

@@ -1,42 +1,63 @@
-{{define "Title"}}登录{{end}}
-{{define "ContentWidth"}}8{{end}}
-{{define "Breadcrumb"}}
-	<ul class="breadcrumb">
-		<li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
-		<li class="active">登录</li>
-	</ul>
-{{end}}
-{{define "Content"}}
-	<div class="content">
-	  <img src="http://77fkk5.com1.z0.glb.clouddn.com/static/img/gopher/talks.png" class="pull-right">
-	  <form action="" method="post" class="form-horizontal" role="form">
-		<fieldset>
-		  {{.form.RenderInput "next"}}
-      {{.utils.RenderInputH .form "username" 2 6 `placeholder="用户名"`}}
-      {{.utils.RenderInputH .form "password" 2 6 `placeholder="密码"`}}
-      <div class="form-group{{if .captchaErr}} has-error{{end}}">
-        <label class="col-lg-2 control-label">验证码</label>
-        <div class="col-lg-6">
-          <script type="text/javascript" src="{{.gtUrl}}"></script>
-          {{if .captchaErr}}
-            <span class="help-block">验证码错误</span>
-          {{end}}
-        </div>
-      </div>
-		  <div class="form-group">
-			 <div class="col-lg-offset-2 col-lg-6">
-			   <input type="submit" class="btn btn-primary" value="登录">
-         <p>
-           <br>
-           <a href="/forgot_password">忘记密码？</a><br>
-           没有帐号？<a href="/signup" class="btn btn-info">注册</a>
-         </p>
-			 </div>
-		  </div>
-		</fieldset>
-	  </form>
-	</div>
-{{end}}
+{{ template "base.html" . }}
+{{ define "body" }}
+<div class="uk-vertical-align uk-text-center uk-height-1-1">
+  <div class="uk-vertical-align-middle" style="width: 250px;">
+    <div id="form"></div>
+  </div>
+</div>
+<script type="text/babel">
+  var SigninForm = React.createClass({
+    getInititalState: function () {
+      return {username: '', password: ''};
+    },
+    handleUsernameChange: function (e) {
+      this.setState({username: e.target.value});
+    },
+    handlePasswordChange: function (e) {
+      this.setState({password: e.target.value});
+    },
+    handleSubmit: function (e) {
+      e.preventDefault();
+      console.log('submit', this.state.username, this.state.password);
+      fetch('/api/signin', {
+        method: 'POST',
+        body: JSON.stringify({username: this.state.username, password: this.state.password})
+      }).then((response) => {
+        console.log(response);
+        response.json().then((data) => {
+          if (data.status === 0) {
+            UIkit.notify('<i class="uk-icon-info"></i> ' + data.message, {timeout: 1000});
+          } else {
+            UIkit.notify('<i class="uk-icon-check"></i> 登录成功', {timeout: 1000});
+            window.localStorage.setItem('token', data.token);
+            Cookies.set('user', data.cookie.user, { expores: 365 });
 
-{{define "LeftSide"}}{{end}}
-{{define "RightSide"}}{{end}}
+            window.location.href = '/';
+          }
+        });
+      });
+    },
+    render: function () {
+      return (
+        <form className="uk-panel uk-panel-box uk-form" onSubmit={this.handleSubmit}>
+          <div className="uk-form-row">
+            <input className="uk-width-1-1 uk-form-large" type="text" placeholder="Username" onChange={this.handleUsernameChange} />
+          </div>
+          <div className="uk-form-row uk-form-password">
+            <input className="uk-width-1-1 uk-form-large" type="password" placeholder="Password" onChange={this.handlePasswordChange} />
+          </div>
+          <div className="uk-form-row">
+            <button className="uk-width-1-1 uk-button uk-button-primary uk-button-large" type="submit">登录</button>
+          </div>
+          <div className="uk-form-row uk-text-small">
+            <label className="uk-float-left"><input type="checkbox" /> Remember Me</label>
+            <a className="uk-float-right uk-link uk-link-muted" href="#">Forgot Password?</a>
+          </div>
+        </form>
+      );
+    }
+  });
+
+  ReactDOM.render(<SigninForm />, document.getElementById('form'));
+</script>
+{{ end }}

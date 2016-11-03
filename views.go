@@ -1,8 +1,4 @@
-/*
-一些辅助方法
-*/
-
-package gopher
+package main
 
 import (
 	"fmt"
@@ -11,16 +7,16 @@ import (
 	"regexp"
 	"sort"
 	"strconv"
-	"strings"
 
-	"github.com/gorilla/sessions"
 	"github.com/jimmykuu/webhelpers"
 	"github.com/jimmykuu/wtforms"
-	"github.com/pborman/uuid"
-	qiniuIo "github.com/qiniu/api.v6/io"
-	"github.com/qiniu/api.v6/rs"
+	//	"github.com/pborman/uuid"
+	//	qiniuIo "github.com/qiniu/api.v6/io"
+	//	"github.com/qiniu/api.v6/rs"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+
+	"github.com/jimmykuu/gopher/models"
 )
 
 const (
@@ -28,7 +24,6 @@ const (
 )
 
 var (
-	store       *sessions.CookieStore
 	fileVersion map[string]string = make(map[string]string) // {path: version}
 	utils       *Utils
 	usersJson   []byte
@@ -38,9 +33,9 @@ type Utils struct {
 }
 
 func (u *Utils) UserInfo(username string, db *mgo.Database) template.HTML {
-	c := db.C(USERS)
+	c := db.C(models.USERS)
 
-	user := User{}
+	user := models.User{}
 	// 检查用户名
 	c.Find(bson.M{"username": username}).One(&user)
 
@@ -55,8 +50,8 @@ func (u *Utils) UserInfo(username string, db *mgo.Database) template.HTML {
 }
 
 func (u *Utils) News(username string, db *mgo.Database) template.HTML {
-	c := db.C(USERS)
-	user := User{}
+	c := db.C(models.USERS)
+	user := models.User{}
 	//检查用户名
 	c.Find(bson.M{"username": username}).One(&user)
 	format := `<div>
@@ -139,33 +134,29 @@ func (u *Utils) RenderInputH(form wtforms.Form, fieldStr string, labelWidth, inp
 		))
 }
 
-func (u *Utils) AssertUser(i interface{}) *User {
-	v, _ := i.(User)
+func (u *Utils) AssertUser(i interface{}) *models.User {
+	v, _ := i.(models.User)
 	return &v
 }
 
-func (u *Utils) AssertNode(i interface{}) *Node {
-	v, _ := i.(Node)
+func (u *Utils) AssertNode(i interface{}) *models.Node {
+	v, _ := i.(models.Node)
 	return &v
 }
 
-func (u *Utils) AssertTopic(i interface{}) *Topic {
-	v, _ := i.(Topic)
+func (u *Utils) AssertTopic(i interface{}) *models.Topic {
+	v, _ := i.(models.Topic)
 	return &v
 }
 
-func (u *Utils) AssertArticle(i interface{}) *Article {
-	v, _ := i.(Article)
+func (u *Utils) AssertArticle(i interface{}) *models.Article {
+	v, _ := i.(models.Article)
 	return &v
 }
 
-func (u *Utils) AssertPackage(i interface{}) *Package {
-	v, _ := i.(Package)
+func (u *Utils) AssertPackage(i interface{}) *models.Package {
+	v, _ := i.(models.Package)
 	return &v
-}
-
-func message(handler *Handler, title string, message string, class string) {
-	handler.renderTemplate("message.html", BASE, map[string]interface{}{"title": title, "message": template.HTML(message), "class": class})
 }
 
 // 获取链接的页码，默认"?p=1"这种类型
@@ -203,12 +194,6 @@ func stringInArray(a []string, x string) bool {
 	return true
 }
 
-func staticHandler(templateFile string) HandlerFunc {
-	return func(handler *Handler) {
-		handler.renderTemplate(templateFile, BASE, map[string]interface{}{})
-	}
-}
-
 func getPage(r *http.Request) (page int, err error) {
 	p := r.FormValue("p")
 	page = 1
@@ -234,6 +219,7 @@ func findAts(content string) []string {
 	return users
 }
 
+/*
 func searchHandler(handler *Handler) {
 	p := handler.Request.FormValue("p")
 	page := 1
@@ -308,9 +294,11 @@ func searchHandler(handler *Handler) {
 		"active":     "topic",
 	})
 }
+*/
 
 // URL: /upload/image
 // 编辑器上传图片，接收后上传到七牛
+/*
 func uploadImageHandler(handler *Handler) {
 	file, header, err := handler.Request.FormFile("editormd-image-file")
 	if err != nil {
@@ -375,3 +363,4 @@ func uploadImageHandler(handler *Handler) {
 		"url":     "http://77fkk5.com1.z0.glb.clouddn.com/" + key,
 	})
 }
+*/

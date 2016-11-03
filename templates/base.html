@@ -1,163 +1,102 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
-	<meta name="keywords" content="Golang, Go语言, Golang 中国, Golang社区, golang.tc" />
-	<meta name="description" content="Golang中国社区，致力于打造国内Gopher交流的地方，提供社区，文章，酷站，第三方包，下载功能">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta property="wb:webmaster" content="7e9b420372e9d83e" />
-	<meta property="qc:admins" content="44113752776774167436375" />
-	<title>{{template "Title" .}} - Golang中国</title>
-	<script type="text/javascript" src="http://cdn.staticfile.org/jquery/2.0.3/jquery.min.js"></script>
-	<link rel="stylesheet" href="http://7xk58a.com1.z0.glb.clouddn.com/bootstrap-3.3.6/css/bootstrap.min.css">
-	<link rel="stylesheet" href="http://7xk58a.com1.z0.glb.clouddn.com/font-awesome-4.4.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="http://77fkk5.com1.z0.glb.clouddn.com/static/lib/editor.md-1.5.0/css/editormd.min.css">
-	<link rel="stylesheet" href="/static/css/style.css?v=20" type="text/css">
-	<link rel="shortcut icon" href="http://77fkk5.com1.z0.glb.clouddn.com/static/favicon.ico">
-</head>
-<body>
-	<header>
-		<div class="container">
-			<ul class="nav navbar-nav pull-right top">
-				<li><a href="http://www.jiankongbao.com/labs/http" target="_blank">免费性能测试</a></li>
-        <li><a href="http://click.aliyun.com/m/5714/" target="_blank">高性能云服务器+SSD</a></li>
-			</ul>
-		</div>
-		<div class="container">
-				<a class="brand" href="/"><img src="http://77fkk5.com1.z0.glb.clouddn.com/logo/golangtc.png?imageView2/2/h/60/q/100" alt="Golang中国"></a>
-				<div class="bar">
-					{{$ads := ads "top0" .db}}
-						{{range $ads}}
-		  				{{html .Code}}
-					{{end}}
-				</div>
-				{{if .username}}
-					<ul class="nav navbar-nav pull-right" style="margin-top: 1em;">
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-								我的空间
-								<b class="caret"></b>
-							</a>
-              <ul class="dropdown-menu" role="menu">
-								<li><a href="/user_center"><i class="glyphicon glyphicon-user"></i> 用户中心</a></li>
-                <li><a href="/member/{{.username}}/collect"><i class="glyphicon glyphicon-star"></i> 我的收藏夹</a></li>
-								<li><a href="/user_center/change_password"><i class="glyphicon glyphicon-edit"></i> 修改密码</a></li>
-								{{if .isSuperUser}}
-									<li><a href="/admin"><i class="glyphicon glyphicon-wrench"></i> 管理</a></li>
-								{{end}}
-								<li class="divider"></li>
-								<li><a href="/signout"><i class="glyphicon glyphicon-off"></i> 登出</a></li>
-							</ul>
-						</li>
-					</ul>
-				{{else}}
-					<div class="pull-right" style="margin-top: 24px;">
-						<div style="height: 5px;"></div>
-							<a href="/signin">登录</a> <span class="divider">|</span>
-							<a href="/signup">注册</a>
-						</div>
-					</div>
-				{{end}}
-		</div>
-	</header>
-	{{$ads := ads "top" .db}}
-	{{range $ads}}
-	<div class="container" style="margin-bottom: 8px;">
-	  <div class="row">
-		<div class="col-md-12">
-		  {{html .Code}}
-		</div>
-	  </div>
-	</div>
-	{{end}}
-	<div class="container">
-        <nav class="navbar navbar-default" role="navigation" id="navbar">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-				<span class="sr-only">Toggle navigation</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				</button>
-			</div>
-			<div class="collapse navbar-collapse navbar-ex1-collapse">
-				<ul class="nav navbar-nav" id="menu">
-					<li{{if eq .active "topic"}} class="active"{{end}}><a href="/">社区</a></li>
-					<li{{if eq .active "article"}} class="active"{{end}}><a href="/articles">文章</a></li>
-					<li{{if eq .active "site"}} class="active"{{end}}><a href="/sites">酷站</a></li>
-					<li{{if eq .active "package"}} class="active"{{end}}><a href="/packages">第三方包</a></li>
-					<li{{if eq .active "members"}} class="active"{{end}}><a href="/members">会员</a></li>
-          <li{{if eq .active "books"}} class="active"{{end}}><a href="/books">图书</a></li>
-					<li><a href="http://tour.golangtc.com" target="_blank" rel="nofollow">Go 指南</a></li>
-					<li><a href="http://godoc.golangtc.com" target="_blank" rel="nofollow">GoDoc</a></li>
-					<li><a href="http://goblog.golangtc.com" target="_blank" rel="nofollow">GoBlog</a></li>
-					<li class="dropdown">
-					  <a href="#" class="dropdown-toggle" data-toggle="dropdown">下载 <span class="caret"></span></a>
-					  <ul class="dropdown-menu" role="menu">
-						<li><a href="/download">Go</a></li>
-						<li><a href="/download/package">第三方包</a></li>
-						<li><a href="/download/liteide">LiteIDE</a></li>
-					  </ul>
-					</li>
-                    <li><a href="/timeline">时间线</a></li>
-				</ul>
-				<form action="/search" class="navbar-form pull-right" method="get" role="search">
-					<div class="form-group">
-						<input name="q" type="text" class="form-control" placeholder="搜索">
-					</div>
-				</form>
-			</div>
-		</nav>
-	</div>
-	<div class="container">
-		<div class="row">
-			{{template "LeftSide" .}}
-            <div class="col-md-{{template "ContentWidth"}}">
-			{{template "Breadcrumb" .}}
-			{{template "Content" .}}
-			</div>
-			{{template "RightSide" .}}
-		</div>
-	</div>
-	<footer class="footer">
-		<div class="container">
-			<p>
-				<ul class="footer-links">
-					<li><a href="/about">关于</a>
-					<li class="muted">&middot;</li>
-					<li><a href="/faq">FAQ</a></li>
-					<li class="muted">&middot;</li>
-					<li><a href="/link">友链</a></li>
-					<li class="muted">&middot;</li>
-					<li><a href="/go/feedback">反馈</a></li>
-					<li class="muted">&middot;</li>
-					<li><a href="https://github.com/jimmykuu/gopher" target="_blank">GitHub</a></li>
-				</ul>
-			</p>
-			<p>&copy;2012-2016 golangtc.com</p>
-			<p>Website built by <a href="https://github.com/jimmykuu/gopher" target="_blank" rel="nofollow">Gopher</a>, powered by <a href="http://golang.org/" target="_blank" rel="nofollow">Golang</a>, <a href="http://www.mongodb.org/" target="_blank" rel="nofollow">MongoDB</a>.</p>
-			<p>
-			  Build version {{.goVersion}}.
-			  Based on <a target="_blank" href="http://getbootstrap.com/" rel="nofollow">Bootstrap</a>.
-			  Icons from <a target="_blank" href="http://glyphicons.com/" rel="nofollow">Glyphicons</a>.
-			  {{loadtimes .startTime}}.
-			</p>
-			<p>
-				服务器由 <a href="http://www.ucloud.cn/?utm_source=zanzhu&utm_campaign=golang&utm_medium=display&utm_content=yejiao&ytag=golang_logo" target="_blank"><strong>UCloud</strong></a> 赞助
-			</p>
-			<p class="friendly_links clearfix">
-			  <a class="pull-right" href="http://www.ucloud.cn/?utm_source=zanzhu&utm_campaign=golang&utm_medium=display&utm_content=yejiao&ytag=golang_logo" target="_blank" title="服务器由 UCloud 赞助"><img src="http://77fkk5.com2.z0.glb.clouddn.com/logo/UCloud_Logo_150x30.png" border="0" alt="UCloud云计算"></a>
-			  {{range .linksOnBottom}}
-			  <a href="{{.URL}}" target="_blank"><img src="{{.Logo}}" alt="{{.Name}}"></a>
-			  {{end}}
-			</p>
-		</div>
-	</footer>
-	{{.analyticsCode}}
-</body>
-<script type="text/javascript" src="http://7xk58a.com1.z0.glb.clouddn.com/bootstrap-3.3.6/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="http://77fkk5.com1.z0.glb.clouddn.com/static/lib/editor.md-1.5.0/editormd.min.js"></script>
-<script type="text/javascript" src="http://7xk58a.com1.z0.glb.clouddn.com/google-code-prettify/prettify.js"></script>
-<script type="text/javascript" src="http://7xk58a.com1.z0.glb.clouddn.com/pace-1.0.2/pace.min.js"></script>
-<script type="text/javascript" src="/static/js/application.js?v=26"></script>
+<html lang="en-gb" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ .title }} - Golang 中国</title>
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon-precomposed" href="images/apple-touch-icon.png">
+    <link rel="stylesheet" href="/static/css/uikit.gradient.min.css">
+    <link rel="stylesheet" href="/static/css/components/notify.gradient.min.css">
+    <script src="/static/js/jquery-3.1.0.min.js"></script>
+    <script src="/static/js/uikit.min.js"></script>
+    <script src="/static/js/components/notify.min.js"></script>
+    <script src="/static/js/js.cookie.js"></script>
+    <script src="/static/js/fetch.js"></script>
+    <script src="/static/js/react-with-addons.min.js"></script>
+    <script src="/static/js/react-dom.min.js"></script>
+    <script src="/static/js/browser.min.js"></script>
+  </head>
+  <body>
+    <div class="uk-container uk-container-center uk-margin-top uk-margin-large-bottom">
+      <nav class="uk-navbar uk-margin-large-bottom">
+        <a class="uk-navbar-brand uk-hidden-small" href="/">Golang 中国</a>
+        <ul class="uk-navbar-nav uk-hidden-small">
+          <li class="uk-active">
+            <a href="layouts_frontpage.html" href="/">社区</a>
+          </li>
+          <li>
+            <a href="#">资讯</a>
+          </li>
+          <li>
+            <a href="layouts_blog.html">招聘</a>
+          </li>
+          <li>
+            <a href="layouts_documentation.html">Documentation</a>
+          </li>
+          <li>
+            <a href="layouts_contact.html">Contact</a>
+          </li>
+        </ul>
+        <ul class="uk-navbar-nav uk-navbar-flip" style="float: right;">
+          {{ if .user }}
+          <li data-uk-dropdown="{mode:'click'}">
+            <!-- 拨动下拉菜单的导航元素 -->
+            <a href="javascript:;">
+              {{ ".user.Username" }}
+              <i class="uk-icon-caret-down"></i>
+            </a>
+
+            <!-- 这是下拉菜单 -->
+            <div class="uk-dropdown uk-dropdown-small">
+              <ul class="uk-nav uk-nav-dropdown">
+                <li><a href="javascript:;">个人中心</a></li>
+              </ul>
+            </div>
+          </li>
+          {{ end }}
+        </ul>
+        {{ if not .user }}
+	      <div class="uk-navbar-content uk-navbar-flip uk-hidden-small">
+          <div class="uk-button-group">
+            <a class="uk-button uk-button-danger" href="/signin">登录</a>
+	          <a class="uk-button uk-button-danger" href="#">注册</a>
+          </div>
+        </div>
+        {{ end }}
+        <a href="#offcanvas" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas></a>
+        <div class="uk-navbar-brand uk-navbar-center uk-visible-small">Golang 中国</div>
+      </nav>
+      <div class="uk-grid" data-uk-grid-margin>
+        {{ template "body" .}}
+      </div>
+    </div>
+
+    <div id="offcanvas" class="uk-offcanvas">
+      <div class="uk-offcanvas-bar">
+        <ul class="uk-nav uk-nav-offcanvas">
+          <li class="uk-active">
+            <a href="/">社区</a>
+          </li>
+          <li>
+            <a href="layouts_portfolio.html">Portfolio</a>
+          </li>
+          <li>
+            <a href="layouts_blog.html">Blog</a>
+          </li>
+          <li>
+            <a href="layouts_documentation.html">Documentation</a>
+          </li>
+          <li>
+            <a href="layouts_contact.html">Contact</a>
+          </li>
+          {{ if not .user }}
+            <li><a href="/signin">登录</a></li>
+            <li><a href="/signup">注册</a></li>
+          {{ end }}
+        </ul>
+      </div>
+    </div>
+  </body>
 </html>
+

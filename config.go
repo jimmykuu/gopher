@@ -1,4 +1,4 @@
-package gopher
+package main
 
 import (
 	"encoding/json"
@@ -6,8 +6,6 @@ import (
 	"io/ioutil"
 	"os"
 	"runtime"
-
-	"github.com/bradrydzewski/go.auth"
 )
 
 type ConfigStruct struct {
@@ -71,18 +69,4 @@ func getDefaultCode(path string) (code template.HTML) {
 		code = template.HTML(string(content))
 	}
 	return
-}
-
-func configGithubAuth() {
-	if Config.GithubClientId == "" || Config.GithubClientSecret == "" {
-		logger.Fatal("没有配置github应用的参数")
-	}
-	auth.Config.CookieSecret = []byte(Config.CookieSecret)
-	auth.Config.LoginRedirect = Config.GithubLoginRedirect
-	auth.Config.LoginSuccessRedirect = Config.GithubLoginSuccessRedirect
-	auth.Config.CookieSecure = Config.CookieSecure
-	if !auth.Config.CookieSecure {
-		logger.Println("注意,cookie_secure设置为false,只能在本地环境下测试")
-	}
-	githubHandler = auth.Github(Config.GithubClientId, Config.GithubClientSecret, "user")
 }
