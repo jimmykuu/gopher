@@ -1,3 +1,5 @@
+{{ template "base.html" . }}
+{{ define "body" }}
 <div class="uk-width-medium-3-4 uk-row-first">
   <ul class="topic-list">
   {{ range .topics }}
@@ -48,3 +50,4 @@
 
   }
 </style>
+{{ end }}

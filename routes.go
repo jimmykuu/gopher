@@ -9,5 +9,9 @@ import (
 
 func setRoutes(t *tango.Tango) {
 	t.Any("/signin", new(actions.Signin))
-	t.Any("/api/signin", new(apis.Signin))
+	t.Any("/", new(actions.LatestTopics))
+
+	t.Group("/api", func(g *tango.Group) {
+		g.Any("/signin", new(apis.Signin))
+	})
 }
