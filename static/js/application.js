@@ -50,7 +50,7 @@ function aliyunC(data) {
 
 function aliyunD(data) {
     var banner = eval(data['data'][0]['content'])[0];
-    $('#aliyun-d').replaceWith('<a href="' + banner['url'] + '" target="_blank"><img src="' + banner['img'] + '></a>');
+    $('#aliyun-d').replaceWith('<a href="' + banner['url'] + '" target="_blank"><img src="' + banner['img'] + '"></a>');
 }
 
 $(document).ready(function(){
