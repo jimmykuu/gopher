@@ -51,12 +51,7 @@
     </div>
     {{end}}
 
-    {{$ads := ads "content" .db}}
-    {{if $ads}}
-      <div id="content-bar" style="margin-top: 80px">
-	     {{html (index $ads 0).Code}}
-      </div>
-    {{end}}
+    <a id="aliyun-d"></a>
   </div>
 </div>
 <div id="replies" class="content">
@@ -173,7 +168,8 @@
   {{$ads := ads "frontpage" .db}}
   {{if $ads}}
   <div class="panel panel-default" id="ads">
-	<div class="panel-body">
+	  <div class="panel-body">
+      <a id="aliyun-c"></a>
 	  {{range $ads}}
 	  {{html .Code}}
 	  {{end}}
@@ -193,4 +189,6 @@
 	</div>
   </div>
 </div>
+<script src="https://promotion.aliyun.com/promotion/adv/getAliyunAdv.htm?s=d02c95ba5019479390585a02e98473e1&p=page_1479719677076&pin=pos_1479720161856&cback=aliyunC"></script>
+<script src="https://promotion.aliyun.com/promotion/adv/getAliyunAdv.htm?s=d02c95ba5019479390585a02e98473e1&p=page_1479719677076&pin=pos_1479719971312&cback=aliyunD"></script>
 {{end}}
