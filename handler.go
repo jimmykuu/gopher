@@ -72,6 +72,7 @@ func (handler *Handler) renderTemplate(file, baseFile string, datas ...map[strin
 	data["startTime"] = handler.StartTime
 	data["db"] = handler.DB
 	data["host"] = Config.Host
+	data["now"] = time.Now()
 
 	var linksOnBottom []LinkExchange
 	c := handler.DB.C(LINK_EXCHANGES)

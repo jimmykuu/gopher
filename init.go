@@ -23,8 +23,8 @@ func init() {
 
 	session, err := mgo.Dial(Config.DB)
 	if err != nil {
-		panic(err)
 		fmt.Println("MongoDB连接失败:", err.Error())
+		panic(err)
 		os.Exit(1)
 	}
 
