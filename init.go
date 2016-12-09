@@ -25,7 +25,6 @@ func init() {
 	if err != nil {
 		fmt.Println("MongoDB连接失败:", err.Error())
 		panic(err)
-		os.Exit(1)
 	}
 
 	session.SetMode(mgo.Monotonic, true)

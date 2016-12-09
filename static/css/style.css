@@ -158,6 +158,7 @@ header {
 header .bar {
 	float: left;
 	margin-top: 10px;
+  max-width: 780px;
 }
 
 header h1 {
