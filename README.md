@@ -6,30 +6,13 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 
 该分支『2.0』开始使用 [Tango](https://github.com/lunny/tango) 进行重构。
 
-## Requirements
-
-- Go1.2+
-- MongoDB
-- github.com/gorilla/mux
-- github.com/gorilla/sessions
-- github.com/qiniu/bytes
-- github.com/qiniu/rpc
-- github.com/qiniu/api.v6
-- labix.org/v2/mgo
-- github.com/pborman/uuid
-- github.com/jimmykuu/webhelpers
-- github.com/jimmykuu/wtforms
-- github.com/jimmykuu/gt-go-sdk
-- golang.org/x/net/websocket
-
 ## Install
 
-    $ go get github.com/jimmykuu/gopher/server
+    $ go get github.com/jimmykuu/gopher
 
 
 复制文件 *etc/config.json.default* 并改名为 *etc/config.json* 作为配置文件
 
-- sendmail_path: 配置为 "/usr/sbin/sendmail -i -t" 表示使用 sendmail 来发送邮件，否则使用 SMTP 配置来发送邮件
 - superusers: 内容为用户名,如果没有管理员,内容为"",如果有多个,用英文逗号隔开
 - analytics_file: 内容为统计分析代码的文件名
 - time_zone_offset: 时差，跟UTC的时间差，单位小时
@@ -95,7 +78,7 @@ Windows:
 
 ## License
 
-Copyright (c) 2012-2015
+Copyright (c) 2012-2017
 
 Released under the MIT license:
 

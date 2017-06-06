@@ -1,102 +1,67 @@
 <!DOCTYPE html>
-<html lang="en-gb" dir="ltr">
+<html lang="zh_CN">
   <head>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ .title }} - Golang 中国</title>
     <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon-precomposed" href="images/apple-touch-icon.png">
-    <link rel="stylesheet" href="/static/css/uikit.gradient.min.css">
-    <link rel="stylesheet" href="/static/css/components/notify.gradient.min.css">
-    <script src="/static/js/jquery-3.1.0.min.js"></script>
-    <script src="/static/js/uikit.min.js"></script>
-    <script src="/static/js/components/notify.min.js"></script>
-    <script src="/static/js/js.cookie.js"></script>
+    <link href="/static/css/semantic.min.css" rel="stylesheet" type="text/css" />
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+    <script src="/static/js/semantic.min.js"></script>
+    <!--<script src="/static/js/js.cookie.js"></script>
     <script src="/static/js/fetch.js"></script>
     <script src="/static/js/react-with-addons.min.js"></script>
     <script src="/static/js/react-dom.min.js"></script>
-    <script src="/static/js/browser.min.js"></script>
+    <script src="/static/js/browser.min.js"></script>-->
+    <style type="text/css">
+    </style>
   </head>
   <body>
-    <div class="uk-container uk-container-center uk-margin-top uk-margin-large-bottom">
-      <nav class="uk-navbar uk-margin-large-bottom">
-        <a class="uk-navbar-brand uk-hidden-small" href="/">Golang 中国</a>
-        <ul class="uk-navbar-nav uk-hidden-small">
-          <li class="uk-active">
-            <a href="layouts_frontpage.html" href="/">社区</a>
-          </li>
-          <li>
-            <a href="#">资讯</a>
-          </li>
-          <li>
-            <a href="layouts_blog.html">招聘</a>
-          </li>
-          <li>
-            <a href="layouts_documentation.html">Documentation</a>
-          </li>
-          <li>
-            <a href="layouts_contact.html">Contact</a>
-          </li>
-        </ul>
-        <ul class="uk-navbar-nav uk-navbar-flip" style="float: right;">
-          {{ if .user }}
-          <li data-uk-dropdown="{mode:'click'}">
-            <!-- 拨动下拉菜单的导航元素 -->
-            <a href="javascript:;">
-              {{ ".user.Username" }}
-              <i class="uk-icon-caret-down"></i>
-            </a>
+    <div class="ui menu">
+      <div class="header item">
+        Golang 中国
+      </div>
+      <a class="item">
+        关于我们
+      </a>
+      <a class="item">
+        工作
+      </a>
+      <a class="item">
+        地点
+      </a>
 
-            <!-- 这是下拉菜单 -->
-            <div class="uk-dropdown uk-dropdown-small">
-              <ul class="uk-nav uk-nav-dropdown">
-                <li><a href="javascript:;">个人中心</a></li>
-              </ul>
-            </div>
-          </li>
-          {{ end }}
-        </ul>
-        {{ if not .user }}
-	      <div class="uk-navbar-content uk-navbar-flip uk-hidden-small">
-          <div class="uk-button-group">
-            <a class="uk-button uk-button-danger" href="/signin">登录</a>
-	          <a class="uk-button uk-button-danger" href="#">注册</a>
-          </div>
+      {{ if .user }}
+      <div class="ui dropdown right item">
+        更多
+        <i class="dropdown icon"></i>
+        <div class="menu">
+          <a class="item"><i class="edit icon"></i> 编辑配置文件</a>
+          <a class="item"><i class="globe icon"></i> 选择语言</a>
+          <a class="item"><i class="settings icon"></i> 账号设置</a>
         </div>
-        {{ end }}
-        <a href="#offcanvas" class="uk-navbar-toggle uk-visible-small" data-uk-offcanvas></a>
-        <div class="uk-navbar-brand uk-navbar-center uk-visible-small">Golang 中国</div>
-      </nav>
-      <div class="uk-grid" data-uk-grid-margin>
-        {{ template "body" .}}
       </div>
+      {{ else }}
+      <div class="right menu">
+        <a class="item">登录</a>
+        <a class="item">注册</a>
+      </div>
+
+      {{ end }}
     </div>
 
-    <div id="offcanvas" class="uk-offcanvas">
-      <div class="uk-offcanvas-bar">
-        <ul class="uk-nav uk-nav-offcanvas">
-          <li class="uk-active">
-            <a href="/">社区</a>
-          </li>
-          <li>
-            <a href="layouts_portfolio.html">Portfolio</a>
-          </li>
-          <li>
-            <a href="layouts_blog.html">Blog</a>
-          </li>
-          <li>
-            <a href="layouts_documentation.html">Documentation</a>
-          </li>
-          <li>
-            <a href="layouts_contact.html">Contact</a>
-          </li>
-          {{ if not .user }}
-            <li><a href="/signin">登录</a></li>
-            <li><a href="/signup">注册</a></li>
-          {{ end }}
-        </ul>
-      </div>
+    <div class="ui container">
+      {{ template "body" .}}
     </div>
+
+    <footer>
+      <div class="mui-container mui--text-center">
+        Made with ♥ by <a href="https://www.muicss.com">MUICSS</a>
+      </div>
+    </footer>
   </body>
+  <script type="text/javascript">
+    $('.ui.dropdown').dropdown();
+  </script>
 </html>
-

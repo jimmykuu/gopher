@@ -1,33 +1,33 @@
 {{ template "base.html" . }}
 {{ define "body" }}
-<div class="uk-width-medium-3-4 uk-row-first">
-  <ul class="topic-list">
+<div class="ui items">
   {{ range .topics }}
   {{ $creater := .Creater $.db }}
   {{ $node := .Node $.db }}
-  <li class="mdl-list__item mdl-list__item--three-line">
-    <a href="/member/{{$creater.Username}}" class="avatar">
-      <img src="{{ $creater.AvatarImgSrc 80 }}" alt="{{$creater.Username}}" style="width: 40px; height: 40px; border-radius: 100px; vertical-align: top;">
+  <div class="item">
+    <a href="/member/{{$creater.Username}}" class="ui tiny image">
+      <img src="{{ $creater.AvatarImgSrc 80 }}" alt="{{$creater.Username}}" style="width: 40px; height: 40px;">
     </a>
-    <a href="/t/{{ .Id_.Hex }}" class="title">{{ truncate .Title 40 "..." }}</a>
-    <div>
-      <a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
-      <a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
-      {{ if .CommentCount }}
-      {{ $latestReplier := .LatestReplier $.db }}
-        <time datetime="{{formatdatetime .LatestRepliedAt}}" title="{{ formatdatetime .LatestRepliedAt }}">{{ formattime .LatestRepliedAt }}</time> •
-        最后回复来自 <a href="/member/{{ $latestReplier.Username }}">{{ $latestReplier.Username }}</a>
-      {{ else }}
-        <time datetime="{{ formatdatetime .CreatedAt }}" title="{{ formatdatetime .CreatedAt }}">{{ formattime .CreatedAt }}</time>
-      {{ end }}
+    <div class="content">
+      <a href="/t/{{ .Id_.Hex }}" class="header">{{ truncate .Title 40 "..." }}</a>
+      <div class="description">
+        <a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
+        <a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
+        {{ if .CommentCount }}
+        {{ $latestReplier := .LatestReplier $.db }}
+          <time datetime="{{formatdatetime .LatestRepliedAt}}" title="{{ formatdatetime .LatestRepliedAt }}">{{ formattime .LatestRepliedAt }}</time> •
+          最后回复来自 <a href="/member/{{ $latestReplier.Username }}">{{ $latestReplier.Username }}</a>
+        {{ else }}
+          <time datetime="{{ formatdatetime .CreatedAt }}" title="{{ formatdatetime .CreatedAt }}">{{ formattime .CreatedAt }}</time>
+        {{ end }}
 
-      {{ if .CommentCount }}
-        <a class="uk-float-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
-      {{ end }}
+        {{ if .CommentCount }}
+          <a class="uk-float-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
+        {{ end }}
+        </div>
     </div>
-  </li>
+  </div>
   {{ end }}
-  </ul>
 </div>
 <div class="uk-width-medium-1-4">
   <a class="uk-button uk-button-primary" href="/topic/new">发表话题</a>
