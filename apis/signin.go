@@ -47,15 +47,15 @@ func (a *Signin) Post() interface{} {
 
 	if err != nil {
 		return map[string]interface{}{
-			"status":  0,
-			"message": "该用户不存在",
+			"status":   0,
+			"messages": []string{"该用户不存在"},
 		}
 	}
 
 	if !user.CheckPassword(form.Password) {
 		return map[string]interface{}{
-			"status":  0,
-			"message": "密码和用户名不匹配",
+			"status":   0,
+			"messages": []string{"密码和用户名不匹配"},
 		}
 	}
 

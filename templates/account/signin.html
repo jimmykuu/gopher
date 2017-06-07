@@ -1,34 +1,64 @@
 {{ template "base.html" . }}
 {{ define "body" }}
-<div class="uk-vertical-align uk-text-center uk-height-1-1">
-  <div class="uk-vertical-align-middle" style="width: 250px;">
+<style type="text/css">
+  .column {
+    max-width: 450px;
+  }
+</style>
+<div class="ui middle aligned center aligned grid">
+  <div class="column">
+    <h2 class="ui teal image header">
+      <div class="content">
+        登录
+      </div>
+    </h2>
     <div id="form"></div>
+
+    <div class="ui message">
+      没有账户？ <a href="/signup">注册</a>
+    </div>
   </div>
 </div>
 <script type="text/babel">
-  var SigninForm = React.createClass({
-    getInititalState: function () {
-      return {username: '', password: ''};
-    },
-    handleUsernameChange: function (e) {
+  class SigninForm extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        username: '',
+        password: '',
+        errors: []
+      };
+    }
+
+    handleUsernameChange = (e) => {
       this.setState({username: e.target.value});
-    },
-    handlePasswordChange: function (e) {
+    }
+
+    handlePasswordChange = (e) => {
       this.setState({password: e.target.value});
-    },
-    handleSubmit: function (e) {
+    }
+
+    handleSubmit = (e) => {
       e.preventDefault();
-      console.log('submit', this.state.username, this.state.password);
+
+      if (!this.state.username) {
+        this.setState({errors: ["请输入用户名"]});
+        return;
+      }
+
+      if (!this.state.password) {
+        this.setState({errors: ["请输入密码"]});
+        return;
+      }
+
       fetch('/api/signin', {
         method: 'POST',
         body: JSON.stringify({username: this.state.username, password: this.state.password})
       }).then((response) => {
-        console.log(response);
         response.json().then((data) => {
           if (data.status === 0) {
-            UIkit.notify('<i class="uk-icon-info"></i> ' + data.message, {timeout: 1000});
+            this.setState({errors: data.messages});
           } else {
-            UIkit.notify('<i class="uk-icon-check"></i> 登录成功', {timeout: 1000});
             window.localStorage.setItem('token', data.token);
             Cookies.set('user', data.cookie.user, { expores: 365 });
 
@@ -36,27 +66,48 @@
           }
         });
       });
-    },
-    render: function () {
+    }
+
+    render() {
+      let formClass = "ui large form";
+      if (this.state.errors) {
+        formClass += " error";
+      }
       return (
-        <form className="uk-panel uk-panel-box uk-form" onSubmit={this.handleSubmit}>
-          <div className="uk-form-row">
-            <input className="uk-width-1-1 uk-form-large" type="text" placeholder="Username" onChange={this.handleUsernameChange} />
-          </div>
-          <div className="uk-form-row uk-form-password">
-            <input className="uk-width-1-1 uk-form-large" type="password" placeholder="Password" onChange={this.handlePasswordChange} />
-          </div>
-          <div className="uk-form-row">
-            <button className="uk-width-1-1 uk-button uk-button-primary uk-button-large" type="submit">登录</button>
-          </div>
-          <div className="uk-form-row uk-text-small">
-            <label className="uk-float-left"><input type="checkbox" /> Remember Me</label>
-            <a className="uk-float-right uk-link uk-link-muted" href="#">Forgot Password?</a>
+        <form className={formClass} onSubmit={this.handleSubmit}>
+          <div className="ui stacked segment">
+            <div className="field">
+              <div className="ui left icon input">
+                <i className="user icon"></i>
+                <input type="text" onChange={this.handleUsernameChange} placeholder="用户名" />
+              </div>
+            </div>
+            <div className="field">
+              <div className="ui left icon input">
+                <i className="lock icon"></i>
+                <input type="password" onChange={this.handlePasswordChange} placeholder="密码" />
+              </div>
+            </div>
+            {this.state.errors.length > 0 ?
+              <div className="ui error message">
+                <ul className="list">
+                  {
+                    this.state.errors.map(function (item) {
+                          return <li>{item}</li>
+                    })
+                  }
+                </ul>
+              </div>
+            :
+              ''
+            }
+
+            <button className="ui fluid large teal submit button" type="submit">登录</button>
           </div>
         </form>
       );
     }
-  });
+  }
 
   ReactDOM.render(<SigninForm />, document.getElementById('form'));
 </script>
