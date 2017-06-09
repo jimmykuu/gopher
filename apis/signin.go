@@ -17,6 +17,7 @@ type Signin struct {
 	binding.Binder
 }
 
+// Post /api/signin 提交登录
 func (a *Signin) Post() interface{} {
 	var form struct {
 		Username string `json:"username"`

@@ -1,0 +1,134 @@
+{{ template "base.html" . }}
+{{ define "body" }}
+<style type="text/css">
+  .column {
+    max-width: 450px;
+  }
+</style>
+<div class="ui middle aligned center aligned grid">
+  <div class="column">
+    <h2 class="ui teal image header">
+      <div class="content">
+        注册
+      </div>
+    </h2>
+    <div id="form"></div>
+
+    <div class="ui message">
+      已有账户？ <a href="/signin">登录</a>
+    </div>
+  </div>
+</div>
+<script type="text/babel">
+  class SignupForm extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        username: '',
+        password: '',
+        email: '',
+        errors: []
+      };
+    }
+
+    handleUsernameChange = (e) => {
+      this.setState({username: e.target.value});
+    }
+
+    handlePasswordChange = (e) => {
+      this.setState({password: e.target.value});
+    }
+
+    handleEmailChange = (e) => {
+      this.setState({email: e.target.value});
+    }
+
+    handleSubmit = (e) => {
+      e.preventDefault();
+
+      if (!this.state.username) {
+        this.setState({errors: ["请输入用户名"]});
+        return;
+      }
+
+      if (!this.state.password) {
+        this.setState({errors: ["请输入密码"]});
+        return;
+      }
+
+      if (!this.state.email) {
+          this.setState({errors: ["请输入邮箱地址"]});
+          return;
+      }
+
+      fetch('/api/signup', {
+        method: 'POST',
+        body: JSON.stringify({
+          username: this.state.username,
+          password: this.state.password,
+          email: this.state.email
+        })
+      }).then((response) => {
+        response.json().then((data) => {
+          if (data.status === 0) {
+            this.setState({errors: data.messages});
+          } else {
+            window.localStorage.setItem('token', data.token);
+            Cookies.set('user', data.cookie.user, { expores: 365 });
+
+            window.location.href = '/';
+          }
+        });
+      });
+    }
+
+    render() {
+      let formClass = "ui large form";
+      if (this.state.errors) {
+        formClass += " error";
+      }
+      return (
+        <form className={formClass} onSubmit={this.handleSubmit}>
+          <div className="ui stacked segment">
+            <div className="field">
+              <div className="ui left icon input">
+                <i className="user icon"></i>
+                <input type="text" onChange={this.handleUsernameChange} placeholder="用户名" />
+              </div>
+            </div>
+            <div className="field">
+              <div className="ui left icon input">
+                <i className="lock icon"></i>
+                <input type="password" onChange={this.handlePasswordChange} placeholder="密码" />
+              </div>
+            </div>
+            <div className="field">
+              <div className="ui left icon input">
+                <i className="mail icon"></i>
+                <input type="email" onChange={this.handleEmailChange} placeholder="邮箱" />
+              </div>
+            </div>
+            {this.state.errors.length > 0 ?
+              <div className="ui error message">
+                <ul className="list">
+                  {
+                    this.state.errors.map(function (item) {
+                      return <li>{item}</li>
+                    })
+                  }
+                </ul>
+              </div>
+            :
+              ''
+            }
+
+            <button className="ui fluid large teal submit button" type="submit">注册</button>
+          </div>
+        </form>
+      );
+    }
+  }
+
+  ReactDOM.render(<SignupForm />, document.getElementById('form'));
+</script>
+{{ end }}
