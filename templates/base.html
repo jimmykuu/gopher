@@ -20,6 +20,12 @@
     <script src="/static/js/browser.min.js"></script>-->
     <style type="text/css">
     </style>
+    <script type="text/javascript">
+      function signout() {
+        Cookies.remove('user');
+        window.location.reload();
+      }
+    </script>
   </head>
   <body>
     <div class="ui menu">
@@ -38,12 +44,12 @@
 
       {{ if .user }}
       <div class="ui dropdown right item">
-        更多
+        {{ .user.Username }}
         <i class="dropdown icon"></i>
         <div class="menu">
           <a class="item"><i class="edit icon"></i> 编辑配置文件</a>
           <a class="item"><i class="globe icon"></i> 选择语言</a>
-          <a class="item"><i class="settings icon"></i> 账号设置</a>
+          <a class="item" href="javascript: signout();"><i class="sign out icon"></i> 登出</a>
         </div>
       </div>
       {{ else }}
@@ -51,7 +57,6 @@
         <a class="item" href="/signin">登录</a>
         <a class="item">注册</a>
       </div>
-
       {{ end }}
     </div>
 

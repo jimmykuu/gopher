@@ -1,7 +1,6 @@
 package apis
 
 import (
-	"encoding/base64"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -9,22 +8,10 @@ import (
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/jimmykuu/gopher/models"
+	"github.com/jimmykuu/gopher/utils"
 )
 
-const (
-	base64Table = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-)
-
-var coder = base64.NewEncoding(base64Table)
-
-func base64Encode(src []byte) []byte {
-	return []byte(coder.EncodeToString(src))
-}
-
-func base64Decode(src []byte) ([]byte, error) {
-	return coder.DecodeString(string(src))
-}
-
+// Signin 登录
 type Signin struct {
 	Base
 	binding.Binder
@@ -69,20 +56,11 @@ func (a *Signin) Post() interface{} {
 		panic(err)
 	}
 
-	println(">>> src:", user.Id_.Hex())
-	encode := string(base64Encode([]byte(user.Id_.Hex())))
-	println(">>> encode", encode)
-	decode, err := base64Decode([]byte(encode))
-	if err != nil {
-		panic(err)
-	}
-	println(">>> decode", decode)
-
 	return map[string]interface{}{
 		"status": 1,
 		"token":  tokenString,
 		"cookie": map[string]interface{}{
-			"user": string(base64Encode([]byte(user.Id_.Hex()))),
+			"user": string(utils.Base64Encode([]byte(user.Id_.Hex()))),
 		},
 	}
 }
