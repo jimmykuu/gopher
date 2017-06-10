@@ -1,8 +1,6 @@
 package actions
 
 import (
-	"fmt"
-
 	"github.com/lunny/tango"
 	"github.com/tango-contrib/renders"
 	"gopkg.in/mgo.v2/bson"
@@ -11,11 +9,13 @@ import (
 	"github.com/jimmykuu/gopher/utils"
 )
 
+// RenderBase 渲染基类
 type RenderBase struct {
 	renders.Renderer
 	tango.Ctx
 }
 
+// Render 渲染模板
 func (r *RenderBase) Render(tmpl string, t ...renders.T) error {
 
 	var ts = renders.T{}
@@ -28,23 +28,23 @@ func (r *RenderBase) Render(tmpl string, t ...renders.T) error {
 
 	user, has := r.currentUser()
 
-	fmt.Println(user, has)
-
 	if has {
 		ts["user"] = user
+		ts["ussername"] = user.Username
 	}
 
 	return r.Renderer.Render(tmpl, ts)
 }
 
+// currentUser 当前用户
 func (r *RenderBase) currentUser() (*models.User, bool) {
 	cookies := r.Cookies()
-	userId, err := cookies.String("user")
+	userID, err := cookies.String("user")
 	if err != nil {
 		return nil, false
 	}
 
-	userId2, err := utils.Base64Decode([]byte(userId))
+	userID2, err := utils.Base64Decode([]byte(userID))
 	if err != nil {
 		panic(err)
 	}
@@ -57,7 +57,7 @@ func (r *RenderBase) currentUser() (*models.User, bool) {
 	c := DB.C(models.USERS)
 
 	// 检查用户名
-	err = c.Find(bson.M{"_id": bson.ObjectIdHex(string(userId2))}).One(&user)
+	err = c.Find(bson.M{"_id": bson.ObjectIdHex(string(userID2))}).One(&user)
 
 	if err != nil {
 		return nil, false

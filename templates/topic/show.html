@@ -1,196 +1,43 @@
-{{define "Title"}}{{.topic.Title}}{{end}}
-{{define "ContentWidth"}}8{{end}}
-{{define "Breadcrumb"}}
-{{$topic := .utils.AssertTopic .topic}}
-{{$node := $topic.Node .db}}
-<ul class="breadcrumb">
-  <li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
-  <li><a href="/go/{{$node.Id}}">{{$node.Name}}</a></li>
-</ul>
-{{end}}
-{{define "Content"}}
-{{$topic := .utils.AssertTopic .topic}}
-{{$creater := $topic.Creater .db}}
-<div class="content">
-  <div class="page-header">
-  	<h1>{{$topic.Title}}</h1>
-    <div class="btn-group btn-group-sm pull-right">
-  	  {{if .username}}
-          {{if .curr_user.IsSuperuser}}
-  	      {{if $topic.IsTop}}
-  	        <a href="/admin/topic/{{$topic.Id_.Hex}}/cancel/top" class="btn btn-success" title="取消置顶"><i class="glyphicon glyphicon-pushpin"></i></a>
-  	      {{else}}
-              <a href="/admin/topic/{{$topic.Id_.Hex}}/set/top" class="btn btn-default" title="置顶"><i class="glyphicon glyphicon-pushpin"></i></a>
-  	      {{end}}
-  	    {{end}}
-  	    {{if $topic.CanEdit .username $.db}}
-            <a href="/t/{{$topic.Id_.Hex}}/edit" class="btn btn-default" title="编辑"><i class="glyphicon glyphicon-edit"></i></a>
-  	    {{end}}
-  	    {{if $topic.CanDelete .username $.db}}
-  	    <a href="/t/{{$topic.Id_.Hex}}/delete" class="btn btn-default" title="删除" onclick="return confirm('确定删除吗？');"><i class="glyphicon glyphicon-remove"></i></a>
-  	    {{end}}
-  	    {{if ne .username $creater.Username}}
-  	      {{if $topic.CanCollect .username $.db}}
-  	        <a href="/t/{{$topic.Id_.Hex}}/collect" class="btn btn-default" title="收藏"><i class="glyphicon glyphicon-star-empty"></i></a>
-  	      {{end}}
-  	    {{end}}
-  	  {{end}}
-  	</div>
-	  <div>
-	    由 <a href="/member/{{$creater.Username}}">{{$creater.Username}}</a> 在 {{formattime $topic.CreatedAt }} 发布 {{$topic.Hits}} 次点击
-	  </div>
-    <div class="clearfix"></div>
-  </div>
-  <div class="body editormd-preview-container">
-    {{$topic.Html}}
-    {{$updater := $topic.Updater .db}}
-    {{if $updater}}
-    <hr>
-    <div class="alert alert-success">
-      {{$updater.Username}} 于 {{formattime $topic.UpdatedAt }} 修改
-    </div>
-    {{end}}
+{{ template "base.html" . }}
+{{ define "body" }}
+<div class="ui text container">
+	<h1 class="ui header">{{ .topic.Title }}</h1>
+	<div class="ui divider"></div>
+	{{ .topic.Html }}
 
-    {{$ads := ads "content" .db}}
-    {{if $ads}}
-      <div id="content-bar" style="margin-top: 80px">
-	     {{html (index $ads 0).Code}}
-      </div>
-    {{end}}
-  </div>
-</div>
-<div id="replies" class="content">
-  <span>{{$topic.CommentCount}} 回复</span>
-  <hr>
-  <dl class="replies editormd-preview-container">
-	{{range $index, $reply := $topic.Comments .db}}
-	{{$commenter := .Creater $.db}}
-	<dd id="{{.Id_.Hex}}">
-      <a href="/member/{{$commenter.Username}}" class="pull-left" style="margin-right: 10px;">
-		<img class="img-rounded" src="{{$commenter.AvatarImgSrc 48}}" alt="{{$commenter.Username}}">
-	  </a>
-	  <div class="info">
-		<span class="label label-default pull-right">#{{add $index 1}}</span>
-		{{if $.username}}
-		{{if $reply.CanDeleteOrEdit $.username $.db}}
-		<div class="btn-group btn-group-xs pull-right" style="margin-right: 1em;">
-		  <a href="javascript:;" class="edit-comment btn btn-default" title="编辑" comment-id="{{.Id_.Hex}}"><i class="glyphicon glyphicon-edit"></i></a>
-		  <a href="/comment/{{.Id_.Hex}}/delete" class="btn btn-default" title="删除" onclick="return confirm('确认删除该评论吗？');"><i class="glyphicon glyphicon-remove"></i></a>
+	<div class="ui comments">
+		{{ range $index, $reply := .comments }}
+		{{ $commenter := $reply.Creater $.db }}
+		<div class="comment">
+			<a class="avatar" href="/member/{{ $commenter.Username }}">
+				<img src="{{ $commenter.AvatarImgSrc 48 }}">
+			</a>
+			<div class="content">
+				<a class="author" href="/member/{{ $commenter.Username }}">{{ $commenter.Username }}</a>
+				<div class="metadata">
+					<div class="date">{{ formattime $reply.CreatedAt }}</div>
+				</div>
+				<div class="text">
+					{{ .Html }}
+				</div>
+				{{ if $.username }}
+					{{ if $reply.CanDeleteOrEdit $.username $.db }}
+						<div class="actions">
+							<a class="reply">Reply</a>
+					</div>
+					{{ end }}
+				</div>
+				{{ end }}
 		</div>
-		{{end}}
-		{{end}}
-		<a href="/member/{{$commenter.Username}}"><strong>{{$commenter.Username}}</strong></a> •
-		{{formattime .CreatedAt}}
-	  </div>
-	  <div class="space"></div>
-	  <div class="reply-content">{{.Html}}</div>
-	  <div class="clear"></div>
-	</dd>
-	{{end}}
-  </dl>
-</div>
-{{if .username}}
-<div id="reply">
-  <form action="/comment/{{$topic.Id_.Hex}}" method="post" class="form-vertical" id="reply-form" role="form">
-	<fieldset>
-	  <div class="form-group">
-		<label>新回复</label>
-		<div id="editormd">
-		  <textarea style="display: none;"></textarea>
-		</div>
-	  </div>
-	  <input type="submit" class="btn btn-primary" value="回复" id="submit">
-	</fieldset>
+		{{ end }}
+  <form class="ui reply form">
+    <div class="field">
+      <textarea></textarea>
+    </div>
+    <div class="ui primary submit labeled icon button">
+      <i class="icon edit"></i> Add Comment
+    </div>
   </form>
 </div>
-
-  <script type="text/javascript">
-	  var editor, editor_edit;
-    $(function() {
-      $('#submit').attr('disabled', true);
-
-      editor = createEditorMd("editormd", "#submit");
-
-      $('.edit-comment').click(function () {
-        var commentId = $(this).attr('comment-id');
-        $.getJSON("/comment/" + commentId + ".json", function (data) {
-          $('#edit-comment-form').attr('action', '/comment/' + commentId + '/edit');
-	        $('#myModal').on('shown.bs.modal', function (e) {
-	          if (editor_edit) {
-	            editor_edit.setMarkdown(data.markdown);
-	          } else {
-	            editor_edit = createEditorMd("editormd-edit", "#edit-submit", data.markdown);
-	          }
-          });
-
-	        $('#myModal').modal({});
-        });
-      });
-    });
-  </script>
-{{else}}
-<div class="content" style="padding: 2em;">
-  需要 <a href="/signin" class="btn btn-primary">登录</a> 后方可回复, 如果你还没有账号你可以 <a href="/signup" class="btn btn-danger">注册</a> 一个帐号。
 </div>
-{{end}}
-
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="myModalLabel">编辑评论</h4>
-      </div>
-      <div class="modal-body">
-		<form action="" method="post" class="form-vertical" id="edit-comment-form" role="form">
-		  <div class="form-group">
-			<div id="editormd-edit">
-			  <textarea style="display: none;" id="comment-markdown"></textarea>
-			</div>
-		  </div>
-		  <button type="submit" class="btn btn-info" id="edit-submit">提交</button>
-	  </div>
-	  </form>
-    </div>
-  </div>
-</div>
-{{end}}
-
-{{define "LeftSide"}}{{end}}
-{{define "RightSide"}}
-{{$topic := .utils.AssertTopic .topic}}
-{{$creater := $topic.Creater .db}}
-<div class="col-md-4">
-  <div class="panel panel-default">
-	<div class="panel-heading">
-	  <h3 class="panel-title">作者</h3>
-	</div>
-	<div class="panel-body">
-	  {{.utils.UserInfo $creater.Username .db}}
-	</div>
-  </div>
-  <a href="/topic/new" class="btn btn-success btn-lg btn-block" style="margin-bottom: 20px;"><i class="glyphicon glyphicon-edit"></i> 发表话题</a>
-  {{$ads := ads "frontpage" .db}}
-  {{if $ads}}
-  <div class="panel panel-default" id="ads">
-	<div class="panel-body">
-	  {{range $ads}}
-	  {{html .Code}}
-	  {{end}}
-	</div>
-  </div>
-  {{end}}
-  <div class="panel panel-default">
-	<div class="panel-heading">
-	  <h3 class="panel-title">作者其它话题</h3>
-	</div>
-	<div class="panel-body">
-	  <ul>
-		{{range $creater.LatestTopics .db}}
-		<li><a href="/t/{{.Id_.Hex}}">{{.Content.Title}}</a></li>
-		{{end}}
-	  </ul>
-	</div>
-  </div>
-</div>
-{{end}}
+{{ end }}

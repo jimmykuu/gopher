@@ -47,8 +47,6 @@ func (a *Topic) list(conditions bson.M, sortBy string, url string, subActive str
 		page = 1
 	}
 
-	println(">>>", page)
-
 	var nodes []models.Node
 
 	session, DB := models.GetSessionAndDB()
@@ -162,6 +160,43 @@ type NoReplyTopics struct {
 
 func (a *NoReplyTopics) Get() error {
 	return a.list(bson.M{"content.type": models.TypeTopic, "content.commentcount": 0}, "-content.createdat", "/topics/no_reply", "noReply")
+}
+
+type ShowTopic struct {
+	RenderBase
+}
+
+// Get /t/:topicId 显示主题
+func (a *ShowTopic) Get() error {
+	topicID := a.Param("topicID")
+
+	if !bson.IsObjectIdHex(topicID) {
+		a.NotFound("参数错误")
+		return nil
+	}
+
+	session, DB := models.GetSessionAndDB()
+	defer session.Close()
+
+	c := DB.C(models.CONTENTS)
+
+	topic := models.Topic{}
+
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicID), "content.type": models.TypeTopic}).One(&topic)
+
+	if err != nil {
+		a.NotFound(err.Error())
+		return nil
+	}
+
+	// 点击数 +1
+	c.UpdateId(bson.ObjectIdHex(topicID), bson.M{"$inc": bson.M{"content.hits": 1}})
+	return a.Render("topic/show.html", renders.T{
+		"title":    topic.Title,
+		"topic":    topic,
+		"comments": topic.Comments(DB),
+		"db":       DB,
+	})
 }
 
 /*
@@ -310,84 +345,6 @@ func editTopicHandler(handler *Handler) {
 		"form":   form,
 		"title":  "编辑",
 		"action": "/t/" + topicId + "/edit",
-		"active": "topic",
-	})
-}
-
-// URL: /t/{topicId}
-// 根据主题的ID,显示主题的信息及回复
-func showTopicHandler(handler *Handler) {
-	testParam()
-	vars := mux.Vars(handler.Request)
-	topicId := vars["topicId"]
-	c := handler.DB.C(CONTENTS)
-	cusers := handler.DB.C(USERS)
-	topic := Topic{}
-
-	if !bson.IsObjectIdHex(topicId) {
-		http.NotFound(handler.ResponseWriter, handler.Request)
-		return
-	}
-
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": TypeTopic}).One(&topic)
-
-	if err != nil {
-		logger.Println(err)
-		http.NotFound(handler.ResponseWriter, handler.Request)
-		return
-	}
-
-	c.UpdateId(bson.ObjectIdHex(topicId), bson.M{"$inc": bson.M{"content.hits": 1}})
-
-	user, has := currentUser(handler)
-
-	//去除新消息的提醒
-	if has {
-		replies := user.RecentReplies
-		ats := user.RecentAts
-		pos := -1
-
-		for k, v := range replies {
-			if v.ContentId == topicId {
-				pos = k
-				break
-			}
-		}
-
-		//数组的删除不是这么删的,早知如此就应该存链表了
-
-		if pos != -1 {
-			if pos == len(replies)-1 {
-				replies = replies[:pos]
-			} else {
-				replies = append(replies[:pos], replies[pos+1:]...)
-			}
-			cusers.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"recentreplies": replies}})
-
-		}
-
-		pos = -1
-
-		for k, v := range ats {
-			if v.ContentId == topicId {
-				pos = k
-				break
-			}
-		}
-
-		if pos != -1 {
-			if pos == len(ats)-1 {
-				ats = ats[:pos]
-			} else {
-				ats = append(ats[:pos], ats[pos+1:]...)
-			}
-
-			cusers.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{"recentats": ats}})
-		}
-	}
-
-	handler.renderTemplate("topic/show.html", BASE, map[string]interface{}{
-		"topic":  topic,
 		"active": "topic",
 	})
 }
