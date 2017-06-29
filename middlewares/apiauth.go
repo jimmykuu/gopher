@@ -14,6 +14,7 @@ func ApiAuthHandler() tango.HandlerFunc {
 		if path == "/api/signin" || path == "/api/signup" {
 			// 登录和注册状态下不用检查登录状态
 			ctx.Next()
+			return
 		} else {
 			// 检查登录情况
 		}
