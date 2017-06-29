@@ -11,6 +11,7 @@ import (
 
 	"github.com/jimmykuu/webhelpers"
 	"github.com/lunny/tango"
+	"github.com/tango-contrib/events"
 	"github.com/tango-contrib/renders"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -25,6 +26,7 @@ var (
 func main() {
 	t := tango.Classic()
 	t.Use(
+		events.Events(),
 		tango.Static(tango.StaticOptions{
 			RootPath: "./static",
 			Prefix:   "static",

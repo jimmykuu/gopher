@@ -162,6 +162,7 @@ func (a *NoReplyTopics) Get() error {
 	return a.list(bson.M{"content.type": models.TypeTopic, "content.commentcount": 0}, "-content.createdat", "/topics/no_reply", "noReply")
 }
 
+// ShowTopic 显示主题
 type ShowTopic struct {
 	RenderBase
 }
@@ -196,6 +197,18 @@ func (a *ShowTopic) Get() error {
 		"topic":    topic,
 		"comments": topic.Comments(DB),
 		"db":       DB,
+	})
+}
+
+// NewTopic 新建主题
+type NewTopic struct {
+	RenderBase
+}
+
+// Get /topic/new 新建主题页面
+func (a *NewTopic) Get() error {
+	return a.Render("topic/form.html", renders.T{
+		"title": "新建主题",
 	})
 }
 

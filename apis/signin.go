@@ -25,10 +25,7 @@ func (a *Signin) Post() interface{} {
 	}
 
 	a.ReadJSON(&form)
-	session, DB := models.GetSessionAndDB()
-	defer session.Close()
-
-	c := DB.C(models.USERS)
+	c := a.DB.C(models.USERS)
 	user := models.User{}
 
 	err := c.Find(bson.M{"username": form.Username}).One(&user)
@@ -52,7 +49,7 @@ func (a *Signin) Post() interface{} {
 		"exp":     time.Now().AddDate(1, 0, 0).Unix(),
 	})
 
-	tokenString, err := token.SignedString([]byte("fwZ1owO330suuhtfb0zvjlrXSYREnyhG"))
+	tokenString, err := token.SignedString([]byte(JWT_KEY))
 	if err != nil {
 		panic(err)
 	}

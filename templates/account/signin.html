@@ -26,7 +26,7 @@
       this.state = {
         username: '',
         password: '',
-        loading: false,
+        submiting: false,
         errors: []
       };
     }
@@ -40,7 +40,7 @@
     }
 
     handleSubmit = (e) => {
-      if (this.state.loading) {
+      if (this.state.submiting) {
         return;
       }
 
@@ -56,7 +56,7 @@
         return;
       }
 
-      this.setState({loading: true});
+      this.setState({submiting: true});
 
       fetch('/api/signin', {
         method: 'POST',
@@ -64,7 +64,7 @@
       }).then((response) => {
         response.json().then((data) => {
           if (data.status === 0) {
-            this.setState({errors: data.messages, loading: false});
+            this.setState({errors: data.messages, submiting: false});
           } else {
             window.localStorage.setItem('token', data.token);
             Cookies.set('user', data.cookie.user, { expores: 365 });
@@ -82,7 +82,7 @@
       }
 
       let buttonClass = "ui fluid large teal submit button";
-      if (this.state.loading) {
+      if (this.state.submiting) {
         buttonClass += " loading disabled";
       }
 

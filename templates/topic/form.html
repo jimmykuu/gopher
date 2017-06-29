@@ -1,58 +1,132 @@
-{{define "Title"}}{{.title}}主题{{end}}
-{{define "ContentWidth"}}9{{end}}
-{{define "Breadcrumb"}}
-<ul class="breadcrumb">
-  <li><a href="/"><i class="glyphicon glyphicon-home"></i> 首页</a></li>
-  <li class="active">{{.title}}主题</li>
-</ul>
-{{end}}
-{{define "Content"}}
-<div class="content">
-  <form action="" method="post" id="topic-form" role="form">
-	<fieldset>
-      {{$node := .form.Field "node"}}
-      <div class="form-group">
-        {{$node.RenderLabel}}
-        {{$node.RenderInput `class="form-control"`}}
-      </div>
-      {{$title := .form.Field "title"}}
-      <div class="form-group">
-        {{$title.RenderLabel}}
-        {{$title.RenderInput `class="form-control"` `rows="4"` `placeholder="请输入主题标题，注意文字长度，如果标题能够表达完整内容，正文可以为空"`}}
-      </div>
-	  <div class="form-group">
-		<div id="editormd">
-          <textarea style="display:none;">{{.form.Value "editormd-markdown-doc"}}</textarea>
-		</div>
-	  </div>
-
-	  <input type="submit" id="submit" class="btn btn-primary" value="{{.title}}">
-	</fieldset>
-  </form>
+{{ template "base.html" .}}
+{{ define "body" }}
+<div id="form">
 </div>
-<script type="text/javascript">
-  var editor;
-  $(function() {
-    editor = createEditorMd("editormd", "#submit");
+<script type="text/babel">
+  let converter = new showdown.Converter({
+    simpleLineBreaks: true
   });
-</script>
-{{end}}
+  class TopicForm extends React.Component {
+    constructor(props) {
+      super(props);
 
-{{define "LeftSide"}}{{end}}
-{{define "RightSide"}}
-<div class="col-md-3 sidebar">
-  <div class="panel panel-default">
-	<div class="panel-heading">
-      <h3 class="panel-title">请在创建主题时考虑：</h3>
-	</div>
-	<div class="panel-body">
-      <ul>
-		<li>请选择一个合适的节点。</li>
-		<li><strong>提问型主题：</strong>请用准确的语言描述你遇到的问题，如果问题足够在标题中写完，那么正文是不用填写的，在正文中写 RT 是完全没有必要的。</li>
-		<li><strong>分享型主题：</strong>欢迎你在这里分享你在网上看到的有关Go语言的信息或你自己的经验/心得/代码/作品，请不要分享社会新闻。</li>
-		<li>主题内容使用Markdown格式，请参考下面的Markdown格式说明</li>
-      </ul>
-	</div>
-  </div>
-</div>
+      this.state = {
+        loading: true,
+        submiting: false,
+        nodes: [],
+        isEditing: true,
+        nodeId: '',
+        title: '',
+        markdown: '',
+        html: ''
+      }
+    }
+
+    handleNodeChange = (e) => {
+      this.setState({
+        nodeId: e.target.value
+      })
+    }
+
+    handleTitleChange = (e) => {
+      this.setState({
+        title: e.target.value
+      })
+    }
+
+    handleMarkdownChange = (e) => {
+      this.setState({
+        markdown: e.target.value
+      });
+    }
+
+    onEditingTabClick = () => {
+      this.setState({isEditing: true});
+    }
+
+    onPreviewTabClick = () => {
+      this.setState({
+        isEditing: false,
+        html: converter.makeHtml(this.state.markdown)
+      });
+    }
+
+    handleSubmit = (e) => {
+      e.preventDefault();
+      this.setState({submiting: true});
+    }
+
+    componentDidMount() {
+      get('/api/nodes').then((data) => {
+        this.setState({
+            loading: false,
+            nodes: data
+          });
+      });
+    }
+
+    render() {
+      let editingTabClassName = "item";
+      let previewTabClassName = "item";
+      let formClassName = "ui form";
+      let submitClassName = "ui primary submit button";
+
+      if (this.state.isEditing) {
+        editingTabClassName += " active";
+      } else {
+        previewTabClassName += " active";
+      }
+
+      if (this.state.loading) {
+        formClassName += " loading";
+      }
+
+      if (this.state.submiting) {
+        submitClassName += "  loading disabled";
+      }
+
+      return (<null>
+        <div className="ui bottom attached segment">
+          <form className={formClassName} onSubmit={this.handleSubmit}>
+            <div className="fields">
+              <div className="two wide field">
+                <select className="ui fluid search dropdown" value={this.state.node_id} onChange={this.handleNodeChange}>
+                  <option value="">请选择节点</option>
+                  {this.state.nodes.map(node =>
+                    <option value={node.id}>{node.name}</option>
+                  )}
+                </select>
+              </div>
+              <div className="fourteen wide field">
+                <input type="text" placeholder="请输入标题" value={this.state.title} onChange={this.handleTitleChange} />
+              </div>
+            </div>
+
+            <div className="ui top attached tabular menu">
+              <a className={editingTabClassName} onClick={this.onEditingTabClick}>
+                编辑
+              </a>
+              <a className={previewTabClassName} onClick={this.onPreviewTabClick}>
+                预览
+              </a>
+            </div>
+            {
+              this.state.isEditing ?
+                <div className="field">
+                  <textarea value={this.state.markdown} onChange={this.handleMarkdownChange}></textarea>
+                </div>
+              :
+                <div className="ui container" dangerouslySetInnerHTML={ {__html: this.state.html} }>
+                </div>
+            }
+
+            <button type="submit" className={submitClassName}>提交</button>
+          </form>
+        </div>
+      </null>);
+    }
+  }
+
+  ReactDOM.render(<TopicForm />, document.getElementById('form'));
+</script>
 {{end}}
