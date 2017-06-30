@@ -233,50 +233,62 @@ func (a *EditTopic) Get() error {
 	})
 }
 
-/*
-// URL: /go/{node}
-// 列出节点下所有的主题
-func topicInNodeHandler(handler *Handler) {
-	vars := mux.Vars(handler.Request)
-	nodeId := vars["node"]
-	c := handler.DB.C(NODES)
+// NodeTopics 节点下的所有主题
+type NodeTopics struct {
+	RenderBase
+}
 
-	node := Node{}
+// Get /go/:node
+func (a *NodeTopics) Get() error {
+	nodeId := a.Param("node")
+	session, DB := models.GetSessionAndDB()
+	defer session.Close()
+
+	c := DB.C(models.NODES)
+
+	node := models.Node{}
 	err := c.Find(bson.M{"id": nodeId}).One(&node)
 
 	if err != nil {
-		message(handler, "没有此节点", "请联系管理员创建此节点", "error")
-		return
+		a.NotFound("没有此节点")
+		return nil
 	}
 
-	page, err := getPage(handler.Request)
-
+	pageStr, err := a.Forms().String("p")
 	if err != nil {
-		message(handler, "页码错误", "页码错误", "error")
-		return
+		pageStr = "1"
+	}
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		page = 1
 	}
 
-	c = handler.DB.C(CONTENTS)
+	if page <= 0 {
+		page = 1
+	}
 
-	pagination := NewPagination(c.Find(bson.M{"nodeid": node.Id_, "content.type": TypeTopic}).Sort("-latestrepliedat"), "/", 20)
+	c = DB.C(models.CONTENTS)
 
-	var topics []Topic
+	pagination := NewPagination(c.Find(bson.M{"nodeid": node.Id_, "content.type": models.TypeTopic}).Sort("-latestrepliedat"), "/", 20)
+
+	var topics []models.Topic
 
 	query, err := pagination.Page(page)
 	if err != nil {
-		message(handler, "没有找到页面", "没有找到页面", "error")
-		return
+		a.NotFound("没有找到页面")
+		return nil
 	}
 
 	query.(*mgo.Query).All(&topics)
 
-	handler.renderTemplate("/topic/list.html", BASE, map[string]interface{}{
+	return a.Render("topic/list.html", renders.T{
 		"topics": topics,
 		"node":   node,
-		"active": "topic",
+		"db":     DB,
 	})
 }
 
+/*
 // URL: /t/{topicId}/collect/
 // 将主题收藏至当前用户的收藏夹
 func collectTopicHandler(handler *Handler) {

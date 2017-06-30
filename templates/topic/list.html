@@ -1,0 +1,33 @@
+{{ template "base.html" . }}
+{{ define "body" }}
+<div class="ui items">
+  {{ range .topics }}
+  {{ $creater := .Creater $.db }}
+  {{ $node := .Node $.db }}
+  <div class="item">
+    <a href="/member/{{$creater.Username}}" class="ui tiny image">
+      <img src="{{ $creater.AvatarImgSrc 80 }}" alt="{{$creater.Username}}" style="width: 40px; height: 40px;">
+    </a>
+    <div class="content">
+      <a href="/t/{{ .Id_.Hex }}" class="header">{{ truncate .Title 40 "..." }}</a>
+      <div class="description">
+        <a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
+        <a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
+        {{ if .CommentCount }}
+        {{ $latestReplier := .LatestReplier $.db }}
+        <time datetime="{{formatdatetime .LatestRepliedAt}}" title="{{ formatdatetime .LatestRepliedAt }}">{{ formattime .LatestRepliedAt }}</time> •
+        最后回复来自 <a href="/member/{{ $latestReplier.Username }}">{{ $latestReplier.Username }}</a>
+        {{ else }}
+        <time datetime="{{ formatdatetime .CreatedAt }}" title="{{ formatdatetime .CreatedAt }}">{{ formattime .CreatedAt }}</time>
+        {{ end }}
+
+        {{ if .CommentCount }}
+        <a class="uk-float-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
+        {{ end }}
+      </div>
+    </div>
+  </div>
+  {{ end }}
+</div>
+{{ end }}
+
