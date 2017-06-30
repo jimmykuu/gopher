@@ -2,16 +2,16 @@ package apis
 
 import (
 	"fmt"
-	"time"
 	"strings"
+	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/pborman/uuid"
 	"github.com/tango-contrib/binding"
 	"gopkg.in/mgo.v2/bson"
-	"github.com/dgrijalva/jwt-go"
 
-	"github.com/jimmykuu/gopher/utils"
 	"github.com/jimmykuu/gopher/models"
+	"github.com/jimmykuu/gopher/utils"
 )
 
 // Signin 登录
@@ -149,4 +149,3 @@ func (a *Signup) Post() interface{} {
 		},
 	}
 }
-

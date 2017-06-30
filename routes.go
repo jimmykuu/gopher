@@ -20,5 +20,6 @@ func setRoutes(t *tango.Tango) {
 		g.Any("/signin", new(apis.Signin))
 		g.Any("/signup", new(apis.Signup))
 		g.Any("/nodes", new(apis.NodeList))
+		g.Post("/topic/new", new(apis.NewTopic))
 	})
 }

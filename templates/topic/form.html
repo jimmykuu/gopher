@@ -54,6 +54,21 @@
     handleSubmit = (e) => {
       e.preventDefault();
       this.setState({submiting: true});
+
+      post('/api/topic/new', {
+          title: this.state.title,
+          node_id: this.state.nodeId,
+          markdown: this.state.markdown,
+          html: converter.makeHtml(this.state.markdown)
+      }).then((data) => {
+        if (data.status) {
+          window.location.href = "/t/" + data.topic_id;
+        } else {
+          this.setState({
+            submiting: fasle
+          });
+        }
+      });
     }
 
     componentDidMount() {
