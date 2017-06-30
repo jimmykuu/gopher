@@ -2,6 +2,10 @@
 
 Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 
+**注意：**
+
+该版本除了一些 Bug 处理，不再进行新功能开发。目前正在进行使用全新架构重构 [2.0](https://github.com/jimmykuu/gopher/tree/2.0) 分支。
+
 ## Requirements
 
 - Go1.2+
