@@ -3,7 +3,9 @@
 <div id="form">
 </div>
 <script type="text/babel">
-  let converter = new showdown.Converter({
+  const action = "{{ .action }}"; // 模板传入 new/edit
+  const topicId = "{{ .topicId }}"; // 模板传入
+  const converter = new showdown.Converter({
     simpleLineBreaks: true
   });
   class TopicForm extends React.Component {
@@ -55,15 +57,19 @@
       e.preventDefault();
       this.setState({submiting: true});
 
-      post('/api/topic/new', {
-          title: this.state.title,
-          node_id: this.state.nodeId,
-          markdown: this.state.markdown,
-          html: converter.makeHtml(this.state.markdown)
+      const url = action == 'new' ? '/api/topic/new' : '/api/topic/' + topicId + '/edit';
+
+      post(url, {
+        title: this.state.title,
+        node_id: this.state.nodeId,
+        markdown: this.state.markdown,
+        html: converter.makeHtml(this.state.markdown)
       }).then((data) => {
         if (data.status) {
+
           window.location.href = "/t/" + data.topic_id;
         } else {
+          alert(data.message);
           this.setState({
             submiting: fasle
           });
@@ -73,10 +79,24 @@
 
     componentDidMount() {
       get('/api/nodes').then((data) => {
-        this.setState({
+        if (action == "new") {
+          this.setState({
             loading: false,
             nodes: data
           });
+        } else {
+          this.setState({nodes: data});
+
+          // 获取主题
+          get('/api/topic/' + topicId).then((data) => {
+            this.setState({
+              loading: false,
+              title: data.title,
+              nodeId: data.node_id,
+              markdown: data.markdown
+            });
+          });
+        }
       });
     }
 
@@ -105,7 +125,7 @@
           <form className={formClassName} onSubmit={this.handleSubmit}>
             <div className="fields">
               <div className="two wide field">
-                <select className="ui fluid search dropdown" value={this.state.node_id} onChange={this.handleNodeChange}>
+                <select className="ui fluid search dropdown" value={this.state.nodeId} onChange={this.handleNodeChange}>
                   <option value="">请选择节点</option>
                   {this.state.nodes.map(node =>
                     <option value={node.id}>{node.name}</option>

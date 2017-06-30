@@ -169,9 +169,9 @@ type ShowTopic struct {
 
 // Get /t/:topicId 显示主题
 func (a *ShowTopic) Get() error {
-	topicID := a.Param("topicID")
+	topicId := a.Param("topicId")
 
-	if !bson.IsObjectIdHex(topicID) {
+	if !bson.IsObjectIdHex(topicId) {
 		a.NotFound("参数错误")
 		return nil
 	}
@@ -183,7 +183,7 @@ func (a *ShowTopic) Get() error {
 
 	topic := models.Topic{}
 
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicID), "content.type": models.TypeTopic}).One(&topic)
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": models.TypeTopic}).One(&topic)
 
 	if err != nil {
 		a.NotFound(err.Error())
@@ -191,7 +191,7 @@ func (a *ShowTopic) Get() error {
 	}
 
 	// 点击数 +1
-	c.UpdateId(bson.ObjectIdHex(topicID), bson.M{"$inc": bson.M{"content.hits": 1}})
+	c.UpdateId(bson.ObjectIdHex(topicId), bson.M{"$inc": bson.M{"content.hits": 1}})
 	return a.Render("topic/show.html", renders.T{
 		"title":    topic.Title,
 		"topic":    topic,
@@ -208,82 +208,32 @@ type NewTopic struct {
 // Get /topic/new 新建主题页面
 func (a *NewTopic) Get() error {
 	return a.Render("topic/form.html", renders.T{
-		"title": "新建主题",
+		"title":  "新建主题",
+		"action": "new",
+	})
+}
+
+// EditTopic 编辑主题
+type EditTopic struct {
+	RenderBase
+}
+
+// Get /t/:tipicId 编辑主题页面
+func (a *EditTopic) Get() error {
+	topicId := a.Param("topicId")
+	if !bson.IsObjectIdHex(topicId) {
+		a.NotFound("参数错误")
+		return nil
+	}
+
+	return a.Render("topic/form.html", renders.T{
+		"title":   "编辑主题",
+		"action":  "edit",
+		"topicId": topicId,
 	})
 }
 
 /*
-// URL: /t/{topicId}/edit
-// 编辑主题
-func editTopicHandler(handler *Handler) {
-	user, _ := currentUser(handler)
-
-	topicId := bson.ObjectIdHex(mux.Vars(handler.Request)["topicId"])
-
-	c := handler.DB.C(CONTENTS)
-	var topic Topic
-	err := c.Find(bson.M{"_id": topicId, "content.type": TypeTopic}).One(&topic)
-
-	if err != nil {
-		message(handler, "没有该主题", "没有该主题,不能编辑", "error")
-		return
-	}
-
-	if !topic.CanEdit(user.Username, handler.DB) {
-		message(handler, "没有该权限", "对不起,你没有权限编辑该主题", "error")
-		return
-	}
-
-	var nodes []Node
-	c = handler.DB.C(NODES)
-	c.Find(nil).All(&nodes)
-
-	var choices = []wtforms.Choice{wtforms.Choice{}} // 第一个选项为空
-
-	for _, node := range nodes {
-		choices = append(choices, wtforms.Choice{Value: node.Id_.Hex(), Label: node.Name})
-	}
-
-	form := wtforms.NewForm(
-		wtforms.NewSelectField("node", "节点", choices, topic.NodeId.Hex(), &wtforms.Required{}),
-		wtforms.NewTextArea("title", "标题", topic.Title, &wtforms.Required{}),
-		wtforms.NewTextArea("editormd-markdown-doc", "内容", topic.Markdown),
-		wtforms.NewTextArea("editormd-html-code", "html", ""),
-	)
-
-	if handler.Request.Method == "POST" {
-		if form.Validate(handler.Request) {
-			nodeId := bson.ObjectIdHex(form.Value("node"))
-			c = handler.DB.C(CONTENTS)
-			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{
-				"nodeid":            nodeId,
-				"content.title":     form.Value("title"),
-				"content.markdown":  form.Value("editormd-markdown-doc"),
-				"content.html":      template.HTML(form.Value("editormd-html-code")),
-				"content.updatedat": time.Now(),
-				"content.updatedby": user.Id_.Hex(),
-			}})
-
-			// 如果两次的节点不同,更新节点的主题数量
-			if topic.NodeId != nodeId {
-				c = handler.DB.C(NODES)
-				c.Update(bson.M{"_id": topic.NodeId}, bson.M{"$inc": bson.M{"topiccount": -1}})
-				c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
-			}
-
-			http.Redirect(handler.ResponseWriter, handler.Request, "/t/"+topic.Id_.Hex(), http.StatusFound)
-			return
-		}
-	}
-
-	handler.renderTemplate("topic/form.html", BASE, map[string]interface{}{
-		"form":   form,
-		"title":  "编辑",
-		"action": "/t/" + topicId + "/edit",
-		"active": "topic",
-	})
-}
-
 // URL: /go/{node}
 // 列出节点下所有的主题
 func topicInNodeHandler(handler *Handler) {
