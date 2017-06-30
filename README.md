@@ -1,10 +1,27 @@
+![Golang 中国](http://77fkk5.com1.z0.glb.clouddn.com/logo/golangtc.png)
+
 # Gopher
 
-Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
+Golang 中国([www.golangtc.com](https://www.golangtc.com))源代码.
 
 ## 重构计划
 
-该分支『2.0』开始使用 [Tango](https://github.com/lunny/tango) 进行重构。
+该分支『2.0』使用 [Tango](https://github.com/lunny/tango) 进行后端重构，前端页面使用 Template 进行渲染（考虑到 SEO），表单渲染使用 React，使用 Fetch 和后端 API 进行交互。
+
+社区功能和后台管理功能重构完成后即上线。
+
+- [] 架构搭建；
+- [] 前端架构；
+- [] 首页；
+- [] 注册；
+- [] 登录；
+- [] 开发 Markdown 编辑器；
+- [] 主题浏览；
+- [] 新建主题；
+- [] 编辑主题；
+- [] ...
+- [] 自建图片服务器，切换七牛的图片服务；
+- [] 后台管理功能
 
 ## Install
 
@@ -55,20 +72,6 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
         "litedide_download_path": ""
     }
 
-需要先启动MongoDB
-
-Linux/Unix/OS X:
-
-    $ $GOPATH/bin/server
-
-Windows:
-
-    > $GOPATH\bin\server.exe
-
-或者:
-
-	$ go build -o binary github.com/jimmykuu/gopher/server
-	$ ./binary
 
 **注意**：*etc*，*static*，*templates* 目录需要在可执行文件同一个目录下，可以通过软链或者复制到同一个目录下。
 
