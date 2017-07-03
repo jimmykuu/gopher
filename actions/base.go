@@ -17,13 +17,9 @@ type RenderBase struct {
 
 // Render 渲染模板
 func (r *RenderBase) Render(tmpl string, t ...renders.T) error {
-
 	var ts = renders.T{}
-
 	if len(t) > 0 {
 		ts = t[0].Merge(renders.T{})
-	} else {
-		ts = renders.T{}
 	}
 
 	user, has := r.currentUser()
