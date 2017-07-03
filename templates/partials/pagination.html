@@ -1,0 +1,44 @@
+{{ $pages := .pagination.Pages }}
+{{ $current := .pagination.Current }}
+
+<style type="text/csss">
+.disabled.item {
+    opacity: 0.45 !important;
+}
+
+.disabled {
+    cursor: not-allowed !important;
+}
+</style>
+
+<div class="ui pagination mini menu">
+  {{ range $pages }}
+    {{ if . }}
+      <a class="item{{ if eq $current . }} active{{ end }}" href="{{ $.url }}?p={{ . }}">{{ . }}</a>
+    {{ else }}
+      <a class="item" href="javascript:;">...</a>
+    {{ end }}
+  {{ end }}
+
+  {{ $prev := $.pagination.Prev }}
+  {{ if $prev }}
+    <a class="item" href="/?p={{ $prev }}">
+      <i class="angle left icon"></i>
+    </a>
+  {{ else }}
+    <a class="disabled item" href="javascript:;">
+      <i class="angle left icon"></i>
+    </a>
+  {{ end }}
+
+  {{ $next := $.pagination.Next }}
+  {{ if $next }}
+    <a class="item" href="/?p={{ $next }}">
+      <i class="angle right icon"></i>
+    </a>
+  {{ else }}
+    <a class="disabled item" href="javascript:;">
+      <i class="angle right icon"></i>
+    </a>
+  {{ end }}
+</div>

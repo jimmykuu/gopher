@@ -12,7 +12,7 @@ Golang 中国([www.golangtc.com](https://www.golangtc.com))源代码.
 
 - [x] 架构搭建；
 - [x] 前端架构；
-- [ ] 首页 (60%)；
+- [ ] 首页 (70%)；
 - [ ] 注册 (80%)；
 - [ ] 登录 (80%)；
 - [ ] 开发 Markdown 编辑器 (20%)；

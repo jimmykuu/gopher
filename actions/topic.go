@@ -1,7 +1,3 @@
-/*
-主题
-*/
-
 package actions
 
 import (
@@ -33,7 +29,7 @@ type Topic struct {
 }
 
 // 按条件列出所有主题
-func (a *Topic) list(conditions bson.M, sortBy string, url string, subActive string) error {
+func (a *Topic) list(conditions bson.M, sortBy string, subActive string) error {
 	pageStr, err := a.Forms().String("p")
 	if err != nil {
 		pageStr = "1"
@@ -75,7 +71,7 @@ func (a *Topic) list(conditions bson.M, sortBy string, url string, subActive str
 		}
 	}
 
-	pagination := NewPagination(c.Find(conditions).Sort(sortBy), url, PerPage)
+	pagination := NewPagination(c.Find(conditions).Sort(sortBy), PerPage)
 
 	var topics []models.Topic
 
@@ -111,7 +107,7 @@ func (a *Topic) list(conditions bson.M, sortBy string, url string, subActive str
 		if city.Name != "" {
 			hotCities = append(hotCities, city)
 
-			count += 1
+			count++
 		}
 
 		if count == 10 {
@@ -128,6 +124,7 @@ func (a *Topic) list(conditions bson.M, sortBy string, url string, subActive str
 		"topics":        topics,
 		"linkExchanges": linkExchanges,
 		"pagination":    pagination,
+		"url":           "/",
 		"page":          page,
 		"active":        "topic",
 		"subActive":     subActive,
@@ -139,7 +136,7 @@ type LatestReplyTopics struct {
 }
 
 func (a *LatestReplyTopics) Get() error {
-	return a.list(bson.M{"content.type": models.TypeTopic}, "-latestrepliedat", "/", "latestReply")
+	return a.list(bson.M{"content.type": models.TypeTopic}, "-latestrepliedat", "latestReply")
 }
 
 // 最新发布的主题，按照发布时间倒序排列
@@ -149,7 +146,7 @@ type LatestTopics struct {
 }
 
 func (a *LatestTopics) Get() error {
-	return a.list(bson.M{"content.type": models.TypeTopic}, "-content.createdat", "/topics/latest", "latestCreate")
+	return a.list(bson.M{"content.type": models.TypeTopic}, "-content.createdat", "latestCreate")
 }
 
 // URL: /topics/no_reply
@@ -159,7 +156,7 @@ type NoReplyTopics struct {
 }
 
 func (a *NoReplyTopics) Get() error {
-	return a.list(bson.M{"content.type": models.TypeTopic, "content.commentcount": 0}, "-content.createdat", "/topics/no_reply", "noReply")
+	return a.list(bson.M{"content.type": models.TypeTopic, "content.commentcount": 0}, "-content.createdat", "noReply")
 }
 
 // ShowTopic 显示主题
@@ -269,7 +266,7 @@ func (a *NodeTopics) Get() error {
 
 	c = DB.C(models.CONTENTS)
 
-	pagination := NewPagination(c.Find(bson.M{"nodeid": node.Id_, "content.type": models.TypeTopic}).Sort("-latestrepliedat"), "/", 20)
+	pagination := NewPagination(c.Find(bson.M{"nodeid": node.Id_, "content.type": models.TypeTopic}).Sort("-latestrepliedat"), 20)
 
 	var topics []models.Topic
 

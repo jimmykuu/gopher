@@ -1,53 +1,40 @@
 {{ template "base.html" . }}
 {{ define "body" }}
-<div class="ui items">
-  {{ range .topics }}
-  {{ $creater := .Creater $.db }}
-  {{ $node := .Node $.db }}
-  <div class="item">
-    <a href="/member/{{$creater.Username}}" class="ui tiny image">
-      <img src="{{ $creater.AvatarImgSrc 80 }}" alt="{{$creater.Username}}" style="width: 40px; height: 40px;">
-    </a>
-    <div class="content">
-      <a href="/t/{{ .Id_.Hex }}" class="header">{{ truncate .Title 40 "..." }}</a>
-      <div class="description">
-        <a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
-        <a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
-        {{ if .CommentCount }}
-        {{ $latestReplier := .LatestReplier $.db }}
-          <time datetime="{{formatdatetime .LatestRepliedAt}}" title="{{ formatdatetime .LatestRepliedAt }}">{{ formattime .LatestRepliedAt }}</time> •
-          最后回复来自 <a href="/member/{{ $latestReplier.Username }}">{{ $latestReplier.Username }}</a>
-        {{ else }}
-          <time datetime="{{ formatdatetime .CreatedAt }}" title="{{ formatdatetime .CreatedAt }}">{{ formattime .CreatedAt }}</time>
-        {{ end }}
-
-        {{ if .CommentCount }}
-          <a class="uk-float-right" href="/t/{{.Id_.Hex}}#.LatestReplyId.Hex">{{.CommentCount}}</a>
-        {{ end }}
+<div class="ui grid">
+  <div class="twelve wide column">
+    <div class="ui items segment">
+      {{ template "partials/pagination.html" .}}
+      {{ range .topics }}
+      {{ $creater := .Creater $.db }}
+      {{ $node := .Node $.db }}
+      <div class="item" style="border-top: 1px solid #dddddd; padding: 14px 0 0 0;">
+        <a class="ui mini label{{ if eq .CommentCount 0 }} blue{{ end }}" style="height: 24px;" href="/t/{{ .Id_.Hex }}#comments">
+          {{ .CommentCount }} 回复
+        </a>
+        <div class="content" style="padding-left: 21px;">
+          <a href="/t/{{ .Id_.Hex }}" class="header" style="font-size: 16px;">{{ truncate .Title 40 "..." }}</a>
+          <div class="meta">
+            <a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
+            <a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
+            {{ if .CommentCount }}
+            {{ $latestReplier := .LatestReplier $.db }}
+              <time datetime="{{formatdatetime .LatestRepliedAt}}" title="{{ formatdatetime .LatestRepliedAt }}">{{ formattime .LatestRepliedAt }}</time> •
+              最后回复来自 <a href="/member/{{ $latestReplier.Username }}">{{ $latestReplier.Username }}</a>
+            {{ else }}
+              <time datetime="{{ formatdatetime .CreatedAt }}" title="{{ formatdatetime .CreatedAt }}">{{ formattime .CreatedAt }}</time>
+            {{ end }}
+          </div>
         </div>
+      </div>
+      {{ end }}
+
+      {{ template "partials/pagination.html" .}}
     </div>
   </div>
-  {{ end }}
+
+  <div class="four wide column">
+    <div class="ui segment">
+    </div>
+  </div>
 </div>
-<div class="uk-width-medium-1-4">
-  <a class="uk-button uk-button-primary" href="/topic/new">发表话题</a>
-</div>
-<style type="text/css">
-  ul.topic-list {
-    list-style: none;
-  }
-
-  ul.topic-list li {
-  margin-bottom: 1em;
-  }
-
-  a.avatar {
-  float: left;
-  margin-right: 15px;
-  }
-
-  a.title {
-
-  }
-</style>
 {{ end }}
