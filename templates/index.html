@@ -2,6 +2,20 @@
 {{ define "body" }}
 <div class="ui grid">
   <div class="twelve wide column">
+    <div class="ui secondary pointing menu">
+      <div class="header item">话题首页</div>
+      <div class="right menu">
+        <a class="item{{ if eq .active "LatestReply" }} active{{ end }}" href="/">
+          最近回复
+        </a>
+        <a class="item{{ if eq .active "Latest" }} active{{ end }}" href="/topics/latest">
+          最近发布
+        </a>
+        <a class="item{{ if eq .active "NoReply" }} active{{ end }}" href="/topics/no_reply">
+          尚未回复
+        </a>
+  </div>
+</div>
     <div class="ui items segment">
       {{ template "partials/pagination.html" .}}
       {{ range .topics }}

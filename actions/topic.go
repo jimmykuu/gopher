@@ -24,12 +24,15 @@ func (a ByCount) Len() int           { return len(a) }
 func (a ByCount) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByCount) Less(i, j int) bool { return a[i].MemberCount > a[j].MemberCount }
 
+// Topic 主题基类
 type Topic struct {
 	RenderBase
+	url    string // 当前页面的 URL 地址
+	active string // 当前页面 LatestReply/Latest/NoReply
 }
 
 // 按条件列出所有主题
-func (a *Topic) list(conditions bson.M, sortBy string, subActive string) error {
+func (a *Topic) list(conditions bson.M, sortBy string) error {
 	pageStr, err := a.Forms().String("p")
 	if err != nil {
 		pageStr = "1"
@@ -124,39 +127,46 @@ func (a *Topic) list(conditions bson.M, sortBy string, subActive string) error {
 		"topics":        topics,
 		"linkExchanges": linkExchanges,
 		"pagination":    pagination,
-		"url":           "/",
+		"url":           a.url,
 		"page":          page,
-		"active":        "topic",
-		"subActive":     subActive,
+		"active":        a.active,
 	})
 }
 
+// LatestReplyTopics 最新回复
 type LatestReplyTopics struct {
 	Topic
 }
 
+// Get / 默认首页
 func (a *LatestReplyTopics) Get() error {
-	return a.list(bson.M{"content.type": models.TypeTopic}, "-latestrepliedat", "latestReply")
+	a.url = "/"
+	a.active = "LatestReply"
+	return a.list(bson.M{"content.type": models.TypeTopic}, "-latestrepliedat")
 }
 
-// 最新发布的主题，按照发布时间倒序排列
-// URL: /topics/latest
+// LatestTopics 最新发布的主题，按照发布时间倒序排列
 type LatestTopics struct {
 	Topic
 }
 
+// Get /topics/latest 最新发布的主题
 func (a *LatestTopics) Get() error {
-	return a.list(bson.M{"content.type": models.TypeTopic}, "-content.createdat", "latestCreate")
+	a.url = "/topics/latest"
+	a.active = "Latest"
+	return a.list(bson.M{"content.type": models.TypeTopic}, "-content.createdat")
 }
 
-// URL: /topics/no_reply
-// 无人回复的主题，按照发布时间倒序排列
+// NoReplyTopics 无人回复的主题，按照发布时间倒序排列
 type NoReplyTopics struct {
 	Topic
 }
 
+// Get /topics/no_reply 无人回复的主题
 func (a *NoReplyTopics) Get() error {
-	return a.list(bson.M{"content.type": models.TypeTopic, "content.commentcount": 0}, "-content.createdat", "noReply")
+	a.url = "/topics/no_reply"
+	a.active = "NoReply"
+	return a.list(bson.M{"content.type": models.TypeTopic, "content.commentcount": 0}, "-content.createdat")
 }
 
 // ShowTopic 显示主题

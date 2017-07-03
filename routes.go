@@ -15,7 +15,9 @@ func setRoutes(t *tango.Tango) {
 	t.Get("/topic/new", new(actions.NewTopic))
 	t.Get("/t/:topicId/edit", new(actions.EditTopic))
 	t.Get("/go/:node", new(actions.NodeTopics))
-	t.Get("/", new(actions.LatestTopics))
+	t.Get("/topics/latest", new(actions.LatestTopics))
+	t.Get("/topics/no_reply", new(actions.NoReplyTopics))
+	t.Get("/", new(actions.LatestReplyTopics))
 
 	t.Group("/api", func(g *tango.Group) {
 		g.Use(middlewares.ApiAuthHandler())
