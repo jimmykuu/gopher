@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"html/template"
 	"io/ioutil"
-	"os"
 	"runtime"
+
+	"github.com/jimmykuu/gopher/modules/etc"
 )
 
 type ConfigStruct struct {
@@ -48,7 +49,8 @@ var (
 )
 
 func parseJsonFile(path string, v interface{}) {
-	file, err := os.Open(path)
+	f := etc.FileSystem("etc")
+	file, err := f.Open(path)
 	if err != nil {
 		logger.Fatal("配置文件读取失败:", err)
 	}

@@ -6,14 +6,14 @@ import (
 	"strings"
 
 	. "github.com/qiniu/api.v6/conf"
-	"gopkg.in/mgo.v2"
+	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/jimmykuu/gopher/models"
 )
 
 func init() {
-	parseJsonFile("etc/config.json", &Config)
+	parseJsonFile("config.json", &Config)
 	analyticsCode = getDefaultCode(Config.AnalyticsFile)
 
 	if Config.DB == "" {

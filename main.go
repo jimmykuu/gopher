@@ -17,6 +17,8 @@ import (
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/jimmykuu/gopher/models"
+	"github.com/jimmykuu/gopher/modules/static"
+	"github.com/jimmykuu/gopher/modules/templates"
 )
 
 var (
@@ -27,13 +29,11 @@ func main() {
 	t := tango.Classic()
 	t.Use(
 		events.Events(),
-		tango.Static(tango.StaticOptions{
-			RootPath: "./static",
-			Prefix:   "static",
-		}),
+		static.Static(),
 		renders.New(renders.Options{
-			Reload:    true,
-			Directory: "./templates",
+			Reload:     true,
+			FileSystem: templates.FileSystem("templates"),
+			Directory:  "templates",
 			Funcs: template.FuncMap{
 				"asserttopic": func(i interface{}) *models.Topic {
 					v, _ := i.(models.Topic)
