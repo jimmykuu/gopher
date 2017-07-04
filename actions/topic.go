@@ -376,6 +376,7 @@ func (a *SearchTopic) Get() error {
 	}
 
 	return a.Render("topic/result.html", renders.T{
+		"url":        "/search?q=" + q,
 		"q":          q,
 		"topics":     topics,
 		"pagination": pagination,

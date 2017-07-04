@@ -14,7 +14,7 @@
 <div class="ui pagination mini menu">
   {{ range $pages }}
     {{ if . }}
-      <a class="item{{ if eq $current . }} active{{ end }}" href="{{ $.url }}?p={{ . }}">{{ . }}</a>
+      <a class="item{{ if eq $current . }} active{{ end }}" href="{{ $.pagination.Url $.url . }}">{{ . }}</a>
     {{ else }}
       <a class="item" href="javascript:;">...</a>
     {{ end }}
@@ -22,7 +22,7 @@
 
   {{ $prev := $.pagination.Prev }}
   {{ if $prev }}
-    <a class="item" href="/?p={{ $prev }}">
+    <a class="item" href="{{ $.pagination.Url $.url $prev }}">
       <i class="angle left icon"></i>
     </a>
   {{ else }}
@@ -33,7 +33,7 @@
 
   {{ $next := $.pagination.Next }}
   {{ if $next }}
-    <a class="item" href="/?p={{ $next }}">
+    <a class="item" href="{{ $.pagination.Url $.url $next }}">
       <i class="angle right icon"></i>
     </a>
   {{ else }}

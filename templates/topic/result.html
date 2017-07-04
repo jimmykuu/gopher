@@ -4,6 +4,10 @@
   <div class="twelve wide column">
     <div class="ui items segment">
       {{ template "partials/pagination.html" .}}
+
+      <div><p>&nbsp;</p></div>
+      <div id="search-input"></div>
+
       {{ range .topics }}
       {{ $creater := .Creater $.db }}
       {{ $node := .Node $.db }}
@@ -31,6 +35,49 @@
       {{ template "partials/pagination.html" .}}
     </div>
   </div>
+
+  <script type="text/babel">
+  class SearchInput extends React.Component {
+    constructor(props) {
+      super(props);
+
+      this.state = {
+        q: '{{ .q }}'
+      }
+    }
+
+    search() {
+      if (this.state.q) {
+        window.location.href = '/search?q=' + this.state.q;
+      }
+    }
+
+    handleKeyPress = (e) => {
+      if (e.key == 'Enter') {
+        this.search();
+      }
+    }
+
+    handleSearch = (e) => {
+      this.search();
+    }
+
+    handleQChange = (e) => {
+      this.setState({q: e.target.value});
+    }
+
+    render() {
+      return (
+        <div className="ui fluid icon input">
+          <input type="text" value={this.state.q} placeholder="搜索主题..." onKeyPress={this.handleKeyPress} onChange={this.handleQChange} />
+          <i className="search link icon" onClick={this.handleSearch}></i>
+        </div>
+      );
+    }
+  }
+
+  ReactDOM.render(<SearchInput />, document.getElementById('search-input'));
+</script>
 
   <div class="four wide column">
   </div>

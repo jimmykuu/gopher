@@ -2,7 +2,9 @@ package actions
 
 import (
 	"errors"
+	"fmt"
 	"math"
+	"strings"
 
 	"gopkg.in/mgo.v2"
 
@@ -88,6 +90,15 @@ func (p *Pagination) Next() int {
 	}
 
 	return p.current + 1
+}
+
+// Url 生成链接
+func (p *Pagination) Url(url string, page int) string {
+	if strings.Contains(url, "?") {
+		return fmt.Sprintf("%s&p=%d", url, page)
+	} else {
+		return fmt.Sprintf("%s?p=%d", url, page)
+	}
 }
 
 // Pages 页码列表, 0 表示 ...
