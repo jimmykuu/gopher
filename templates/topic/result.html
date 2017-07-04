@@ -1,22 +1,7 @@
-{{ template "base.html" . }}
+{{ template "base.html" .}}
 {{ define "body" }}
 <div class="ui grid">
   <div class="twelve wide column">
-    <div class="ui secondary pointing menu">
-      <div class="header item">话题首页</div>
-      <div class="right menu">
-        <a class="item{{ if eq .active "LatestReply" }} active{{ end }}" href="/">
-          最近回复
-        </a>
-        <a class="item{{ if eq .active "Latest" }} active{{ end }}" href="/topics/latest">
-          最近发布
-        </a>
-        <a class="item{{ if eq .active "NoReply" }} active{{ end }}" href="/topics/no_reply">
-          尚未回复
-        </a>
-        <div id="search-input"></div>
-      </div>
-    </div>
     <div class="ui items segment">
       {{ template "partials/pagination.html" .}}
       {{ range .topics }}
@@ -50,47 +35,4 @@
   <div class="four wide column">
   </div>
 </div>
-
-<script type="text/babel">
-  class SearchInput extends React.Component {
-    constructor(props) {
-      super(props);
-
-      this.state = {
-        q: ''
-      }
-    }
-    
-    search() {
-      if (this.state.q) {
-        window.location.href = '/search?q=' + this.state.q;
-      }
-    }
-
-    handleKeyPress = (e) => {
-      if (e.key == 'Enter') {
-        this.search();
-      }
-    }
-
-    handleSearch = (e) => {
-      this.search();
-    }
-
-    handleQChange = (e) => {
-      this.setState({q: e.target.value});
-    }
-
-    render() {
-      return (
-        <div className="ui icon input">
-          <input type="text" placeholder="搜索主题..." onKeyPress={this.handleKeyPress} onChange={this.handleQChange} />
-          <i className="search link icon" onClick={this.handleSearch}></i>
-        </div>
-      );
-    }
-  }
-
-  ReactDOM.render(<SearchInput />, document.getElementById('search-input'));
-</script>
-{{ end }}
+{{end}}

@@ -3,6 +3,7 @@ package actions
 import (
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/tango-contrib/renders"
 	"gopkg.in/mgo.v2"
@@ -292,6 +293,94 @@ func (a *NodeTopics) Get() error {
 		"topics": topics,
 		"node":   node,
 		"db":     DB,
+	})
+}
+
+type SearchTopic struct {
+	RenderBase
+}
+
+func (a *SearchTopic) Get() error {
+	pageStr, err := a.Forms().String("p")
+	if err != nil {
+		pageStr = "1"
+	}
+
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		page = 1
+	}
+
+	if page <= 0 {
+		page = 1
+	}
+
+	q, err := a.Forms().String("q")
+	if err != nil {
+		a.NotFound(err.Error())
+		return nil
+	}
+
+	keywords := strings.Split(q, " ")
+
+	var noSpaceKeywords []string
+
+	for _, keyword := range keywords {
+		temp := strings.TrimSpace(keyword)
+		if temp != "" {
+			noSpaceKeywords = append(noSpaceKeywords, temp)
+		}
+	}
+
+	var titleConditions []bson.M
+	var markdownConditions []bson.M
+
+	for _, keyword := range noSpaceKeywords {
+		titleConditions = append(titleConditions, bson.M{"content.title": bson.M{"$regex": bson.RegEx{keyword, "i"}}})
+		markdownConditions = append(markdownConditions, bson.M{"content.markdown": bson.M{"$regex": bson.RegEx{keyword, "i"}}})
+	}
+
+	session, DB := models.GetSessionAndDB()
+	defer session.Close()
+
+	c := DB.C(models.CONTENTS)
+
+	var pagination *Pagination
+
+	if len(noSpaceKeywords) == 0 {
+		pagination = NewPagination(c.Find(bson.M{"content.type": models.TypeTopic}).Sort("-latestrepliedat"), PerPage)
+	} else {
+		pagination = NewPagination(c.Find(bson.M{"$and": []bson.M{
+			bson.M{"content.type": models.TypeTopic},
+			bson.M{"$or": []bson.M{
+				bson.M{"$and": titleConditions},
+				bson.M{"$and": markdownConditions},
+			},
+			},
+		}}).Sort("-latestrepliedat"), PerPage)
+	}
+
+	var topics []models.Topic
+
+	query, err := pagination.Page(page)
+	if err != nil {
+		a.NotFound(err.Error())
+		return nil
+	}
+
+	query.(*mgo.Query).All(&topics)
+
+	if err != nil {
+		a.NotFound(err.Error())
+		return nil
+	}
+
+	return a.Render("topic/result.html", renders.T{
+		"q":          q,
+		"topics":     topics,
+		"pagination": pagination,
+		"page":       page,
+		"db":         DB,
 	})
 }
 
