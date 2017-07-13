@@ -273,16 +273,21 @@ func (a *NodeTopics) Get() error {
 	query.(*mgo.Query).All(&topics)
 
 	return a.Render("topic/list.html", renders.T{
-		"topics": topics,
-		"node":   node,
-		"db":     DB,
+		"topics":     topics,
+		"node":       node,
+		"db":         DB,
+		"pagination": pagination,
+		"url":        "/go/" + nodeId,
+		"page":       page,
 	})
 }
 
+// SearchTopic 检索主题
 type SearchTopic struct {
 	RenderBase
 }
 
+// Get: /search
 func (a *SearchTopic) Get() error {
 	page := a.FormInt("p", 1)
 	if page <= 0 {
