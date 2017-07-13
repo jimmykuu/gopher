@@ -2,7 +2,6 @@ package actions
 
 import (
 	"sort"
-	"strconv"
 	"strings"
 
 	"github.com/tango-contrib/renders"
@@ -34,15 +33,7 @@ type Topic struct {
 
 // 按条件列出所有主题
 func (a *Topic) list(conditions bson.M, sortBy string) error {
-	pageStr, err := a.Forms().String("p")
-	if err != nil {
-		pageStr = "1"
-	}
-	page, err := strconv.Atoi(pageStr)
-	if err != nil {
-		page = 1
-	}
-
+	page := a.FormInt("p", 1)
 	if page <= 0 {
 		page = 1
 	}
@@ -262,15 +253,7 @@ func (a *NodeTopics) Get() error {
 		return nil
 	}
 
-	pageStr, err := a.Forms().String("p")
-	if err != nil {
-		pageStr = "1"
-	}
-	page, err := strconv.Atoi(pageStr)
-	if err != nil {
-		page = 1
-	}
-
+	page := a.FormInt("p", 1)
 	if page <= 0 {
 		page = 1
 	}
@@ -301,26 +284,12 @@ type SearchTopic struct {
 }
 
 func (a *SearchTopic) Get() error {
-	pageStr, err := a.Forms().String("p")
-	if err != nil {
-		pageStr = "1"
-	}
-
-	page, err := strconv.Atoi(pageStr)
-	if err != nil {
-		page = 1
-	}
-
+	page := a.FormInt("p", 1)
 	if page <= 0 {
 		page = 1
 	}
 
-	q, err := a.Forms().String("q")
-	if err != nil {
-		a.NotFound(err.Error())
-		return nil
-	}
-
+	q := a.Form("q")
 	keywords := strings.Split(q, " ")
 
 	var noSpaceKeywords []string
