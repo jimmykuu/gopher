@@ -1,0 +1,23 @@
+{{ range .topics }}
+{{ $creater := .Creater $.db }}
+{{ $node := .Node $.db }}
+<div class="item" style="border-top: 1px solid #dddddd; padding: 14px 0 0 0;">
+  <a class="ui mini label{{ if eq .CommentCount 0 }} blue{{ end }}" style="height: 24px;" href="/t/{{ .Id_.Hex }}#comments">
+    {{ .CommentCount }} 回复
+  </a>
+  <div class="content" style="padding-left: 21px;">
+    <a href="/t/{{ .Id_.Hex }}" class="header" style="font-size: 16px;">{{ truncate .Title 40 "..." }}</a>
+    <div class="meta">
+    <a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
+    <a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
+    {{ if .CommentCount }}
+    {{ $latestReplier := .LatestReplier $.db }}
+      <time datetime="{{formatdatetime .LatestRepliedAt}}" title="{{ formatdatetime .LatestRepliedAt }}">{{ formattime .LatestRepliedAt }}</time> •
+        最后回复来自 <a href="/member/{{ $latestReplier.Username }}">{{ $latestReplier.Username }}</a>
+    {{ else }}
+      <time datetime="{{ formatdatetime .CreatedAt }}" title="{{ formatdatetime .CreatedAt }}">{{ formattime .CreatedAt }}</time>
+    {{ end }}
+    </div>
+  </div>
+</div>
+{{ end }}
