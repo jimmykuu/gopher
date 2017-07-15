@@ -1,7 +1,9 @@
 package actions
 
 import (
+	"github.com/jimmykuu/gopher/models"
 	"github.com/tango-contrib/renders"
+	"gopkg.in/mgo.v2/bson"
 )
 
 // Signin 登录
@@ -10,8 +12,8 @@ type Signin struct {
 }
 
 // Get /signup 登录页面
-func (c *Signin) Get() error {
-	return c.Render("account/signin.html", renders.T{
+func (a *Signin) Get() error {
+	return a.Render("account/signin.html", renders.T{
 		"title": "登录",
 	})
 }
@@ -22,8 +24,35 @@ type Signup struct {
 }
 
 // Get /signup 注册页面
-func (c *Signup) Get() error {
-	return c.Render("account/signup.html", renders.T{
+func (a *Signup) Get() error {
+	return a.Render("account/signup.html", renders.T{
 		"title": "注册",
+	})
+}
+
+// AccountIndex 账户首页
+type AccountIndex struct {
+	RenderBase
+}
+
+// Get /menuber/:username
+func (a *AccountIndex) Get() error {
+	username := a.Param("username")
+	session, DB := models.GetSessionAndDB()
+	defer session.Close()
+	c := DB.C(models.USERS)
+
+	user := models.User{}
+
+	err := c.Find(bson.M{"username": username}).One(&user)
+
+	if err != nil {
+		a.NotFound("会员未找到")
+		return nil
+	}
+
+	return a.Render("account/index.html", renders.T{
+		"title":  username,
+		"member": user,
 	})
 }

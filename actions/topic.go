@@ -273,6 +273,7 @@ func (a *NodeTopics) Get() error {
 	query.(*mgo.Query).All(&topics)
 
 	return a.Render("topic/list.html", renders.T{
+		"title":      node.Name + "主题列表",
 		"topics":     topics,
 		"node":       node,
 		"db":         DB,

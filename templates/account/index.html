@@ -1,0 +1,37 @@
+{{ template "base.html" .}}
+{{ define "body" }}
+<div class="ui grid">
+  <div class="four wide column">
+    <div class="ui card">
+      <div class="image">
+        <img src="http://77fkk5.com1.z0.glb.clouddn.com/avatar/4dbf2ca317f611e48587ee3b9c14156b.jpg?imageView2/2/w/300/h/300/q/100">
+      </div>
+      <div class="content">
+        <div class="header">{{ .member.Username }}</div>
+        <div class="meta">
+          <span class="date">第 {{ .member.Index }} 号会员 / {{ .member.JoinedAt.Format "2006-01-02" }}</span>
+        </div>
+        <div class="description">
+          Kristy is an art director living in New York.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="twelve wide column">
+    <div class="ui secondary pointing menu">
+      <a class="active item">
+        主题
+      </a>
+      <a class="item">
+        回复
+      </a>
+      <a class="item">
+        收藏
+      </a>
+    </div>
+    <div class="ui segment">
+      <p></p>
+    </div>
+  </div>
+</div>
+{{ end }}
