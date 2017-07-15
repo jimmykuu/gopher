@@ -491,19 +491,16 @@ func unfollowHandler(handler *Handler) {
 // 忘记密码,输入用户名和邮箱,如果匹配,发出邮件
 func forgotPasswordHandler(handler *Handler) {
 	form := wtforms.NewForm(
-		wtforms.NewTextField("username", "用户名", "", wtforms.Required{}),
-		wtforms.NewTextField("email", "电子邮件", "", wtforms.Email{}),
+		wtforms.NewTextField("username_or_email", "用户名或邮箱", "", wtforms.Required{}),
 	)
 
 	if handler.Request.Method == "POST" {
 		if form.Validate(handler.Request) {
 			var user User
 			c := handler.DB.C(USERS)
-			err := c.Find(bson.M{"username": form.Value("username")}).One(&user)
+			err := c.Find(bson.M{"$or": []bson.M{bson.M{"username": form.Value("username_or_email")}, bson.M{"email": form.Value("username_or_email")}}}).One(&user)
 			if err != nil {
-				form.AddError("username", "没有该用户")
-			} else if user.Email != form.Value("email") {
-				form.AddError("username", "用户名和邮件不匹配")
+				form.AddError("username_or_email", "没有该用户")
 			} else {
 				message2 := `Hi %s,<br>
 我们的系统收到一个请求，说你希望通过电子邮件重新设置你在 Golang中国 的密码。你可以点击下面的链接开始重设密码：
@@ -532,7 +529,7 @@ func forgotPasswordHandler(handler *Handler) {
 					)
 				} else {
 					webhelpers.SendMailExec(
-						"[Golang中国]重设密码",
+						"[Golang 中国]重设密码",
 						message2,
 						Config.FromEmail,
 						[]string{user.Email},
