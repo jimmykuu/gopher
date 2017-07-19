@@ -1,9 +1,15 @@
 {{ template "base.html" . }}
 {{ define "body" }}
-<div class="ui items segment">
-  {{ template "partials/pagination.html" . }}
-  {{ template "partials/topics.html" . }}
-  {{ template "partials/pagination.html" . }}
+<div class="ui grid">
+  <div class="twelve wide column">
+    <div class="ui items segment">
+      {{ template "partials/pagination.html" . }}
+      {{ template "partials/topics.html" . }}
+      {{ template "partials/pagination.html" . }}
+    </div>
+  </div>
+  <div class="four wide column">
+		{{ template "partials/ads.html" . }}
+	</div>
 </div>
 {{ end }}
-

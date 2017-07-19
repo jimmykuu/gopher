@@ -1,43 +1,50 @@
 {{ template "base.html" . }}
 {{ define "body" }}
-<div class="ui text container">
-	<h1 class="ui header">{{ .topic.Title }}</h1>
-	<div class="ui divider"></div>
-	{{ .topic.Html }}
+<div class="ui grid">
+  <div class="twelve wide column">
+		<div class="ui segment">
+			<h1 class="ui header">{{ .topic.Title }}</h1>
+			<div class="ui divider"></div>
+			{{ .topic.Html }}
 
-	<div class="ui comments">
-		{{ range $index, $reply := .comments }}
-		{{ $commenter := $reply.Creater $.db }}
-		<div class="comment">
-			<a class="avatar" href="/member/{{ $commenter.Username }}">
-				<img src="{{ $commenter.AvatarImgSrc 48 }}">
-			</a>
-			<div class="content">
-				<a class="author" href="/member/{{ $commenter.Username }}">{{ $commenter.Username }}</a>
-				<div class="metadata">
-					<div class="date">{{ formattime $reply.CreatedAt }}</div>
-				</div>
-				<div class="text">
-					{{ .Html }}
-				</div>
-				{{ if $.username }}
-					{{ if $reply.CanDeleteOrEdit $.username $.db }}
-						<div class="actions">
-							<a class="reply">Reply</a>
-					</div>
-					{{ end }}
+			<div class="ui comments">
+				{{ range $index, $reply := .comments }}
+				{{ $commenter := $reply.Creater $.db }}
+				<div class="comment">
+					<a class="avatar" href="/member/{{ $commenter.Username }}">
+						<img src="{{ $commenter.AvatarImgSrc 48 }}">
+					</a>
+					<div class="content">
+						<a class="author" href="/member/{{ $commenter.Username }}">{{ $commenter.Username }}</a>
+						<div class="metadata">
+							<div class="date">{{ formattime $reply.CreatedAt }}</div>
+						</div>
+						<div class="text">
+							{{ .Html }}
+						</div>
+						{{ if $.username }}
+							{{ if $reply.CanDeleteOrEdit $.username $.db }}
+								<div class="actions">
+									<a class="reply">Reply</a>
+							</div>
+							{{ end }}
+						</div>
+						{{ end }}
 				</div>
 				{{ end }}
+				<form class="ui reply form">
+					<div class="field">
+						<textarea></textarea>
+					</div>
+					<div class="ui primary submit labeled icon button">
+						<i class="icon edit"></i> Add Comment
+					</div>
+				</form>
+			</div>
 		</div>
-		{{ end }}
-  <form class="ui reply form">
-    <div class="field">
-      <textarea></textarea>
-    </div>
-    <div class="ui primary submit labeled icon button">
-      <i class="icon edit"></i> Add Comment
-    </div>
-  </form>
-</div>
+	</div>
+	<div class="four wide column">
+		{{ template "partials/ads.html" . }}
+	</div>
 </div>
 {{ end }}
