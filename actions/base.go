@@ -3,6 +3,7 @@ package actions
 import (
 	"github.com/lunny/tango"
 	"github.com/tango-contrib/renders"
+	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/jimmykuu/gopher/models"
@@ -13,31 +14,21 @@ import (
 type RenderBase struct {
 	renders.Renderer
 	tango.Ctx
+
+	session *mgo.Session
+	DB      *mgo.Database
+	User    models.User
+	IsLogin bool
 }
 
-// Render 渲染模板
-func (r *RenderBase) Render(tmpl string, t ...renders.T) error {
-	var ts = renders.T{}
-	if len(t) > 0 {
-		ts = t[0].Merge(renders.T{})
-	}
+// Before
+func (b *RenderBase) Before() {
+	b.session, b.DB = models.GetSessionAndDB()
 
-	user, has := r.currentUser()
-
-	if has {
-		ts["user"] = user
-		ts["ussername"] = user.Username
-	}
-
-	return r.Renderer.Render(tmpl, ts)
-}
-
-// currentUser 当前用户
-func (r *RenderBase) currentUser() (*models.User, bool) {
-	cookies := r.Cookies()
+	cookies := b.Cookies()
 	userID, err := cookies.String("user")
 	if err != nil {
-		return nil, false
+		return
 	}
 
 	userID2, err := utils.Base64Decode([]byte(userID))
@@ -56,8 +47,39 @@ func (r *RenderBase) currentUser() (*models.User, bool) {
 	err = c.Find(bson.M{"_id": bson.ObjectIdHex(string(userID2))}).One(&user)
 
 	if err != nil {
-		return nil, false
+		return
 	}
 
-	return &user, true
+	b.User = user
+	b.IsLogin = true
+}
+
+// After
+func (b *RenderBase) After() {
+	b.session.Close()
+}
+
+// Render 渲染模板
+func (b *RenderBase) Render(tmpl string, t ...renders.T) error {
+	var ts = renders.T{}
+	if len(t) > 0 {
+		ts = t[0].Merge(renders.T{})
+	}
+
+	ts["user"] = b.User
+	ts["ussername"] = b.User.Username
+
+	return b.Renderer.Render(tmpl, ts)
+}
+
+// AuthRenderBase 必须要登录用户的渲染基类
+type AuthRenderBase struct {
+	RenderBase
+}
+
+func (b *AuthRenderBase) Before() {
+	b.RenderBase.Before()
+	if !b.IsLogin {
+		b.Redirect("/signin?next=" + b.Ctx.Req().URL.Path)
+	}
 }

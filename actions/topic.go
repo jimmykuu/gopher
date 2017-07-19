@@ -201,7 +201,7 @@ func (a *ShowTopic) Get() error {
 
 // NewTopic 新建主题
 type NewTopic struct {
-	RenderBase
+	AuthRenderBase
 }
 
 // Get /topic/new 新建主题页面
@@ -214,7 +214,7 @@ func (a *NewTopic) Get() error {
 
 // EditTopic 编辑主题
 type EditTopic struct {
-	RenderBase
+	AuthRenderBase
 }
 
 // Get /t/:tipicId 编辑主题页面

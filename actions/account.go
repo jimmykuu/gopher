@@ -11,10 +11,12 @@ type Signin struct {
 	RenderBase
 }
 
-// Get /signup 登录页面
+// Get /signin 登录页面
 func (a *Signin) Get() error {
+	var next = a.Form("next", "/")
 	return a.Render("account/signin.html", renders.T{
 		"title": "登录",
+		"next":  next,
 	})
 }
 

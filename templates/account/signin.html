@@ -20,6 +20,7 @@
   </div>
 </div>
 <script type="text/babel">
+  const next = '{{ .next }}';
   class SigninForm extends React.Component {
     constructor(props) {
       super(props);
@@ -69,7 +70,7 @@
             window.localStorage.setItem('token', data.token);
             Cookies.set('user', data.cookie.user, { expores: 365 });
 
-            window.location.href = '/';
+            window.location.href = next;
           }
         });
       });
