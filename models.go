@@ -179,7 +179,7 @@ func (u *User) AvatarImgSrc(size int) string {
 		return fmt.Sprintf("http://identicon.relucks.org/%s?size=%d", u.Username, size)
 	}
 
-	return fmt.Sprintf("http://77fkk5.com1.z0.glb.clouddn.com/avatar/%s?imageView2/2/w/%d/h/%d/q/100", u.Avatar, size, size)
+	return fmt.Sprintf("https://is.golangtc.com/avatar/%s?width=%d&height=%dmode=fill", u.Avatar, size, size)
 }
 
 // 用户发表的最近10个主题
