@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -260,7 +262,7 @@ func signupHandler(handler *Handler) {
 				Id_:          id,
 				Username:     username,
 				Password:     encryptPassword(form.Value("password"), salt),
-				Avatar:       "", // defaultAvatars[rand.Intn(len(defaultAvatars))],
+				Avatar:       "",
 				Salt:         salt,
 				Email:        form.Value("email"),
 				ValidateCode: validateCode,
@@ -277,6 +279,21 @@ func signupHandler(handler *Handler) {
 				logger.Println(err)
 				return
 			}
+
+			// 从 http://identicon.relucks.org 下载头像作为用户的默认头像
+			go func() {
+				res, err := http.Get(fmt.Sprintf("http://identicon.relucks.org/%s?size=400", username))
+				if err != nil {
+					logger.Println("下载头像错误:", err)
+				}
+				defer res.Body.Close()
+				var filename = filepath.Join(Config.ImagePath, "avatar", username+".png")
+				file, err := os.Create(filename)
+				if err != nil {
+					logger.Printf("创建文件 %s 失败: %s\n", filename, err.Error())
+				}
+				io.Copy(file, res.Body)
+			}()
 
 			c2.Update(nil, bson.M{"$inc": bson.M{"userindex": 1, "usercount": 1}})
 
