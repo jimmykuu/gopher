@@ -66,7 +66,8 @@ func uploadAvatarHandler(handler *Handler) {
 	// 检查是否是jpg或png文件
 	uploadFileType := formHeader.Header["Content-Type"][0]
 
-	filename, err := uploadAvatarToQiniu(formFile, uploadFileType)
+	// 保存到头像文件夹
+	filename, err := saveAvatar(formFile, uploadFileType)
 
 	if err != nil {
 		fmt.Println(err)
@@ -116,7 +117,7 @@ func setAvatarFromGravatar(handler *Handler) {
 	}
 	defer resp.Body.Close()
 
-	filename, err := uploadAvatarToQiniu(resp.Body, resp.Header["Content-Type"][0])
+	filename, err := saveAvatar(resp.Body, resp.Header["Content-Type"][0])
 	if err != nil {
 		panic(err)
 	}

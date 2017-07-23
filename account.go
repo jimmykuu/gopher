@@ -22,8 +22,6 @@ import (
 	"github.com/jimmykuu/webhelpers"
 	"github.com/jimmykuu/wtforms"
 	"github.com/pborman/uuid"
-	qiniuIo "github.com/qiniu/api.v6/io"
-	"github.com/qiniu/api.v6/rs"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -610,8 +608,8 @@ type Sizer interface {
 	Size() int64
 }
 
-// 上传到七牛，并返回文件名
-func uploadAvatarToQiniu(file io.ReadCloser, contentType string) (filename string, err error) {
+// 保存头像文件，并返回文件名
+func saveAvatar(formFile io.Reader, contentType string) (filename string, err error) {
 	isValidateType := false
 	for _, imgType := range []string{"image/png", "image/jpeg"} {
 		if imgType == contentType {
@@ -632,26 +630,12 @@ func uploadAvatarToQiniu(file io.ReadCloser, contentType string) (filename strin
 	// 文件名：32位uuid，不带减号和后缀组成
 	filename = strings.Replace(uuid.NewUUID().String(), "-", "", -1) + filenameExtension
 
-	key := "avatar/" + filename
-
-	ret := new(qiniuIo.PutRet)
-
-	var policy = rs.PutPolicy{
-		Scope: "gopher",
-	}
-
-	err = qiniuIo.Put(
-		nil,
-		ret,
-		policy.Token(nil),
-		key,
-		file,
-		nil,
-	)
-
+	file, err := os.Create(filepath.Join(Config.ImagePath, "avatar", filename))
 	if err != nil {
-		return "", err
+		logger.Println("创建头像文件失败: ", err.Error())
 	}
+
+	io.Copy(file, formFile)
 
 	return filename, nil
 }
