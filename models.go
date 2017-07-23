@@ -174,9 +174,9 @@ func deleteGithubValues(session *sessions.Session) {
 
 // 头像的图片地址
 func (u *User) AvatarImgSrc(size int) string {
-	// 如果没有设置头像，用默认头像
+	// 如果没有设置头像，使用从 http://identicon.relucks.org/ 下载的默认头像
 	if u.Avatar == "" {
-		return fmt.Sprintf("http://identicon.relucks.org/%s?size=%d", u.Username, size)
+		return fmt.Sprintf("https://is.golangtc.com/avatar/%s.png?width=%d&height=%d&mode=fill", u.Username, size, size)
 	}
 
 	return fmt.Sprintf("https://is.golangtc.com/avatar/%s?width=%d&height=%d&mode=fill", u.Avatar, size, size)
