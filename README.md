@@ -12,9 +12,6 @@ Golang中国([www.golangtc.com](http://www.golangtc.com))源代码.
 - MongoDB
 - github.com/gorilla/mux
 - github.com/gorilla/sessions
-- github.com/qiniu/bytes
-- github.com/qiniu/rpc
-- github.com/qiniu/api.v6
 - labix.org/v2/mgo
 - github.com/pborman/uuid
 - github.com/jimmykuu/webhelpers

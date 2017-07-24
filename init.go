@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/gorilla/sessions"
-	. "github.com/qiniu/api.v6/conf"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -81,7 +80,4 @@ func init() {
 
 	// 生成users.json字符串
 	generateUsersJson(db)
-
-	ACCESS_KEY = Config.QiniuAccessKey
-	SECRET_KEY = Config.QiniuSecretKey
 }

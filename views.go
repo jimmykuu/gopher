@@ -7,7 +7,10 @@ package gopher
 import (
 	"fmt"
 	"html/template"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 	"regexp"
 	"sort"
 	"strconv"
@@ -17,8 +20,6 @@ import (
 	"github.com/jimmykuu/webhelpers"
 	"github.com/jimmykuu/wtforms"
 	"github.com/pborman/uuid"
-	qiniuIo "github.com/qiniu/api.v6/io"
-	"github.com/qiniu/api.v6/rs"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
@@ -310,11 +311,15 @@ func searchHandler(handler *Handler) {
 }
 
 // URL: /upload/image
-// 编辑器上传图片，接收后上传到七牛
+// 编辑器上传图片，接收后保存到本地图片目录
 func uploadImageHandler(handler *Handler) {
 	file, header, err := handler.Request.FormFile("editormd-image-file")
 	if err != nil {
-		panic(err)
+		logger.Println(err)
+		handler.renderJson(map[string]interface{}{
+			"success": 0,
+			"message": "图片上传失败",
+		})
 		return
 	}
 	defer file.Close()
@@ -342,36 +347,21 @@ func uploadImageHandler(handler *Handler) {
 	// 上传到七牛
 	// 文件名：32位uuid+后缀组成
 	filename := strings.Replace(uuid.NewUUID().String(), "-", "", -1) + filenameExtension
-	key := "upload/image/" + filename
 
-	ret := new(qiniuIo.PutRet)
-
-	var policy = rs.PutPolicy{
-		Scope: "gopher",
-	}
-
-	err = qiniuIo.Put(
-		nil,
-		ret,
-		policy.Token(nil),
-		key,
-		file,
-		nil,
-	)
-
+	toFile, err := os.Create(filepath.Join(Config.ImagePath, "upload", "image", filename))
 	if err != nil {
-		panic(err)
-
+		logger.Println(err)
 		handler.renderJson(map[string]interface{}{
 			"success": 0,
-			"message": "图片上传到七牛失败",
+			"message": "图片上传失败",
 		})
-
 		return
 	}
 
+	io.Copy(toFile, file)
+
 	handler.renderJson(map[string]interface{}{
 		"success": 1,
-		"url":     "http://77fkk5.com1.z0.glb.clouddn.com/" + key,
+		"url":     "https://is.golangtc.com/upload/image/" + filename,
 	})
 }

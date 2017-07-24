@@ -25,8 +25,6 @@ type ConfigStruct struct {
 	TimeZoneOffset             int64  `json:"time_zone_offset"`
 	AnalyticsFile              string `json:"analytics_file"`
 	StaticFileVersion          int    `json:"static_file_version"`
-	QiniuAccessKey             string `json:"qiniu_access_key"`
-	QiniuSecretKey             string `json:"qiniu_secret_key"`
 	GoGetPath                  string `json:"go_get_path"`
 	PackagesDownloadPath       string `json:"packages_download_path"`
 	PublicSalt                 string `json:"public_salt"`

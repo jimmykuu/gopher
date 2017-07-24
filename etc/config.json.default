@@ -11,8 +11,6 @@
 	"from_email": "who@example.com",
 	"superusers": "jimmykuu,another",
 	"analytics_file": "",
-	"qiniu_access_key": "",
-	"qiniu_secret_key": "",
 	"time_zone_offset": 8,
 	"static_file_version": 1,
 	"packages_download_path": "/tmp",
