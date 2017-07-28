@@ -1,6 +1,8 @@
 package actions
 
 import (
+	"fmt"
+
 	"github.com/lunny/tango"
 	"github.com/tango-contrib/renders"
 	mgo "gopkg.in/mgo.v2"
@@ -33,7 +35,8 @@ func (b *RenderBase) Before() {
 
 	userID2, err := utils.Base64Decode([]byte(userID))
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
+		return
 	}
 
 	session, DB := models.GetSessionAndDB()

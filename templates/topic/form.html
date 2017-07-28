@@ -19,8 +19,7 @@
         isEditing: true,
         nodeId: '',
         title: '',
-        markdown: '',
-        html: ''
+        markdown: ''
       }
     }
 
@@ -36,21 +35,14 @@
       })
     }
 
-    handleMarkdownChange = (e) => {
+    handleMarkdownChange = (markdown) => {
       this.setState({
-        markdown: e.target.value
+        markdown: markdown
       });
     }
 
     onEditingTabClick = () => {
       this.setState({isEditing: true});
-    }
-
-    onPreviewTabClick = () => {
-      this.setState({
-        isEditing: false,
-        html: converter.makeHtml(this.state.markdown)
-      });
     }
 
     handleSubmit = (e) => {
@@ -136,24 +128,7 @@
                 <input type="text" placeholder="请输入标题" value={this.state.title} onChange={this.handleTitleChange} />
               </div>
             </div>
-
-            <div className="ui top attached tabular menu">
-              <a className={editingTabClassName} onClick={this.onEditingTabClick}>
-                编辑
-              </a>
-              <a className={previewTabClassName} onClick={this.onPreviewTabClick}>
-                预览
-              </a>
-            </div>
-            {
-              this.state.isEditing ?
-                <div className="field">
-                  <textarea value={this.state.markdown} onChange={this.handleMarkdownChange}></textarea>
-                </div>
-              :
-                <div className="ui container" dangerouslySetInnerHTML={ {__html: this.state.html} }>
-                </div>
-            }
+            <MarkdownEditor markdown={this.state.markdown} onChange={this.handleMarkdownChange}></MarkdownEditor>
 
             <button type="submit" className={submitClassName}>提交</button>
           </form>
