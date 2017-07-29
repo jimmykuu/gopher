@@ -2,49 +2,100 @@
 {{ define "body" }}
 <div class="ui grid">
   <div class="twelve wide column">
-		<div class="ui segment">
-			<h1 class="ui header">{{ .topic.Title }}</h1>
-			<div class="ui divider"></div>
-			{{ .topic.Html }}
-
-			<div class="ui comments">
-				{{ range $index, $reply := .comments }}
-				{{ $commenter := $reply.Creater $.db }}
-				<div class="comment">
-					<a class="avatar" href="/member/{{ $commenter.Username }}">
-						<img src="{{ $commenter.AvatarImgSrc 48 }}">
-					</a>
-					<div class="content">
-						<a class="author" href="/member/{{ $commenter.Username }}">{{ $commenter.Username }}</a>
-						<div class="metadata">
-							<div class="date">{{ formattime $reply.CreatedAt }}</div>
-						</div>
-						<div class="text">
-							{{ .Html }}
-						</div>
-						{{ if $.username }}
-							{{ if $reply.CanDeleteOrEdit $.username $.db }}
-								<div class="actions">
-									<a class="reply">Reply</a>
-							</div>
-							{{ end }}
-						</div>
-						{{ end }}
-				</div>
-				{{ end }}
-				<form class="ui reply form">
-					<div class="field">
-						<textarea></textarea>
-					</div>
-					<div class="ui primary submit labeled icon button">
-						<i class="icon edit"></i> Add Comment
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-	<div class="four wide column">
-		{{ template "partials/ads.html" . }}
-	</div>
+    <div class="ui segment">
+      <h1 class="ui header">{{ .topic.Title }}</h1>
+      <div class="ui divider"></div>
+      {{ .topic.Html }}
+      <div class="ui comments">
+      {{ range $index, $reply := .comments }}
+        {{ $commenter := $reply.Creater $.db }}
+        <div class="comment">
+          <a class="avatar" href="/member/{{ $commenter.Username }}">
+            <img src="{{ $commenter.AvatarImgSrc 48 }}">
+          </a>
+          <div class="content">
+            <a class="author" href="/member/{{ $commenter.Username }}">{{ $commenter.Username }}</a>
+            <div class="metadata">
+              <div class="date">{{ formattime $reply.CreatedAt }}</div>
+            </div>
+            <div class="text">
+              {{ .Html }}
+            </div>
+            {{ if $.username }}
+              {{ if $reply.CanDeleteOrEdit $.username $.db }}
+                <div class="actions">
+                  <a class="reply">Reply</a>
+                </div>
+              {{ end }}
+            {{ end }}
+          </div>
+        </div>
+      {{ end }}
+      </div>
+      <div id="form"></div>
+    </div>
+  </div>
+  <div class="four wide column">
+    {{ template "partials/ads.html" . }}
+  </div>
 </div>
+<script type="text/babel">
+  const topicId = "{{ .topic.Id_.Hex }}"; // 模板传入
+  const converter = new showdown.Converter({
+    simpleLineBreaks: true
+  });
+
+  class CommentForm extends React.Component {
+    constructor(props) {
+      super(props);
+
+      this.state = {
+        submiting: false,
+        markdown: ''
+      }
+    }
+
+    handleMarkdownChange = (markdown) => {
+      this.setState({
+        markdown: markdown
+      });
+    }
+
+    handleSubmit = (e) => {
+      e.preventDefault();
+      this.setState({submiting: true});
+
+      const url = '/api/comment/' + topicId;
+
+      post(url, {
+        markdown: this.state.markdown,
+        html: converter.makeHtml(this.state.markdown)
+      }).then((data) => {
+        if (data.status) {
+          window.location.reload();
+        } else {
+          alert(data.message);
+          this.setState({
+            submiting: fasle
+          });
+        }
+      });
+    }
+
+    render() {
+      let submitClassName = "ui primary submit button";
+
+      if (this.state.submiting) {
+        submitClassName += "  loading disabled";
+      }
+
+      return (<form className="ui reply form" onSubmit={this.handleSubmit}>
+        <MarkdownEditor markdown={this.state.markdown} onChange={this.handleMarkdownChange}></MarkdownEditor>
+        <button type="submit" className={submitClassName}>提交评论</button>
+      </form>);
+    }
+  }
+
+  ReactDOM.render(<CommentForm />, document.getElementById('form'));
+</script>
 {{ end }}

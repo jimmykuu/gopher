@@ -16,7 +16,6 @@
         loading: true,
         submiting: false,
         nodes: [],
-        isEditing: true,
         nodeId: '',
         title: '',
         markdown: ''
@@ -39,10 +38,6 @@
       this.setState({
         markdown: markdown
       });
-    }
-
-    onEditingTabClick = () => {
-      this.setState({isEditing: true});
     }
 
     handleSubmit = (e) => {
@@ -93,16 +88,8 @@
     }
 
     render() {
-      let editingTabClassName = "item";
-      let previewTabClassName = "item";
       let formClassName = "ui form";
       let submitClassName = "ui primary submit button";
-
-      if (this.state.isEditing) {
-        editingTabClassName += " active";
-      } else {
-        previewTabClassName += " active";
-      }
 
       if (this.state.loading) {
         formClassName += " loading";

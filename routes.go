@@ -29,5 +29,6 @@ func setRoutes(t *tango.Tango) {
 		g.Post("/topic/new", new(apis.NewTopic))
 		g.Get("/topic/:topicId", new(apis.GetTopic))
 		g.Post("/topic/:topicId/edit", new(apis.EditTopic))
+		g.Post("/comment/:contentId", new(apis.Comment))
 	})
 }

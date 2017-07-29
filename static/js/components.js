@@ -1,3 +1,7 @@
+const converter = new showdown.Converter({
+  simpleLineBreaks: true
+});
+
 class MarkdownEditor extends React.Component {
   constructor(props) {
     super(props);
