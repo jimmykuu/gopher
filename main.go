@@ -15,6 +15,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
+	"github.com/jimmykuu/gopher/conf"
 	"github.com/jimmykuu/gopher/models"
 )
 
@@ -95,12 +96,12 @@ func main() {
 						return fmt.Sprintf("%.0f 小时前", duration.Hours())
 					}
 
-					t = t.Add(time.Hour * time.Duration(Config.TimeZoneOffset))
+					t = t.Add(time.Hour * time.Duration(conf.Config.TimeZoneOffset))
 					return t.Format("2006-01-02 15:04")
 				},
 				"formatdatetime": func(t time.Time) string {
 					// 格式化时间成 2006-01-02 15:04:05
-					return t.Add(time.Hour * time.Duration(Config.TimeZoneOffset)).Format("2006-01-02 15:04:05")
+					return t.Add(time.Hour * time.Duration(conf.Config.TimeZoneOffset)).Format("2006-01-02 15:04:05")
 				},
 				"nl2br": func(text string) template.HTML {
 					return template.HTML(strings.Replace(text, "\n", "<br>", -1))

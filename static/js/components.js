@@ -33,6 +33,42 @@ class MarkdownEditor extends React.Component {
     });
   }
 
+  onUploadImage = () => {
+    this.refs.file.click();
+  }
+
+  onChooesFile = (e) => {
+    this.onUpload(e.target.files[0]);
+  }
+
+  onUpload = (file) => {
+    let {markdown} = this.state;
+
+    let formData = new FormData();
+    formData.append('image', file);
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/upload/image", true);
+    xhr.setRequestHeader("Authorization", 'Bearer ' + window.localStorage.getItem('token'));
+
+    xhr.addEventListener('load', () => {
+      const resp = JSON.parse(xhr.responseText);
+      if (resp.status) {
+        if (markdown) {
+          markdown = markdown + "\n" + "![](" + resp.image_url + ")\n";
+        } else {
+          markdown = "![](" + resp.image_url + ")\n";
+        }
+
+        this.setState({
+          markdown: markdown,
+          showUploadDialog: false
+        });
+      }
+    });
+
+    xhr.send(formData);
+  }
+
   render() {
     let editingTabClassName = "item";
     let previewTabClassName = "item";
@@ -43,7 +79,10 @@ class MarkdownEditor extends React.Component {
       previewTabClassName += " active";
     }
 
+    const inputFileStyle = {position: 'absolute', left: -1000000};
+
     return (<null>
+      <input type="file" ref="file" style={inputFileStyle} onChange={this.onChooesFile} />
       <div className="ui top attached tabular menu">
         <a className={editingTabClassName} onClick={this.onEditingTabClick}>
           编辑
@@ -51,6 +90,22 @@ class MarkdownEditor extends React.Component {
         <a className={previewTabClassName} onClick={this.onPreviewTabClick}>
           预览
         </a>
+        <div className="icon right menu">
+          <a className="ui dropdown icon item">
+            <i className="code icon"></i>
+            <div className="menu">
+              <div className="item">
+                Open...
+              </div>
+              <div className="item">
+                Save...
+              </div>
+            </div>
+          </a>
+          <a className="item" onClick={this.onUploadImage}>
+            <i className="image icon"></i>
+          </a>
+        </div>
       </div>
       {
         this.state.isEditing ?

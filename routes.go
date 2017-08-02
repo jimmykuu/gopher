@@ -30,5 +30,6 @@ func setRoutes(t *tango.Tango) {
 		g.Get("/topic/:topicId", new(apis.GetTopic))
 		g.Post("/topic/:topicId/edit", new(apis.EditTopic))
 		g.Post("/comment/:contentId", new(apis.Comment))
+		g.Post("/upload/image", new(apis.UploadImage))
 	})
 }

@@ -2,26 +2,40 @@ package main
 
 import (
 	"fmt"
+	"html/template"
+	"io/ioutil"
 	"os"
+	"runtime"
 	"strings"
 
-	. "github.com/qiniu/api.v6/conf"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
+	"github.com/jimmykuu/gopher/conf"
 	"github.com/jimmykuu/gopher/models"
 )
 
-func init() {
-	parseJsonFile("etc/config.json", &Config)
-	analyticsCode = getDefaultCode(Config.AnalyticsFile)
+var (
+	analyticsCode template.HTML // 网站统计分析代码
+	shareCode     template.HTML // 分享代码
+	goVersion     = runtime.Version()
+)
 
-	if Config.DB == "" {
+func init() {
+	err := conf.InitConfig("etc/config.json")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	analyticsCode = getDefaultCode(conf.Config.AnalyticsFile)
+
+	if conf.Config.DB == "" {
 		fmt.Println("数据库地址还没有配置,请到config.json内配置db字段.")
 		os.Exit(1)
 	}
 
-	session, err := mgo.Dial(Config.DB)
+	session, err := mgo.Dial(conf.Config.DB)
 	if err != nil {
 		fmt.Println("MongoDB连接失败:", err.Error())
 		panic(err)
@@ -31,8 +45,8 @@ func init() {
 
 	db := session.DB("gopher")
 
-	models.DB = Config.DB
-	models.PublicSalt = Config.PublicSalt
+	models.DB = conf.Config.DB
+	models.PublicSalt = conf.Config.PublicSalt
 
 	utils = &Utils{}
 
@@ -53,7 +67,7 @@ func init() {
 
 	// 检查是否有超级账户设置
 	var superusers []string
-	for _, username := range strings.Split(Config.Superusers, ",") {
+	for _, username := range strings.Split(conf.Config.Superusers, ",") {
 		username = strings.TrimSpace(username)
 		if username != "" {
 			superusers = append(superusers, username)
@@ -79,7 +93,15 @@ func init() {
 	for _, username := range superusers {
 		c.Update(bson.M{"username": username, "issuperuser": false}, bson.M{"$set": bson.M{"issuperuser": true}})
 	}
+}
 
-	ACCESS_KEY = Config.QiniuAccessKey
-	SECRET_KEY = Config.QiniuSecretKey
+func getDefaultCode(path string) (code template.HTML) {
+	if path != "" {
+		content, err := ioutil.ReadFile(path)
+		if err != nil {
+			logger.Fatal("文件 " + path + " 没有找到")
+		}
+		code = template.HTML(string(content))
+	}
+	return
 }
