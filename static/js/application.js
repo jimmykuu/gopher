@@ -14,8 +14,7 @@ function post(url, body) {
     method: 'POST'
   };
 
-  return fetch(url, opts)
-    .then(getJson);
+  return fetch(url, opts).then(getJson);
 }
 
 function get(url) {
@@ -23,6 +22,15 @@ function get(url) {
     headers: getHeaders(),
     method: 'GET'
   };
-  return fetch(url, opts)
-    .then(getJson);
+
+  return fetch(url, opts).then(getJson);
+}
+
+function delete_(url) {
+  const opts = {
+    headers: getHeaders(),
+    method: 'DELETE'
+  };
+
+  return fetch(url, opts).then(getJson);
 }

@@ -6,10 +6,10 @@
       <h1 class="ui header">{{ .topic.Title }}</h1>
       <div class="ui divider"></div>
       {{ .topic.Html }}
-      <div class="ui comments">
+      <div class="ui minimal comments">
       {{ range $index, $reply := .comments }}
         {{ $commenter := $reply.Creater $.db }}
-        <div class="comment">
+        <div class="comment" id="comment-{{ .Id_.Hex }}">
           <a class="avatar" href="/member/{{ $commenter.Username }}">
             <img src="{{ $commenter.AvatarImgSrc 48 }}">
           </a>
@@ -24,7 +24,12 @@
             {{ if $.username }}
               {{ if $reply.CanDeleteOrEdit $.username $.db }}
                 <div class="actions">
-                  <a class="reply">Reply</a>
+                  <a class="reply">
+                    <i class="edit icon"></i>
+                  </a>
+                  <a class="reply" href="javascript:deleteComment('{{ .Id_.Hex }}');">
+                    <i class="remove icon"></i>
+                  </a>
                 </div>
               {{ end }}
             {{ end }}
@@ -97,5 +102,16 @@
   }
 
   ReactDOM.render(<CommentForm />, document.getElementById('form'));
+
+  function deleteComment(commentId) {
+    if (confirm('确认删除吗？')) {
+      delete_('/api/comment/' + commentId)
+        .then((data) => {
+          $('#comment-' + commentId).fadeOut(1000, function() {
+            $(this).remove();
+          });
+        });
+    }
+  }
 </script>
 {{ end }}

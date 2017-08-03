@@ -70,7 +70,7 @@ func (b *RenderBase) Render(tmpl string, t ...renders.T) error {
 	}
 
 	ts["user"] = b.User
-	ts["ussername"] = b.User.Username
+	ts["username"] = b.User.Username
 
 	return b.Renderer.Render(tmpl, ts)
 }

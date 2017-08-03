@@ -80,29 +80,48 @@ func (a *Comment) Post() interface{} {
 	}
 }
 
-/*
-// URL: /comment/{commentId}/delete
-// 删除评论
-func deleteCommentHandler(handler *Handler) {
-	vars := mux.Vars(handler.Request)
-	var commentId string = vars["commentId"]
+// DeleteComment 删除评论
+type DeleteComment struct {
+	Base
+}
 
-	c := handler.DB.C(COMMENTS)
-	var comment Comment
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(commentId)}).One(&comment)
-
-	if err != nil {
-		message(handler, "评论不存在", "该评论不存在", "error")
-		return
+// Delete /api/comment/:commentId
+func (a *DeleteComment) Delete() interface{} {
+	commentIdStr := a.Param("commentId")
+	if !bson.IsObjectIdHex(commentIdStr) {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "参数错误",
+		}
 	}
 
-	c.Remove(bson.M{"_id": comment.Id_})
+	commentId := bson.ObjectIdHex(commentIdStr)
 
-	c = handler.DB.C(CONTENTS)
+	c := a.DB.C(models.COMMENTS)
+
+	var comment models.Comment
+	err := c.Find(bson.M{"_id": commentId}).One(&comment)
+	if err != nil {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "该评论不存在",
+		}
+	}
+
+	if !comment.CanDeleteOrEdit(a.User.Username, a.DB) {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "没有权限删除该评论",
+		}
+	}
+
+	c.Remove(bson.M{"_id": commentId})
+
+	c = a.DB.C(models.CONTENTS)
 	c.Update(bson.M{"_id": comment.ContentId}, bson.M{"$inc": bson.M{"content.commentcount": -1}})
 
-	if comment.Type == TypeTopic {
-		var topic Topic
+	if comment.Type == models.TypeTopic {
+		var topic models.Topic
 		c.Find(bson.M{"_id": comment.ContentId}).One(&topic)
 		if topic.LatestReplierId == comment.CreatedBy.Hex() {
 			if topic.CommentCount == 0 {
@@ -110,33 +129,26 @@ func deleteCommentHandler(handler *Handler) {
 				c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{"latestreplierid": "", "latestrepliedat": topic.CreatedAt}})
 			} else {
 				// 如果删除的是该主题最后一个回复，设置主题的最新回复id，和时间
-				var latestComment Comment
-				c = handler.DB.C("comments")
+				var latestComment models.Comment
+				c = a.DB.C(models.COMMENTS)
 				c.Find(bson.M{"contentid": topic.Id_}).Sort("-createdat").Limit(1).One(&latestComment)
 
-				c = handler.DB.C("contents")
+				c = a.DB.C(models.CONTENTS)
 				c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{"latestreplierid": latestComment.CreatedBy.Hex(), "latestrepliedat": latestComment.CreatedAt}})
 			}
 		}
 
-		// 修改中的回复数量
-		c = handler.DB.C(STATUS)
+		// 修改总的回复数量
+		c = a.DB.C(models.STATUS)
 		c.Update(nil, bson.M{"$inc": bson.M{"replycount": -1}})
 	}
 
-	var url string
-	switch comment.Type {
-	case TypeArticle:
-		url = "/a/" + comment.ContentId.Hex()
-	case TypeTopic:
-		url = "/t/" + comment.ContentId.Hex()
-	case TypePackage:
-		url = "/p/" + comment.ContentId.Hex()
+	return map[string]interface{}{
+		"status": 1,
 	}
-
-	http.Redirect(handler.ResponseWriter, handler.Request, url, http.StatusFound)
 }
 
+/*
 // URL: /comment/:id.json
 // 获取comment的内容
 func commentJsonHandler(handler *Handler) {
