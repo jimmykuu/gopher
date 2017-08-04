@@ -65,15 +65,16 @@ Golang 中国([www.golangtc.com](https://www.golangtc.com))源代码.
         "go_get_path": "/tmp/download",
         "packages_download_path": "/var/go/gopher/static/download/packages",
         "public_salt": "",
-		"github_auth_client_id": "example",
-		"github_auth_client_secret": "example",
-		"github_login_redirect": "/",
-		"github_login_success_redirect": "/auth/signup",
-		"deferpanic_api_key": "",
+        "github_auth_client_id": "example",
+        "github_auth_client_secret": "example",
+        "github_login_redirect": "/",
+        "github_login_success_redirect": "/auth/signup",
         "gt_captcha_id": "",
         "gt_private_key": "",
         "go_download_path": "",
-        "litedide_download_path": ""
+        "litedide_download_path": "",
+        "image_path": "",
+        "debug": false
     }
 
 

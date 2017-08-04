@@ -6,17 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ .title }} - Golang 中国</title>
     <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
-    <link href="/static/css/semantic.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ staticfile "css/semantic.min.css" }}" rel="stylesheet" type="text/css" />
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
-    <script src="/static/js/semantic.min.js"></script>
-    <script src="/static/js/fetch.js"></script>
-    <script src="/static/js/application.js"></script>
+    <script src="{{ staticfile "js/semantic.min.js" }}"></script>
+    <script src="{{ staticfile "js/fetch.js" }}"></script>
+    <script src="{{ staticfile "js/application.js" }}"></script>
     <script src="https://unpkg.com/react@15/dist/react.min.js"></script>
     <script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-    <script src="/static/js/js.cookie.js"></script>
-    <script src="/static/js/showdown.min.js"></script>
-    <script type="text/babel" src="/static/js/components.js"></script>
+    <script src="{{ staticfile "js/js.cookie.js" }}"></script>
+    <script src="{{ staticfile "js/showdown.min.js" }}"></script>
+    <script type="text/babel" src="{{ staticfile "js/components.js" }}"></script>
     <style type="text/css">
       body, .ui.items>.item>.content>.header {
         font-family: "Microsoft Yahei";

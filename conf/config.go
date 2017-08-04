@@ -34,6 +34,7 @@ type ConfigStruct struct {
 	GoDownloadPath             string `json:"go_download_path"`
 	LiteIDEDownloadPath        string `json:"liteide_download_path"`
 	ImagePath                  string `json:"image_path"`
+	Debug                      bool   `json:"debug"`
 }
 
 var (

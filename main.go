@@ -1,10 +1,13 @@
 package main
 
 import (
+	"crypto/md5"
 	"fmt"
 	"html/template"
+	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -20,7 +23,8 @@ import (
 )
 
 var (
-	logger = log.New(os.Stdout, "[gopher]:", log.LstdFlags)
+	logger      = log.New(os.Stdout, "[gopher]:", log.LstdFlags)
+	staticFiles = map[string]string{} // 静态文件的默认属性 {filepath: md5}
 )
 
 func main() {
@@ -108,6 +112,36 @@ func main() {
 				},
 				"truncate": func(text string, length int, indicator string) string {
 					return webhelpers.Truncate(text, length, indicator)
+				},
+				"staticfile": func(path string) string {
+					// 增加静态文件的版本，防止文件变化后浏览器不更新
+					var filepath = filepath.Join("./static", path)
+					var md5Str string
+
+					file, err := os.Open(filepath)
+					if err != nil {
+						if conf.Config.Debug {
+							panic(err)
+						} else {
+							logger.Println("没有找到静态文件", path, err)
+						}
+
+						md5Str = "nofile"
+					} else {
+						var ok bool
+						if md5Str, ok = staticFiles[path]; !ok {
+							// Debug 状态下，每次都会读取文件的 md5 值，非 Debug状态下，只有第一次读取
+							md5h := md5.New()
+							io.Copy(md5h, file)
+							md5Str = fmt.Sprintf("%x", md5h.Sum([]byte{}))
+
+							if !conf.Config.Debug {
+								staticFiles[path] = md5Str
+							}
+						}
+					}
+
+					return fmt.Sprintf("/static/%s?%s", path, md5Str)
 				},
 			},
 		}))

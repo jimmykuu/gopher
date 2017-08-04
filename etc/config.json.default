@@ -26,5 +26,6 @@
     "gt_private_key": "geetest private key",
     "go_download_path": "",
     "liteide_download_path": "",
-	"image_path": "your/image/path"
+	"image_path": "your/image/path",
+	"debug": false
 }
