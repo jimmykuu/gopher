@@ -8,16 +8,12 @@ class MarkdownEditor extends React.Component {
 
     this.state = {
       isEditing: true,
-      markdown: '',
       html: ''
     };
   }
 
   handleMarkdownChange = (e) => {
     let markdown = e.target.value;
-    this.setState({
-      markdown: markdown
-    });
 
     this.props.onChange(markdown);
   }
@@ -29,7 +25,7 @@ class MarkdownEditor extends React.Component {
   onPreviewTabClick = () => {
     this.setState({
       isEditing: false,
-      html: converter.makeHtml(this.state.markdown)
+      html: converter.makeHtml(this.props.markdown)
     });
   }
 
@@ -42,7 +38,7 @@ class MarkdownEditor extends React.Component {
   }
 
   onUpload = (file) => {
-    let {markdown} = this.state;
+    let {markdown} = this.props;
 
     let formData = new FormData();
     formData.append('image', file);
@@ -60,9 +56,10 @@ class MarkdownEditor extends React.Component {
         }
 
         this.setState({
-          markdown: markdown,
           showUploadDialog: false
         });
+
+        this.props.onChange(markdown);
       }
     });
 
@@ -110,7 +107,7 @@ class MarkdownEditor extends React.Component {
       {
         this.state.isEditing ?
           <div className="field">
-            <textarea value={this.state.markdown} onChange={this.handleMarkdownChange}></textarea>
+            <textarea value={this.props.markdown} onChange={this.handleMarkdownChange}></textarea>
           </div>
         :
           <div className="ui container" dangerouslySetInnerHTML={ {__html: this.state.html} }>

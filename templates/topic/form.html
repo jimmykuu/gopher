@@ -115,6 +115,7 @@
                 <input type="text" placeholder="请输入标题" value={this.state.title} onChange={this.handleTitleChange} />
               </div>
             </div>
+
             <MarkdownEditor markdown={this.state.markdown} onChange={this.handleMarkdownChange}></MarkdownEditor>
 
             <button type="submit" className={submitClassName}>提交</button>

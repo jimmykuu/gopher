@@ -8,6 +8,11 @@
       <div class="ui divider"></div>
       <div class="ui text icon menu">
         <div class="right menu">
+          {{ if $topic.CanEdit $.username $.db }}
+            <a class="item" title="删除" href="/t/{{ $topic.Id_.Hex }}/edit">
+              <i class="edit icon"></i>
+            </a>
+          {{ end }}
           {{ if $topic.CanDelete $.username $.db }}
             <a class="item" title="删除" href="javascript:deleteTopic();">
               <i class="remove icon"></i>
