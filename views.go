@@ -8,8 +8,6 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/jimmykuu/webhelpers"
-	"github.com/jimmykuu/wtforms"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
@@ -59,76 +57,6 @@ func (u *Utils) News(username string, db *mgo.Database) template.HTML {
 	</div>
 	`
 	return template.HTML(fmt.Sprintf(format, username, len(user.RecentReplies), username, len(user.RecentAts)))
-}
-
-func (u *Utils) Truncate(html template.HTML, length int) string {
-	text := webhelpers.RemoveFormatting(string(html))
-	return webhelpers.Truncate(text, length, "...")
-}
-
-func (u *Utils) HTML(str string) template.HTML {
-	return template.HTML(str)
-}
-
-func (u *Utils) RenderInput(form wtforms.Form, fieldStr string, inputAttrs ...string) template.HTML {
-	field, err := form.Field(fieldStr)
-	if err != nil {
-		panic(err)
-	}
-
-	errorClass := ""
-
-	if field.HasErrors() {
-		errorClass = " has-error"
-	}
-
-	format := `<div class="form-group%s">
-        %s
-        %s
-        %s
-    </div>`
-
-	var inputAttrs2 []string = []string{`class="form-control"`}
-	inputAttrs2 = append(inputAttrs2, inputAttrs...)
-
-	return template.HTML(
-		fmt.Sprintf(format,
-			errorClass,
-			field.RenderLabel(),
-			field.RenderInput(inputAttrs2...),
-			field.RenderErrors()))
-}
-
-func (u *Utils) RenderInputH(form wtforms.Form, fieldStr string, labelWidth, inputWidth int, inputAttrs ...string) template.HTML {
-	field, err := form.Field(fieldStr)
-	if err != nil {
-		panic(err)
-	}
-
-	errorClass := ""
-
-	if field.HasErrors() {
-		errorClass = " has-error"
-	}
-	format := `<div class="form-group%s">
-        %s
-        <div class="col-lg-%d">
-            %s%s
-        </div>
-    </div>`
-	labelClass := fmt.Sprintf(`class="col-lg-%d control-label"`, labelWidth)
-
-	var inputAttrs2 []string = []string{`class="form-control"`}
-	inputAttrs2 = append(inputAttrs2, inputAttrs...)
-
-	return template.HTML(
-		fmt.Sprintf(format,
-			errorClass,
-			field.RenderLabel(labelClass),
-			inputWidth,
-			field.RenderInput(inputAttrs2...),
-			field.RenderErrors(),
-		))
 }
 
 func (u *Utils) AssertUser(i interface{}) *models.User {

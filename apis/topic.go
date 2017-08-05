@@ -11,14 +11,14 @@ import (
 	"github.com/jimmykuu/gopher/models"
 )
 
-// 获取主题信息
-type GetTopic struct {
+// Topic 主题
+type Topic struct {
 	Base
 	binding.Binder
 }
 
 // Get /api/topic/:topicId
-func (a *GetTopic) Get() interface{} {
+func (a *Topic) Get() interface{} {
 	topicId := a.Param("topicId")
 	if !bson.IsObjectIdHex(topicId) {
 		return map[string]interface{}{
@@ -51,6 +51,59 @@ func (a *GetTopic) Get() interface{} {
 		"title":    topic.Title,
 		"node_id":  topic.NodeId,
 		"markdown": topic.Markdown,
+	}
+}
+
+// Delete /topic/:topicId
+func (a *Topic) Delete() interface{} {
+	topicId := a.Param("topicId")
+	if !bson.IsObjectIdHex(topicId) {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "错误的主题 id",
+		}
+	}
+
+	c := a.DB.C(models.CONTENTS)
+
+	topic := models.Topic{}
+
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": models.TypeTopic}).One(&topic)
+
+	if err != nil {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "没有找到主题",
+		}
+	}
+
+	if !topic.CanDelete(a.User.Username, a.DB) {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "没有删除该主题的权限",
+		}
+	}
+
+	// Node统计数减一
+	c = a.DB.C(models.NODES)
+	c.Update(bson.M{"_id": topic.NodeId}, bson.M{"$inc": bson.M{"topiccount": -1}})
+
+	c = a.DB.C(models.STATUS)
+	// 统计的主题数减一，减去统计的回复数减去该主题的回复数
+	c.Update(nil, bson.M{"$inc": bson.M{"topiccount": -1, "replycount": -topic.CommentCount}})
+
+	//删除评论
+	c = a.DB.C(models.COMMENTS)
+	if topic.CommentCount > 0 {
+		c.Remove(bson.M{"contentid": topic.Id_})
+	}
+
+	// 删除Topic记录
+	c = a.DB.C(models.CONTENTS)
+	c.Remove(bson.M{"_id": topic.Id_})
+
+	return map[string]interface{}{
+		"status": 1,
 	}
 }
 

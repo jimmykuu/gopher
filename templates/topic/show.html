@@ -1,10 +1,20 @@
 {{ template "base.html" . }}
 {{ define "body" }}
+{{ $topic := asserttopic .topic }}
 <div class="ui grid">
   <div class="twelve wide column">
     <div class="ui segment">
       <h1 class="ui header">{{ .topic.Title }}</h1>
       <div class="ui divider"></div>
+      <div class="ui text icon menu">
+        <div class="right menu">
+          {{ if $topic.CanDelete $.username $.db }}
+            <a class="item" title="删除" href="javascript:deleteTopic();">
+              <i class="remove icon"></i>
+            </a>
+          {{ end }}
+        </div>
+      </div>
       {{ .topic.Html }}
       <div class="ui minimal comments">
       {{ range $index, $reply := .comments }}
@@ -49,6 +59,18 @@
   const converter = new showdown.Converter({
     simpleLineBreaks: true
   });
+
+  function deleteTopic() {
+    if (confirm('确认删除该主题吗？')) {
+      delete_('/api/topic/' + topicId).then((data) => {
+        if (data.status) {
+          window.location.href = '/';
+        } else {
+          alert(data.message);
+        }
+      });
+    }
+  }
 
   class NewCommentForm extends React.Component {
     constructor(props) {
