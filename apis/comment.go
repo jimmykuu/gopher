@@ -10,10 +10,47 @@ import (
 	"github.com/jimmykuu/gopher/models"
 )
 
-// Comment 发表评论
+// Comment 评论
 type Comment struct {
 	Base
 	binding.Binder
+}
+
+// Get /comment/:commentId 获取一条评论信息
+func (a *Comment) Get() interface{} {
+	commentIdStr := a.Param("commentId")
+	if !bson.IsObjectIdHex(commentIdStr) {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "参数错误",
+		}
+	}
+
+	commentId := bson.ObjectIdHex(commentIdStr)
+
+	c := a.DB.C(models.COMMENTS)
+
+	var comment models.Comment
+	err := c.Find(bson.M{"_id": commentId}).One(&comment)
+	if err != nil {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "该评论不存在",
+		}
+	}
+
+	if !comment.CanDeleteOrEdit(a.User.Username, a.DB) {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "没有权限编辑该评论",
+		}
+	}
+
+	return map[string]interface{}{
+		"status":   1,
+		"markdown": comment.Markdown,
+		"html":     comment.Html,
+	}
 }
 
 // Post /comment/:contentId 发表评论
@@ -80,13 +117,8 @@ func (a *Comment) Post() interface{} {
 	}
 }
 
-// DeleteComment 删除评论
-type DeleteComment struct {
-	Base
-}
-
-// Delete /api/comment/:commentId
-func (a *DeleteComment) Delete() interface{} {
+// Delete /api/comment/:commentId 删除一条评论
+func (a *Comment) Delete() interface{} {
 	commentIdStr := a.Param("commentId")
 	if !bson.IsObjectIdHex(commentIdStr) {
 		return map[string]interface{}{

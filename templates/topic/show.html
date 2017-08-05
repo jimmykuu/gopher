@@ -18,13 +18,13 @@
             <div class="metadata">
               <div class="date">{{ formattime $reply.CreatedAt }}</div>
             </div>
-            <div class="text">
+            <div class="text" id="comment-content-{{ .Id_.Hex }}">
               {{ .Html }}
             </div>
             {{ if $.username }}
               {{ if $reply.CanDeleteOrEdit $.username $.db }}
                 <div class="actions">
-                  <a class="reply">
+                  <a class="reply" href="javascript:editComment('{{ .Id_.Hex }}');">
                     <i class="edit icon"></i>
                   </a>
                   <a class="reply" href="javascript:deleteComment('{{ .Id_.Hex }}');">
@@ -50,7 +50,7 @@
     simpleLineBreaks: true
   });
 
-  class CommentForm extends React.Component {
+  class NewCommentForm extends React.Component {
     constructor(props) {
       super(props);
 
@@ -101,17 +101,26 @@
     }
   }
 
-  ReactDOM.render(<CommentForm />, document.getElementById('form'));
+  ReactDOM.render(<NewCommentForm />, document.getElementById('form'));
 
   function deleteComment(commentId) {
-    if (confirm('确认删除吗？')) {
+    if (confirm('确认删除该评论吗？')) {
       delete_('/api/comment/' + commentId)
         .then((data) => {
-          $('#comment-' + commentId).fadeOut(1000, function() {
-            $(this).remove();
-          });
+          console.log(data);
+          if (data.status) {
+            $('#comment-' + commentId).fadeOut(1000, function() {
+              $(this).remove();
+            });
+          } else {
+            alert('删除失败：' + data.message);
+          }
         });
     }
+  }
+
+  function editComment(commentId) {
+    // ReactDOM.render(<EditCommentForm commentId={commentId} />, document.getElementById('comment-content-' + commentId));
   }
 </script>
 {{ end }}
