@@ -17,10 +17,10 @@ type Topic struct {
 	binding.Binder
 }
 
-// Get /api/topic/:topicId
+// Get /api/topic/:topicID
 func (a *Topic) Get() interface{} {
-	topicId := a.Param("topicId")
-	if !bson.IsObjectIdHex(topicId) {
+	topicID := a.Param("topicID")
+	if !bson.IsObjectIdHex(topicID) {
 		return map[string]interface{}{
 			"status":  0,
 			"message": "错误的主题 id",
@@ -31,7 +31,7 @@ func (a *Topic) Get() interface{} {
 
 	topic := models.Topic{}
 
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": models.TypeTopic}).One(&topic)
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicID), "content.type": models.TypeTopic}).One(&topic)
 
 	if err != nil {
 		return map[string]interface{}{
@@ -54,10 +54,10 @@ func (a *Topic) Get() interface{} {
 	}
 }
 
-// Delete /topic/:topicId
+// Delete /topic/:topicID
 func (a *Topic) Delete() interface{} {
-	topicId := a.Param("topicId")
-	if !bson.IsObjectIdHex(topicId) {
+	topicID := a.Param("topicID")
+	if !bson.IsObjectIdHex(topicID) {
 		return map[string]interface{}{
 			"status":  0,
 			"message": "错误的主题 id",
@@ -68,7 +68,7 @@ func (a *Topic) Delete() interface{} {
 
 	topic := models.Topic{}
 
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": models.TypeTopic}).One(&topic)
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicID), "content.type": models.TypeTopic}).One(&topic)
 
 	if err != nil {
 		return map[string]interface{}{
@@ -107,21 +107,16 @@ func (a *Topic) Delete() interface{} {
 	}
 }
 
+// TopicForm 主题表单，新建和编辑共用
 type TopicForm struct {
 	Title    string `json:"title"`
-	NodeId   string `json:"node_id"`
+	NodeID   string `json:"node_id"`
 	Markdown string `json:"markdown"`
-	Html     string `json:"html"`
-}
-
-// NewTopic 新建主题
-type NewTopic struct {
-	Base
-	binding.Binder
+	HTML     string `json:"html"`
 }
 
 // Post /topic/new 新建主题
-func (a *NewTopic) Post() interface{} {
+func (a *Topic) Post() interface{} {
 	if a.User.IsBlocked {
 		return map[string]interface{}{
 			"status":  0,
@@ -136,23 +131,23 @@ func (a *NewTopic) Post() interface{} {
 
 	var c = a.DB.C(models.CONTENTS)
 
-	id_ := bson.NewObjectId()
+	id := bson.NewObjectId()
 
 	now := time.Now()
 
-	nodeId := bson.ObjectIdHex(form.NodeId)
+	nodeID := bson.ObjectIdHex(form.NodeID)
 	err := c.Insert(&models.Topic{
 		Content: models.Content{
-			Id_:       id_,
+			Id_:       id,
 			Type:      models.TypeTopic,
 			Title:     form.Title,
 			Markdown:  form.Markdown,
-			Html:      template.HTML(form.Html),
+			Html:      template.HTML(form.HTML),
 			CreatedBy: a.User.Id_,
 			CreatedAt: now,
 		},
-		Id_:             id_,
-		NodeId:          nodeId,
+		Id_:             id,
+		NodeId:          nodeID,
 		LatestRepliedAt: now,
 	})
 
@@ -166,7 +161,7 @@ func (a *NewTopic) Post() interface{} {
 
 	// 增加Node.TopicCount
 	c = a.DB.C(models.NODES)
-	c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
+	c.Update(bson.M{"_id": nodeID}, bson.M{"$inc": bson.M{"topiccount": 1}})
 
 	// 增加总主题数
 	c = a.DB.C(models.STATUS)
@@ -174,20 +169,15 @@ func (a *NewTopic) Post() interface{} {
 	return map[string]interface{}{
 		"status":   1,
 		"message":  "主题新建成功",
-		"topic_id": id_.Hex(),
+		"topic_id": id.Hex(),
 	}
 }
 
-// EditTopic 编辑主题
-type EditTopic struct {
-	Base
-}
+// Put /topic/:topicId/edit
+func (a *Topic) Put() interface{} {
+	topicID := a.Param("topicID")
 
-// Post /topic/:topicId/edit
-func (a *EditTopic) Post() interface{} {
-	topicId := a.Param("topicId")
-
-	if !bson.IsObjectIdHex(topicId) {
+	if !bson.IsObjectIdHex(topicID) {
 		return map[string]interface{}{
 			"status":  0,
 			"message": "参数错误",
@@ -198,7 +188,7 @@ func (a *EditTopic) Post() interface{} {
 
 	topic := models.Topic{}
 
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": models.TypeTopic}).One(&topic)
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicID), "content.type": models.TypeTopic}).One(&topic)
 
 	if err != nil {
 		return map[string]interface{}{
@@ -219,28 +209,28 @@ func (a *EditTopic) Post() interface{} {
 
 	// TODO form 校验
 
-	var newNodeId = bson.ObjectIdHex(form.NodeId)
+	var newNodeID = bson.ObjectIdHex(form.NodeID)
 
 	c = a.DB.C(models.CONTENTS)
 	c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{
-		"nodeid":            newNodeId,
+		"nodeid":            newNodeID,
 		"content.title":     form.Title,
 		"content.markdown":  form.Markdown,
-		"content.html":      template.HTML(form.Html),
+		"content.html":      template.HTML(form.HTML),
 		"content.updatedat": time.Now(),
 		"content.updatedby": a.User.Id_.Hex(),
 	}})
 
 	// 如果两次的节点不同,更新节点的主题数量
-	if topic.NodeId != newNodeId {
+	if topic.NodeId != newNodeID {
 		c = a.DB.C(models.NODES)
 		c.Update(bson.M{"_id": topic.NodeId}, bson.M{"$inc": bson.M{"topiccount": -1}})
-		c.Update(bson.M{"_id": newNodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
+		c.Update(bson.M{"_id": newNodeID}, bson.M{"$inc": bson.M{"topiccount": 1}})
 	}
 
 	return map[string]interface{}{
 		"status":   1,
 		"message":  "主题编辑成功",
-		"topic_id": topicId,
+		"topic_id": topicID,
 	}
 }

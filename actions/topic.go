@@ -166,11 +166,11 @@ type ShowTopic struct {
 	RenderBase
 }
 
-// Get /t/:topicId 显示主题
+// Get /t/:topicID 显示主题
 func (a *ShowTopic) Get() error {
-	topicId := a.Param("topicId")
+	topicID := a.Param("topicID")
 
-	if !bson.IsObjectIdHex(topicId) {
+	if !bson.IsObjectIdHex(topicID) {
 		a.NotFound("参数错误")
 		return nil
 	}
@@ -182,7 +182,7 @@ func (a *ShowTopic) Get() error {
 
 	topic := models.Topic{}
 
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicId), "content.type": models.TypeTopic}).One(&topic)
+	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicID), "content.type": models.TypeTopic}).One(&topic)
 
 	if err != nil {
 		a.NotFound(err.Error())
@@ -190,7 +190,7 @@ func (a *ShowTopic) Get() error {
 	}
 
 	// 点击数 +1
-	c.UpdateId(bson.ObjectIdHex(topicId), bson.M{"$inc": bson.M{"content.hits": 1}})
+	c.UpdateId(bson.ObjectIdHex(topicID), bson.M{"$inc": bson.M{"content.hits": 1}})
 	return a.Render("topic/show.html", renders.T{
 		"title":    topic.Title,
 		"topic":    topic,
@@ -219,8 +219,8 @@ type EditTopic struct {
 
 // Get /t/:tipicId 编辑主题页面
 func (a *EditTopic) Get() error {
-	topicId := a.Param("topicId")
-	if !bson.IsObjectIdHex(topicId) {
+	topicID := a.Param("topicID")
+	if !bson.IsObjectIdHex(topicID) {
 		a.NotFound("参数错误")
 		return nil
 	}
@@ -228,7 +228,7 @@ func (a *EditTopic) Get() error {
 	return a.Render("topic/form.html", renders.T{
 		"title":   "编辑主题",
 		"action":  "edit",
-		"topicId": topicId,
+		"topicID": topicID,
 	})
 }
 

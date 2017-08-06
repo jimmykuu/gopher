@@ -34,3 +34,13 @@ function delete_(url) {
 
   return fetch(url, opts).then(getJson);
 }
+
+function put(url, body) {
+  const opts = {
+    body: JSON.stringify(body),
+    headers: getHeaders(),
+    method: 'PUT'
+  };
+
+  return fetch(url, opts).then(getJson);
+}

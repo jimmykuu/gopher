@@ -4,7 +4,7 @@
 </div>
 <script type="text/babel">
   const action = "{{ .action }}"; // 模板传入 new/edit
-  const topicId = "{{ .topicId }}"; // 模板传入
+  const topicID = "{{ .topicID }}"; // 模板传入
   const converter = new showdown.Converter({
     simpleLineBreaks: true
   });
@@ -44,9 +44,17 @@
       e.preventDefault();
       this.setState({submiting: true});
 
-      const url = action == 'new' ? '/api/topic/new' : '/api/topic/' + topicId + '/edit';
+      let url;
+      let method;
+      if (action == 'new') {
+        url = '/api/topics';
+        method = post;
+      } else {
+        url = '/api/topics/' + topicID;
+        method = put;
+      }
 
-      post(url, {
+      method(url, {
         title: this.state.title,
         node_id: this.state.nodeId,
         markdown: this.state.markdown,
@@ -75,7 +83,7 @@
           this.setState({nodes: data});
 
           // 获取主题
-          get('/api/topic/' + topicId).then((data) => {
+          get('/api/topics/' + topicID).then((data) => {
             this.setState({
               loading: false,
               title: data.title,
