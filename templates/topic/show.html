@@ -39,7 +39,7 @@
             {{ if $.username }}
               {{ if $reply.CanDeleteOrEdit $.username $.db }}
                 <div class="actions">
-                  <a class="reply" href="javascript:editComment('{{ .Id_.Hex }}');">
+                  <a class="reply" id="edit-comment-{{ .Id_.Hex }}" href="javascript:editComment('{{ .Id_.Hex }}');">
                     <i class="edit icon"></i>
                   </a>
                   <a class="reply" href="javascript:deleteComment('{{ .Id_.Hex }}');">
@@ -60,6 +60,7 @@
   </div>
 </div>
 <script type="text/babel">
+  var html = '';
   const topicId = "{{ .topic.Id_.Hex }}"; // 模板传入
   const converter = new showdown.Converter({
     simpleLineBreaks: true
@@ -146,8 +147,78 @@
     }
   }
 
+  class EditCommentForm extends React.Component {
+    constructor(props) {
+      super(props);
+
+      this.state = {
+        loading: false,
+        markdown: '',
+        html: ''
+      }
+    }
+
+    componentDidMount() {
+      // 获取评论
+      get('/api/comment/' + this.props.commentId).then((data) => {
+        this.setState({
+          loading: false,
+          markdown: data.markdown,
+          html: data.html
+        });
+      });
+    }
+
+    handleMarkdownChange = (markdown) => {
+      this.setState({
+        markdown: markdown
+      });
+    }
+
+    handleSubmit = (e) => {
+      e.preventDefault();
+      console.log('submit');
+      this.setState({submiting: true});
+
+      put("/api/comments/" + this.props.commentId, {
+        markdown: this.state.markdown,
+        html: converter.makeHtml(this.state.markdown)
+      }).then((data) => {
+        if (data.status) {
+          ReactDOM.unmountComponentAtNode(document.getElementById('comment-content-' + this.props.commentId));
+          $('#comment-content-' + this.props.commentId).html(data.html);
+        } else {
+          alert(data.message);
+          this.setState({
+            submiting: fasle
+          });
+        }
+      });
+    }
+
+    onCancel = (e) => {
+      e.preventDefault();
+      ReactDOM.unmountComponentAtNode(document.getElementById('comment-content-' + this.props.commentId));
+      $('#comment-content-' + this.props.commentId).html(this.state.html);
+    }
+
+    render() {
+      return (<form className="ui form" onSubmit={this.handleSubmit}>
+        <div className="field">
+          <MarkdownEditor markdown={this.state.markdown} onChange={this.handleMarkdownChange} />
+        </div>
+        <button type="submit" className="ui primary submit button">提交</button>
+        <button className="ui button" onClick={this.onCancel}>取消</button>
+      </form>);
+    }
+  }
+
+  var isEditingComment = {};  // {commentId: true}
+
   function editComment(commentId) {
-    // ReactDOM.render(<EditCommentForm commentId={commentId} />, document.getElementById('comment-content-' + commentId));
+    if (!isEditingComment[commentId]) {
+      ReactDOM.render(<EditCommentForm commentId={commentId} />, document.getElementById('comment-content-' + commentId));
+    }
   }
 </script>
 {{ end }}

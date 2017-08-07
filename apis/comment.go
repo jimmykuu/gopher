@@ -117,6 +117,57 @@ func (a *Comment) Post() interface{} {
 	}
 }
 
+// Put /api/comment/:commentId 编辑评论
+func (a *Comment) Put() interface{} {
+	commentIdStr := a.Param("commentId")
+	if !bson.IsObjectIdHex(commentIdStr) {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "参数错误",
+		}
+	}
+
+	commentId := bson.ObjectIdHex(commentIdStr)
+
+	c := a.DB.C(models.COMMENTS)
+
+	comment := models.Comment{}
+
+	err := c.Find(bson.M{"_id": commentId}).One(&comment)
+	if err != nil {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "没有找到该评论",
+		}
+	}
+
+	if !comment.CanDeleteOrEdit(a.User.Username, a.DB) {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "没有权限编辑该评论",
+		}
+	}
+
+	var form struct {
+		Markdown string `json:"markdown"`
+		Html     string `json:"html"`
+	}
+
+	a.ReadJSON(&form)
+
+	c.Update(bson.M{"_id": commentId}, bson.M{"$set": bson.M{
+		"markdown":  form.Markdown,
+		"html":      template.HTML(form.Html),
+		"updatedby": a.User.Id_.Hex(),
+		"updatedat": time.Now(),
+	}})
+
+	return map[string]interface{}{
+		"status": 1,
+		"html":   form.Html,
+	}
+}
+
 // Delete /api/comment/:commentId 删除一条评论
 func (a *Comment) Delete() interface{} {
 	commentIdStr := a.Param("commentId")
@@ -179,77 +230,3 @@ func (a *Comment) Delete() interface{} {
 		"status": 1,
 	}
 }
-
-/*
-// URL: /comment/:id.json
-// 获取comment的内容
-func commentJsonHandler(handler *Handler) {
-	vars := mux.Vars(handler.Request)
-	var id string = vars["id"]
-
-	c := handler.DB.C(COMMENTS)
-	var comment Comment
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(id)}).One(&comment)
-
-	if err != nil {
-		return
-	}
-
-	data := map[string]string{
-		"markdown": comment.Markdown,
-	}
-
-	handler.renderJson(data)
-}
-
-// URL: /commeint/:id/edit
-// 编辑comment
-func editCommentHandler(handler *Handler) {
-	if handler.Request.Method != "POST" {
-		return
-	}
-	vars := mux.Vars(handler.Request)
-	var id string = vars["id"]
-
-	c := handler.DB.C(COMMENTS)
-
-	user, _ := currentUser(handler)
-
-	comment := Comment{}
-
-	c.Find(bson.M{"_id": bson.ObjectIdHex(id)}).One(&comment)
-
-	if !comment.CanDeleteOrEdit(user.Username, handler.DB) {
-		return
-	}
-
-	markdown := handler.Request.FormValue("editormd-edit-markdown-doc")
-	html := handler.Request.FormValue("editormd-edit-html-code")
-
-	c.Update(bson.M{"_id": bson.ObjectIdHex(id)}, bson.M{"$set": bson.M{
-		"markdown":  markdown,
-		"html":      template.HTML(html),
-		"updatedby": user.Id_.Hex(),
-		"updatedat": time.Now(),
-	}})
-
-	var temp map[string]interface{}
-	c = handler.DB.C(CONTENTS)
-	c.Find(bson.M{"_id": comment.ContentId}).One(&temp)
-
-	temp2 := temp["content"].(map[string]interface{})
-	type_ := temp2["type"].(int)
-
-	var url string
-	switch type_ {
-	case TypeArticle:
-		url = "/a/" + comment.ContentId.Hex()
-	case TypeTopic:
-		url = "/t/" + comment.ContentId.Hex()
-	case TypePackage:
-		url = "/p/" + comment.ContentId.Hex()
-	}
-
-	http.Redirect(handler.ResponseWriter, handler.Request, url, http.StatusFound)
-}
-*/
