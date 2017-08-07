@@ -16,22 +16,22 @@ type Comment struct {
 	binding.Binder
 }
 
-// Get /comment/:commentId 获取一条评论信息
+// Get /comments/:commentID 获取一条评论信息
 func (a *Comment) Get() interface{} {
-	commentIdStr := a.Param("commentId")
-	if !bson.IsObjectIdHex(commentIdStr) {
+	commentIDStr := a.Param("commentID")
+	if !bson.IsObjectIdHex(commentIDStr) {
 		return map[string]interface{}{
 			"status":  0,
 			"message": "参数错误",
 		}
 	}
 
-	commentId := bson.ObjectIdHex(commentIdStr)
+	commentID := bson.ObjectIdHex(commentIDStr)
 
 	c := a.DB.C(models.COMMENTS)
 
 	var comment models.Comment
-	err := c.Find(bson.M{"_id": commentId}).One(&comment)
+	err := c.Find(bson.M{"_id": commentID}).One(&comment)
 	if err != nil {
 		return map[string]interface{}{
 			"status":  0,
@@ -53,7 +53,7 @@ func (a *Comment) Get() interface{} {
 	}
 }
 
-// Post /comment/:contentId 发表评论
+// Post /comments 发表评论
 func (a *Comment) Post() interface{} {
 	if a.User.IsBlocked {
 		return map[string]interface{}{
@@ -62,49 +62,56 @@ func (a *Comment) Post() interface{} {
 		}
 	}
 
-	contentIdStr := a.Param("contentId")
-	if !bson.IsObjectIdHex(contentIdStr) {
+	var form struct {
+		ContentID string `json:"content_id"`
+		Markdown  string `json:"markdown"`
+		HTML      string `json:"html"`
+	}
+
+	a.ReadJSON(&form)
+
+	if !bson.IsObjectIdHex(form.ContentID) {
 		return map[string]interface{}{
 			"status":  0,
 			"message": "参数错误",
 		}
 	}
 
-	contentId := bson.ObjectIdHex(contentIdStr)
+	contentID := bson.ObjectIdHex(form.ContentID)
 
 	var temp map[string]interface{}
 	c := a.DB.C(models.CONTENTS)
-	c.Find(bson.M{"_id": contentId}).One(&temp)
+	err := c.Find(bson.M{"_id": contentID}).One(&temp)
+	if err != nil {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "没有找到该主题",
+		}
+	}
 
 	temp2 := temp["content"].(map[string]interface{})
 	type_ := temp2["type"].(int)
 
-	var form struct {
-		Markdown string `json:"markdown"`
-		Html     string `json:"html"`
-	}
+	c.Update(bson.M{"_id": contentID}, bson.M{"$inc": bson.M{"content.commentcount": 1}})
 
-	a.ReadJSON(&form)
-
-	c.Update(bson.M{"_id": contentId}, bson.M{"$inc": bson.M{"content.commentcount": 1}})
-
-	commentId := bson.NewObjectId()
+	commentID := bson.NewObjectId()
 	now := time.Now()
 
 	c = a.DB.C(models.COMMENTS)
 	c.Insert(&models.Comment{
-		Id_:       commentId,
+		Id_:       commentID,
 		Type:      type_,
-		ContentId: contentId,
+		ContentId: contentID,
 		Markdown:  form.Markdown,
-		Html:      template.HTML(form.Html),
+		Html:      template.HTML(form.HTML),
 		CreatedBy: a.User.Id_,
 		CreatedAt: now,
 	})
+
 	if type_ == models.TypeTopic {
 		// 修改最后回复用户Id和时间
 		c = a.DB.C(models.CONTENTS)
-		c.Update(bson.M{"_id": contentId}, bson.M{"$set": bson.M{"latestreplierid": a.User.Id_.Hex(), "latestrepliedat": now}})
+		c.Update(bson.M{"_id": contentID}, bson.M{"$set": bson.M{"latestreplierid": a.User.Id_.Hex(), "latestrepliedat": now}})
 
 		// 修改总的回复数量
 		c = a.DB.C(models.STATUS)
@@ -117,23 +124,23 @@ func (a *Comment) Post() interface{} {
 	}
 }
 
-// Put /api/comment/:commentId 编辑评论
+// Put /api/comments/:commentID 编辑评论
 func (a *Comment) Put() interface{} {
-	commentIdStr := a.Param("commentId")
-	if !bson.IsObjectIdHex(commentIdStr) {
+	commentIDStr := a.Param("commentID")
+	if !bson.IsObjectIdHex(commentIDStr) {
 		return map[string]interface{}{
 			"status":  0,
 			"message": "参数错误",
 		}
 	}
 
-	commentId := bson.ObjectIdHex(commentIdStr)
+	commentID := bson.ObjectIdHex(commentIDStr)
 
 	c := a.DB.C(models.COMMENTS)
 
 	comment := models.Comment{}
 
-	err := c.Find(bson.M{"_id": commentId}).One(&comment)
+	err := c.Find(bson.M{"_id": commentID}).One(&comment)
 	if err != nil {
 		return map[string]interface{}{
 			"status":  0,
@@ -150,40 +157,40 @@ func (a *Comment) Put() interface{} {
 
 	var form struct {
 		Markdown string `json:"markdown"`
-		Html     string `json:"html"`
+		HTML     string `json:"html"`
 	}
 
 	a.ReadJSON(&form)
 
-	c.Update(bson.M{"_id": commentId}, bson.M{"$set": bson.M{
+	c.Update(bson.M{"_id": commentID}, bson.M{"$set": bson.M{
 		"markdown":  form.Markdown,
-		"html":      template.HTML(form.Html),
+		"html":      template.HTML(form.HTML),
 		"updatedby": a.User.Id_.Hex(),
 		"updatedat": time.Now(),
 	}})
 
 	return map[string]interface{}{
 		"status": 1,
-		"html":   form.Html,
+		"html":   form.HTML,
 	}
 }
 
-// Delete /api/comment/:commentId 删除一条评论
+// Delete /api/comments/:commentID 删除一条评论
 func (a *Comment) Delete() interface{} {
-	commentIdStr := a.Param("commentId")
-	if !bson.IsObjectIdHex(commentIdStr) {
+	commentIDStr := a.Param("commentID")
+	if !bson.IsObjectIdHex(commentIDStr) {
 		return map[string]interface{}{
 			"status":  0,
 			"message": "参数错误",
 		}
 	}
 
-	commentId := bson.ObjectIdHex(commentIdStr)
+	commentID := bson.ObjectIdHex(commentIDStr)
 
 	c := a.DB.C(models.COMMENTS)
 
 	var comment models.Comment
-	err := c.Find(bson.M{"_id": commentId}).One(&comment)
+	err := c.Find(bson.M{"_id": commentID}).One(&comment)
 	if err != nil {
 		return map[string]interface{}{
 			"status":  0,
@@ -198,7 +205,7 @@ func (a *Comment) Delete() interface{} {
 		}
 	}
 
-	c.Remove(bson.M{"_id": commentId})
+	c.Remove(bson.M{"_id": commentID})
 
 	c = a.DB.C(models.CONTENTS)
 	c.Update(bson.M{"_id": comment.ContentId}, bson.M{"$inc": bson.M{"content.commentcount": -1}})

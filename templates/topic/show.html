@@ -98,9 +98,8 @@
       e.preventDefault();
       this.setState({submiting: true});
 
-      const url = '/api/comment/' + topicId;
-
-      post(url, {
+      post('/api/comments', {
+        content_id: topicId,
         markdown: this.state.markdown,
         html: converter.makeHtml(this.state.markdown)
       }).then((data) => {
@@ -133,7 +132,7 @@
 
   function deleteComment(commentId) {
     if (confirm('确认删除该评论吗？')) {
-      delete_('/api/comment/' + commentId)
+      delete_('/api/comments/' + commentId)
         .then((data) => {
           console.log(data);
           if (data.status) {
@@ -160,7 +159,7 @@
 
     componentDidMount() {
       // 获取评论
-      get('/api/comment/' + this.props.commentId).then((data) => {
+      get('/api/comments/' + this.props.commentId).then((data) => {
         this.setState({
           loading: false,
           markdown: data.markdown,
