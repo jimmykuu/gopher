@@ -3,6 +3,7 @@ package conf
 import (
 	"encoding/json"
 	"os"
+	"runtime"
 )
 
 type ConfigStruct struct {
@@ -38,7 +39,9 @@ type ConfigStruct struct {
 }
 
 var (
-	Config ConfigStruct
+	Config    ConfigStruct
+	GoVersion = runtime.Version()
+	Version   string
 )
 
 func InitConfig(configFile string) error {

@@ -2,12 +2,14 @@ package actions
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/lunny/tango"
 	"github.com/tango-contrib/renders"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
+	"github.com/jimmykuu/gopher/conf"
 	"github.com/jimmykuu/gopher/models"
 	"github.com/jimmykuu/gopher/utils"
 )
@@ -17,14 +19,17 @@ type RenderBase struct {
 	renders.Renderer
 	tango.Ctx
 
-	session *mgo.Session
-	DB      *mgo.Database
-	User    models.User
-	IsLogin bool
+	session   *mgo.Session
+	DB        *mgo.Database
+	User      *models.User
+	IsLogin   bool
+	startTime time.Time
 }
 
 // Before
 func (b *RenderBase) Before() {
+	b.startTime = time.Now()
+
 	b.session, b.DB = models.GetSessionAndDB()
 
 	cookies := b.Cookies()
@@ -53,7 +58,7 @@ func (b *RenderBase) Before() {
 		return
 	}
 
-	b.User = user
+	b.User = &user
 	b.IsLogin = true
 }
 
@@ -69,8 +74,14 @@ func (b *RenderBase) Render(tmpl string, t ...renders.T) error {
 		ts = t[0].Merge(renders.T{})
 	}
 
+	ts["goVersion"] = conf.GoVersion
+	ts["version"] = conf.Version
 	ts["user"] = b.User
-	ts["username"] = b.User.Username
+	if b.User != nil {
+		ts["username"] = b.User.Username
+	}
+
+	ts["costTime"] = fmt.Sprintf("%dms", time.Now().Sub(b.startTime)/1000000)
 
 	return b.Renderer.Render(tmpl, ts)
 }

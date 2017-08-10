@@ -22,6 +22,10 @@ import (
 	"github.com/jimmykuu/gopher/models"
 )
 
+const (
+	Version = "2.0.0"
+)
+
 var (
 	logger      = log.New(os.Stdout, "[gopher]:", log.LstdFlags)
 	staticFiles = map[string]string{} // 静态文件的默认属性 {filepath: md5}
@@ -45,10 +49,6 @@ func main() {
 				},
 				"html": func(text string) template.HTML {
 					return template.HTML(text)
-				},
-				"loadtimes": func(startTime time.Time) string {
-					// 加载时间
-					return fmt.Sprintf("%dms", time.Now().Sub(startTime)/1000000)
 				},
 				"ads": func(position string, db *mgo.Database) []models.AD {
 					c := db.C(models.ADS)

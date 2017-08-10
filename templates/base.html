@@ -30,34 +30,61 @@
     </script>
   </head>
   <body>
-    <div class="ui container menu">
-      <a class="header item" href="/">
-        Golang 中国
-      </a>
-
-      {{ if .user }}
-      <div class="ui dropdown right item">
-        {{ .user.Username }}
-        <i class="dropdown icon"></i>
-        <div class="menu">
-          <a class="item"><i class="edit icon"></i> 编辑配置文件</a>
-          <a class="item"><i class="globe icon"></i> 选择语言</a>
-          <a class="item" href="javascript: signout();"><i class="sign out icon"></i> 登出</a>
+    <div class="ui menu">
+      <div class="ui container">
+        <a class="header item" href="/" style="padding-top: 0; padding-bottom: 0; padding-left: 0; border: none; background-color: white;">
+          <img src="https://is.golangtc.com/logo/golangtc.png?height=60" class="ui">
+        </a>
+        <a class="item" href="/">主题</a>
+        {{ if .user }}
+        <div class="ui dropdown right item">
+          {{ .user.Username }}
+          <i class="dropdown icon"></i>
+          <div class="menu">
+            <a class="item"><i class="edit icon"></i> 编辑配置文件</a>
+            <a class="item"><i class="globe icon"></i> 选择语言</a>
+            <a class="item" href="javascript: signout();"><i class="sign out icon"></i> 登出</a>
+          </div>
         </div>
+        {{ else }}
+        <div class="right menu">
+          <a class="item" href="/signin">登录</a>
+          <a class="item" href="/signup">注册</a>
+        </div>
+        {{ end }}
       </div>
-      {{ else }}
-      <div class="right menu">
-        <a class="item" href="/signin">登录</a>
-        <a class="item" href="/signup">注册</a>
-      </div>
-      {{ end }}
     </div>
 
     <div class="ui container">
       {{ template "body" .}}
     </div>
 
-    <footer>
+    <footer class="ui footer segment">
+      <div class="ui container">
+        <div class="ui grid">
+          <div class="twelve wide column">
+            <div class="row">
+              <div class="ui text menu">
+                <div class="header item">
+                  &copy; 2012-2017 Golang China
+                </div>
+                <a class="item" href="/about">关于</a>
+              </div>
+            </div>
+            <div class="row">
+              Build by <a href="https://github.com/jimmykuu/gopher">Gopher</a>,
+              Powered by <a href="https://github.com/lunny/tango">Tango</a>,
+              Based on <a href="https://semantic-ui.com/">Semantic UI</a>.
+            </div>
+            <div class="row">
+              Version: {{ .version }}, Build version {{ .goVersion }}. {{ .costTime }}.
+            </div>
+          </div>
+          <div class="four wide column">
+            <iframe src="https://ghbtns.com/github-btn.html?user=jimmykuu&repo=gopher&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+          </div>
+        </div>
+      </div>
     </footer>
   </body>
   <script type="text/javascript">

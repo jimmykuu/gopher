@@ -5,7 +5,6 @@ import (
 	"html/template"
 	"io/ioutil"
 	"os"
-	"runtime"
 	"strings"
 
 	"gopkg.in/mgo.v2"
@@ -18,10 +17,11 @@ import (
 var (
 	analyticsCode template.HTML // 网站统计分析代码
 	shareCode     template.HTML // 分享代码
-	goVersion     = runtime.Version()
 )
 
 func init() {
+	conf.Version = Version
+
 	err := conf.InitConfig("etc/config.json")
 	if err != nil {
 		fmt.Println(err)
