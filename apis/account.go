@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/asaskevich/govalidator"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/pborman/uuid"
 	"github.com/tango-contrib/binding"
@@ -23,15 +24,26 @@ type Signin struct {
 // Post /api/signin 提交登录
 func (a *Signin) Post() interface{} {
 	var form struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
+		Username string `json:"username" valid:"required,ascii"`
+		Password string `json:"password" valid:"required,ascii"`
 	}
 
 	a.ReadJSON(&form)
+
+	result, err := govalidator.ValidateStruct(form)
+
+	if !result {
+		var errors = strings.Split(err.Error(), ";")
+		return map[string]interface{}{
+			"status":   0,
+			"messages": errors[:len(errors)-1],
+		}
+	}
+
 	c := a.DB.C(models.USERS)
 	user := models.User{}
 
-	err := c.Find(bson.M{"username": form.Username}).One(&user)
+	err = c.Find(bson.M{"username": form.Username}).One(&user)
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -76,24 +88,32 @@ type Signup struct {
 // Post /api/signup 提交注册
 func (a *Signup) Post() interface{} {
 	var form struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-		Email    string `json:"email"`
+		Username string `json:"username" valid:"required,ascii"`
+		Password string `json:"password" valid:"required,ascii"`
+		Email    string `json:"email" valid:"required,email"`
 	}
 
 	a.ReadJSON(&form)
+
+	result, err := govalidator.ValidateStruct(form)
+
+	if !result {
+		var errors = strings.Split(err.Error(), ";")
+		return map[string]interface{}{
+			"status":   0,
+			"messages": errors[:len(errors)-1],
+		}
+	}
 
 	session, DB := models.GetSessionAndDB()
 	defer session.Close()
 
 	c := DB.C(models.USERS)
 
-	result := models.User{}
-
-	// TODO: 检查邮箱合法性，使用极验验证
+	user := models.User{}
 
 	// 检查用户名
-	err := c.Find(bson.M{"username": form.Username}).One(&result)
+	err = c.Find(bson.M{"username": form.Username}).One(&user)
 	if err == nil {
 		return map[string]interface{}{
 			"status":   0,
@@ -102,7 +122,7 @@ func (a *Signup) Post() interface{} {
 	}
 
 	// 检查邮箱
-	err = c.Find(bson.M{"email": form.Email}).One(&result)
+	err = c.Find(bson.M{"email": form.Email}).One(&user)
 
 	if err == nil {
 		return map[string]interface{}{
@@ -119,7 +139,7 @@ func (a *Signup) Post() interface{} {
 	validateCode := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 	salt := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 	index := status.UserIndex + 1
-	user := &models.User{
+	newUser := &models.User{
 		Id_:          id,
 		Username:     form.Username,
 		Password:     utils.EncryptPassword(form.Password, salt, models.PublicSalt),
@@ -132,7 +152,7 @@ func (a *Signup) Post() interface{} {
 		Index:        index,
 	}
 
-	err = c.Insert(user)
+	err = c.Insert(newUser)
 	if err != nil {
 		return map[string]interface{}{
 			"status":   0,
@@ -145,7 +165,7 @@ func (a *Signup) Post() interface{} {
 	return map[string]interface{}{
 		"status": 1,
 		"cookie": map[string]interface{}{
-			"user": string(utils.Base64Encode([]byte(user.Id_.Hex()))),
+			"user": string(utils.Base64Encode([]byte(newUser.Id_.Hex()))),
 		},
 	}
 }
