@@ -77,6 +77,7 @@ func (b *RenderBase) Render(tmpl string, t ...renders.T) error {
 	ts["goVersion"] = conf.GoVersion
 	ts["version"] = conf.Version
 	ts["user"] = b.User
+	ts["username"] = ""
 	if b.User != nil {
 		ts["username"] = b.User.Username
 	}
