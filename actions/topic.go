@@ -40,17 +40,14 @@ func (a *Topic) list(conditions bson.M, sortBy string) error {
 
 	var nodes []models.Node
 
-	session, DB := models.GetSessionAndDB()
-	defer session.Close()
-
-	c := DB.C(models.NODES)
+	c := a.DB.C(models.NODES)
 	c.Find(bson.M{"topiccount": bson.M{"$gt": 0}}).Sort("-topiccount").All(&nodes)
 
 	var status models.Status
-	c = DB.C(models.STATUS)
+	c = a.DB.C(models.STATUS)
 	c.Find(nil).One(&status)
 
-	c = DB.C(models.CONTENTS)
+	c = a.DB.C(models.CONTENTS)
 
 	var topTopics []models.Topic
 
@@ -78,12 +75,12 @@ func (a *Topic) list(conditions bson.M, sortBy string) error {
 	query.(*mgo.Query).All(&topics)
 
 	var linkExchanges []models.LinkExchange
-	c = DB.C(models.LINK_EXCHANGES)
+	c = a.DB.C(models.LINK_EXCHANGES)
 	c.Find(bson.M{"is_on_home": true}).All(&linkExchanges)
 
 	topics = append(topTopics, topics...)
 
-	c = DB.C(models.USERS)
+	c = a.DB.C(models.USERS)
 
 	var cities []City
 	c.Pipe([]bson.M{bson.M{
@@ -112,7 +109,6 @@ func (a *Topic) list(conditions bson.M, sortBy string) error {
 
 	return a.Render("index.html", renders.T{
 		"title":         "首页",
-		"db":            DB,
 		"nodes":         nodes,
 		"cities":        hotCities,
 		"status":        status,
@@ -175,10 +171,7 @@ func (a *ShowTopic) Get() error {
 		return nil
 	}
 
-	session, DB := models.GetSessionAndDB()
-	defer session.Close()
-
-	c := DB.C(models.CONTENTS)
+	c := a.DB.C(models.CONTENTS)
 
 	topic := models.Topic{}
 
@@ -194,8 +187,7 @@ func (a *ShowTopic) Get() error {
 	return a.Render("topic/show.html", renders.T{
 		"title":    topic.Title,
 		"topic":    topic,
-		"comments": topic.Comments(DB),
-		"db":       DB,
+		"comments": topic.Comments(a.DB),
 	})
 }
 
@@ -240,10 +232,8 @@ type NodeTopics struct {
 // Get /go/:node
 func (a *NodeTopics) Get() error {
 	nodeId := a.Param("node")
-	session, DB := models.GetSessionAndDB()
-	defer session.Close()
 
-	c := DB.C(models.NODES)
+	c := a.DB.C(models.NODES)
 
 	node := models.Node{}
 	err := c.Find(bson.M{"id": nodeId}).One(&node)
@@ -258,7 +248,7 @@ func (a *NodeTopics) Get() error {
 		page = 1
 	}
 
-	c = DB.C(models.CONTENTS)
+	c = a.DB.C(models.CONTENTS)
 
 	pagination := NewPagination(c.Find(bson.M{"nodeid": node.Id_, "content.type": models.TypeTopic}).Sort("-latestrepliedat"), 20)
 
@@ -276,7 +266,6 @@ func (a *NodeTopics) Get() error {
 		"title":      node.Name + "主题列表",
 		"topics":     topics,
 		"node":       node,
-		"db":         DB,
 		"pagination": pagination,
 		"url":        "/go/" + nodeId,
 		"page":       page,
@@ -315,10 +304,7 @@ func (a *SearchTopic) Get() error {
 		markdownConditions = append(markdownConditions, bson.M{"content.markdown": bson.M{"$regex": bson.RegEx{keyword, "i"}}})
 	}
 
-	session, DB := models.GetSessionAndDB()
-	defer session.Close()
-
-	c := DB.C(models.CONTENTS)
+	c := a.DB.C(models.CONTENTS)
 
 	var pagination *Pagination
 
@@ -356,7 +342,6 @@ func (a *SearchTopic) Get() error {
 		"topics":     topics,
 		"pagination": pagination,
 		"page":       page,
-		"db":         DB,
 	})
 }
 

@@ -74,6 +74,7 @@ func (b *RenderBase) Render(tmpl string, t ...renders.T) error {
 		ts = t[0].Merge(renders.T{})
 	}
 
+	ts["db"] = b.DB
 	ts["goVersion"] = conf.GoVersion
 	ts["version"] = conf.Version
 	ts["user"] = b.User
