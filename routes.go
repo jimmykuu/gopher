@@ -20,6 +20,7 @@ func setRoutes(t *tango.Tango) {
 	t.Get("/search", new(actions.SearchTopic))
 	t.Get("/member/:username", new(actions.AccountIndex))
 	t.Get("/", new(actions.LatestReplyTopics))
+	t.Get("/:slug", new(actions.Announcement))
 
 	t.Group("/api", func(g *tango.Group) {
 		g.Use(middlewares.ApiAuthHandler())

@@ -1,11 +1,12 @@
 package models
 
 const (
-	TypeTopic     = 'T'
-	TypeArticle   = 'A'
-	TypeSite      = 'S'
-	TypePackage   = 'P'
-	DefaultAvatar = "gopher_teal.jpg"
+	TypeTopic        = 'T'
+	TypeArticle      = 'A'
+	TypeSite         = 'S'
+	TypePackage      = 'P'
+	TypeAnnouncement = 'N'
+	DefaultAvatar    = "gopher_teal.jpg"
 
 	ADS                 = "ads"
 	ARTICLE_CATEGORIES  = "articlecategories"

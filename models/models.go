@@ -196,7 +196,7 @@ type Node struct {
 	TopicCount  int
 }
 
-// 通用的内容
+// Content 通用的内容
 type Content struct {
 	Id_          bson.ObjectId // 同外层Id_
 	Type         int
@@ -284,7 +284,14 @@ func (c *Content) CanDelete(username string, db *mgo.Database) bool {
 	return user.IsSuperuser
 }
 
-// 主题
+// Announcement 公告
+type Announcement struct {
+	Content
+	Id_  bson.ObjectId `bson:"_id"`
+	Slug string        `bson:"slug"` // 唯一值，通过 url 路径找到该条内容
+}
+
+// Topic 主题
 type Topic struct {
 	Content
 	Id_             bson.ObjectId `bson:"_id"`
