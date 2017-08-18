@@ -19,27 +19,28 @@ func encryptPassword(password, salt string) string {
 	return fmt.Sprintf("%x", md5.Sum([]byte(md5SaltedPassword+PublicSalt)))
 }
 
-var colors = []string{"#FFCC66", "#66CCFF", "#6666FF", "#FF8000", "#0080FF", "#008040", "#008080"}
+// var colors = []string{"#FFCC66", "#66CCFF", "#6666FF", "#FF8000", "#0080FF", "#008040", "#008080"}
 
-//主题id和评论id，用于定位到专门的评论
+// At 主题 id 和评论 id，用于定位到专门的评论
 type At struct {
 	User      string
 	ContentId string
 	CommentId string
 }
 
-//主题id和主题标题
+// Reply 主题 id 和主题标题
 type Reply struct {
 	ContentId  string
 	TopicTitle string
 }
 
-//收藏的话题
+// CollectTopic 收藏的话题
 type CollectTopic struct {
 	TopicId       string
 	TimeCollected time.Time
 }
 
+// Topic 获取收藏对应的话题
 func (ct *CollectTopic) Topic(db *mgo.Database) *Topic {
 	c := db.C(CONTENTS)
 	var topic Topic
@@ -51,7 +52,7 @@ func (ct *CollectTopic) Topic(db *mgo.Database) *Topic {
 	return &topic
 }
 
-// 用户
+// User 用户
 type User struct {
 	Id_             bson.ObjectId `bson:"_id"`
 	Username        string        //如果关联社区帐号，默认使用社区的用户名
@@ -78,15 +79,15 @@ type User struct {
 	ValidateCode    string
 	ResetCode       string
 	Index           int    // 第几个加入社区
-	AccountRef      string //帐号关联的社区
-	IdRef           string //关联社区的帐号
-	LinkRef         string //关联社区的主页链接
-	OrgRef          string //关联社区的组织或者公司
-	PictureRef      string //关联社区的头像链接
-	Provider        string //关联社区名称,比如 github.com
+	AccountRef      string // 帐号关联的社区
+	IdRef           string // 关联社区的帐号
+	LinkRef         string // 关联社区的主页链接
+	OrgRef          string // 关联社区的组织或者公司
+	PictureRef      string // 关联社区的头像链接
+	Provider        string // 关联社区名称,比如 github.com
 }
 
-// 增加最近被@
+// AtBy 增加最近被@
 func (u *User) AtBy(c *mgo.Collection, username, contentIdStr, commentIdStr string) error {
 	if username == "" || contentIdStr == "" || commentIdStr == "" {
 		return errors.New("string parameters can not be empty string")
@@ -109,7 +110,7 @@ func (u *User) AtBy(c *mgo.Collection, username, contentIdStr, commentIdStr stri
 	return nil
 }
 
-// 是否是默认头像
+// IsDefaultAvatar 是否是默认头像
 func (u *User) IsDefaultAvatar(avatar string) bool {
 	filename := u.Avatar
 	if filename == "" {
@@ -119,12 +120,12 @@ func (u *User) IsDefaultAvatar(avatar string) bool {
 	return filename == avatar
 }
 
-// 检查密码是否正确
+// CheckPassword 检查密码是否正确
 func (u User) CheckPassword(password string) bool {
 	return u.Password == encryptPassword(password, u.Salt)
 }
 
-// 头像的图片地址
+// AvatarImgSrc 头像的图片地址
 func (u *User) AvatarImgSrc(size int) string {
 	// 如果没有设置头像，使用从 http://identicon.relucks.org/ 下载的默认头像
 	if u.Avatar == "" {
@@ -134,7 +135,7 @@ func (u *User) AvatarImgSrc(size int) string {
 	return fmt.Sprintf("https://is.golangtc.com/avatar/%s?width=%d&height=%d&mode=fill", u.Avatar, size, size)
 }
 
-// 用户发表的最近10个主题
+// LatestTopics 用户发表的最近10个主题
 func (u *User) LatestTopics(db *mgo.Database) *[]Topic {
 	c := db.C("contents")
 	var topics []Topic
@@ -144,7 +145,7 @@ func (u *User) LatestTopics(db *mgo.Database) *[]Topic {
 	return &topics
 }
 
-// 用户的最近10个回复
+// LatestReplies 用户的最近10个回复
 func (u *User) LatestReplies(db *mgo.Database) *[]Comment {
 	c := db.C("comments")
 	var replies []Comment
@@ -154,7 +155,7 @@ func (u *User) LatestReplies(db *mgo.Database) *[]Comment {
 	return &replies
 }
 
-// 是否被某人关注
+// IsFollowedBy 是否被某人关注
 func (u *User) IsFollowedBy(who string) bool {
 	for _, username := range u.Fans {
 		if username == who {
@@ -165,7 +166,7 @@ func (u *User) IsFollowedBy(who string) bool {
 	return false
 }
 
-// 是否关注某人
+// IsFans 是否关注某人
 func (u *User) IsFans(who string) bool {
 	for _, username := range u.Follow {
 		if username == who {
@@ -176,7 +177,7 @@ func (u *User) IsFans(who string) bool {
 	return false
 }
 
-// getUserByName
+// getUserByName 通过用户名查找用户
 func getUserByName(c *mgo.Collection, name string) (*User, error) {
 	u := new(User)
 	err := c.Find(bson.M{"username": name}).One(u)
@@ -187,7 +188,7 @@ func getUserByName(c *mgo.Collection, name string) (*User, error) {
 
 }
 
-// 节点
+// Node 节点
 type Node struct {
 	Id_         bson.ObjectId `bson:"_id"`
 	Id          string
@@ -211,6 +212,7 @@ type Content struct {
 	UpdatedBy    string
 }
 
+// Creater 创建人
 func (c *Content) Creater(db *mgo.Database) *User {
 	c_ := db.C(USERS)
 	user := User{}
@@ -219,6 +221,7 @@ func (c *Content) Creater(db *mgo.Database) *User {
 	return &user
 }
 
+// Updater 编辑人
 func (c *Content) Updater(db *mgo.Database) *User {
 	if c.UpdatedBy == "" {
 		return nil
@@ -231,6 +234,7 @@ func (c *Content) Updater(db *mgo.Database) *User {
 	return &user
 }
 
+// Comments 获取评论
 func (c *Content) Comments(db *mgo.Database) *[]Comment {
 	c_ := db.C("comments")
 	var comments []Comment
@@ -240,7 +244,7 @@ func (c *Content) Comments(db *mgo.Database) *[]Comment {
 	return &comments
 }
 
-// 只能收藏未收藏过的主题
+// CanCollect 只能收藏未收藏过的主题
 func (c *Content) CanCollect(username string, db *mgo.Database) bool {
 	var user User
 	c_ := db.C(USERS)
@@ -257,7 +261,7 @@ func (c *Content) CanCollect(username string, db *mgo.Database) bool {
 	return !has
 }
 
-// 是否有权编辑主题
+// CanEdit 是否有权编辑主题
 func (c *Content) CanEdit(username string, db *mgo.Database) bool {
 	var user User
 	c_ := db.C(USERS)
@@ -273,6 +277,7 @@ func (c *Content) CanEdit(username string, db *mgo.Database) bool {
 	return c.CreatedBy == user.Id_
 }
 
+// CanDelete 用户是否可删除
 func (c *Content) CanDelete(username string, db *mgo.Database) bool {
 	var user User
 	c_ := db.C("users")
@@ -301,7 +306,7 @@ type Topic struct {
 	IsTop           bool `bson:"is_top"` // 置顶
 }
 
-// 主题所属节点
+// Node 主题所属节点
 func (t *Topic) Node(db *mgo.Database) *Node {
 	c := db.C("nodes")
 	node := Node{}
@@ -310,18 +315,18 @@ func (t *Topic) Node(db *mgo.Database) *Node {
 	return &node
 }
 
-// 主题链接
+// Link 主题链接
 func (t *Topic) Link(id bson.ObjectId) string {
 	return "http://golangtc.com/t/" + id.Hex()
 
 }
 
-//格式化日期
+// Format 格式化日期
 func (t *Topic) Format(tm time.Time) string {
 	return tm.Format(time.RFC822)
 }
 
-// 主题的最近的一个回复
+// LatestReplier 主题的最近的一个回复
 func (t *Topic) LatestReplier(db *mgo.Database) *User {
 	if t.LatestReplierId == "" {
 		return nil
@@ -339,7 +344,7 @@ func (t *Topic) LatestReplier(db *mgo.Database) *User {
 	return &user
 }
 
-// 状态,MongoDB中只存储一个状态
+// Status 状态, MongoDB 中只存储一个状态
 type Status struct {
 	Id_        bson.ObjectId `bson:"_id"`
 	UserCount  int
@@ -348,13 +353,13 @@ type Status struct {
 	UserIndex  int
 }
 
-// 站点分类
+// SiteCategory 站点分类
 type SiteCategory struct {
 	Id_  bson.ObjectId `bson:"_id"`
 	Name string
 }
 
-// 分类下的所有站点
+// Sites 分类下的所有站点
 func (sc *SiteCategory) Sites(db *mgo.Database) *[]Site {
 	var sites []Site
 	c := db.C("contents")
@@ -363,7 +368,7 @@ func (sc *SiteCategory) Sites(db *mgo.Database) *[]Site {
 	return &sites
 }
 
-// 站点
+// Site 站点
 type Site struct {
 	Content
 	Id_        bson.ObjectId `bson:"_id"`
@@ -371,17 +376,18 @@ type Site struct {
 	CategoryId bson.ObjectId
 }
 
+// TrimUrlHttpPrefix 取域名
 func (s *Site) TrimUrlHttpPrefix() string {
 	return strings.TrimPrefix(s.Url, "http://")
 }
 
-// 文章分类
+// ArticleCategory 文章分类
 type ArticleCategory struct {
 	Id_  bson.ObjectId `bson:"_id"`
 	Name string
 }
 
-// 文章
+// Article 文章
 type Article struct {
 	Content
 	Id_            bson.ObjectId `bson:"_id"`
@@ -390,7 +396,7 @@ type Article struct {
 	OriginalUrl    string
 }
 
-// 主题所属类型
+// Category 主题所属类型
 func (a *Article) Category(db *mgo.Database) *ArticleCategory {
 	c := db.C("articlecategories")
 	category := ArticleCategory{}
@@ -399,7 +405,7 @@ func (a *Article) Category(db *mgo.Database) *ArticleCategory {
 	return &category
 }
 
-// 评论
+// Comment 评论
 type Comment struct {
 	Id_       bson.ObjectId `bson:"_id"`
 	Type      int
@@ -412,7 +418,7 @@ type Comment struct {
 	UpdatedAt time.Time
 }
 
-// 评论人
+// Creater 评论人
 func (c *Comment) Creater(db *mgo.Database) *User {
 	c_ := db.C("users")
 	user := User{}
@@ -421,7 +427,7 @@ func (c *Comment) Creater(db *mgo.Database) *User {
 	return &user
 }
 
-// 是否有权删除评论，管理员和作者可删除
+// CanDeleteOrEdit 是否有权删除评论，管理员和作者可删除
 func (c *Comment) CanDeleteOrEdit(username string, db *mgo.Database) bool {
 	if c.Creater(db).Username == username {
 		return true
@@ -436,7 +442,7 @@ func (c *Comment) CanDeleteOrEdit(username string, db *mgo.Database) bool {
 	return user.IsSuperuser
 }
 
-// 主题
+// Topic 主题
 func (c *Comment) Topic(db *mgo.Database) *Topic {
 	// 内容
 	var topic Topic
@@ -445,7 +451,7 @@ func (c *Comment) Topic(db *mgo.Database) *Topic {
 	return &topic
 }
 
-// 包分类
+// PackageCategory 包分类
 type PackageCategory struct {
 	Id_          bson.ObjectId `bson:"_id"`
 	Id           string
@@ -453,6 +459,7 @@ type PackageCategory struct {
 	PackageCount int
 }
 
+// Package 包
 type Package struct {
 	Content
 	Id_        bson.ObjectId `bson:"_id"`
@@ -460,6 +467,7 @@ type Package struct {
 	Url        string
 }
 
+// Category 类目
 func (p *Package) Category(db *mgo.Database) *PackageCategory {
 	category := PackageCategory{}
 	c := db.C("packagecategories")
@@ -468,6 +476,7 @@ func (p *Package) Category(db *mgo.Database) *PackageCategory {
 	return &category
 }
 
+// LinkExchange 友链
 type LinkExchange struct {
 	Id_         bson.ObjectId `bson:"_id"`
 	Name        string        `bson:"name"`
@@ -478,6 +487,7 @@ type LinkExchange struct {
 	IsOnBottom  bool          `bson:"is_on_bottom"` // 是否在底部显示
 }
 
+// AD 广告
 type AD struct {
 	Id_      bson.ObjectId `bson:"_id"`
 	Position string        `bson:"position"`
@@ -486,6 +496,7 @@ type AD struct {
 	Index    int           `bons:"index"`
 }
 
+// Book 书籍
 type Book struct {
 	Id_             bson.ObjectId `bson:"_id"`
 	Title           string        `bson:"title"`
