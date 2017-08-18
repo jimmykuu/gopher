@@ -104,10 +104,7 @@ func (u *User) AtBy(c *mgo.Collection, username, contentIdStr, commentIdStr stri
 
 	u.RecentAts = append(u.RecentAts, At{username, contentIdStr, commentIdStr})
 	err := c.Update(bson.M{"username": u.Username}, bson.M{"$set": bson.M{"recentats": u.RecentAts}})
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 // IsDefaultAvatar 是否是默认头像
