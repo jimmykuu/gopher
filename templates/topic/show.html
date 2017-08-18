@@ -21,10 +21,16 @@
         </div>
       </div>
       {{ .topic.Html }}
-      <div class="ui minimal comments">
+      <div class="ui minimal comments" id="comments">
+        {{ if .comments }}
+        <h3 class="ui dividing header">
+          共 {{ len .comments }} 个回复
+        </h3>
+        {{ end }}
       {{ range $index, $reply := .comments }}
         {{ $commenter := $reply.Creater $.db }}
         <div class="comment" id="comment-{{ .Id_.Hex }}">
+          <span class="ui mini label" style="float: right;"># {{ add $index 1 }}</span>
           <a class="avatar" href="/member/{{ $commenter.Username }}">
             <img src="{{ $commenter.AvatarImgSrc 48 }}">
           </a>
