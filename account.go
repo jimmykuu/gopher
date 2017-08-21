@@ -354,7 +354,7 @@ func signinHandler(handler *Handler) {
 
 	form := wtforms.NewForm(
 		wtforms.NewHiddenField("next", next),
-		wtforms.NewTextField("username", "用户名", "", &wtforms.Required{}),
+		wtforms.NewTextField("username", "用户名/邮箱", "", &wtforms.Required{}),
 		wtforms.NewPasswordField("password", "密码", &wtforms.Required{}),
 		wtforms.NewTextField("geetest_challenge", "challenge", ""),
 		wtforms.NewTextField("geetest_validate", "validate", ""),
@@ -378,7 +378,12 @@ func signinHandler(handler *Handler) {
 			c := handler.DB.C(USERS)
 			user := User{}
 
-			err := c.Find(bson.M{"username": form.Value("username")}).One(&user)
+			var err error
+			if strings.Contains(form.Value("username"), "@") {
+				err = c.Find(bson.M{"email": form.Value("username")}).One(&user)
+			} else {
+				err = c.Find(bson.M{"username": form.Value("username")}).One(&user)
+			}
 
 			if err != nil {
 				form.AddError("username", "该用户不存在")
