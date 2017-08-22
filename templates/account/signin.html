@@ -48,7 +48,7 @@
       e.preventDefault();
 
       if (!this.state.username) {
-        this.setState({errors: ["请输入用户名"]});
+        this.setState({errors: ["请输入用户名或邮箱"]});
         return;
       }
 
@@ -93,7 +93,7 @@
             <div className="field">
               <div className="ui left icon input">
                 <i className="user icon"></i>
-                <input type="text" onChange={this.handleUsernameChange} placeholder="用户名" />
+                <input type="text" onChange={this.handleUsernameChange} placeholder="用户名/邮箱" />
               </div>
             </div>
             <div className="field">

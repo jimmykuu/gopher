@@ -43,7 +43,11 @@ func (a *Signin) Post() interface{} {
 	c := a.DB.C(models.USERS)
 	user := models.User{}
 
-	err = c.Find(bson.M{"username": form.Username}).One(&user)
+	if strings.Contains(form.Username, "@") {
+		err = c.Find(bson.M{"email": form.Username}).One(&user)
+	} else {
+		err = c.Find(bson.M{"username": form.Username}).One(&user)
+	}
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -56,7 +60,7 @@ func (a *Signin) Post() interface{} {
 	if !user.CheckPassword(form.Password) {
 		return map[string]interface{}{
 			"status":   0,
-			"messages": []string{"密码和用户名不匹配"},
+			"messages": []string{"密码和用户名/邮箱不匹配"},
 		}
 	}
 

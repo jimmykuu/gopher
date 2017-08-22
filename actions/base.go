@@ -44,6 +44,10 @@ func (b *RenderBase) Before() {
 		return
 	}
 
+	if !bson.IsObjectIdHex(string(userID2)) {
+		return
+	}
+
 	session, DB := models.GetSessionAndDB()
 	defer session.Close()
 
