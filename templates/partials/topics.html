@@ -6,7 +6,7 @@
     <a class="ui{{ if eq .CommentCount 0 }} blue{{ end }} ribbon label" href="/t/{{ .Id_.Hex }}#comments">{{ .CommentCount }} 回复</a>
     <a href="/t/{{ .Id_.Hex }}" class="header" style="font-size: 16px;">{{ truncate .Title 40 "..." }}</a>
     <div class="meta">
-      <a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
+      <a class="ui mini label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
       <a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
       {{ if .CommentCount }}
       {{ $latestReplier := .LatestReplier $.db }}

@@ -1,13 +1,34 @@
 {{ template "base.html" . }}
 {{ define "body" }}
 {{ $topic := asserttopic .topic }}
+{{ $creater := $topic.Creater .db }}
+{{ $node := $topic.Node .db }}
+<style type="text/css">
+  .metadata {
+    margin-bottom: 2em;
+    font-weight: 400;
+    color: #cccccc;
+  }
+  .metadata span {
+    margin-right: 1em;
+  }
+</style>
 <div class="ui grid">
   <div class="twelve wide column">
-    <div class="ui segment">
-      <h1 class="ui header">{{ .topic.Title }}</h1>
-      <div class="ui divider"></div>
-      <div class="ui text icon menu">
-        <div class="right menu">
+    <div style="position: absolute; left: 0; top: 28px; width: 80px;">
+      <a href="/member/{{ $creater.Username }}">
+        <img src="{{ $creater.AvatarImgSrc 80 }}" class="ui tiny circular image" alt="{{ $creater.Username }}">
+      </a>
+    </div>
+    <div class="ui segment" style="margin-left: 80px;">
+      <h1 class="ui dividing header">{{ .topic.Title }}</h1>
+      <div class="metadata">
+        <span><a href="/member/{{$creater.Username}}">{{ $creater.Username }}</a></span>
+        <span><time datetime="{{ formatdatetime .topic.CreatedAt }}" class="date">{{ formattime .topic.CreatedAt }}</time>发布</span>
+        <span>{{ .topic.Hits }}浏览</span>
+        <a class="ui mini label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a>
+
+        <div class="ui compact mini right floated icon menu">
           {{ if $topic.CanEdit $.username $.db }}
             <a class="item" title="删除" href="/t/{{ $topic.Id_.Hex }}/edit">
               <i class="edit icon"></i>
@@ -20,7 +41,9 @@
           {{ end }}
         </div>
       </div>
-      {{ .topic.Html }}
+      <div class="content">
+        {{ .topic.Html }}
+      </div>
       <div class="ui minimal comments" id="comments">
         {{ if .comments }}
         <h3 class="ui dividing header">
