@@ -1,17 +1,31 @@
 {{ template "base.html" . }}
 {{ define "body" }}
-<div class="ui grid">
-  <div class="twelve wide column">
-    <div class="ui doubling eight column grid">
-      {{ range .members }}
-        <div class="column" style="text-align: center;">
-          <a href="/member/{{ .Username }}">
-          <img src="{{ .AvatarImgSrc 32 }}"><br>
-          {{ .Username }}
+<div class="ui segment">
+  <h4 class="ui header dash_header">新加入会员</h4>
+  <div class="ui grid">
+    <div class="twelve wide column">
+      <div class="ui doubling eight column grid">
+        {{ range .members }}
+          <a class="column" href="/member/{{ .Username }}">
+            <img class="ui rounded image" src="{{ .AvatarImgSrc 48 }}">
+            <span>{{ .Username }}</span>
           </a>
-        </div>
-      {{ end }}
+        {{ end }}
+      </div>
     </div>
   </div>
 </div>
+<style type="text/css">
+  a.column {
+    text-align: center;
+  }
+
+  a.column img.ui.image {
+    display: inline;
+  }
+
+  a.column span {
+    display: block;
+  }
+</style>
 {{ end }}
