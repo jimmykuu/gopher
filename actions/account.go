@@ -58,3 +58,18 @@ func (a *AccountIndex) Get() error {
 		"member": user,
 	})
 }
+
+type ListUsers struct {
+	RenderBase
+}
+
+func (l *ListUsers) Get() error {
+	var members []models.User
+	c := l.DB.C(models.USERS)
+	c.Find(nil).Sort("-joinedat").Limit(40).All(&members)
+
+	return l.Render("account/members.html", renders.T{
+		"title":   "最新会员",
+		"members": members,
+	})
+}

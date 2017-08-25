@@ -1,0 +1,17 @@
+{{ template "base.html" . }}
+{{ define "body" }}
+<div class="ui grid">
+  <div class="twelve wide column">
+    <div class="ui doubling eight column grid">
+      {{ range .members }}
+        <div class="column" style="text-align: center;">
+          <a href="/member/{{ .Username }}">
+          <img src="{{ .AvatarImgSrc 32 }}"><br>
+          {{ .Username }}
+          </a>
+        </div>
+      {{ end }}
+    </div>
+  </div>
+</div>
+{{ end }}
