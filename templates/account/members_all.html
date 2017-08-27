@@ -1,4 +1,5 @@
-{{ template "base.html" . }} {{ define "body" }}
+{{ template "base.html" . }} 
+{{ define "body" }}
 
 <style type="text/css">
   a.column {
@@ -12,14 +13,10 @@
   a.column span {
     display: block;
   }
-  
-  a.all-members {
-    float: right;
-  }
 </style>
 
 <div class="ui segment">
-  <h4 class="ui header dash_header">新加入会员</h4>
+  <h4 class="ui header dash_header">所有会员</h4>
   <div class="ui grid">
     <div class="twelve wide column">
       <div class="ui doubling eight column grid">
@@ -31,13 +28,12 @@
         {{ end }}
       </div>
 
-      <div class="ui right aligned grid">
+      <div class="ui center aligned grid">
         <div class="column">
-          <a href="/members/all" class="all-members">所有会员</a>
+          {{ template "partials/pagination.html" . }}
         </div>
       </div>
     </div>
   </div>
 </div>
-
 {{ end }}

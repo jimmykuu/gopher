@@ -3,6 +3,7 @@ package actions
 import (
 	"github.com/jimmykuu/gopher/models"
 	"github.com/tango-contrib/renders"
+	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -64,8 +65,13 @@ type ListUsers struct {
 	RenderBase
 }
 
+// LatestUsers 最新会员
+type LatestUsers struct {
+	ListUsers
+}
+
 // Get /members
-func (a *ListUsers) Get() error {
+func (a *LatestUsers) Get() error {
 	var members []models.User
 	c := a.DB.C(models.USERS)
 	c.Find(nil).Sort("-joinedat").Limit(40).All(&members)
@@ -73,5 +79,38 @@ func (a *ListUsers) Get() error {
 	return a.Render("account/members.html", renders.T{
 		"title":   "最新会员",
 		"members": members,
+	})
+}
+
+// AllUsers 所有会员带分页
+type AllUsers struct {
+	ListUsers
+}
+
+// Get /members/all?p=1
+func (a *ListUsers) Get() error {
+	page := a.FormInt("p", 1)
+	if page <= 0 {
+		page = 1
+	}
+
+	var members []models.User
+	c := a.DB.C(models.USERS)
+
+	pagination := NewPagination(c.Find(nil).Sort("joinedat"), 40)
+
+	query, err := pagination.Page(page)
+	if err != nil {
+		return err
+	}
+
+	query.(*mgo.Query).All(&members)
+
+	return a.Render("account/members_all.html", renders.T{
+		"title":      "所有会员",
+		"members":    members,
+		"pagination": pagination,
+		"page":       page,
+		"url":        "/members/all",
 	})
 }
