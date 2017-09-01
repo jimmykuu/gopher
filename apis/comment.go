@@ -55,6 +55,13 @@ func (a *Comment) Get() interface{} {
 
 // Post /comments 发表评论
 func (a *Comment) Post() interface{} {
+	if !a.IsLogin {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "请先登录",
+		}
+	}
+
 	if a.User.IsBlocked {
 		return map[string]interface{}{
 			"status":  0,
