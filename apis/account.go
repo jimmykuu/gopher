@@ -166,8 +166,19 @@ func (a *Signup) Post() interface{} {
 
 	c2.Update(nil, bson.M{"$inc": bson.M{"userindex": 1, "usercount": 1}})
 
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id": newUser.Id_.Hex(),
+		"exp":     time.Now().AddDate(1, 0, 0).Unix(),
+	})
+
+	tokenString, err := token.SignedString([]byte(JWT_KEY))
+	if err != nil {
+		panic(err)
+	}
+
 	return map[string]interface{}{
 		"status": 1,
+		"token":  tokenString,
 		"cookie": map[string]interface{}{
 			"user": string(utils.Base64Encode([]byte(newUser.Id_.Hex()))),
 		},
