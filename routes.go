@@ -31,6 +31,8 @@ func setRoutes(t *tango.Tango) {
 
 	t.Get("/:slug", new(actions.Announcement))
 
+	t.Get("/user_center", new(actions.UserCenter))
+
 	t.Group("/api", func(g *tango.Group) {
 		g.Use(middlewares.ApiAuthHandler())
 		g.Post("/signin", new(apis.Signin))

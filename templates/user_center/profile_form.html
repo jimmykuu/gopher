@@ -1,0 +1,76 @@
+<style>
+  .hr-dividing {
+    padding: 10px 0;
+  }
+</style>
+<div id="form">
+</div>
+<script type="text/babel">
+  const username = "{{ .user.Username }}";
+
+  class ProfileForm extends React.Component {
+    constructor(props) {
+      super(props);
+
+      this.state = {
+      }
+    }
+
+    render() {
+      let formClassName = "ui form";
+      let fieldClassName = "inline field";
+      let labelClassName = "two wide field";
+      let inputClassName = "twelve wide field";
+      let submitClassName = "ui primary submit button";
+      let hrClassName = "hr-dividing";
+
+      if (this.state.loading) {
+      }
+
+      if (this.state.submiting) {
+      }
+
+      return (<null>
+          <div className={formClassName}>
+              <div className={fieldClassName}>
+                <label className={labelClassName}>用户名</label>
+                <input placeholder="Read Only" type="text" value={username} className={inputClassName} disabled="true" tabindex="-1" />
+              </div>
+              <div className={fieldClassName}>
+                <label className={labelClassName}>E-mail</label>
+                <input type="email" className={inputClassName} placeholder="E-mail" />
+              </div>
+              <div className={fieldClassName}>
+                <label className={labelClassName}>个人网站</label>
+                <input type="text" className={inputClassName} placeholder="个人网站" />
+              </div>
+              <div className={fieldClassName}>
+                <label className={labelClassName}>所在地</label>
+                <input type="text" className={inputClassName} placeholder="所在地" />
+              </div>
+              <div className={fieldClassName}>
+                <label className={labelClassName}>签名</label>
+                <input type="text" className={inputClassName} placeholder="签名" />
+              </div>
+              <div className={fieldClassName}>
+                <label className={labelClassName}>个人简介</label>
+                <input type="text" className={inputClassName} placeholder="个人简介" />
+              </div>
+              
+              <div className={hrClassName}></div>
+
+              <div className={fieldClassName}>
+                <label className={labelClassName}>Github 用户名</label>
+                <input type="text" className={inputClassName} placeholder="Github 用户名" />
+              </div>
+              <div className={fieldClassName}>
+                <label className={labelClassName}>新浪微博</label>
+                <input type="text" className={inputClassName} placeholder="新浪微博" />
+              </div>
+            </div>
+      </null>);
+    }
+  }
+
+  ReactDOM.render(<ProfileForm />, document.getElementById('form'));
+</script>

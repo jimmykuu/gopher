@@ -1,0 +1,37 @@
+{{ template "base.html" .}}
+{{ define "body" }}
+<style>
+  label {
+    text-align: right;
+  }
+</style>
+
+<div class="ui grid">
+  <div class="four wide column">
+    <div class="ui card">
+      <div class="image">
+        <img src="http://77fkk5.com1.z0.glb.clouddn.com/avatar/4dbf2ca317f611e48587ee3b9c14156b.jpg?imageView2/2/w/300/h/300/q/100">
+      </div>
+      <div class="content">
+        <div class="header">{{ .user.Username }}</div>
+        <div class="meta">
+          <span class="date">第 {{ .user.Index }} 号会员 / {{ .user.JoinedAt.Format "2006-01-02" }} 加入</span>
+        </div>
+
+        <div class="ui link list">
+          <div class="active item">用户中心</div>
+          <a class="item">个人信息</a>
+          <a class="item">选择语言</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="twelve wide column">
+    <div class="ui segment">
+      {{ template "user_center/profile_form.html" .}}
+    </div>
+  </div>
+</div>
+
+{{ end }}
