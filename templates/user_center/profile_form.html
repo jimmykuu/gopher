@@ -3,8 +3,10 @@
     padding: 10px 0;
   }
 </style>
+
 <div id="form">
 </div>
+
 <script type="text/babel">
   const username = "{{ .user.Username }}";
 
@@ -13,7 +15,75 @@
       super(props);
 
       this.state = {
+        email: "{{ .user.Email }}",
+        website: "{{ .user.Website }}",
+        location: "{{ .user.Location }}",
+        tagline: "{{ .user.Tagline }}",
+        bio: "{{ .user.Bio }}",
+        gitHubUsername: "{{ .user.GitHubUsername }}",
+        weibo: "{{ .user.Weibo }}",
       }
+    }
+    
+    handleEmailChange = (e) => {
+      this.setState({
+        email: e.target.value
+      })
+    }
+    handleWebsiteChange = (e) => {
+      this.setState({
+        website: e.target.value
+      })
+    }
+    handleLocationChange = (e) => {
+      this.setState({
+        location: e.target.value
+      })
+    }
+    handleTaglineChange = (e) => {
+      this.setState({
+        tagline: e.target.value
+      })
+    }
+    handleBioChange = (e) => {
+      this.setState({
+        bio: e.target.value
+      })
+    }
+    handleGitHubUsernameChange = (e) => {
+      this.setState({
+        gitHubUsername: e.target.value
+      })
+    }
+    handleWeiboChange = (e) => {
+      this.setState({
+        weibo: e.target.value
+      })
+    }
+
+    handleSubmit = (e) => {
+      e.preventDefault();
+      this.setState({ submiting: true });
+      let url = '/api/user_center/profile';
+      let method;
+
+      put(url, {
+        email: this.state.email,
+        website: this.state.website,
+        location: this.state.location,
+        tagline: this.state.tagline,
+        bio: this.state.bio,
+        github_username: this.state.gitHubUsername,
+        weibo: this.state.weibo,
+      }).then((data) => {
+        if (data.status) {
+          window.location.href = "/";
+        } else {
+          this.setState({
+            submiting: fasle
+          });
+        }
+      });
     }
 
     render() {
@@ -23,6 +93,7 @@
       let inputClassName = "twelve wide field";
       let submitClassName = "ui primary submit button";
       let hrClassName = "hr-dividing";
+      let submitBtnClassName = "ui primary button";
 
       if (this.state.loading) {
       }
@@ -31,43 +102,47 @@
       }
 
       return (<null>
+        <form className={formClassName} onSubmit={this.handleSubmit}>
           <div className={formClassName}>
-              <div className={fieldClassName}>
-                <label className={labelClassName}>用户名</label>
-                <input placeholder="Read Only" type="text" value={username} className={inputClassName} disabled="true" tabindex="-1" />
-              </div>
-              <div className={fieldClassName}>
-                <label className={labelClassName}>E-mail</label>
-                <input type="email" className={inputClassName} placeholder="E-mail" />
-              </div>
-              <div className={fieldClassName}>
-                <label className={labelClassName}>个人网站</label>
-                <input type="text" className={inputClassName} placeholder="个人网站" />
-              </div>
-              <div className={fieldClassName}>
-                <label className={labelClassName}>所在地</label>
-                <input type="text" className={inputClassName} placeholder="所在地" />
-              </div>
-              <div className={fieldClassName}>
-                <label className={labelClassName}>签名</label>
-                <input type="text" className={inputClassName} placeholder="签名" />
-              </div>
-              <div className={fieldClassName}>
-                <label className={labelClassName}>个人简介</label>
-                <input type="text" className={inputClassName} placeholder="个人简介" />
-              </div>
-              
-              <div className={hrClassName}></div>
-
-              <div className={fieldClassName}>
-                <label className={labelClassName}>Github 用户名</label>
-                <input type="text" className={inputClassName} placeholder="Github 用户名" />
-              </div>
-              <div className={fieldClassName}>
-                <label className={labelClassName}>新浪微博</label>
-                <input type="text" className={inputClassName} placeholder="新浪微博" />
-              </div>
+            <div className={fieldClassName}>
+              <label className={labelClassName}>用户名</label>
+              <input placeholder="Read Only" type="text" value={username} className={inputClassName} disabled="true" tabindex="-1" />
             </div>
+            <div className={fieldClassName}>
+              <label className={labelClassName}>E-mail</label>
+              <input type="email" className={inputClassName} placeholder="E-mail" value={this.state.email} onChange={this.handleEmailChange} />
+            </div>
+            <div className={fieldClassName}>
+              <label className={labelClassName}>个人网站</label>
+              <input type="text" className={inputClassName} placeholder="个人网站" value={this.state.website} onChange={this.handleWebsiteChange} />
+            </div>
+            <div className={fieldClassName}>
+              <label className={labelClassName}>所在地</label>
+              <input type="text" className={inputClassName} placeholder="所在地" value={this.state.location} onChange={this.handleLocationChange} />
+            </div>
+            <div className={fieldClassName}>
+              <label className={labelClassName}>签名</label>
+              <input type="text" className={inputClassName} placeholder="签名" value={this.state.tagline} onChange={this.handleTaglineChange} />
+            </div>
+            <div className={fieldClassName}>
+              <label className={labelClassName}>个人简介</label>
+              <input type="text" className={inputClassName} placeholder="个人简介" value={this.state.bio} onChange={this.handleBioChange} />
+            </div>
+            
+            <div className={hrClassName}></div>
+
+            <div className={fieldClassName}>
+              <label className={labelClassName}>Github 用户名</label>
+              <input type="text" className={inputClassName} placeholder="Github 用户名" value={this.state.gitHubUsername} onChange={this.handleGitHubUsernameChange} />
+            </div>
+            <div className={fieldClassName}>
+              <label className={labelClassName}>新浪微博</label>
+              <input type="text" className={inputClassName} placeholder="新浪微博" value={this.state.weibo} onChange={this.handleWeiboChange} />
+            </div>
+
+            <button type="submit" className={submitBtnClassName} >保存</button>
+          </div>
+        </form>
       </null>);
     }
   }

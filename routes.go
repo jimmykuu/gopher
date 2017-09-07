@@ -50,5 +50,7 @@ func setRoutes(t *tango.Tango) {
 		g.Delete("/comments/:commentID", new(apis.Comment))
 		g.Get("/comments/:commentID", new(apis.Comment))
 		g.Put("/comments/:commentID", new(apis.Comment))
+
+		g.Put("/user_center/profile", new(apis.UserCenter))
 	})
 }
