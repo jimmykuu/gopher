@@ -15,6 +15,8 @@
       super(props);
 
       this.state = {
+        submiting: false,
+
         email: "{{ .user.Email }}",
         website: "{{ .user.Website }}",
         location: "{{ .user.Location }}",
@@ -24,7 +26,7 @@
         weibo: "{{ .user.Weibo }}",
       }
     }
-    
+
     handleEmailChange = (e) => {
       this.setState({
         email: e.target.value
@@ -65,7 +67,6 @@
       e.preventDefault();
       this.setState({ submiting: true });
       let url = '/api/user_center/profile';
-      let method;
 
       put(url, {
         email: this.state.email,
@@ -75,14 +76,14 @@
         bio: this.state.bio,
         github_username: this.state.gitHubUsername,
         weibo: this.state.weibo,
+
       }).then((data) => {
         if (data.status) {
-          window.location.href = "/";
+          alert("保存成功");
         } else {
-          this.setState({
-            submiting: fasle
-          });
+          alert(data.message);
         }
+        this.setState({ submiting: false });
       });
     }
 
@@ -94,11 +95,9 @@
       let submitClassName = "ui primary submit button";
       let hrClassName = "hr-dividing";
       let submitBtnClassName = "ui primary button";
-
-      if (this.state.loading) {
-      }
-
+      
       if (this.state.submiting) {
+        submitBtnClassName += " loading disabled";
       }
 
       return (<null>
@@ -139,8 +138,10 @@
               <label className={labelClassName}>新浪微博</label>
               <input type="text" className={inputClassName} placeholder="新浪微博" value={this.state.weibo} onChange={this.handleWeiboChange} />
             </div>
-
-            <button type="submit" className={submitBtnClassName} >保存</button>
+            <div className={fieldClassName}>
+              <label className={labelClassName}></label>
+              <button type="submit" className={submitBtnClassName}>保存</button>
+            </div>
           </div>
         </form>
       </null>);

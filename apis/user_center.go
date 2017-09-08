@@ -31,7 +31,7 @@ func (a *UserCenter) Put() interface{} {
 	var form ProfileForm
 	a.ReadJSON(&form)
 
-	c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{
+	err := c.Update(bson.M{"_id": user.Id_}, bson.M{"$set": bson.M{
 		"email":          form.Email,
 		"website":        form.Website,
 		"location":       form.Location,
@@ -40,6 +40,13 @@ func (a *UserCenter) Put() interface{} {
 		"githubusername": form.GithubUsername,
 		"weibo":          form.Weibo,
 	}})
+
+	if err != nil {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "保存个人信息出错",
+		}
+	}
 
 	return map[string]interface{}{
 		"status": 1,
