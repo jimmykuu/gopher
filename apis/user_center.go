@@ -6,13 +6,13 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-// UserCenter 评论
+// UserCenter 用户中心
 type UserCenter struct {
 	Base
 	binding.Binder
 }
 
-// TopicForm 主题表单，新建和编辑共用
+// ProfileForm 个人信息表单
 type ProfileForm struct {
 	Email          string `json:"email"`
 	Website        string `json:"website"`
@@ -23,8 +23,12 @@ type ProfileForm struct {
 	Weibo          string `json:"weibo"`
 }
 
+type UserProfile struct {
+	UserCenter
+}
+
 // Put /api/user_center/profile 编辑个人信息
-func (a *UserCenter) Put() interface{} {
+func (a *UserProfile) Put() interface{} {
 	user := a.User
 	c := a.DB.C(models.USERS)
 
@@ -51,4 +55,12 @@ func (a *UserCenter) Put() interface{} {
 	return map[string]interface{}{
 		"status": 1,
 	}
+}
+
+type UserChangePassword struct {
+	UserCenter
+}
+
+func (a *UserChangePassword) Put() error {
+	return nil
 }

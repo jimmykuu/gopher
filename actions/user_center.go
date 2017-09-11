@@ -11,5 +11,19 @@ type UserCenter struct {
 
 // Get /user_center
 func (a *UserCenter) Get() error {
-	return a.Render("user_center/index.html", renders.T{})
+	return a.Render("user_center/index.html", renders.T{
+		"active": "profile",
+	})
+}
+
+// UserChangePassword 用户修改密码
+type UserChangePassword struct {
+	UserCenter
+}
+
+// Get /user_center/change_password
+func (a *UserChangePassword) Get() error {
+	return a.Render("user_center/index.html", renders.T{
+		"active": "changePassword",
+	})
 }

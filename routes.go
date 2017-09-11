@@ -32,6 +32,7 @@ func setRoutes(t *tango.Tango) {
 	t.Get("/:slug", new(actions.Announcement))
 
 	t.Get("/user_center", new(actions.UserCenter))
+	t.Get("/user_center/change_password", new(actions.UserChangePassword))
 
 	t.Group("/api", func(g *tango.Group) {
 		g.Use(middlewares.ApiAuthHandler())
@@ -52,5 +53,6 @@ func setRoutes(t *tango.Tango) {
 		g.Put("/comments/:commentID", new(apis.Comment))
 
 		g.Put("/user_center/profile", new(apis.UserCenter))
+		g.Put("/user_center/change_password", new(apis.UserChangePassword))
 	})
 }

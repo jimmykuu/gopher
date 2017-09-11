@@ -19,8 +19,9 @@
         </div>
 
         <div class="ui link list">
-          <a class="active item">个人信息</a>
-          <a class="item">选择语言</a>
+          <a href="/user_center/profile" class="{{ if eq .active "profile"}}active{{ end }} item">个人信息</a>
+          <a href="/user_center/change_password" class="{{ if eq .active "changePassword"}}active{{ end }} item">修改密码</a>
+          <a href="/user_center/favorites" class="{{ if eq .active "favorites"}}active{{ end }} item">我的收藏夹</a>
         </div>
       </div>
     </div>
@@ -28,7 +29,11 @@
 
   <div class="twelve wide column">
     <div class="ui segment">
-      {{ template "user_center/profile_form.html" .}}
+      {{ if eq .active "profile"}}
+        {{ template "user_center/profile_form.html" .}}
+      {{ else if eq .active "changePassword"}}
+        {{ template "user_center/change_password.html" .}}
+      {{end}}
     </div>
   </div>
 </div>
