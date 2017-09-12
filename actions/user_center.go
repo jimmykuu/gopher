@@ -27,3 +27,15 @@ func (a *UserChangePassword) Get() error {
 		"active": "changePassword",
 	})
 }
+
+// UserFavorite 用户修改密码
+type UserFavorite struct {
+	UserCenter
+}
+
+// Get /user_center/favorites
+func (a *UserFavorite) Get() error {
+	return a.Render("user_center/index.html", renders.T{
+		"active": "favorites",
+	})
+}

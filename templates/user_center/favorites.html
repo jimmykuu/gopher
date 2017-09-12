@@ -1,0 +1,19 @@
+{{ template "base.html" . }} 
+{{ define "body" }}
+
+<div class="ui segment">
+  <h4 class="ui header dash_header">我的收藏</h4>
+  <div class="ui grid">
+    <div class="twelve wide column">
+      <div class="ui doubling eight column grid">
+      </div>
+
+      <div class="ui center aligned grid">
+        <div class="column">
+          {{ template "partials/pagination.html" . }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}
