@@ -6,7 +6,7 @@ import (
 
 // UserCenter 显示和修改用户信息
 type UserCenter struct {
-	RenderBase
+	AuthRenderBase
 }
 
 // Get /user_center
