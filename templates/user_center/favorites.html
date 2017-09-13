@@ -1,16 +1,23 @@
-
-<div class="ui segment">
-  <h4 class="ui header dash_header">我的收藏</h4>
-  <div class="ui grid">
-    <div class="twelve wide column">
-      <div class="ui doubling eight column grid">
-      </div>
-
-      <div class="ui center aligned grid">
-        <div class="column">
-          {{ template "partials/pagination.html" . }}
+<h4 class="ui header dash_header">我的收藏</h4>
+<div class="ui divided items">
+  {{ range .collects }} 
+    {{ $t := .Topic $.db }} 
+    {{ $creater := $t.Creater $.db }} 
+    {{ $n := $t.Node $.db }}
+    <div class="item">
+      <div class="content">
+        <a href="/t/{{ .TopicId }}" class="ui small header">{{ $t.Title }}</a>
+        <div class="description">
+          <div class="meta">
+            <a href="/go/{{ $n.Id }}" class="item">
+              <div class="ui teal horizontal label">{{ $n.Name }}</div> •
+            </a>
+            <a href="/member/{{ $creater.Username }}"><strong>{{ $creater.Username }}</strong></a> •
+            <time datetime="{{ formatdatetime  $t.CreatedAt }}" title="{{ formatdatetime  $t.CreatedAt }}">{{ formattime  $t.CreatedAt }}</time>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  {{ end }}
 </div>
+{{ template "partials/pagination.html" . }}

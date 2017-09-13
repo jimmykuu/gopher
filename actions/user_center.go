@@ -35,7 +35,19 @@ type UserFavorite struct {
 
 // Get /user_center/favorites
 func (a *UserFavorite) Get() error {
+	page := a.FormInt("p", 1)
+	if page <= 0 {
+		page = 1
+	}
+
+	pagination := NewPagination(a.User.TopicsCollected, PerPage)
+	collects, err := pagination.Page(page)
+	if err != nil {
+		return err
+	}
+
 	return a.Render("user_center/index.html", renders.T{
-		"active": "favorites",
+		"active":   "favorites",
+		"collects": collects,
 	})
 }

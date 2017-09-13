@@ -33,6 +33,7 @@ func setRoutes(t *tango.Tango) {
 
 	t.Get("/user_center", new(actions.UserCenter))
 	t.Get("/user_center/change_password", new(actions.UserChangePassword))
+	t.Get("/user_center/favorites", new(actions.UserFavorite))
 
 	t.Group("/api", func(g *tango.Group) {
 		g.Use(middlewares.ApiAuthHandler())
