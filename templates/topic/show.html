@@ -30,7 +30,7 @@
 
         <div class="ui compact mini right floated icon menu">
           {{ if $topic.CanEdit $.username $.db }}
-            <a class="item" title="删除" href="/t/{{ $topic.Id_.Hex }}/edit">
+            <a class="item" title="编辑" href="/t/{{ $topic.Id_.Hex }}/edit">
               <i class="edit icon"></i>
             </a>
           {{ end }}
