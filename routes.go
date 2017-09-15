@@ -15,6 +15,7 @@ func setRoutes(t *tango.Tango) {
 	t.Get("/topic/new", new(actions.NewTopic))
 	t.Get("/t/:topicID/edit", new(actions.EditTopic))
 	t.Get("/t/:topicID", new(actions.ShowTopic))
+	t.Get("/t/:topicID/collect", new(actions.CollectTopic))
 
 	t.Get("/", new(actions.LatestReplyTopics))
 	t.Get("/go/:node", new(actions.NodeTopics))

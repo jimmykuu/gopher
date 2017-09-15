@@ -345,6 +345,17 @@ func (a *SearchTopic) Get() error {
 	})
 }
 
+// CollectTopic 收藏主题
+type CollectTopic struct {
+	AuthRenderBase
+}
+
+// Get /t/:topicId/collect
+func (a *CollectTopic) Get() {
+	// TODO: 收藏/反收藏
+	a.Redirect("/user_center/favorites")
+}
+
 /*
 // URL: /t/{topicId}/collect/
 // 将主题收藏至当前用户的收藏夹

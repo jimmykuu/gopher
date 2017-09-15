@@ -249,12 +249,15 @@ func (c *Content) CanCollect(username string, db *mgo.Database) bool {
 	if err != nil {
 		return false
 	}
+
 	has := false
 	for _, v := range user.TopicsCollected {
 		if v.TopicId == c.Id_.Hex() {
 			has = true
+			break
 		}
 	}
+
 	return !has
 }
 

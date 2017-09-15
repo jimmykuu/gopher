@@ -15,11 +15,11 @@
 </style>
 <div class="ui grid">
   <div class="twelve wide column">
-    <div style="position: absolute; left: 0; top: 28px; width: 80px;">
+    <!-- <div style="position: absolute; left: 0; top: 28px; width: 80px;">
       <a href="/member/{{ $creater.Username }}">
         <img src="{{ $creater.AvatarImgSrc 80 }}" class="ui tiny circular image" alt="{{ $creater.Username }}">
       </a>
-    </div>
+    </div> -->
     <div class="ui segment" style="margin-left: 80px;">
       <h1 class="ui dividing header">{{ .topic.Title }}</h1>
       <div class="metadata">
@@ -39,7 +39,20 @@
               <i class="remove icon"></i>
             </a>
           {{ end }}
+          
+          {{ if $.user }}
+            {{ if $topic.CanCollect $.user.Username $.db }}
+            <a class="item" title="收藏" href="/t/{{$topic.Id_.Hex}}/collect">
+              <i class="empty star icon"></i>
+            </a>
+            {{ else }}
+            <a class="item" title="取消收藏" href="/t/{{$topic.Id_.Hex}}/collect">
+              <i class="star icon"></i>
+            </a>
+            {{ end }}
+          {{ end }}
         </div>
+
       </div>
       <div class="content">
         {{ .topic.Html }}
