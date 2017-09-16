@@ -32,7 +32,7 @@ func setRoutes(t *tango.Tango) {
 
 	t.Get("/:slug", new(actions.Announcement))
 
-	t.Get("/user_center", new(actions.UserCenter))
+	t.Get("/user_center/profile", new(actions.UserCenter))
 	t.Get("/user_center/change_password", new(actions.UserChangePassword))
 	t.Get("/user_center/favorites", new(actions.UserFavorite))
 
