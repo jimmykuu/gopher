@@ -28,31 +28,31 @@
         <span>{{ .topic.Hits }}浏览</span>
         <a class="ui mini label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a>
 
+        {{ if $.user }}
         <div class="ui compact mini right floated icon menu">
           {{ if $topic.CanEdit $.username $.db }}
-            <a class="item" title="编辑" href="/t/{{ $topic.Id_.Hex }}/edit">
-              <i class="edit icon"></i>
-            </a>
+          <a class="item" title="编辑" href="/t/{{ $topic.Id_.Hex }}/edit">
+            <i class="edit icon"></i>
+          </a>
           {{ end }}
           {{ if $topic.CanDelete $.username $.db }}
-            <a class="item" title="删除" href="javascript:deleteTopic();">
-              <i class="remove icon"></i>
-            </a>
+          <a class="item" title="删除" href="javascript:deleteTopic();">
+            <i class="remove icon"></i>
+          </a>
           {{ end }}
-          
-          {{ if $.user }}
-            {{ if $topic.CanCollect $.user.Username $.db }}
-            <a class="item" title="收藏" href="/t/{{$topic.Id_.Hex}}/collect">
-              <i class="empty star icon"></i>
-            </a>
-            {{ else }}
-            <a class="item" title="取消收藏" href="/t/{{$topic.Id_.Hex}}/collect">
-              <i class="star icon"></i>
-            </a>
-            {{ end }}
+        
+          {{ if $topic.CanCollect $.user.Username $.db }}
+          <a class="item" title="收藏" href="/t/{{$topic.Id_.Hex}}/collect">
+            <i class="empty star icon"></i>
+          </a>
+          {{ else }}
+          <a class="item" title="取消收藏" href="/t/{{$topic.Id_.Hex}}/collect">
+            <i class="star icon"></i>
+          </a>
           {{ end }}
         </div>
-
+        {{ end }}
+        
       </div>
       <div class="content">
         {{ .topic.Html }}
