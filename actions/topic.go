@@ -3,6 +3,7 @@ package actions
 import (
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/tango-contrib/renders"
 	"gopkg.in/mgo.v2"
@@ -351,9 +352,41 @@ type CollectTopic struct {
 }
 
 // Get /t/:topicId/collect
-func (a *CollectTopic) Get() {
-	// TODO: 收藏/反收藏
+func (a *CollectTopic) Get() error {
+	topicID := a.Param("topicID")
+	if !bson.IsObjectIdHex(topicID) {
+		a.NotFound("参数错误")
+		return nil
+	}
+
+	user := a.User
+	var collected bool
+	for _, v := range user.TopicsCollected {
+		if v.TopicId == topicID {
+			collected = true
+			break
+		}
+	}
+
+	if !collected {
+		t := time.Now()
+		collectTopic := models.CollectTopic{
+			TopicId:       topicID,
+			TimeCollected: t,
+		}
+		user.TopicsCollected = append(user.TopicsCollected, collectTopic)
+
+		c := a.DB.C(models.USERS)
+		err := c.UpdateId(user.Id_, bson.M{"$set": bson.M{"topicscollected": user.TopicsCollected}})
+
+		if err != nil {
+			a.NotFound(err.Error())
+			return nil
+		}
+	}
+
 	a.Redirect("/user_center/favorites")
+	return nil
 }
 
 /*
