@@ -667,3 +667,23 @@ func blockAccountHandler(handler *Handler) {
 
 	handler.Redirect("/member/" + username)
 }
+
+// URL: /account/{username}/delete_all_topics
+// 删除账户的所有主题
+func deleteAccountAllTopicsHandler(handler *Handler) {
+	username := mux.Vars(handler.Request)["username"]
+
+	user := User{}
+	c := handler.DB.C(USERS)
+	err := c.Find(bson.M{"username": username}).One(&user)
+
+	if err != nil {
+		message(handler, "没有该会员", "没有该会员", "error")
+		return
+	}
+
+	c = handler.DB.C(CONTENTS)
+	c.RemoveAll(bson.M{"content.createdby": user.Id_})
+
+	handler.Redirect("/member/" + username)
+}

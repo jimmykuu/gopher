@@ -16,7 +16,8 @@
 			<span class="label label-danger">已禁言</span>
 	  {{else}}
 			<a href="/account/{{$user.Username}}/block" class="btn btn-danger btn-xs" title="禁言"><i class="fa fa-hand-paper-o"></i></a>
-	  {{end}}
+		{{end}}
+		<a href="/account/{{$user.Username}}/delete_all_topics" class="btn btn-danger btn-xs" title="删除所有主题"><i class="fa fa-trash-o"></i></a>
 	{{end}}
   {{if $user.Tagline}}
   <h3><small>{{$user.Tagline}}</small></h3>
