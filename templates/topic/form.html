@@ -21,8 +21,9 @@
         {{$title.RenderInput `class="form-control"` `rows="4"` `placeholder="请输入主题标题，注意文字长度，如果标题能够表达完整内容，正文可以为空"`}}
       </div>
 	  <div class="form-group">
-		<div id="editormd">
+		  <div id="editormd">
           <textarea style="display:none;">{{.form.Value "editormd-markdown-doc"}}</textarea>
+      </div>
     </div>
     <div class="form-group{{if .captchaErr}} has-error{{end}}">
       <label class="col-lg-2 control-label">验证码</label>
@@ -33,7 +34,6 @@
         {{end}}
       </div>
     </div>
-	  </div>
 
 	  <input type="submit" id="submit" class="btn btn-primary" value="{{.title}}">
 	</fieldset>
