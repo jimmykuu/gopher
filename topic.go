@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/jimmykuu/gt-go-sdk"
 	"github.com/jimmykuu/wtforms"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -160,15 +161,29 @@ func newTopicHandler(handler *Handler) {
 		choices = append(choices, wtforms.Choice{Value: node.Id_.Hex(), Label: node.Name})
 	}
 
+	geeTest := geetest.NewGeeTest(Config.GtCaptchaId, Config.GtPrivateKey)
+
 	form := wtforms.NewForm(
 		wtforms.NewSelectField("node", "节点", choices, nodeId, &wtforms.Required{}),
 		wtforms.NewTextArea("title", "标题", "", &wtforms.Required{}),
 		wtforms.NewTextArea("editormd-markdown-doc", "内容", ""),
 		wtforms.NewTextArea("editormd-html-code", "HTML", ""),
+		wtforms.NewTextField("geetest_challenge", "challenge", ""),
+		wtforms.NewTextField("geetest_validate", "validate", ""),
+		wtforms.NewTextField("geetest_seccode", "seccode", ""),
 	)
 
 	if handler.Request.Method == "POST" {
 		if form.Validate(handler.Request) {
+			if !geeTest.Validate(form.Value("geetest_challenge"), form.Value("geetest_validate"), form.Value("geetest_seccode")) {
+				handler.renderTemplate("topic/form.html", BASE, map[string]interface{}{
+					"form":       form,
+					"gtUrl":      geeTest.EmbedURL(),
+					"captchaErr": true,
+				})
+				return
+			}
+
 			c = handler.DB.C(CONTENTS)
 
 			id_ := bson.NewObjectId()
@@ -214,6 +229,7 @@ func newTopicHandler(handler *Handler) {
 		"title":  "新建",
 		"action": "/topic/new",
 		"active": "topic",
+		"gtUrl":  geeTest.EmbedURL(),
 	})
 }
 
@@ -248,15 +264,29 @@ func editTopicHandler(handler *Handler) {
 		choices = append(choices, wtforms.Choice{Value: node.Id_.Hex(), Label: node.Name})
 	}
 
+	geeTest := geetest.NewGeeTest(Config.GtCaptchaId, Config.GtPrivateKey)
+
 	form := wtforms.NewForm(
 		wtforms.NewSelectField("node", "节点", choices, topic.NodeId.Hex(), &wtforms.Required{}),
 		wtforms.NewTextArea("title", "标题", topic.Title, &wtforms.Required{}),
 		wtforms.NewTextArea("editormd-markdown-doc", "内容", topic.Markdown),
 		wtforms.NewTextArea("editormd-html-code", "html", ""),
+		wtforms.NewTextField("geetest_challenge", "challenge", ""),
+		wtforms.NewTextField("geetest_validate", "validate", ""),
+		wtforms.NewTextField("geetest_seccode", "seccode", ""),
 	)
 
 	if handler.Request.Method == "POST" {
 		if form.Validate(handler.Request) {
+			if !geeTest.Validate(form.Value("geetest_challenge"), form.Value("geetest_validate"), form.Value("geetest_seccode")) {
+				handler.renderTemplate("topic/form.html", BASE, map[string]interface{}{
+					"form":       form,
+					"gtUrl":      geeTest.EmbedURL(),
+					"captchaErr": true,
+				})
+				return
+			}
+
 			nodeId := bson.ObjectIdHex(form.Value("node"))
 			c = handler.DB.C(CONTENTS)
 			c.Update(bson.M{"_id": topic.Id_}, bson.M{"$set": bson.M{
@@ -285,6 +315,7 @@ func editTopicHandler(handler *Handler) {
 		"title":  "编辑",
 		"action": "/t/" + topicId + "/edit",
 		"active": "topic",
+		"gtUrl":  geeTest.EmbedURL(),
 	})
 }
 
