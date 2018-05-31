@@ -149,7 +149,7 @@ func newTopicHandler(handler *Handler) {
 		return
 	}
 
-	nodeId := mux.Vars(handler.Request)["node"]
+	nodeID := mux.Vars(handler.Request)["node"]
 
 	var nodes []Node
 	c := handler.DB.C(NODES)
@@ -164,7 +164,7 @@ func newTopicHandler(handler *Handler) {
 	geeTest := geetest.NewGeeTest(Config.GtCaptchaId, Config.GtPrivateKey)
 
 	form := wtforms.NewForm(
-		wtforms.NewSelectField("node", "节点", choices, nodeId, &wtforms.Required{}),
+		wtforms.NewSelectField("node", "节点", choices, nodeID, &wtforms.Required{}),
 		wtforms.NewTextArea("title", "标题", "", &wtforms.Required{}),
 		wtforms.NewTextArea("editormd-markdown-doc", "内容", ""),
 		wtforms.NewTextArea("editormd-html-code", "HTML", ""),
@@ -178,20 +178,34 @@ func newTopicHandler(handler *Handler) {
 			if !geeTest.Validate(form.Value("geetest_challenge"), form.Value("geetest_validate"), form.Value("geetest_seccode")) {
 				handler.renderTemplate("topic/form.html", BASE, map[string]interface{}{
 					"form":       form,
+					"title":      "新建",
 					"gtUrl":      geeTest.EmbedURL(),
 					"captchaErr": true,
 				})
 				return
 			}
 
+			now := time.Now()
+
 			c = handler.DB.C(CONTENTS)
+
+			// 查找最新的一篇帖子，限制发帖间隔
+			var latestTopic Topic
+			err := c.Find(bson.M{"content.createdby": user.Id_}).Sort("-content.createdat").Limit(1).One(&latestTopic)
+			if err == nil {
+				fmt.Println("lastTopic", latestTopic.Content.CreatedAt)
+
+				if !latestTopic.Content.CreatedAt.Add(time.Minute * 30).Before(now) {
+					// 半小时内只能发一帖
+					message(handler, "发表主题过于频繁", "发表主题过于频繁，不能发布该主题", "error")
+					return
+				}
+			}
 
 			id_ := bson.NewObjectId()
 
-			now := time.Now()
-
-			nodeId := bson.ObjectIdHex(form.Value("node"))
-			err := c.Insert(&Topic{
+			nodeID := bson.ObjectIdHex(form.Value("node"))
+			err = c.Insert(&Topic{
 				Content: Content{
 					Id_:       id_,
 					Type:      TypeTopic,
@@ -202,7 +216,7 @@ func newTopicHandler(handler *Handler) {
 					CreatedAt: now,
 				},
 				Id_:             id_,
-				NodeId:          nodeId,
+				NodeId:          nodeID,
 				LatestRepliedAt: now,
 			})
 
@@ -213,7 +227,7 @@ func newTopicHandler(handler *Handler) {
 
 			// 增加Node.TopicCount
 			c = handler.DB.C(NODES)
-			c.Update(bson.M{"_id": nodeId}, bson.M{"$inc": bson.M{"topiccount": 1}})
+			c.Update(bson.M{"_id": nodeID}, bson.M{"$inc": bson.M{"topiccount": 1}})
 
 			c = handler.DB.C(STATUS)
 
