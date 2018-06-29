@@ -234,3 +234,53 @@ func (a *Topic) Put() interface{} {
 		"topic_id": topicID,
 	}
 }
+
+// CollectTopic 收藏主题
+type CollectTopic struct {
+	Base
+	binding.Binder
+}
+
+// Get /t/:topicID/collect 收藏主题
+func (ct *CollectTopic) Get() interface{} {
+	topicID := ct.Param("topicID")
+
+	if !bson.IsObjectIdHex(topicID) {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "参数错误",
+		}
+	}
+
+	user := ct.User
+	var collected bool
+	for _, v := range user.TopicsCollected {
+		if v.TopicId == topicID {
+			collected = true
+			break
+		}
+	}
+
+	if !collected {
+		t := time.Now()
+		collectTopic := models.CollectTopic{
+			TopicId:       topicID,
+			TimeCollected: t,
+		}
+		user.TopicsCollected = append(user.TopicsCollected, collectTopic)
+
+		c := ct.DB.C(models.USERS)
+		err := c.UpdateId(user.Id_, bson.M{"$set": bson.M{"topicscollected": user.TopicsCollected}})
+
+		if err != nil {
+			return map[string]interface{}{
+				"status":  0,
+				"message": "用户不存在",
+			}
+		}
+	}
+
+	return map[string]interface{}{
+		"status": 1,
+	}
+}

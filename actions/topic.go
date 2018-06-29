@@ -3,7 +3,6 @@ package actions
 import (
 	"sort"
 	"strings"
-	"time"
 
 	"github.com/tango-contrib/renders"
 	"gopkg.in/mgo.v2"
@@ -351,100 +350,7 @@ type CollectTopic struct {
 	AuthRenderBase
 }
 
-// Get /t/:topicId/collect
-func (a *CollectTopic) Get() error {
-	topicID := a.Param("topicID")
-	if !bson.IsObjectIdHex(topicID) {
-		a.NotFound("参数错误")
-		return nil
-	}
-
-	user := a.User
-	var collected bool
-	for _, v := range user.TopicsCollected {
-		if v.TopicId == topicID {
-			collected = true
-			break
-		}
-	}
-
-	if !collected {
-		t := time.Now()
-		collectTopic := models.CollectTopic{
-			TopicId:       topicID,
-			TimeCollected: t,
-		}
-		user.TopicsCollected = append(user.TopicsCollected, collectTopic)
-
-		c := a.DB.C(models.USERS)
-		err := c.UpdateId(user.Id_, bson.M{"$set": bson.M{"topicscollected": user.TopicsCollected}})
-
-		if err != nil {
-			a.NotFound(err.Error())
-			return nil
-		}
-	}
-
-	a.Redirect("/user_center/favorites")
-	return nil
-}
-
 /*
-// URL: /t/{topicId}/collect/
-// 将主题收藏至当前用户的收藏夹
-func collectTopicHandler(handler *Handler) {
-	vars := mux.Vars(handler.Request)
-	topicId := vars["topicId"]
-	t := time.Now()
-	user, _ := currentUser(handler)
-	for _, v := range user.TopicsCollected {
-		if v.TopicId == topicId {
-			return
-		}
-	}
-	user.TopicsCollected = append(user.TopicsCollected, CollectTopic{topicId, t})
-	c := handler.DB.C(USERS)
-	c.UpdateId(user.Id_, bson.M{"$set": bson.M{"topicscollected": user.TopicsCollected}})
-	http.Redirect(handler.ResponseWriter, handler.Request, "/member/"+user.Username+"/collect?p=1", http.StatusFound)
-}
-
-// URL: /t/{topicId}/delete
-// 删除主题
-func deleteTopicHandler(handler *Handler) {
-	vars := mux.Vars(handler.Request)
-	topicId := bson.ObjectIdHex(vars["topicId"])
-
-	c := handler.DB.C(CONTENTS)
-
-	topic := Topic{}
-
-	err := c.Find(bson.M{"_id": topicId, "content.type": TypeTopic}).One(&topic)
-
-	if err != nil {
-		fmt.Println("deleteTopic:", err.Error())
-		return
-	}
-
-	// Node统计数减一
-	c = handler.DB.C(NODES)
-	c.Update(bson.M{"_id": topic.NodeId}, bson.M{"$inc": bson.M{"topiccount": -1}})
-
-	c = handler.DB.C(STATUS)
-	// 统计的主题数减一，减去统计的回复数减去该主题的回复数
-	c.Update(nil, bson.M{"$inc": bson.M{"topiccount": -1, "replycount": -topic.CommentCount}})
-
-	//删除评论
-	c = handler.DB.C(COMMENTS)
-	if topic.CommentCount > 0 {
-		c.Remove(bson.M{"contentid": topic.Id_})
-	}
-
-	// 删除Topic记录
-	c = handler.DB.C(CONTENTS)
-	c.Remove(bson.M{"_id": topic.Id_})
-
-	http.Redirect(handler.ResponseWriter, handler.Request, "/", http.StatusFound)
-}
 
 // 列出置顶的主题
 func listTopTopicsHandler(handler *Handler) {

@@ -36,23 +36,23 @@
           </a>
           {{ end }}
           {{ if $topic.CanDelete $.username $.db }}
-          <a class="item" title="删除" href="javascript:deleteTopic();">
+          <a class="item" title="删除" href="javascript:deleteTopic('{{ $topic.Id_.Hex }}');">
             <i class="remove icon"></i>
           </a>
           {{ end }}
-        
+
           {{ if $topic.CanCollect $.user.Username $.db }}
-          <a class="item" title="收藏" href="/t/{{$topic.Id_.Hex}}/collect">
-            <i class="empty star icon"></i>
+          <a class="item" title="收藏" href="javascript:collectTopic('{{ $topic.Id_.Hex }}');">
+            <i class="outline star icon"></i>
           </a>
           {{ else }}
-          <a class="item" title="取消收藏" href="javascript:;">
+          <a class="item" title="取消收藏" href="javascript:cancelCollectTopic('{{ $topic.Id_.Hex }}');">
             <i class="yellow star icon"></i>
           </a>
           {{ end }}
         </div>
         {{ end }}
-        
+
       </div>
       <div class="content">
         {{ .topic.Html }}
@@ -108,7 +108,7 @@
     simpleLineBreaks: true
   });
 
-  function deleteTopic() {
+  function deleteTopic(topicId) {
     if (confirm('确认删除该主题吗？')) {
       delete_('/api/topic/' + topicId).then((data) => {
         if (data.status) {
@@ -118,6 +118,18 @@
         }
       });
     }
+  }
+
+  function collectTopic(topicId) {
+    console.log(topicId);
+
+    get('/api/topic/' + topicId + '/collect').then((data) => {
+      if (data.status) {
+        console.log(data);
+      } else {
+        alter(data.message);
+      }
+    });
   }
 
   class NewCommentForm extends React.Component {

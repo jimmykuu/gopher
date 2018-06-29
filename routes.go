@@ -47,6 +47,8 @@ func setRoutes(t *tango.Tango) {
 		g.Get("/topics/:topicID", new(apis.Topic))
 		g.Delete("/topic/:topicID", new(apis.Topic))
 
+		g.Get("/topic/:topicID/collect", new(apis.CollectTopic))
+
 		g.Post("/upload/image", new(apis.UploadImage))
 
 		g.Post("/comments", new(apis.Comment))
