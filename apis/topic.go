@@ -242,8 +242,8 @@ type CollectTopic struct {
 }
 
 // Get /t/:topicID/collect 收藏主题
-func (ct *CollectTopic) Get() interface{} {
-	topicID := ct.Param("topicID")
+func (a *CollectTopic) Get() interface{} {
+	topicID := a.Param("topicID")
 
 	if !bson.IsObjectIdHex(topicID) {
 		return map[string]interface{}{
@@ -252,7 +252,7 @@ func (ct *CollectTopic) Get() interface{} {
 		}
 	}
 
-	user := ct.User
+	user := a.User
 	var collected bool
 	for _, v := range user.TopicsCollected {
 		if v.TopicId == topicID {
@@ -269,7 +269,7 @@ func (ct *CollectTopic) Get() interface{} {
 		}
 		user.TopicsCollected = append(user.TopicsCollected, collectTopic)
 
-		c := ct.DB.C(models.USERS)
+		c := a.DB.C(models.USERS)
 		err := c.UpdateId(user.Id_, bson.M{"$set": bson.M{"topicscollected": user.TopicsCollected}})
 
 		if err != nil {
@@ -277,6 +277,46 @@ func (ct *CollectTopic) Get() interface{} {
 				"status":  0,
 				"message": "用户不存在",
 			}
+		}
+	}
+
+	return map[string]interface{}{
+		"status": 1,
+	}
+}
+
+// CancelCollectTopic 取消收藏主题
+type CancelCollectTopic struct {
+	Base
+	binding.Binder
+}
+
+// Get /t/:topicID/cancel_collect 取消收藏主题
+func (a *CancelCollectTopic) Get() interface{} {
+	topicID := a.Param("topicID")
+
+	if !bson.IsObjectIdHex(topicID) {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "参数错误",
+		}
+	}
+
+	user := a.User
+	var newCollectedTopics = []models.CollectTopic{}
+	for _, v := range user.TopicsCollected {
+		if v.TopicId != topicID {
+			newCollectedTopics = append(newCollectedTopics, v)
+		}
+	}
+
+	c := a.DB.C(models.USERS)
+	err := c.UpdateId(user.Id_, bson.M{"$set": bson.M{"topicscollected": newCollectedTopics}})
+
+	if err != nil {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "用户不存在",
 		}
 	}
 

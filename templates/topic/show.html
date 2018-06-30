@@ -29,28 +29,7 @@
         <a class="ui mini label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a>
 
         {{ if $.user }}
-        <div class="ui compact mini right floated icon menu">
-          {{ if $topic.CanEdit $.username $.db }}
-          <a class="item" title="编辑" href="/t/{{ $topic.Id_.Hex }}/edit">
-            <i class="edit icon"></i>
-          </a>
-          {{ end }}
-          {{ if $topic.CanDelete $.username $.db }}
-          <a class="item" title="删除" href="javascript:deleteTopic('{{ $topic.Id_.Hex }}');">
-            <i class="remove icon"></i>
-          </a>
-          {{ end }}
-
-          {{ if $topic.CanCollect $.user.Username $.db }}
-          <a class="item" title="收藏" href="javascript:collectTopic('{{ $topic.Id_.Hex }}');">
-            <i class="outline star icon"></i>
-          </a>
-          {{ else }}
-          <a class="item" title="取消收藏" href="javascript:cancelCollectTopic('{{ $topic.Id_.Hex }}');">
-            <i class="yellow star icon"></i>
-          </a>
-          {{ end }}
-        </div>
+          <div id="toolbar"></div>
         {{ end }}
 
       </div>
@@ -109,6 +88,7 @@
   });
 
   function deleteTopic(topicId) {
+    return;
     if (confirm('确认删除该主题吗？')) {
       delete_('/api/topic/' + topicId).then((data) => {
         if (data.status) {
@@ -118,18 +98,6 @@
         }
       });
     }
-  }
-
-  function collectTopic(topicId) {
-    console.log(topicId);
-
-    get('/api/topic/' + topicId + '/collect').then((data) => {
-      if (data.status) {
-        console.log(data);
-      } else {
-        alter(data.message);
-      }
-    });
   }
 
   class NewCommentForm extends React.Component {
@@ -172,7 +140,7 @@
       let submitClassName = "ui primary submit button";
 
       if (this.state.submiting) {
-        submitClassName += "  loading disabled";
+        submitClassName += " loading disabled";
       }
 
       return (<form className="ui reply form" onSubmit={this.handleSubmit}>
@@ -273,5 +241,15 @@
       ReactDOM.render(<EditCommentForm commentId={commentId} />, document.getElementById('comment-content-' + commentId));
     }
   }
+
+  {{ if $.user }}
+    ReactDOM.render(
+      <Toolbar
+        canEdit="{{ $topic.CanEdit $.username $.db }}"
+        canDelete="{{ $topic.CanDelete $.username $.db }}"
+        canCollect="{{ $topic.CanCollect $.user.Username $.db }}"
+        topicId="{{ $topic.Id_.Hex }}"
+      />, document.getElementById('toolbar'));
+  {{ end }}
 </script>
 {{ end }}
