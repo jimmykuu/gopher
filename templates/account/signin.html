@@ -27,8 +27,11 @@
       this.state = {
         username: '',
         password: '',
+        geetest_challenge: '',
+        geetest_validate: '',
+        geetest_seccode: '',
         submiting: false,
-        errors: []
+        errors: [],
       };
     }
 
@@ -57,8 +60,30 @@
         return;
       }
 
+      if (!this.state.geetest_challenge) {
+        alert('请先完成验证！');
+        return;
+      }
+
       this.setState({submiting: true});
 
+      post('/api/signin', {
+        username: this.state.username,
+        password: this.state.password,
+        geetest_challenge: this.state.geetest_challenge,
+        geetest_validate: this.state.geetest_validate,
+        geetest_seccode: this.state.geetest_seccode
+      }).then((data) => {
+        if (data.status === 0) {
+          this.setState({errors: data.messages, submiting: false});
+        } else {
+          window.localStorage.setItem('token', data.token);
+          Cookies.set('user', data.cookie.user, { expores: 365 });
+
+          window.location.href = next;
+        }
+      });
+      /*
       fetch('/api/signin', {
         method: 'POST',
         body: JSON.stringify({username: this.state.username, password: this.state.password})
@@ -74,9 +99,15 @@
           }
         });
       });
+      */
+    }
+
+    handlerGeetest = (result) => {
+      this.setState({...result});
     }
 
     render() {
+      const { username, password } = this.state;
       let formClass = "ui large form";
       if (this.state.errors) {
         formClass += " error";
@@ -102,12 +133,20 @@
                 <input type="password" onChange={this.handlePasswordChange} placeholder="密码" />
               </div>
             </div>
+            <div className="field">
+              <Geetest2
+                gt="{{.gt}}"
+                challenge="{{.challenge}}"
+                success="{{.success}}"
+                onSuccess={this.handlerGeetest}
+              />
+            </div>
             {this.state.errors.length > 0 ?
               <div className="ui error message">
                 <ul className="list">
                   {
                     this.state.errors.map(function (item) {
-                          return <li>{item}</li>
+                      return <li>{item}</li>
                     })
                   }
                 </ul>

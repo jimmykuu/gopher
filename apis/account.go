@@ -2,9 +2,11 @@ package apis
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 	"time"
 
+	"github.com/Youngyezi/geetest"
 	"github.com/asaskevich/govalidator"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/pborman/uuid"
@@ -24,11 +26,19 @@ type Signin struct {
 // Post /api/signin 提交登录
 func (a *Signin) Post() interface{} {
 	var form struct {
-		Username string `json:"username" valid:"required,ascii"`
-		Password string `json:"password" valid:"required,ascii"`
+		Username         string `json:"username" valid:"required,ascii"`
+		Password         string `json:"password" valid:"required,ascii"`
+		GeetestChallenge string `json:"geetest_challenge" valid:"required,ascii"`
+		GeetestValidate  string `json:"geetest_validate" valid:"required,ascii"`
+		GeetestCeccode   string `json:"geetest_seccode" valid:"required,ascii"`
 	}
 
 	a.ReadJSON(&form)
+
+	g := geetest.New("dd619ec5bcbf142e85b8d31e83d29ad5", "700a48ec7a6f15637ab007433eabf4de")
+	p := url.Values{
+		"client": {"web"},
+	}
 
 	result, err := govalidator.ValidateStruct(form)
 
@@ -37,6 +47,15 @@ func (a *Signin) Post() interface{} {
 		return map[string]interface{}{
 			"status":   0,
 			"messages": errors[:len(errors)-1],
+		}
+	}
+
+	success := g.SuccessValidate(form.GeetestChallenge, form.GeetestValidate, form.GeetestCeccode, p)
+
+	if success == 0 {
+		return map[string]interface{}{
+			"status":  0,
+			"message": []string{"验证码错误"},
 		}
 	}
 

@@ -27,9 +27,6 @@ func setRoutes(t *tango.Tango) {
 	t.Get("/members", new(actions.LatestUsers))
 	t.Get("/members/all", new(actions.AllUsers))
 
-	t.Get("/download", new(actions.DownloadGo))
-	t.Get("/download/liteide", new(actions.DownloadLiteIDE))
-
 	t.Get("/:slug", new(actions.Announcement))
 
 	t.Get("/user_center/profile", new(actions.UserCenter))
