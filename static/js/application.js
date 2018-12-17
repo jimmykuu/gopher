@@ -38,21 +38,6 @@ function createEditorMd(divId, submitId, markdown) {
 	return editor;
 }
 
-function aliyunA(data) {
-    var banner = eval(data['data'][0]['content'])[0];
-    $('#aliyun-a').replaceWith('<a href="' + banner['url'] + '" target="_blank"><img src="' + banner['img'] + '" style="max-width: 100%;"></a>');
-}
-
-function aliyunC(data) {
-    var banner = eval(data['data'][0]['content'])[0];
-    $('#aliyun-c').replaceWith('<a href="' + banner['url'] + '" target="_blank"><img src="' + banner['img'] + '" width="100%"></a>');
-}
-
-function aliyunD(data) {
-    var banner = eval(data['data'][0]['content'])[0];
-    $('#aliyun-d').replaceWith('<a href="' + banner['url'] + '" target="_blank"><img src="' + banner['img'] + '"></a>');
-}
-
 $(document).ready(function(){
 	editormd.urls.atLinkBase = "/member/";
 
