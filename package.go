@@ -39,6 +39,11 @@ func packagesHandler(handler *Handler) {
 func newPackageHandler(handler *Handler) {
 	user, _ := currentUser(handler)
 
+	if user.IsBlocked {
+		handler.Redirect("/user/blocked")
+		return
+	}
+
 	var categories []PackageCategory
 
 	c := handler.DB.C(PACKAGE_CATEGORIES)

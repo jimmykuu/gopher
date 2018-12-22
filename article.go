@@ -19,6 +19,13 @@ import (
 // URL: /article/new
 // 新建文章
 func newArticleHandler(handler *Handler) {
+	user, _ := currentUser(handler)
+
+	if user.IsBlocked {
+		handler.Redirect("/user/blocked")
+		return
+	}
+
 	var categories []ArticleCategory
 	c := handler.DB.C(ARTICLE_CATEGORIES)
 	c.Find(nil).All(&categories)
@@ -38,8 +45,6 @@ func newArticleHandler(handler *Handler) {
 	)
 
 	if handler.Request.Method == "POST" && form.Validate(handler.Request) {
-		user, _ := currentUser(handler)
-
 		c = handler.DB.C(CONTENTS)
 
 		id_ := bson.NewObjectId()
