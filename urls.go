@@ -82,10 +82,6 @@ var routes = []Route{
 	{"/admin/ad/new", Administrator, adminNewAdHandler},
 	{"/admin/ad/{id:[0-9a-f]{24}}/delete", Administrator, adminDeleteAdHandler},
 	{"/admin/ad/{id:[0-9a-f]{24}}/edit", Administrator, adminEditAdHandler},
-	{"/admin/book/new", Administrator, newBookHandler},
-	{"/admin/books", Administrator, listBooksHandler},
-	{"/admin/book/{id}/edit", Administrator, editBookHandler},
-	{"/admin/book/{id}/delete", Administrator, deleteBookHandler},
 	{"/admin/top/topics", Administrator, listTopTopicsHandler},
 	{"/admin/topic/{id:[0-9a-f]{24}}/cancel/top", Administrator, cancelTopTopicHandler},
 	{"/admin/topic/{id:[0-9a-f]{24}}/set/top", Administrator, setTopTopicHandler},
@@ -157,9 +153,6 @@ var routes = []Route{
 	{"/p/{packageId}", Everyone, showPackageHandler},
 	{"/p/{packageId}/edit", Authenticated, editPackageHandler},
 	{"/p/{packageId}/delete", Administrator, deletePackageHandler},
-
-	{"/books", Everyone, booksHandler},
-	{"/book/{id}", Everyone, showBookHandler},
 
 	{"/upload/image", Authenticated, uploadImageHandler},
 
