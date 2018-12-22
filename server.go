@@ -11,7 +11,6 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
-	"golang.org/x/net/websocket"
 )
 
 var (
@@ -63,8 +62,6 @@ func handlerFun(route Route) http.HandlerFunc {
 
 func StartServer() {
 	//http.Handle("/static/", http.FileServer(http.Dir(".")))
-	http.Handle("/get/package", websocket.Handler(getPackageHandler))
-
 	r := mux.NewRouter()
 	for _, route := range routes {
 		r.HandleFunc(route.URL, handlerFun(route))

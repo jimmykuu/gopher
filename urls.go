@@ -153,7 +153,6 @@ var routes = []Route{
 
 	{"/packages", Everyone, packagesHandler},
 	{"/package/new", Authenticated, newPackageHandler},
-	{"/package", Everyone, getPackageUrlHandler},
 	{"/packages/{categoryId}", Everyone, listPackagesHandler},
 	{"/p/{packageId}", Everyone, showPackageHandler},
 	{"/p/{packageId}/edit", Authenticated, editPackageHandler},
@@ -161,10 +160,6 @@ var routes = []Route{
 
 	{"/books", Everyone, booksHandler},
 	{"/book/{id}", Everyone, showBookHandler},
-
-	{"/download", Everyone, downloadGoHandler},
-	{"/download/package", Everyone, downloadPackagesHandler},
-	{"/download/liteide", Everyone, downloadLiteIDEHandler},
 
 	{"/upload/image", Authenticated, uploadImageHandler},
 
