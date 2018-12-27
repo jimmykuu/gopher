@@ -60,6 +60,16 @@
 				{{end}}
 		</div>
 	</header>
+	{{$ads := ads "top" .db}}
+	{{range $ads}}
+	<div class="container" style="margin-bottom: 8px;">
+	  <div class="row">
+		<div class="col-md-12">
+		  {{html .Code}}
+		</div>
+	  </div>
+	</div>
+	{{end}}
 	<div class="container">
         <nav class="navbar navbar-default" role="navigation" id="navbar">
 			<div class="navbar-header">
