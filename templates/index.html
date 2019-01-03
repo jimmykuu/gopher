@@ -4,17 +4,13 @@
   <div class="twelve wide column">
     <div class="ui secondary pointing menu">
       <div class="header item">话题首页</div>
-      <div class="right menu">
-        <a class="item{{ if eq .active "LatestReply" }} active{{ end }}" href="/">
-          最近回复
-        </a>
-        <a class="item{{ if eq .active "Latest" }} active{{ end }}" href="/topics/latest">
-          最近发布
-        </a>
-        <a class="item{{ if eq .active "NoReply" }} active{{ end }}" href="/topics/no_reply">
-          尚未回复
-        </a>
-        <div id="search-input"></div>
+      <div id="search-input"></div>
+      <div class="tabs is-right">
+        <ul>
+          <li{{ if eq .active "LatestReply" }} class="is-active"{{ end }}><a>最近回复</a></li>
+          <li{{ if eq .active "Latest" }} class="is-active"{{ end }}><a>最近发布</a></li>
+          <li{{ if eq .active "Latest" }} class="is-active"{{ end }}><a>尚未回复</a></li>
+        </ul>
       </div>
     </div>
     <div class="ui items segment">

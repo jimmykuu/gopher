@@ -11,34 +11,22 @@
 }
 </style>
 
-<div class="ui pagination mini menu">
-  {{ range $pages }}
-    {{ if . }}
-      <a class="item{{ if eq $current . }} active{{ end }}" href="{{ $.pagination.Url $.url . }}">{{ . }}</a>
-    {{ else }}
-      <a class="item" href="javascript:;">...</a>
-    {{ end }}
-  {{ end }}
-
+<div class="pagination" role="navigation">
   {{ $prev := $.pagination.Prev }}
-  {{ if $prev }}
-    <a class="item" href="{{ $.pagination.Url $.url $prev }}">
-      <i class="angle left icon"></i>
-    </a>
-  {{ else }}
-    <a class="disabled item" href="javascript:;">
-      <i class="angle left icon"></i>
-    </a>
-  {{ end }}
+  <a class="pagination-previous" href="{{ $.pagination.Url $.url $prev }}"{{if not $prev}} disabled{{ end }}>&lt;</a>
 
   {{ $next := $.pagination.Next }}
-  {{ if $next }}
-    <a class="item" href="{{ $.pagination.Url $.url $next }}">
-      <i class="angle right icon"></i>
-    </a>
-  {{ else }}
-    <a class="disabled item" href="javascript:;">
-      <i class="angle right icon"></i>
-    </a>
+  <a class="pagination-next" href="{{ $.pagination.Url $.url $next }}"{{ if not $next }} disabled{{ end }}>&gt;</a>
+
+  <ul class="pagination-list">
+  {{ range $pages }}
+    <li>
+    {{ if . }}
+      <a class="pagination-link{{ if eq $current . }} is-current{{ end }}" href="{{ $.pagination.Url $.url . }}">{{ . }}</a>
+    {{ else }}
+      <span class="pagination-ellipsis">&hellip;</span>
+    {{ end }}
+    </li>
   {{ end }}
+  </ul>
 </div>

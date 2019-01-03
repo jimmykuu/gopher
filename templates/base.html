@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ .title }} - Golang 中国</title>
     <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
-    <link href="{{ staticfile "css/semantic.min.css" }}" rel="stylesheet" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="{{ staticfile "css/style.css" }}" rel="stylesheet">
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
     <script src="{{ staticfile "js/gt.js" }}"></script>
     <script src="{{ staticfile "js/semantic.min.js" }}"></script>
@@ -31,66 +33,88 @@
     </script>
   </head>
   <body>
-    <div class="ui menu">
-      <div class="ui container">
-        <a class="header item" href="/" style="padding-top: 0; padding-bottom: 0; padding-left: 0; border: none; background-color: white;">
-          <img src="https://is.golangtc.com/logo/golangtc.png?height=60" class="ui">
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+          <img src="https://is.golangtc.com/logo/golangtc.png?height=60">
         </a>
-        <a class="item" href="/">主题</a>
-        <a class="item" href="/members">会员</a>
-        {{ if .user }}
-        <div class="ui dropdown right item">
-          {{ .user.Username }}
-          <i class="dropdown icon"></i>
-          <div class="menu">
-            <a href="/user_center/profile" class="item"><i class="edit icon"></i> 用户信息</a>
-            <a href="/user_center/favorites" class="item"><i class="star  icon"></i> 我的收藏</a>
-            <a href="/user_center/change_password" class="item"><i class="lock icon"></i> 修改密码</a>
-            <a class="item" href="javascript: signout();"><i class="sign out icon"></i> 登出</a>
-          </div>
-        </div>
-        {{ else }}
-        <div class="right menu">
-          <a class="item" href="/signin">登录</a>
-          <a class="item" href="/signup">注册</a>
-        </div>
-        {{ end }}
-      </div>
-    </div>
 
-    <div class="ui container">
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="navbarBasicExample" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" href="/">
+            主题
+          </a>
+          <a class="navbar-item" href="/members">
+            会员
+          </a>
+        </div>
+        <div class="navbar-end">
+        {{ if .user }}
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              {{ .user.Username }}
+            </a>
+
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="/user_center/profile">
+                用户信息
+              </a>
+              <a class="navbar-item" href="/user_center/favorites">
+                我的收藏
+              </a>
+              <a class="navbar-item" href="/user_center/change_password">
+                修改密码
+              </a>
+              <hr class="navbar-divider">
+              <a class="navbar-item" href="javascript: signout();">
+                登出
+              </a>
+            </div>
+          </div>
+        {{ else }}
+          <div class="navbar-item">
+            <div class="buttons">
+              <a class="button is-primary" href="/signin">
+                <strong>登录</strong>
+              </a>
+              <a class="button is-light" href="/signup">
+                注册
+              </a>
+            </div>
+          </div>
+        {{ end }}
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
       {{ template "body" .}}
     </div>
 
-    <footer class="ui footer segment">
-      <div class="ui container">
-        <div class="ui grid">
-          <div class="twelve wide column">
-            <div class="row">
-              <div class="ui text menu">
-                <div class="header item">
-                  &copy; 2012-2018 Golang China
-                </div>
-                <a class="item" href="/about">关于</a>
-              </div>
-            </div>
-            <div class="row">
-              Build by <a href="https://github.com/jimmykuu/gopher">Gopher</a>,
-              Powered by <a href="https://github.com/lunny/tango">Tango</a>,
-              Based on <a href="https://semantic-ui.com/">Semantic UI</a>.
-            </div>
-            <div class="row">
-              Version: {{ .version }}, Build version {{ .goVersion }}. {{ .costTime }}.
-            </div>
-          </div>
-          <div class="four wide column">
-            <iframe src="https://ghbtns.com/github-btn.html?user=jimmykuu&repo=gopher&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
-          </div>
-        </div>
+    <footer class="footer">
+      <div class="content has-text-centered">
+        <p>
+          &copy; 2012-2018 Golang China
+        </p>
+        <p>
+          Build by <a href="https://github.com/jimmykuu/gopher" target="_blank">Gopher</a>,
+          Powered by <a href="https://github.com/lunny/tango"  target="_blank">Tango</a>,
+          Based on <a href="https://bulma.io/"  target="_blank">Bulma</a>.
+        </p>
+        <p>
+          Version: {{ .version }}, Build version {{ .goVersion }}. {{ .costTime }}.
+        </p>
+        <p>
+          <iframe src="https://ghbtns.com/github-btn.html?user=jimmykuu&repo=gopher&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+        </p>
       </div>
     </footer>
   </body>
-  <script type="text/javascript">
-    $('.ui.dropdown').dropdown();
-  </script>
 </html>
