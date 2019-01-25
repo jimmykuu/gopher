@@ -4,10 +4,12 @@ import (
 	"net/url"
 
 	"github.com/Youngyezi/geetest"
-	"github.com/jimmykuu/gopher/models"
 	"github.com/tango-contrib/renders"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+
+	"github.com/jimmykuu/gopher/conf"
+	"github.com/jimmykuu/gopher/models"
 )
 
 // Signin 登录
@@ -17,7 +19,7 @@ type Signin struct {
 
 // Get /signin 登录页面
 func (a *Signin) Get() error {
-	g := geetest.New("dd619ec5bcbf142e85b8d31e83d29ad5", "700a48ec7a6f15637ab007433eabf4de")
+	g := geetest.New(conf.Config.GtCaptchaId, conf.Config.GtPrivateKey)
 	p := url.Values{
 		"client": {"web"},
 	}
@@ -26,11 +28,12 @@ func (a *Signin) Get() error {
 
 	var next = a.Form("next", "/")
 	return a.Render("account/signin.html", renders.T{
-		"title":     "登录",
-		"next":      next,
-		"gt":        resp["gt"],
-		"challenge": resp["challenge"],
-		"success":   resp["success"],
+		"title":       "登录",
+		"next":        next,
+		"gt":          resp["gt"],
+		"challenge":   resp["challenge"],
+		"success":     resp["success"],
+		"new_captcha": resp["new_captcha"],
 	})
 }
 
@@ -41,8 +44,19 @@ type Signup struct {
 
 // Get /signup 注册页面
 func (a *Signup) Get() error {
+	g := geetest.New(conf.Config.GtCaptchaId, conf.Config.GtPrivateKey)
+	p := url.Values{
+		"client": {"web"},
+	}
+
+	resp := g.PreProcess(p)
+
 	return a.Render("account/signup.html", renders.T{
-		"title": "注册",
+		"title":       "注册",
+		"gt":          resp["gt"],
+		"challenge":   resp["challenge"],
+		"success":     resp["success"],
+		"new_captcha": resp["new_captcha"],
 	})
 }
 

@@ -64,7 +64,6 @@ Golang 中国([www.golangtc.com](https://www.golangtc.com))源代码.
         "time_zone_offset": 8,
         "static_file_version": 1,
         "go_get_path": "/tmp/download",
-        "packages_download_path": "/var/go/gopher/static/download/packages",
         "public_salt": "",
         "github_auth_client_id": "example",
         "github_auth_client_secret": "example",
@@ -87,7 +86,7 @@ Golang 中国([www.golangtc.com](https://www.golangtc.com))源代码.
 
 ## License
 
-Copyright (c) 2012-2017
+Copyright (c) 2012-2019
 
 Released under the MIT license:
 

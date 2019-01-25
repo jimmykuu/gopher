@@ -13,15 +13,14 @@
     margin-right: 1em;
   }
 </style>
-<div class="ui grid">
-  <div class="twelve wide column">
     <!-- <div style="position: absolute; left: 0; top: 28px; width: 80px;">
       <a href="/member/{{ $creater.Username }}">
         <img src="{{ $creater.AvatarImgSrc 80 }}" class="ui tiny circular image" alt="{{ $creater.Username }}">
       </a>
     </div> -->
+<h1>{{ .topic.Title }}</h1>
     <div class="ui segment" style="margin-left: 80px;">
-      <h1 class="ui dividing header">{{ .topic.Title }}</h1>
+
       <div class="metadata">
         <span><a href="/member/{{$creater.Username}}">{{ $creater.Username }}</a></span>
         <span><time datetime="{{ formatdatetime .topic.CreatedAt }}" class="date">{{ formattime .topic.CreatedAt }}</time>发布</span>
@@ -75,11 +74,9 @@
       </div>
       <div id="form"></div>
     </div>
-  </div>
   <div class="four wide column">
     {{ template "partials/ads.html" . }}
   </div>
-</div>
 <script type="text/babel">
   var html = '';
   const topicId = "{{ .topic.Id_.Hex }}"; // 模板传入

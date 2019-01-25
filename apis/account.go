@@ -13,6 +13,7 @@ import (
 	"github.com/tango-contrib/binding"
 	"gopkg.in/mgo.v2/bson"
 
+	"github.com/jimmykuu/gopher/conf"
 	"github.com/jimmykuu/gopher/models"
 	"github.com/jimmykuu/gopher/utils"
 )
@@ -35,7 +36,7 @@ func (a *Signin) Post() interface{} {
 
 	a.ReadJSON(&form)
 
-	g := geetest.New("dd619ec5bcbf142e85b8d31e83d29ad5", "700a48ec7a6f15637ab007433eabf4de")
+	g := geetest.New(conf.Config.GtCaptchaId, conf.Config.GtPrivateKey)
 	p := url.Values{
 		"client": {"web"},
 	}

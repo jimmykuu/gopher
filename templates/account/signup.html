@@ -4,31 +4,127 @@
   .column {
     max-width: 450px;
   }
-</style>
-<div class="ui middle aligned center aligned grid">
-  <div class="column">
-    <h2 class="ui teal image header">
-      <div class="content">
-        注册
-      </div>
-    </h2>
-    <div id="form"></div>
 
-    <div class="ui message">
-      已有账户？ <a href="/signin">登录</a>
+  #text {
+    height: 42px;
+    width: 298px;
+    text-align: center;
+    border-radius: 2px;
+    background-color: #F3F3F3;
+    color: #BBBBBB;
+    font-size: 14px;
+    letter-spacing: 0.1px;
+    line-height: 42px;
+  }
+
+  #wait {
+    height: 42px;
+    width: 298px;
+    text-align: center;
+    border-radius: 2px;
+    background-color: #F3F3F3;
+  }
+
+  .loading {
+    margin: auto;
+    width: 70px;
+    height: 20px;
+  }
+
+  .loading-dot {
+    float: left;
+    width: 8px;
+    height: 8px;
+    margin: 18px 4px;
+    background: #ccc;
+
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+
+    opacity: 0;
+
+    -webkit-box-shadow: 0 0 2px black;
+    -moz-box-shadow: 0 0 2px black;
+    -ms-box-shadow: 0 0 2px black;
+    -o-box-shadow: 0 0 2px black;
+    box-shadow: 0 0 2px black;
+
+    -webkit-animation: loadingFade 1s infinite;
+    -moz-animation: loadingFade 1s infinite;
+    animation: loadingFade 1s infinite;
+  }
+
+  .loading-dot:nth-child(1) {
+    -webkit-animation-delay: 0s;
+    -moz-animation-delay: 0s;
+    animation-delay: 0s;
+  }
+
+  .loading-dot:nth-child(2) {
+    -webkit-animation-delay: 0.1s;
+    -moz-animation-delay: 0.1s;
+    animation-delay: 0.1s;
+  }
+
+  .loading-dot:nth-child(3) {
+    -webkit-animation-delay: 0.2s;
+    -moz-animation-delay: 0.2s;
+    animation-delay: 0.2s;
+  }
+
+  .loading-dot:nth-child(4) {
+    -webkit-animation-delay: 0.3s;
+    -moz-animation-delay: 0.3s;
+    animation-delay: 0.3s;
+  }
+
+  @-webkit-keyframes loadingFade {
+    0% { opacity: 0; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0; }
+  }
+
+  @-moz-keyframes loadingFade {
+    0% { opacity: 0; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0; }
+  }
+
+  @keyframes loadingFade {
+    0% { opacity: 0; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0; }
+  }
+</style>
+<section class="hero">
+  <div class="hero-body">
+    <div class="container has-text-centered">
+      <div class="column is-4 is-offset-4">
+        <h3 class="title has-text-grey">登录</h3>
+          <div class="box">
+            <div id="form"></div>
+          </div>
+          <p class="has-text-grey">
+            <a href="/signup">注册</a> &nbsp;·&nbsp;
+            <a href="/forgot_password">忘记密码</a>
+          </p>
+      </div>
     </div>
   </div>
-</div>
+</section>
 <script type="text/babel">
+  const next = '{{ .next }}';
   class SignupForm extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
         username: '',
-        password: '',
         email: '',
-        loading: false,
-        errors: []
+        password: '',
+        submiting: false,
+        errors: [],
+        waiting: true
       };
     }
 
@@ -40,20 +136,21 @@
       this.setState({password: e.target.value});
     }
 
-    handleEmailChange = (e) => {
-      this.setState({email: e.target.value});
-    }
-
     handleSubmit = (e) => {
-      if (this.state.loading) {
+      e.preventDefault();
+
+      if (this.state.submiting) {
         return;
       }
 
-      e.preventDefault();
+      if (!this.state.email) {
+        this.setState({errors: ["请输入邮箱地址"]});
+        return;
+      }
 
       if (!this.state.username) {
-        this.setState({errors: ["请输入用户名"]});
-        return;
+          this.setState({errors: ["请输入用户名"]});
+          return;
       }
 
       if (!this.state.password) {
@@ -61,66 +158,116 @@
         return;
       }
 
-      if (!this.state.email) {
-          this.setState({errors: ["请输入邮箱地址"]});
-          return;
+      let result = window.gt.getValidate();
+
+      if (!result) {
+        alert('请先完成验证！');
+        return;
       }
 
-      this.setState({loading: true});
+      this.setState({submiting: true});
 
-      fetch('/api/signup', {
-        method: 'POST',
-        body: JSON.stringify({
-          username: this.state.username,
-          password: this.state.password,
-          email: this.state.email
-        })
-      }).then((response) => {
-        response.json().then((data) => {
-          if (data.status === 0) {
-            this.setState({errors: data.messages, loading: false});
-          } else {
-            window.localStorage.setItem('token', data.token);
-            Cookies.set('user', data.cookie.user, { expores: 365 });
+      post('/api/signin', {
+        username: this.state.username,
+        password: this.state.password,
+        geetest_challenge: result.geetest_challenge,
+        geetest_validate: result.geetest_validate,
+        geetest_seccode: result.geetest_seccode
+      }).then((data) => {
+        if (data.status === 0) {
+          this.setState({errors: data.messages, submiting: false});
+        } else {
+          window.localStorage.setItem('token', data.token);
+          Cookies.set('user', data.cookie.user, { expores: 365 });
 
-            window.location.href = '/';
-          }
-        });
+          window.location.href = next;
+        }
       });
     }
 
-    render() {
-      let formClass = "ui large form";
-      if (this.state.errors) {
-        formClass += " error";
-      }
+    handlerGeetest = (captchaObj) => {
+      captchaObj.appendTo('#captcha');
+      this.setState({waiting: false});
+      window.gt = captchaObj;
+    };
 
-      let buttonClass = "ui fluid large teal submit button";
-      if (this.state.loading) {
-        buttonClass += " loading disabled";
+    componentDidMount() {
+      // 调用 initGeetest 进行初始化
+      // 参数1：配置参数
+      // 参数2：回调，回调的第一个参数验证码对象，之后可以使用它调用相应的接口
+      initGeetest({
+        // 以下 4 个配置参数为必须，不能缺少
+        gt: '{{ .gt }}',
+        challenge: '{{ .challenge }}',
+        offline: !{{ .success }}, // 表示用户后台检测极验服务器是否宕机
+        new_captcha: {{ .new_captcha }}, // 用于宕机时表示是新验证码的宕机
+
+        product: "popup", // 产品形式，包括：float，popup
+        width: "100%",
+        https: true
+
+      // 更多配置参数说明请参见：http://docs.geetest.com/install/client/web-front/
+      }, this.handlerGeetest);
+    }
+
+    render() {
+      const { username, password, email, waiting } = this.state;
+
+      let waitingDiv = "";
+      if (waiting) {
+        waitingDiv = <div>
+          <div id="text">
+            行为验证™ 安全组件加载中
+          </div>
+          <div id="wait">
+            <div className="loading">
+              <div className="loading-dot"></div>
+              <div className="loading-dot"></div>
+              <div className="loading-dot"></div>
+              <div className="loading-dot"></div>
+            </div>
+          </div>
+        </div>;
       }
 
       return (
-        <form className={formClass} onSubmit={this.handleSubmit}>
+        <form onSubmit={this.handleSubmit}>
+          <div className="field">
+            <div className="control has-icons-left">
+              <input className="input is-medium" type="text" placeholder="用户名" autofocus="" onChange={this.handleUsernameChange} />
+              <span className="icon is-small is-left">
+                <i className="fas fa-user"></i>
+              </span>
+            </div>
+          </div>
+
+          <div className="field">
+            <div className="control has-icons-left">
+              <input className="input is-medium" type="email" placeholder="邮箱" autofocus="" onChange={this.handleEmailChange} />
+              <span className="icon is-small is-left">
+                <i className="fas fa-envelope"></i>
+              </span>
+            </div>
+          </div>
+
+          <div className="field">
+            <div className="control has-icons-left">
+              <input className="input is-medium" type="password" placeholder="密码" onChange={this.handlePasswordChange} />
+              <span className="icon is-small is-left">
+                <i className="fas fa-lock"></i>
+              </span>
+            </div>
+          </div>
+
+          <div className="field">
+            <div id="captcha">
+              { waitingDiv }
+            </div>
+          </div>
+
+          <button className="button is-block is-info is-medium is-fullwidth" type="submit">登录</button>
+
           <div className="ui stacked segment">
-            <div className="field">
-              <div className="ui left icon input">
-                <i className="user icon"></i>
-                <input type="text" onChange={this.handleUsernameChange} placeholder="用户名" />
-              </div>
-            </div>
-            <div className="field">
-              <div className="ui left icon input">
-                <i className="lock icon"></i>
-                <input type="password" onChange={this.handlePasswordChange} placeholder="密码" />
-              </div>
-            </div>
-            <div className="field">
-              <div className="ui left icon input">
-                <i className="mail icon"></i>
-                <input type="email" onChange={this.handleEmailChange} placeholder="邮箱" />
-              </div>
-            </div>
             {this.state.errors.length > 0 ?
               <div className="ui error message">
                 <ul className="list">
@@ -134,8 +281,6 @@
             :
               ''
             }
-
-            <button className={buttonClass} type="submit">注册</button>
           </div>
         </form>
       );
