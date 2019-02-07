@@ -1,6 +1,7 @@
 {{ template "base.html" .}}
 {{ define "body" }}
-<div id="form">
+<div class="columns">
+  <div class="column is-12 is-horizontal" id="form"></div>
 </div>
 <script type="text/babel">
   const action = "{{ .action }}"; // 模板传入 new/edit
@@ -8,6 +9,7 @@
   const converter = new showdown.Converter({
     simpleLineBreaks: true
   });
+
   class TopicForm extends React.Component {
     constructor(props) {
       super(props);
@@ -18,7 +20,8 @@
         nodes: [],
         nodeId: '',
         title: '',
-        markdown: ''
+        markdown: '',
+        html: ''
       }
     }
 
@@ -34,9 +37,10 @@
       })
     }
 
-    handleMarkdownChange = (markdown) => {
+    handleMarkdownChange = (markdown, html) => {
       this.setState({
-        markdown: markdown
+        markdown: markdown,
+        html: html
       });
     }
 
@@ -54,11 +58,13 @@
         method = put;
       }
 
+      console.log(this.state.title);
+
       method(url, {
         title: this.state.title,
         node_id: this.state.nodeId,
         markdown: this.state.markdown,
-        html: converter.makeHtml(this.state.markdown)
+        html: this.state.html
       }).then((data) => {
         if (data.status) {
 
@@ -96,43 +102,70 @@
     }
 
     render() {
-      let formClassName = "ui form";
-      let submitClassName = "ui primary submit button";
-
-      if (this.state.loading) {
-        formClassName += " loading";
-      }
-
-      if (this.state.submiting) {
-        submitClassName += "  loading disabled";
-      }
-
-      return (<null>
-        <div className="ui bottom attached segment">
-          <form className={formClassName} onSubmit={this.handleSubmit}>
-            <div className="fields">
-              <div className="two wide field">
-                <select className="ui fluid search dropdown" value={this.state.nodeId} onChange={this.handleNodeChange}>
-                  <option value="">请选择节点</option>
-                  {this.state.nodes.map(node =>
-                    <option value={node.id}>{node.name}</option>
-                  )}
-                </select>
-              </div>
-              <div className="fourteen wide field">
-                <input type="text" placeholder="请输入标题" value={this.state.title} onChange={this.handleTitleChange} />
+      return (<form onSubmit={this.handleSubmit}>
+        <div className="field is-horizontal">
+          <div className="field-label is-normal">
+            <label className="label">节点</label>
+          </div>
+          <div className="field-body">
+            <div className="field is-narrow">
+              <div className="control">
+                <div className="select is-fullwidth">
+                  <select value={this.state.nodeId} onChange={this.handleNodeChange}>
+                    <option value="">请选择节点</option>
+                    {this.state.nodes.map(node =>
+                      <option value={node.id}>{node.name}</option>
+                    )}
+                  </select>
+                </div>
               </div>
             </div>
-
-            <MarkdownEditor markdown={this.state.markdown} onChange={this.handleMarkdownChange}></MarkdownEditor>
-
-            <button type="submit" className={submitClassName}>提交</button>
-          </form>
+          </div>
         </div>
-      </null>);
+
+        <div className="field is-horizontal">
+          <div className="field-label is-normal">
+            <label className="label">标题</label>
+          </div>
+          <div className="field-body">
+            <div className="field">
+              <div className="control">
+                <input className="input" type="text" placeholder="请输入标题" value={this.state.title} onChange={this.handleTitleChange} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="field is-horizontal">
+          <div className="field-label is-normal">
+            <label className="label">内容</label>
+          </div>
+          <div className="field-body">
+            <div className="field">
+              <div className="control">
+                <MarkdownEditor markdown={this.state.markdown} onChange={this.handleMarkdownChange}></MarkdownEditor>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="field is-horizontal">
+          <div className="field-label">
+          </div>
+          <div className="field-body">
+            <div className="field">
+              <div className="control">
+                <button className="button is-primary" type="submit">提交</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>);
     }
   }
 
-  ReactDOM.render(<TopicForm />, document.getElementById('form'));
+  $(document).ready(function () {
+    ReactDOM.render(<TopicForm />, document.getElementById('form'));
+  });
 </script>
 {{end}}

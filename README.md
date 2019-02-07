@@ -13,14 +13,14 @@ Golang 中国([www.golangtc.com](https://www.golangtc.com))源代码.
 - [x] 架构搭建；
 - [x] 前端架构；
 - [ ] 首页 (72%)；
-- [ ] 注册 (90%)；
-- [ ] 登录 (90%)；
-- [ ] 开发 Markdown 编辑器 (30%)；
+- [x] 注册；
+- [x] 登录；
+- [x] 开发 Markdown 编辑器(使用 tui.editor)；
 - [ ] 主题浏览 (70%)；
 - [ ] 新建主题 (70%)；
 - [ ] 编辑主题 (70%)；
 - [ ] 提交评论 (80%);
-- [x] 删除评论;
+- [x] 删除评论；
 - [ ] 编辑评论 (80%)；
 - [x] 主题检索；
 - [ ] 浏览节点下所有的主题 (80%)；
@@ -44,7 +44,6 @@ Golang 中国([www.golangtc.com](https://www.golangtc.com))源代码.
 - gt_captcha_id: geetest.com 服务的 id
 - gt_private_key: geetest.com 服务的 key
 - go_download_path: 存放下载的 Go 文件目录
-- liteide_download_path: 存放下载的 LiteIDE 文件目录
 
 内容如下:
 
@@ -72,7 +71,6 @@ Golang 中国([www.golangtc.com](https://www.golangtc.com))源代码.
         "gt_captcha_id": "",
         "gt_private_key": "",
         "go_download_path": "",
-        "litedide_download_path": "",
         "image_path": "",
         "debug": false
     }

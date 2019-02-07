@@ -36,7 +36,6 @@ func (a *Signin) Post() interface{} {
 
 	a.ReadJSON(&form)
 
-	g := geetest.New(conf.Config.GtCaptchaId, conf.Config.GtPrivateKey)
 	p := url.Values{
 		"client": {"web"},
 	}
@@ -51,6 +50,7 @@ func (a *Signin) Post() interface{} {
 		}
 	}
 
+	g := geetest.New(conf.Config.GtCaptchaId, conf.Config.GtPrivateKey)
 	success := g.SuccessValidate(form.GeetestChallenge, form.GeetestValidate, form.GeetestCeccode, p)
 
 	if success == 0 {
@@ -112,9 +112,12 @@ type Signup struct {
 // Post /api/signup 提交注册
 func (a *Signup) Post() interface{} {
 	var form struct {
-		Username string `json:"username" valid:"required,ascii"`
-		Password string `json:"password" valid:"required,ascii"`
-		Email    string `json:"email" valid:"required,email"`
+		Username         string `json:"username" valid:"required,ascii"`
+		Password         string `json:"password" valid:"required,ascii"`
+		Email            string `json:"email" valid:"required,email"`
+		GeetestChallenge string `json:"geetest_challenge" valid:"required,ascii"`
+		GeetestValidate  string `json:"geetest_validate" valid:"required,ascii"`
+		GeetestCeccode   string `json:"geetest_seccode" valid:"required,ascii"`
 	}
 
 	a.ReadJSON(&form)

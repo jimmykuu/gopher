@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"os"
 	"runtime"
+
+	"github.com/lunny/tango"
 )
 
 type ConfigStruct struct {
@@ -32,16 +34,15 @@ type ConfigStruct struct {
 	DeferPanicApiKey           string `json:"deferpanic_api_key"`
 	GtCaptchaId                string `json:"gt_captcha_id"`
 	GtPrivateKey               string `json:"gt_private_key"`
-	GoDownloadPath             string `json:"go_download_path"`
-	LiteIDEDownloadPath        string `json:"liteide_download_path"`
 	ImagePath                  string `json:"image_path"`
 	Debug                      bool   `json:"debug"`
 }
 
 var (
-	Config    ConfigStruct
-	GoVersion = runtime.Version()
-	Version   string
+	Config       ConfigStruct
+	GoVersion    = runtime.Version()
+	TangoVersion = tango.Version()
+	Version      string
 )
 
 func InitConfig(configFile string) error {

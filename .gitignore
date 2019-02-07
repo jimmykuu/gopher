@@ -26,3 +26,5 @@ etc/config.json
 static/download
 cert.pem
 key.pem
+
+images

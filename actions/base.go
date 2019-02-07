@@ -80,6 +80,7 @@ func (b *RenderBase) Render(tmpl string, t ...renders.T) error {
 
 	ts["db"] = b.DB
 	ts["goVersion"] = conf.GoVersion
+	ts["tangoVersion"] = conf.TangoVersion
 	ts["version"] = conf.Version
 	ts["user"] = b.User
 	ts["username"] = ""
