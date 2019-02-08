@@ -107,43 +107,49 @@ class Toolbar extends React.Component {
     let { canCollect } = this.state;
     let editButton = null;
     if (canEdit == 'true') {
-      editButton = (
-        <a className="item" title="编辑" href={'/t/' + this.props.topicId + '/edit'}>
-          <i className="edit icon"></i>
+      editButton = (<p className="control">
+        <a className="button is-small" title="编辑" href={'/t/' + this.props.topicId + '/edit'}>
+          <span className="icon is-small">
+            <i className="fas fa-edit"></i>
+          </span>
         </a>
-      );
+      </p>);
     }
 
     let deleteButton = null;
     if (canDelete == 'true') {
-      deleteButton = (
-        <a className="item" title="删除" onClick={this.deleteTopic}>
-          <i className="remove icon"></i>
+      deleteButton = (<p className="control">
+        <a className="button is-small" title="删除" onClick={this.deleteTopic}>
+          <span className="icon is-small">
+            <i className="fas fa-times"></i>
+          </span>
         </a>
-      );
+      </p>);
     }
 
     let collectButton = null;
     if (canCollect == 'true') {
-      collectButton = (
-        <a className="item" title="收藏" onClick={this.collectTopic}>
-          <i className="outline star icon"></i>
+      collectButton = (<p className="control">
+        <a className="button is-small" title="收藏" onClick={this.collectTopic}>
+          <span className="icon is-small">
+            <i className="far fa-star"></i>
+          </span>
         </a>
-      );
+      </p>);
     } else {
-      collectButton = (
-        <a className="item" title="取消收藏" onClick={this.cancelCollectTopic}>
-          <i className="yellow star icon"></i>
+      collectButton = (<p className="control">
+        <a className="button is-small" title="取消收藏" onClick={this.cancelCollectTopic}>
+          <span className="icon is-small">
+            <i className="fas fa-star"></i>
+          </span>
         </a>
-      );
+      </p>);
     }
 
-    return (
-      <div className="ui compact mini right floated icon menu">
-        {editButton}
-        {deleteButton}
-        {collectButton}
-      </div>
-    );
+    return (<div className="field has-addons">
+      {editButton}
+      {deleteButton}
+      {collectButton}
+    </div>);
   }
 }

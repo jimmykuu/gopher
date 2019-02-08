@@ -24,9 +24,8 @@ Golang 中国([www.golangtc.com](https://www.golangtc.com))源代码.
 - [ ] 编辑评论 (80%)；
 - [x] 主题检索；
 - [ ] 浏览节点下所有的主题 (80%)；
-- [ ] 会员首页。
-- [x] 自建图片服务器，切换七牛的图片服务；
-- [ ] 后台管理框架；
+- [ ] 会员首页；
+- [ ] 后台管理框架。
 
 ## Install
 
@@ -62,15 +61,9 @@ Golang 中国([www.golangtc.com](https://www.golangtc.com))源代码.
         "analytics_file": "",
         "time_zone_offset": 8,
         "static_file_version": 1,
-        "go_get_path": "/tmp/download",
         "public_salt": "",
-        "github_auth_client_id": "example",
-        "github_auth_client_secret": "example",
-        "github_login_redirect": "/",
-        "github_login_success_redirect": "/auth/signup",
         "gt_captcha_id": "",
         "gt_private_key": "",
-        "go_download_path": "",
         "image_path": "",
         "debug": false
     }

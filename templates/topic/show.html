@@ -18,71 +18,82 @@
         <img src="{{ $creater.AvatarImgSrc 80 }}" class="ui tiny circular image" alt="{{ $creater.Username }}">
       </a>
     </div> -->
-<h1>{{ .topic.Title }}</h1>
-    <div class="ui segment" style="margin-left: 80px;">
+<div class="columns">
+  <div class="column is-9">
+    <article class="media box">
+      <div class="media-content">
+        <div class="content">
+          <h1 class="title">{{ .topic.Title }}</h1>
+          <div class="metadata">
+            <span><a href="/member/{{$creater.Username}}">{{ $creater.Username }}</a></span>
+            <span><time datetime="{{ formatdatetime .topic.CreatedAt }}" class="date">{{ formattime .topic.CreatedAt }}</time>发布</span>
+            <span>{{ .topic.Hits }}浏览</span>
+            <a class="tag" href="/go/{{$node.Id}}">{{$node.Name}}</a>
 
-      <div class="metadata">
-        <span><a href="/member/{{$creater.Username}}">{{ $creater.Username }}</a></span>
-        <span><time datetime="{{ formatdatetime .topic.CreatedAt }}" class="date">{{ formattime .topic.CreatedAt }}</time>发布</span>
-        <span>{{ .topic.Hits }}浏览</span>
-        <a class="ui mini label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a>
-
-        {{ if $.user }}
-          <div id="toolbar"></div>
-        {{ end }}
-
+            {{ if $.user }}
+              <div id="toolbar"></div>
+            {{ end }}
+          </div>
+          <div>
+            {{ .topic.Html }}
+          </div>
+        </div>
       </div>
-      <div class="content">
-        {{ .topic.Html }}
-      </div>
-      <div class="ui minimal comments" id="comments">
-        {{ if .comments }}
-        <h3 class="ui dividing header">
-          共 {{ len .comments }} 个回复
-        </h3>
-        {{ end }}
+    </article>
+    <div id="comments" class="box">
+      {{ if .comments }}
+        <h3>共 {{ len .comments }} 个回复</h3>
+        <hr>
+      {{ end }}
+
       {{ range $index, $reply := .comments }}
         {{ $commenter := $reply.Creater $.db }}
-        <div class="comment" id="comment-{{ .Id_.Hex }}">
-          <span class="ui mini label" style="float: right;"># {{ add $index 1 }}</span>
-          <a class="avatar" href="/member/{{ $commenter.Username }}">
-            <img src="{{ $commenter.AvatarImgSrc 48 }}">
-          </a>
-          <div class="content">
-            <a class="author" href="/member/{{ $commenter.Username }}">{{ $commenter.Username }}</a>
-            <div class="metadata">
-              <div class="date">{{ formattime $reply.CreatedAt }}</div>
+        <article class="media comment" id="comment-{{ .Id_.Hex }}">
+          <figure class="media-left">
+            <a class="image is-48x48" href="/member/{{ $commenter.Username }}">
+              <img src="{{ $commenter.AvatarImgSrc 48 }}">
+            </a>
+          </figure>
+          <div class="media-content">
+            <div class="content">
+              <p>
+                <a href="/member/{{ $commenter.Username }}"><strong>{{ $commenter.Username }}</strong></a>
+                <small><time datetime="{{ $reply.CreatedAt }}">{{ formattime $reply.CreatedAt }}</time></small>
+              </p>
             </div>
-            <div class="text" id="comment-content-{{ .Id_.Hex }}">
+            <div class="content">
               {{ .Html }}
             </div>
             {{ if $.username }}
               {{ if $reply.CanDeleteOrEdit $.username $.db }}
-                <div class="actions">
-                  <a class="reply" id="edit-comment-{{ .Id_.Hex }}" href="javascript:editComment('{{ .Id_.Hex }}');">
-                    <i class="edit icon"></i>
+              <nav class="level is-mobile">
+                <div class="level-left">
+                  <a class="level-item" id="edit-comment-{{ .Id_.Hex }}" href="javascript:editComment('{{ .Id_.Hex }}');">
+                    <span class="icon is-small"><i class="fas fa-edit"></i></span>
                   </a>
-                  <a class="reply" href="javascript:deleteComment('{{ .Id_.Hex }}');">
-                    <i class="remove icon"></i>
+                  <a class="level-item" href="javascript:deleteComment('{{ .Id_.Hex }}');">
+                    <span class="icon is-small"><i class="fas fa-times"></i></span>
                   </a>
                 </div>
+              </nav>
               {{ end }}
             {{ end }}
           </div>
-        </div>
+          <div class="media-right">
+            <span class="tag"># {{ $index }}</span>
+          </div>
+        </article>
       {{ end }}
-      </div>
-      <div id="form"></div>
     </div>
-  <div class="four wide column">
+    <hr>
+    <div id="form"></div>
+  </div>
+  <div class="column is-3">
     {{ template "partials/ads.html" . }}
   </div>
+</div>
 <script type="text/babel">
-  var html = '';
   const topicId = "{{ .topic.Id_.Hex }}"; // 模板传入
-  const converter = new showdown.Converter({
-    simpleLineBreaks: true
-  });
 
   function deleteTopic(topicId) {
     return;
@@ -103,24 +114,26 @@
 
       this.state = {
         submiting: false,
-        markdown: ''
+        markdown: '',
+        html: ''
       }
     }
 
-    handleMarkdownChange = (markdown) => {
+    handleMarkdownChange = (markdown, html) => {
       this.setState({
-        markdown: markdown
+        markdown: markdown,
+        html: html
       });
     }
 
     handleSubmit = (e) => {
       e.preventDefault();
       this.setState({submiting: true});
-
+      const { markdown, html } = this.state;
       post('/api/comments', {
         content_id: topicId,
-        markdown: this.state.markdown,
-        html: converter.makeHtml(this.state.markdown)
+        markdown: markdown,
+        html: html
       }).then((data) => {
         if (data.status) {
           window.location.reload();
@@ -140,9 +153,19 @@
         submitClassName += " loading disabled";
       }
 
-      return (<form className="ui reply form" onSubmit={this.handleSubmit}>
-        <MarkdownEditor markdown={this.state.markdown} onChange={this.handleMarkdownChange}></MarkdownEditor>
-        <button type="submit" className={submitClassName}>提交评论</button>
+      return (<form onSubmit={this.handleSubmit}>
+        <div className="field">
+          <label className="label">回复</label>
+          <div className="control">
+            <MarkdownEditor markdown={this.state.markdown} onChange={this.handleMarkdownChange}></MarkdownEditor>
+          </div>
+        </div>
+
+        <div className="field is-grouped">
+          <div className="control">
+            <button type="submit" className="button is-link">提交</button>
+          </div>
+        </div>
       </form>);
     }
   }
