@@ -7,10 +7,6 @@ class MarkdownEditor extends React.Component {
     };
   }
 
-  getMarkdown() {
-    return "markdown";
-  }
-
   onChange = (event) => {
     const { editor } = this.state;
 
@@ -22,6 +18,7 @@ class MarkdownEditor extends React.Component {
     let editor = new tui.Editor({
       el: document.querySelector('#editSection'),
       initialEditType: 'markdown',
+      initialValue: this.props.markdown,
       previewStyle: 'vertical',
       height: '300px',
       language: 'zh_CN',

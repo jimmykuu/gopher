@@ -3,24 +3,9 @@
 {{ $topic := asserttopic .topic }}
 {{ $creater := $topic.Creater .db }}
 {{ $node := $topic.Node .db }}
-<style type="text/css">
-  .metadata {
-    margin-bottom: 2em;
-    font-weight: 400;
-    color: #cccccc;
-  }
-  .metadata span {
-    margin-right: 1em;
-  }
-</style>
-    <!-- <div style="position: absolute; left: 0; top: 28px; width: 80px;">
-      <a href="/member/{{ $creater.Username }}">
-        <img src="{{ $creater.AvatarImgSrc 80 }}" class="ui tiny circular image" alt="{{ $creater.Username }}">
-      </a>
-    </div> -->
 <div class="columns">
   <div class="column is-9">
-    <article class="media box">
+    <article class="media box topic">
       <div class="media-content">
         <div class="content">
           <h1 class="title">{{ .topic.Title }}</h1>
@@ -34,6 +19,7 @@
               <div id="toolbar"></div>
             {{ end }}
           </div>
+          <hr>
           <div>
             {{ .topic.Html }}
           </div>
@@ -50,8 +36,8 @@
         {{ $commenter := $reply.Creater $.db }}
         <article class="media comment" id="comment-{{ .Id_.Hex }}">
           <figure class="media-left">
-            <a class="image is-48x48" href="/member/{{ $commenter.Username }}">
-              <img src="{{ $commenter.AvatarImgSrc 48 }}">
+            <a class="image is-32x32" href="/member/{{ $commenter.Username }}">
+              <img src="{{ $commenter.AvatarImgSrc 32 }}">
             </a>
           </figure>
           <div class="media-content">
@@ -61,7 +47,7 @@
                 <small><time datetime="{{ $reply.CreatedAt }}">{{ formattime $reply.CreatedAt }}</time></small>
               </p>
             </div>
-            <div class="content">
+            <div class="content" id="comment-content-{{ .Id_.Hex }}">
               {{ .Html }}
             </div>
             {{ if $.username }}
@@ -147,10 +133,20 @@
     }
 
     render() {
-      let submitClassName = "ui primary submit button";
+      let submitButton = <button
+        type="submit"
+        className="button is-link"
+        disabled={this.state.submiting}>
+          提交
+      </button>;
 
       if (this.state.submiting) {
-        submitClassName += " loading disabled";
+        submitButton = (<a className="button is-info" disabled>
+          <span className="icon">
+            <i className="fas fa-spinner fa-spin"></i>
+          </span>
+          <span>正在提交 ...</span>
+        </a>);
       }
 
       return (<form onSubmit={this.handleSubmit}>
@@ -163,7 +159,7 @@
 
         <div className="field is-grouped">
           <div className="control">
-            <button type="submit" className="button is-link">提交</button>
+            {submitButton}
           </div>
         </div>
       </form>);
@@ -176,7 +172,6 @@
     if (confirm('确认删除该评论吗？')) {
       delete_('/api/comments/' + commentId)
         .then((data) => {
-          console.log(data);
           if (data.status) {
             $('#comment-' + commentId).fadeOut(1000, function() {
               $(this).remove();
@@ -193,7 +188,9 @@
       super(props);
 
       this.state = {
-        loading: false,
+        loading: true,
+        submiting: false,
+        initHtml: '',
         markdown: '',
         html: ''
       }
@@ -204,26 +201,27 @@
       get('/api/comments/' + this.props.commentId).then((data) => {
         this.setState({
           loading: false,
+          initHtml: data.html,
           markdown: data.markdown,
           html: data.html
         });
       });
     }
 
-    handleMarkdownChange = (markdown) => {
+    handleMarkdownChange = (markdown, html) => {
       this.setState({
-        markdown: markdown
+        markdown: markdown,
+        html: html
       });
     }
 
     handleSubmit = (e) => {
       e.preventDefault();
-      console.log('submit');
       this.setState({submiting: true});
 
       put("/api/comments/" + this.props.commentId, {
         markdown: this.state.markdown,
-        html: converter.makeHtml(this.state.markdown)
+        html: this.state.html
       }).then((data) => {
         if (data.status) {
           ReactDOM.unmountComponentAtNode(document.getElementById('comment-content-' + this.props.commentId));
@@ -240,17 +238,53 @@
     onCancel = (e) => {
       e.preventDefault();
       ReactDOM.unmountComponentAtNode(document.getElementById('comment-content-' + this.props.commentId));
-      $('#comment-content-' + this.props.commentId).html(this.state.html);
+      $('#comment-content-' + this.props.commentId).html(this.state.initHtml);
     }
 
     render() {
-      return (<form className="ui form" onSubmit={this.handleSubmit}>
-        <div className="field">
-          <MarkdownEditor markdown={this.state.markdown} onChange={this.handleMarkdownChange} />
-        </div>
-        <button type="submit" className="ui primary submit button">提交</button>
-        <button className="ui button" onClick={this.onCancel}>取消</button>
-      </form>);
+      let form;
+      if (this.state.loading) {
+        form = (<div className="notification">
+          <span className="icon">
+            <i className="fas fa-spinner fa-spin"></i>
+          </span>
+        </div>);
+      } else {
+        let submitButton = <button
+          type="submit"
+          className="button is-link"
+          disabled={this.state.submiting}>
+            提交
+        </button>;
+
+        if (this.state.submiting) {
+          submitButton = (<a className="button is-info" disabled>
+            <span className="icon">
+              <i className="fas fa-spinner fa-spin"></i>
+            </span>
+            <span>正在提交 ...</span>
+          </a>);
+        }
+
+        form = (<form onSubmit={this.handleSubmit}>
+          <div className="field">
+            <div className="control">
+              <MarkdownEditor markdown={this.state.markdown} onChange={this.handleMarkdownChange} />
+            </div>
+          </div>
+          <div className="field is-grouped">
+            <p className="control">
+              {submitButton}
+            </p>
+            <p className="control">
+              <a className="button is-light" onClick={this.onCancel}>
+                  取消
+              </a>
+            </p>
+          </div>
+        </form>);
+      }
+      return form;
     }
   }
 

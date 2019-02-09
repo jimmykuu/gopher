@@ -62,7 +62,6 @@
         html: this.state.html
       }).then((data) => {
         if (data.status) {
-
           window.location.href = "/t/" + data.topic_id;
         } else {
           alert(data.message);
@@ -97,6 +96,18 @@
     }
 
     render() {
+      let markdownEditor;
+
+      if (this.state.loading) {
+        markdownEditor = (<div className="notification">
+          <span className="icon">
+            <i className="fas fa-spinner fa-spin"></i>
+          </span>
+        </div>);
+      } else {
+        markdownEditor = <MarkdownEditor markdown={this.state.markdown} onChange={this.handleMarkdownChange}></MarkdownEditor>;
+      }
+
       return (<form onSubmit={this.handleSubmit}>
         <div className="field is-horizontal">
           <div className="field-label is-normal">
@@ -138,7 +149,7 @@
           <div className="field-body">
             <div className="field">
               <div className="control">
-                <MarkdownEditor markdown={this.state.markdown} onChange={this.handleMarkdownChange}></MarkdownEditor>
+                {markdownEditor}
               </div>
             </div>
           </div>
