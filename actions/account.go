@@ -93,7 +93,51 @@ func (a *AccountIndex) Get() error {
 		"member":     user,
 		"topics":     topics,
 		"pagination": pagination,
-		"url":        fmt.Sprintf("/member/%s", user.Username),
+		"url":        fmt.Sprintf("/member/%s", username),
+	})
+}
+
+// AccountComments 会员的所有回复
+type AccountComments struct {
+	RenderBase
+}
+
+// Get /member/:username/comments
+func (a *AccountComments) Get() error {
+	page := a.FormInt("p", 1)
+	if page <= 0 {
+		page = 1
+	}
+
+	username := a.Param("username")
+	session, DB := models.GetSessionAndDB()
+	defer session.Close()
+	c := DB.C(models.USERS)
+
+	user := models.User{}
+
+	err := c.Find(bson.M{"username": username}).One(&user)
+
+	if err != nil {
+		a.NotFound("会员未找到")
+		return nil
+	}
+
+	var comments []models.Comment
+
+	c = DB.C(models.COMMENTS)
+
+	pagination := NewPagination(c.Find(bson.M{"createdby": user.Id_, "type": models.TypeTopic}).Sort("-createdat"), PerPage)
+
+	query, err := pagination.Page(page)
+
+	query.(*mgo.Query).All(&comments)
+
+	return a.Render("account/comments.html", renders.T{
+		"member":     user,
+		"pagination": pagination,
+		"comments":   comments,
+		"url":        fmt.Sprintf("/member/%s/comments", username),
 	})
 }
 

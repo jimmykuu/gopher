@@ -1,0 +1,37 @@
+{{ template "base.html" .}}
+{{ define "body" }}
+<div class="columns">
+  <div class="column is-3">
+    {{ template "partials/member_info.html" . }}
+  </div>
+  <div class="column is-9">
+    <div class="tabs">
+      <ul>
+        <li><a href="/member/{{ .member.Username }}">主题</a></li>
+        <li class="is-active"><a href="javascript:;">回复</a></li>
+        <li><a>收藏</a></li>
+      </ul>
+    </div>
+    <div class="box">
+      {{ range .comments }}
+        {{ $topic := .Topic $.db }}
+        {{ $creater := $topic.Creater $.db }}
+        <article class="media">
+          <div class="media-content">
+            <div class="content">
+              <p>
+                <time datetime="{{ .CreatedAt }}">{{ formattime .CreatedAt }}</time>
+                回复了
+                <a href="/member/{{$creater.Username}}">{{$creater.Username}}</a>
+                创建的主题: <a href="/t/{{$topic.Id_.Hex}}">{{$topic.Title}}</a>
+              </p>
+              {{ .Html }}
+            </div>
+          </div>
+        </article>
+      {{end}}
+    </div>
+    {{ template "partials/pagination.html" . }}
+  </div>
+</div>
+{{ end }}

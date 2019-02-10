@@ -1,0 +1,46 @@
+{{ $member := assertuser .member }}
+<div class="card member-info">
+  <div class="card-image">
+    <figure class="image">
+      <img src="{{ $member.AvatarImgSrc 512 }}" style="height: auto;">
+    </figure>
+  </div>
+  <div class="card-content">
+    <div class="media">
+      <div class="media-content">
+        <p class="title">{{ .member.Username }}</p>
+        <p class="subtitle">{{ .member.Tagline }}</p>
+      </div>
+    </div>
+
+    <div class="content">
+      第 {{ .member.Index }} 号会员 / <time datetime="{{ .member.JoinedAt }}">{{ .member.JoinedAt.Format "2006-01-02" }}</time>
+      <ul>
+        {{ if .member.Location }}
+          <li>
+            <span class="icon"><i class="fas fa-map-marker"></i></span>
+            <a href="/members/city/{{ .member.Location }}">{{ .member.Location }}</a>
+          </li>
+        {{ end}}
+        {{ if .member.Website }}
+        <li>
+          <span class="icon"><i class="fas fa-globe"></i></span>
+          <a href="{{url .member.Website }}" target="_blank">{{ .member.Website }}</a>
+        </li>
+        {{ end}}
+        {{ if .member.Weibo }}
+        <li>
+          <span class="icon"><i class="fab fa-weibo"></i></span>
+          <a href="http://weibo.com/{{ .member.Weibo }}" target="_blank">http://weibo.com/{{ .member.Weibo }}</a>
+        </li>
+        {{ end}}
+        {{ if .member.GitHubUsername }}
+        <li>
+          <span class="icon"><i class="fab fa-github"></i></span>
+          <a href="https://github.com/{{ .member.GitHubUsername }}" target="_blank">https://github.com/{{ .member.GitHubUsername }}</a>
+        </li>
+        {{ end }}
+      </ul>
+    </div>
+  </div>
+</div>
