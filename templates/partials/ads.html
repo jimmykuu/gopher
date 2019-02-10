@@ -1,8 +1,6 @@
-{{$ads := ads "frontpage" .db}}
-{{if $ads}}
-  {{range $ads}}
-    <div class="segment ad">
-      {{html .Code}}
-    </div>
-  {{end}}
-{{end}}
+{{ $ads := ads "frontpage" .db }}
+{{ range $ads }}
+  <div class="segment ad">
+    {{ html .Code }}
+  </div>
+{{ end }}

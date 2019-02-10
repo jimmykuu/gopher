@@ -107,32 +107,14 @@ func (a *NodeTopics) Get() error {
 		return nil
 	}
 
-	page := a.FormInt("p", 1)
-	if page <= 0 {
-		page = 1
-	}
+	topics, pagination, err := GetTopics(a, a.DB, bson.M{"nodeid": node.Id_, "content.type": models.TypeTopic})
 
-	c = a.DB.C(models.CONTENTS)
-
-	pagination := NewPagination(c.Find(bson.M{"nodeid": node.Id_, "content.type": models.TypeTopic}).Sort("-latestrepliedat"), 20)
-
-	var topics []models.Topic
-
-	query, err := pagination.Page(page)
-	if err != nil {
-		a.NotFound("没有找到页面")
-		return nil
-	}
-
-	query.(*mgo.Query).All(&topics)
-
-	return a.Render("topic/list.html", renders.T{
+	return a.Render("index.html", renders.T{
 		"title":      node.Name + "主题列表",
 		"topics":     topics,
 		"node":       node,
 		"pagination": pagination,
 		"url":        "/go/" + nodeId,
-		"page":       page,
 	})
 }
 

@@ -119,6 +119,13 @@
       </div>
     </nav>
 
+    {{ $ads := ads "top" .db }}
+    {{ range $ads }}
+    <div class="container">
+      {{ html .Code }}
+    </div>
+    {{ end }}
+
     <div class="container main">
       {{ template "body" .}}
     </div>

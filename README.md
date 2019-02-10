@@ -1,4 +1,4 @@
-![Golang 中国](http://77fkk5.com1.z0.glb.clouddn.com/logo/golangtc.png)
+![Golang 中国](https://is.golangtc.com/logo/golangtc.png?height=60)
 
 # Gopher
 
