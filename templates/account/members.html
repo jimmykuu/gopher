@@ -1,44 +1,34 @@
 {{ template "base.html" . }}
 {{ define "body" }}
-
 <style type="text/css">
-  a.column {
+  .users {
+    display: -webkit-flex;
+    display: flex;
+    flex-flow: wrap;
+  }
+
+  .user {
+    width: 60px;
+    height: 80px;
+    margin: 8px 20px;
+    padding: 6px;
+    text-overflow: ellipsis;
+    overflow: hidden;
     text-align: center;
   }
-  
-  a.column img.ui.image {
-    display: inline;
-  }
-  
-  a.column span {
-    display: block;
-  }
-  
-  a.all-members {
-    float: right;
-  }
 </style>
-
-<div class="ui segment">
-  <h4 class="ui header dash_header">新加入会员</h4>
-  <div class="ui grid">
-    <div class="twelve wide column">
-      <div class="ui doubling eight column grid">
-        {{ range .members }}
-        <a class="column" href="/member/{{ .Username }}">
-          <img class="ui rounded image" src="{{ .AvatarImgSrc 48 }}">
-          <span>{{ .Username }}</span>
-        </a>
-        {{ end }}
-      </div>
-
-      <div class="ui right aligned grid">
-        <div class="column">
-          <a href="/members/all" class="all-members">所有会员</a>
-        </div>
-      </div>
-    </div>
+<h4>新加入会员</h4>
+<div class="users">
+  {{ range .members }}
+    <a class="user" href="/member/{{ .Username }}" title="{{ .Username }}">
+      <img src="{{ .AvatarImgSrc 48 }}">
+      <span>{{ .Username }}</span>
+    </a>
+  {{ end }}
+</div>
+<div class="">
+  <div class="column">
+    <a href="/members/all" class="all-members">所有会员</a>
   </div>
 </div>
-
 {{ end }}

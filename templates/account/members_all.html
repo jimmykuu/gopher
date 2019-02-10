@@ -1,39 +1,14 @@
-{{ template "base.html" . }} 
+{{ template "base.html" . }}
 {{ define "body" }}
-
-<style type="text/css">
-  a.column {
-    text-align: center;
-  }
-  
-  a.column img.ui.image {
-    display: inline;
-  }
-  
-  a.column span {
-    display: block;
-  }
-</style>
-
-<div class="ui segment">
-  <h4 class="ui header dash_header">所有会员</h4>
-  <div class="ui grid">
-    <div class="twelve wide column">
-      <div class="ui doubling eight column grid">
-        {{ range .members }}
-        <a class="column" href="/member/{{ .Username }}">
-          <img class="ui rounded image" src="{{ .AvatarImgSrc 48 }}">
-          <span>{{ .Username }}</span>
-        </a>
-        {{ end }}
-      </div>
-
-      <div class="ui center aligned grid">
-        <div class="column">
-          {{ template "partials/pagination.html" . }}
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="users">
+  {{ range .members }}
+    <a class="user" href="/member/{{ .Username }}" title="{{ .Username }}">
+      <img src="{{ .AvatarImgSrc 48 }}">
+      <span>{{ .Username }}</span>
+    </a>
+  {{ end }}
 </div>
+
+{{ template "partials/pagination.html" . }}
+
 {{ end }}

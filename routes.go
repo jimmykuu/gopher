@@ -17,10 +17,8 @@ func setRoutes(t *tango.Tango) {
 	t.Get("/t/:topicID", new(actions.ShowTopic))
 	t.Get("/t/:topicID/collect", new(actions.CollectTopic))
 
-	t.Get("/", new(actions.LatestReplyTopics))
+	t.Get("/", new(actions.Index))
 	t.Get("/go/:node", new(actions.NodeTopics))
-	t.Get("/topics/latest", new(actions.LatestTopics))
-	t.Get("/topics/no_reply", new(actions.NoReplyTopics))
 	t.Get("/search", new(actions.SearchTopic))
 
 	t.Get("/member/:username", new(actions.AccountIndex))

@@ -1,9 +1,8 @@
 {{$ads := ads "frontpage" .db}}
 {{if $ads}}
-<div class="ui segment">
-  <a id="aliyun-c"></a>
   {{range $ads}}
-    {{html .Code}}
+    <div class="segment ad">
+      {{html .Code}}
+    </div>
   {{end}}
-</div>
 {{end}}

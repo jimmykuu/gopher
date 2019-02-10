@@ -1,85 +1,13 @@
 {{ template "base.html" .}}
 {{ define "body" }}
-<div class="ui grid">
-  <div class="twelve wide column">
-    <div class="ui items segment">
-      {{ template "partials/pagination.html" .}}
-
-      <div><p>&nbsp;</p></div>
-      <div id="search-input"></div>
-
-      {{ range .topics }}
-      {{ $creater := .Creater $.db }}
-      {{ $node := .Node $.db }}
-      <div class="item" style="border-top: 1px solid #dddddd; padding: 14px 0 0 0;">
-        <a class="ui mini label{{ if eq .CommentCount 0 }} blue{{ end }}" style="height: 24px;" href="/t/{{ .Id_.Hex }}#comments">
-          {{ .CommentCount }} 回复
-        </a>
-        <div class="content" style="padding-left: 21px;">
-          <a href="/t/{{ .Id_.Hex }}" class="header" style="font-size: 16px;">{{ truncate .Title 40 "..." }}</a>
-          <div class="meta">
-            <a class="label label-info" href="/go/{{$node.Id}}">{{$node.Name}}</a> •
-            <a href="/member/{{$creater.Username}}"><strong>{{$creater.Username}}</strong></a> •
-            {{ if .CommentCount }}
-            {{ $latestReplier := .LatestReplier $.db }}
-              <time datetime="{{formatdatetime .LatestRepliedAt}}" title="{{ formatdatetime .LatestRepliedAt }}">{{ formattime .LatestRepliedAt }}</time> •
-              最后回复来自 <a href="/member/{{ $latestReplier.Username }}">{{ $latestReplier.Username }}</a>
-            {{ else }}
-              <time datetime="{{ formatdatetime .CreatedAt }}" title="{{ formatdatetime .CreatedAt }}">{{ formattime .CreatedAt }}</time>
-            {{ end }}
-          </div>
-        </div>
-      </div>
-      {{ end }}
-
-      {{ template "partials/pagination.html" .}}
+<div class="columns">
+  <div class="column is-9">
+    <div class="notification">
+      关于 <strong>“{{ .q }}”</strong> 的搜索结果，共 <strong>“{{ .pagination.Count }}”</strong> 条。
     </div>
+    {{ template "partials/topics.html" . }}
+    {{ template "partials/pagination.html" .}}
   </div>
-
-  <script type="text/babel">
-  class SearchInput extends React.Component {
-    constructor(props) {
-      super(props);
-
-      this.state = {
-        q: '{{ .q }}'
-      }
-    }
-
-    search() {
-      if (this.state.q) {
-        window.location.href = '/search?q=' + this.state.q;
-      }
-    }
-
-    handleKeyPress = (e) => {
-      if (e.key == 'Enter') {
-        this.search();
-      }
-    }
-
-    handleSearch = (e) => {
-      this.search();
-    }
-
-    handleQChange = (e) => {
-      this.setState({q: e.target.value});
-    }
-
-    render() {
-      return (
-        <div className="ui fluid icon input">
-          <input type="text" value={this.state.q} placeholder="搜索主题..." onKeyPress={this.handleKeyPress} onChange={this.handleQChange} />
-          <i className="search link icon" onClick={this.handleSearch}></i>
-        </div>
-      );
-    }
-  }
-
-  ReactDOM.render(<SearchInput />, document.getElementById('search-input'));
-</script>
-
-  <div class="four wide column">
-  </div>
+  <div class="column is-3"></div>
 </div>
 {{end}}

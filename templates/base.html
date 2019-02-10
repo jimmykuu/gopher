@@ -45,62 +45,76 @@
   </head>
   <body>
     <nav class="navbar has-shadow" role="navigation" aria-label="main navigation">
-      <div class="navbar-brand">
-        <a class="navbar-item" href="/">
-          <img src="https://is.golangtc.com/logo/golangtc.png?height=60">
-        </a>
-
-        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
-      </div>
-
-      <div id="navbarBasicExample" class="navbar-menu">
-        <div class="navbar-start">
+      <div class="container">
+        <div class="navbar-brand">
           <a class="navbar-item" href="/">
-            主题
+            <img src="https://is.golangtc.com/logo/golangtc.png?height=60">
           </a>
-          <a class="navbar-item" href="/members">
-            会员
+
+          <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
           </a>
         </div>
-        <div class="navbar-end">
-        {{ if .user }}
-          <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link">
-              {{ .user.Username }}
-            </a>
 
-            <div class="navbar-dropdown">
-              <a class="navbar-item" href="/user_center/profile">
-                用户信息
-              </a>
-              <a class="navbar-item" href="/user_center/favorites">
-                我的收藏
-              </a>
-              <a class="navbar-item" href="/user_center/change_password">
-                修改密码
-              </a>
-              <hr class="navbar-divider">
-              <a class="navbar-item" href="javascript: signout();">
-                登出
-              </a>
-            </div>
+        <div id="navbarBasicExample" class="navbar-menu">
+          <div class="navbar-start">
+            <a class="navbar-item" href="/">
+              主题
+            </a>
+            <a class="navbar-item" href="/members">
+              会员
+            </a>
           </div>
-        {{ else }}
-          <div class="navbar-item">
-            <div class="buttons">
-              <a class="button is-primary" href="/signin">
-                <strong>登录</strong>
+          <div class="navbar-end">
+            <form class="field has-addons" action="/search" method="GET" id="search">
+              <div class="control">
+                <input class="input" name="q" type="text" placeholder="搜索主题...">
+              </div>
+              <div class="control">
+                <button type="submit" class="button">
+                  <span class="icon is-small">
+                    <i class="fas fa-search"></i>
+                  </span>
+                </button>
+              </div>
+            </form>
+          {{ if .user }}
+            <div class="navbar-item has-dropdown is-hoverable">
+              <a class="navbar-link">
+                {{ .user.Username }}
               </a>
-              <a class="button is-light" href="/signup">
-                注册
-              </a>
+
+              <div class="navbar-dropdown">
+                <a class="navbar-item" href="/user_center/profile">
+                  用户信息
+                </a>
+                <a class="navbar-item" href="/user_center/favorites">
+                  我的收藏
+                </a>
+                <a class="navbar-item" href="/user_center/change_password">
+                  修改密码
+                </a>
+                <hr class="navbar-divider">
+                <a class="navbar-item" href="javascript: signout();">
+                  登出
+                </a>
+              </div>
             </div>
+          {{ else }}
+            <div class="navbar-item">
+              <div class="buttons">
+                <a class="button is-primary" href="/signin">
+                  <strong>登录</strong>
+                </a>
+                <a class="button is-light" href="/signup">
+                  注册
+                </a>
+              </div>
+            </div>
+          {{ end }}
           </div>
-        {{ end }}
         </div>
       </div>
     </nav>

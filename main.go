@@ -47,6 +47,10 @@ func main() {
 					v, _ := i.(models.Topic)
 					return &v
 				},
+				"assertuser": func(i interface{}) *models.User {
+					v, _ := i.(models.User)
+					return &v
+				},
 				"html": func(text string) template.HTML {
 					return template.HTML(text)
 				},

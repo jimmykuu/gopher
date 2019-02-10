@@ -65,7 +65,7 @@ type AccountIndex struct {
 	RenderBase
 }
 
-// Get /menuber/:username
+// Get /member/:username
 func (a *AccountIndex) Get() error {
 	username := a.Param("username")
 	session, DB := models.GetSessionAndDB()

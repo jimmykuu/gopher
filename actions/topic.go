@@ -1,7 +1,6 @@
 package actions
 
 import (
-	"sort"
 	"strings"
 
 	"github.com/tango-contrib/renders"
@@ -10,8 +9,6 @@ import (
 
 	"github.com/jimmykuu/gopher/models"
 )
-
-const PerPage = 20
 
 type City struct {
 	Name        string `bson:"_id"`
@@ -23,139 +20,6 @@ type ByCount []City
 func (a ByCount) Len() int           { return len(a) }
 func (a ByCount) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByCount) Less(i, j int) bool { return a[i].MemberCount > a[j].MemberCount }
-
-// Topic 主题基类
-type Topic struct {
-	RenderBase
-	url    string // 当前页面的 URL 地址
-	active string // 当前页面 LatestReply/Latest/NoReply
-}
-
-// 按条件列出所有主题
-func (a *Topic) list(conditions bson.M, sortBy string) error {
-	page := a.FormInt("p", 1)
-	if page <= 0 {
-		page = 1
-	}
-
-	var nodes []models.Node
-
-	c := a.DB.C(models.NODES)
-	c.Find(bson.M{"topiccount": bson.M{"$gt": 0}}).Sort("-topiccount").All(&nodes)
-
-	var status models.Status
-	c = a.DB.C(models.STATUS)
-	c.Find(nil).One(&status)
-
-	c = a.DB.C(models.CONTENTS)
-
-	var topTopics []models.Topic
-
-	if page == 1 {
-		c.Find(bson.M{"is_top": true}).Sort(sortBy).All(&topTopics)
-
-		var objectIds []bson.ObjectId
-		for _, topic := range topTopics {
-			objectIds = append(objectIds, topic.Id_)
-		}
-		if len(topTopics) > 0 {
-			conditions["_id"] = bson.M{"$not": bson.M{"$in": objectIds}}
-		}
-	}
-
-	pagination := NewPagination(c.Find(conditions).Sort(sortBy), PerPage)
-
-	var topics []models.Topic
-
-	query, err := pagination.Page(page)
-	if err != nil {
-		return err
-	}
-
-	query.(*mgo.Query).All(&topics)
-
-	var linkExchanges []models.LinkExchange
-	c = a.DB.C(models.LINK_EXCHANGES)
-	c.Find(bson.M{"is_on_home": true}).All(&linkExchanges)
-
-	topics = append(topTopics, topics...)
-
-	c = a.DB.C(models.USERS)
-
-	var cities []City
-	c.Pipe([]bson.M{bson.M{
-		"$group": bson.M{
-			"_id":   "$location",
-			"count": bson.M{"$sum": 1},
-		},
-	}}).All(&cities)
-
-	sort.Sort(ByCount(cities))
-
-	var hotCities []City
-
-	count := 0
-	for _, city := range cities {
-		if city.Name != "" {
-			hotCities = append(hotCities, city)
-
-			count++
-		}
-
-		if count == 10 {
-			break
-		}
-	}
-
-	return a.Render("index.html", renders.T{
-		"title":         "首页",
-		"nodes":         nodes,
-		"cities":        hotCities,
-		"status":        status,
-		"topics":        topics,
-		"linkExchanges": linkExchanges,
-		"pagination":    pagination,
-		"url":           a.url,
-		"page":          page,
-		"active":        a.active,
-	})
-}
-
-// LatestReplyTopics 最新回复
-type LatestReplyTopics struct {
-	Topic
-}
-
-// Get / 默认首页
-func (a *LatestReplyTopics) Get() error {
-	a.url = "/"
-	a.active = "LatestReply"
-	return a.list(bson.M{"content.type": models.TypeTopic}, "-latestrepliedat")
-}
-
-// LatestTopics 最新发布的主题，按照发布时间倒序排列
-type LatestTopics struct {
-	Topic
-}
-
-// Get /topics/latest 最新发布的主题
-func (a *LatestTopics) Get() error {
-	a.url = "/topics/latest"
-	a.active = "Latest"
-	return a.list(bson.M{"content.type": models.TypeTopic}, "-content.createdat")
-}
-
-// NoReplyTopics 无人回复的主题，按照发布时间倒序排列
-type NoReplyTopics struct {
-	Topic
-}
-
-// Get /topics/no_reply 无人回复的主题
-func (a *NoReplyTopics) Get() error {
-	a.url = "/topics/no_reply"
-	a.active = "NoReply"
-	return a.list(bson.M{"content.type": models.TypeTopic, "content.commentcount": 0}, "-content.createdat")
-}
 
 // ShowTopic 显示主题
 type ShowTopic struct {

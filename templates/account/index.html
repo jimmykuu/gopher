@@ -1,36 +1,66 @@
 {{ template "base.html" .}}
 {{ define "body" }}
-<div class="ui grid">
-  <div class="four wide column">
-    <div class="ui card">
-      <div class="image">
-        <img src="http://77fkk5.com1.z0.glb.clouddn.com/avatar/4dbf2ca317f611e48587ee3b9c14156b.jpg?imageView2/2/w/300/h/300/q/100">
+{{ $member := assertuser .member }}
+<div class="columns">
+  <div class="column is-4">
+    <div class="card">
+      <div class="card-image">
+        <figure class="image">
+          <img src="{{ $member.AvatarImgSrc 512 }}" style="height: auto;">
+        </figure>
       </div>
-      <div class="content">
-        <div class="header">{{ .member.Username }}</div>
-        <div class="meta">
-          <span class="date">第 {{ .member.Index }} 号会员 / {{ .member.JoinedAt.Format "2006-01-02" }}</span>
-        </div>
-        <div class="description">
-          Kristy is an art director living in New York.
+        <div class="card-content">
+          <div class="media">
+            <!-- <div class="media-left">
+              <figure class="image is-48x48">
+                <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
+              </figure>
+            </div> -->
+            <div class="media-content">
+              <p class="title">{{ .member.Username }}</p>
+              <p class="subtitle">{{ .member.Tagline }}</p>
+            </div>
+          </div>
+
+          <div class="content">
+            第 {{ .member.Index }} 号会员 / <time datetime="{{ .member.JoinedAt }}">{{ .member.JoinedAt.Format "2006-01-02" }}</time>
+            <ul class="member-info">
+              {{ if .member.Location }}
+                <li>
+                  <span class="icon"><i class="fas fa-map-marker"></i></span>
+                  <a href="/members/city/{{ .member.Location }}">{{ .member.Location }}</a>
+                </li>
+              {{ end}}
+              {{ if .member.Website }}
+                <li>
+                  <span class="icon"><i class="fas fa-globe"></i></span>
+                  <a href="{{url .member.Website }}" target="_blank">{{ .member.Website }}</a>
+                </li>
+              {{ end}}
+              {{ if .member.Weibo }}
+                <li>
+                  <span class="icon"><i class="fab fa-weibo"></i></span>
+                  <a href="http://weibo.com/{{ .member.Weibo }}" target="_blank">http://weibo.com/{{ .member.Weibo }}</a>
+                </li>
+              {{ end}}
+              {{ if .member.GitHubUsername }}
+                <li>
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <a href="https://github.com/{{ .member.GitHubUsername }}" target="_blank">https://github.com/{{ .member.GitHubUsername }}</a>
+                </li>
+              {{ end }}
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
   </div>
-  <div class="twelve wide column">
-    <div class="ui secondary pointing menu">
-      <a class="active item">
-        主题
-      </a>
-      <a class="item">
-        回复
-      </a>
-      <a class="item">
-        收藏
-      </a>
-    </div>
-    <div class="ui segment">
-      <p></p>
+  <div class="column is-8">
+    <div class="tabs">
+      <ul>
+        <li class="is-active"><a href="javascript:;">主题</a></li>
+        <li><a>回复</a></li>
+        <li><a>收藏</a></li>
+      </ul>
     </div>
   </div>
 </div>

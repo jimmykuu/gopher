@@ -7,7 +7,7 @@
   <div class="media">
     <div class="media-left">
       <p class="image is-32x32">
-        <img src="{{ $creater.AvatarImgSrc 32 }}">
+        <a href="/member/{{ $creater.Username }}"><img src="{{ $creater.AvatarImgSrc 32 }}"></a>
       </p>
     </div>
     <div class="media-content">
@@ -17,7 +17,7 @@
           {{ if .CommentCount }}
             {{ $latestReplier := .LatestReplier $.db }}
             {{ if $latestReplier}}
-              <time datetime="{{formatdatetime .LatestRepliedAt}}" title="{{ formatdatetime .LatestRepliedAt }}">{{ formattime .LatestRepliedAt }}</time> •
+              <time datetime="{{ .LatestRepliedAt }}" title="{{ formatdatetime .LatestRepliedAt }}">{{ formattime .LatestRepliedAt }}</time> •
               最后回复来自 <a href="/member/{{ $latestReplier.Username }}">{{ $latestReplier.Username }}</a>
             {{ else }}
               <time datetime="{{ formatdatetime .CreatedAt }}" title="{{ formatdatetime .CreatedAt }}">{{ formattime .CreatedAt }}</time>
