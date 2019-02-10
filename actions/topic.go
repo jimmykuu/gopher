@@ -168,32 +168,26 @@ func (a *SearchTopic) Get() error {
 		markdownConditions = append(markdownConditions, bson.M{"content.markdown": bson.M{"$regex": bson.RegEx{keyword, "i"}}})
 	}
 
-	c := a.DB.C(models.CONTENTS)
-
 	var pagination *Pagination
 
+	var conditions bson.M
+
 	if len(noSpaceKeywords) == 0 {
-		pagination = NewPagination(c.Find(bson.M{"content.type": models.TypeTopic}).Sort("-latestrepliedat"), PerPage)
+		conditions = bson.M{"content.type": models.TypeTopic}
 	} else {
-		pagination = NewPagination(c.Find(bson.M{"$and": []bson.M{
-			bson.M{"content.type": models.TypeTopic},
-			bson.M{"$or": []bson.M{
-				bson.M{"$and": titleConditions},
-				bson.M{"$and": markdownConditions},
+		conditions = bson.M{
+			"$and": []bson.M{
+				bson.M{"content.type": models.TypeTopic},
+				bson.M{"$or": []bson.M{
+					bson.M{"$and": titleConditions},
+					bson.M{"$and": markdownConditions},
+				},
+				},
 			},
-			},
-		}}).Sort("-latestrepliedat"), PerPage)
+		}
 	}
 
-	var topics []models.Topic
-
-	query, err := pagination.Page(page)
-	if err != nil {
-		a.NotFound(err.Error())
-		return nil
-	}
-
-	query.(*mgo.Query).All(&topics)
+	topics, pagination, err := GetTopics(a, a.DB, conditions)
 
 	if err != nil {
 		a.NotFound(err.Error())
@@ -207,6 +201,32 @@ func (a *SearchTopic) Get() error {
 		"pagination": pagination,
 		"page":       page,
 	})
+}
+
+type FormInt interface {
+	FormInt(key string, defaults ...int) int
+}
+
+// GetTopics 查询主题
+func GetTopics(ctx FormInt, db *mgo.Database, conditions bson.M) ([]models.Topic, *Pagination, error) {
+	page := ctx.FormInt("p", 1)
+	if page <= 0 {
+		page = 1
+	}
+
+	c := db.C(models.CONTENTS)
+	var pagination = NewPagination(c.Find(conditions).Sort("-latestrepliedat"), PerPage)
+
+	var topics []models.Topic
+
+	query, err := pagination.Page(page)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	query.(*mgo.Query).All(&topics)
+
+	return topics, pagination, nil
 }
 
 // CollectTopic 收藏主题

@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"fmt"
 	"net/url"
 
 	"github.com/Youngyezi/geetest"
@@ -81,9 +82,18 @@ func (a *AccountIndex) Get() error {
 		return nil
 	}
 
+	topics, pagination, err := GetTopics(a, a.DB, bson.M{"content.type": models.TypeTopic, "content.createdby": user.Id_})
+
+	if err != nil {
+		return err
+	}
+
 	return a.Render("account/index.html", renders.T{
-		"title":  username,
-		"member": user,
+		"title":      username,
+		"member":     user,
+		"topics":     topics,
+		"pagination": pagination,
+		"url":        fmt.Sprintf("/member/%s", user.Username),
 	})
 }
 

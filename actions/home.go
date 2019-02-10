@@ -4,7 +4,6 @@ import (
 	"sort"
 
 	"github.com/tango-contrib/renders"
-	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/jimmykuu/gopher/models"
@@ -19,9 +18,6 @@ type Index struct {
 
 // Get / 默认首页
 func (a *Index) Get() error {
-
-	// return a.list(bson.M{"content.type": models.TypeTopic}, "-latestrepliedat")
-
 	page := a.FormInt("p", 1)
 	if page <= 0 {
 		page = 1
@@ -54,16 +50,11 @@ func (a *Index) Get() error {
 		}
 	}
 
-	pagination := NewPagination(c.Find(conditions).Sort("-latestrepliedat"), PerPage)
+	topics, pagination, err := GetTopics(a, a.DB, conditions)
 
-	var topics []models.Topic
-
-	query, err := pagination.Page(page)
 	if err != nil {
 		return err
 	}
-
-	query.(*mgo.Query).All(&topics)
 
 	var linkExchanges []models.LinkExchange
 	c = a.DB.C(models.LINK_EXCHANGES)
