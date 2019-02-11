@@ -7,9 +7,9 @@
   <div class="column is-9">
     <div class="tabs">
       <ul>
-        <li class="is-active"><a href="javascript:;">主题</a></li>
+        <li><a href="/member/{{ .member.Username }}">主题</a></li>
         <li><a href="/member/{{ .member.Username }}/comments">回复</a></li>
-        <li><a href="/member/{{ .member.Username }}/collections">收藏</a></li>
+        <li class="is-active"><a>收藏</a></li>
       </ul>
     </div>
     {{ template "partials/topics.html" . }}

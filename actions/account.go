@@ -6,7 +6,6 @@ import (
 
 	"github.com/Youngyezi/geetest"
 	"github.com/tango-contrib/renders"
-	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/jimmykuu/gopher/conf"
@@ -131,13 +130,61 @@ func (a *AccountComments) Get() error {
 
 	query, err := pagination.Page(page)
 
-	query.(*mgo.Query).All(&comments)
+	query.All(&comments)
 
 	return a.Render("account/comments.html", renders.T{
 		"member":     user,
 		"pagination": pagination,
 		"comments":   comments,
 		"url":        fmt.Sprintf("/member/%s/comments", username),
+	})
+}
+
+// AccountCollections 用户收藏
+type AccountCollections struct {
+	RenderBase
+}
+
+// Get /member/:username/collections
+func (a *AccountCollections) Get() error {
+	username := a.Param("username")
+	session, DB := models.GetSessionAndDB()
+	defer session.Close()
+	c := DB.C(models.USERS)
+
+	user := models.User{}
+
+	err := c.Find(bson.M{"username": username}).One(&user)
+
+	if err != nil {
+		a.NotFound("会员未找到")
+		return nil
+	}
+
+	var topicIDs = []bson.ObjectId{}
+
+	for _, topicCollected := range user.TopicsCollected {
+		topicIDs = append(topicIDs, bson.ObjectIdHex(topicCollected.TopicId))
+	}
+
+	var conditions = bson.M{
+		"content.type": models.TypeTopic,
+		"_id":          bson.M{"$in": topicIDs},
+	}
+
+	topics, pagination, err := GetTopics(a, a.DB, conditions)
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(pagination.Pages())
+
+	return a.Render("account/collections.html", renders.T{
+		"member":     user,
+		"pagination": pagination,
+		"topics":     topics,
+		"url":        fmt.Sprintf("/member/%s/collections", username),
 	})
 }
 
@@ -185,7 +232,7 @@ func (a *ListUsers) Get() error {
 		return err
 	}
 
-	query.(*mgo.Query).All(&members)
+	query.All(&members)
 
 	return a.Render("account/members_all.html", renders.T{
 		"title":      "所有会员",

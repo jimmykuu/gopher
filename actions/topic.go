@@ -206,7 +206,7 @@ func GetTopics(ctx FormInt, db *mgo.Database, conditions bson.M) ([]models.Topic
 		return nil, nil, err
 	}
 
-	query.(*mgo.Query).All(&topics)
+	query.All(&topics)
 
 	return topics, pagination, nil
 }

@@ -1,7 +1,6 @@
 package apis
 
 import (
-	"fmt"
 	"html/template"
 	"time"
 
@@ -135,8 +134,22 @@ func (a *Topic) Post() interface{} {
 
 	now := time.Now()
 
+	// 查找最新的一篇帖子，限制发帖间隔
+	var latestTopic models.Topic
+	err := c.Find(bson.M{"content.createdby": a.User.Id_}).Sort("-content.createdat").Limit(1).One(&latestTopic)
+	if err == nil {
+		if !latestTopic.Content.CreatedAt.Add(time.Minute * 30).Before(now) {
+			// 半小时内只能发一帖
+			return map[string]interface{}{
+				"status":   0,
+				"message":  "发表主题过于频繁，不能发布该主题",
+				"topic_id": id.Hex(),
+			}
+		}
+	}
+
 	nodeID := bson.ObjectIdHex(form.NodeID)
-	err := c.Insert(&models.Topic{
+	err = c.Insert(&models.Topic{
 		Content: models.Content{
 			Id_:       id,
 			Type:      models.TypeTopic,
@@ -152,7 +165,6 @@ func (a *Topic) Post() interface{} {
 	})
 
 	if err != nil {
-		fmt.Println("newTopicHandler:", err.Error())
 		return map[string]interface{}{
 			"status":  0,
 			"message": "主题新建错误" + err.Error(),

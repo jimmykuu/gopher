@@ -7,59 +7,35 @@ import (
 	"strings"
 
 	"gopkg.in/mgo.v2"
-
-	"github.com/jimmykuu/gopher/models"
 )
 
 // Pagination 分页
 type Pagination struct {
-	query   interface{} // 查询体，可能是 mgo.Query 也可能是 slice
-	current int         // 当前页码
-	count   int         // 内容总数
-	perPage int         // 每页多少
+	query   *mgo.Query // 查询体
+	current int        // 当前页码
+	count   int        // 内容总数
+	perPage int        // 每页多少
 }
 
 // Page 返回第几页的查询
-func (p *Pagination) Page(number int) (interface{}, error) {
+func (p *Pagination) Page(number int) (*mgo.Query, error) {
 	pageCount := int(math.Ceil(float64(p.count) / float64(p.perPage)))
-	switch p.query.(type) {
-	case *mgo.Query:
-		query := p.query.(*mgo.Query)
-
-		if count, _ := query.Count(); count == 0 {
-			return query, nil
-		}
-
-		if !(number > 0 && number <= pageCount) {
-			return nil, errors.New("页码不在范围内")
-		}
-
-		p.current = number
-
-		if number > 1 {
-			query = query.Skip(p.perPage * (number - 1))
-		}
-		return query.Limit(p.perPage), nil
-	case []models.CollectTopic:
-		cts := p.query.([]models.CollectTopic)
-		if count := len(cts); count == 0 {
-			return cts, nil
-		}
-		if !(number > 0 && number <= pageCount) {
-			return nil, errors.New("页码不在范围内")
-		}
-
-		p.current = number
-
-		var end int
-		if number*p.perPage > p.count {
-			end = p.count
-		} else {
-			end = number * p.perPage
-		}
-		return cts[p.perPage*(number-1) : end], nil
+	query := p.query
+	if count, _ := query.Count(); count == 0 {
+		return query, nil
 	}
-	return nil, errors.New("Query type is not *mgo.Query or slice")
+
+	if !(number > 0 && number <= pageCount) {
+		return nil, errors.New("页码不在范围内")
+	}
+
+	p.current = number
+
+	if number > 1 {
+		query = query.Skip(p.perPage * (number - 1))
+	}
+
+	return query.Limit(p.perPage), nil
 }
 
 // Count 内容总数
@@ -108,7 +84,7 @@ func (p *Pagination) Pages() []int {
 
 	var result = []int{}
 
-	if p.count == 0 {
+	if p.count == 0 || last == 0 {
 		return result
 	}
 
@@ -169,7 +145,7 @@ func (p *Pagination) Pages() []int {
 		result = append([]int{1}, result...)
 	}
 
-	// 后补补省略值或补最后值
+	// 后部补省略值或补最后值
 	if result[len(result)-1] == last-1 {
 		result = append(result, last)
 	} else if result[len(result)-1] < last-1 {
@@ -180,15 +156,10 @@ func (p *Pagination) Pages() []int {
 }
 
 // NewPagination 创建一个分页结构体
-func NewPagination(query interface{}, perPage int) *Pagination {
+func NewPagination(query *mgo.Query, perPage int) *Pagination {
 	p := Pagination{}
 	p.query = query
-	switch query.(type) {
-	case *mgo.Query:
-		p.count, _ = query.(*mgo.Query).Count()
-	case []models.CollectTopic:
-		p.count = len(query.([]models.CollectTopic))
-	}
+	p.count, _ = query.Count()
 	p.perPage = perPage
 
 	return &p

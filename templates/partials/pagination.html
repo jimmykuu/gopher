@@ -11,6 +11,7 @@
 }
 </style>
 
+{{ if $pages }}
 <div class="pagination" role="navigation">
   {{ $prev := $.pagination.Prev }}
   <a class="pagination-previous" href="{{ $.pagination.Url $.url $prev }}"{{if not $prev}} disabled{{ end }}>&lt;</a>
@@ -30,3 +31,4 @@
   {{ end }}
   </ul>
 </div>
+{{ end }}
