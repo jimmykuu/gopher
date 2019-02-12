@@ -1,6 +1,7 @@
 package apis
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/pborman/uuid"
@@ -165,5 +166,27 @@ type UploadAvatarImage struct {
 
 // Get /api/user_center/upload_avatar
 func (a *UploadAvatarImage) Post() interface{} {
-	return uploadImage(a.Req(), []string{"avatar"}, 500*1024)
+	filename, err := saveImage(a.Req(), []string{"avatar"}, 500*1024)
+	if err != nil {
+		return map[string]interface{}{
+			"status":  0,
+			"message": fmt.Sprintf("图片上传失败（%s）", err.Error()),
+		}
+	}
+
+	c := a.DB.C(models.USERS)
+	c.Update(bson.M{"_id": a.User.Id_}, bson.M{"$set": bson.M{
+		"avatar": filename,
+	}})
+
+	a.User.Avatar = filename
+
+	return map[string]interface{}{
+		"status": 1,
+		"avatars": []string{
+			a.User.AvatarImgSrc(128),
+			a.User.AvatarImgSrc(64),
+			a.User.AvatarImgSrc(32),
+		},
+	}
 }

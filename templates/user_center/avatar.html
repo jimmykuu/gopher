@@ -58,7 +58,13 @@
       let formData = new FormData();
       formData.append('image', file);
 
-      postForm("/api/user_center/set_avatar", formData);
+      postForm("/api/user_center/set_avatar", formData).then((data) => {
+        if (data.status) {
+          this.setState({avatars: data.avatars});
+        } else {
+          alter(data.message);
+        }
+      });
     }
 
     render() {
