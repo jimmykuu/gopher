@@ -35,17 +35,28 @@
       <p class="panel-heading">
         社区状态
       </p>
+      <div class="panel-block">
       <ul class="status">
-        <li class="panel-block">
-          <span>注册会员</span> <strong>{{ .status.UserCount }}</strong>
+        <li>
+          <div class="tags has-addons">
+            <span class="tag">会员</span>
+            <span class="tag is-primary">{{ .status.UserCount }}</span>
+          </div>
         </li>
-        <li class="panel-block">
-          <span>主题</span> <strong>{{ .status.TopicCount }}</strong>
+        <li>
+          <div class="tags has-addons">
+            <span class="tag">主题</span>
+            <span class="tag is-primary">{{ .status.TopicCount }}</span>
+          </div>
         </li>
-        <li class="panel-block">
-          <span>回复</span> <strong>{{ .status.ReplyCount }}</strong>
+        <li>
+          <div class="tags has-addons">
+            <span class="tag">回复</span>
+            <span class="tag is-primary">{{ .status.ReplyCount }}</span>
+          </div>
         </li>
       </ul>
+    </div>
     </div>
   </div>
 </div>

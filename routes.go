@@ -29,9 +29,10 @@ func setRoutes(t *tango.Tango) {
 
 	t.Get("/:slug", new(actions.Announcement))
 
-	t.Get("/user_center/profile", new(actions.UserCenter))
-	t.Get("/user_center/change_password", new(actions.UserChangePassword))
-	t.Get("/user_center/favorites", new(actions.UserFavorite))
+	t.Get("/user_center", new(actions.UserCenter))
+	t.Get("/user_center/profile", new(actions.UserProfile))
+	t.Get("/user_center/avatar", new(actions.ChangeAvatar))
+	t.Get("/user_center/change_password", new(actions.ChangePassword))
 
 	t.Group("/api", func(g *tango.Group) {
 		g.Use(middlewares.ApiAuthHandler())
@@ -54,7 +55,9 @@ func setRoutes(t *tango.Tango) {
 		g.Get("/comments/:commentID", new(apis.Comment))
 		g.Put("/comments/:commentID", new(apis.Comment))
 
-		g.Put("/user_center/profile", new(apis.UserCenter))
+		g.Get("/user_center/user_info", new(apis.UserInfo))
+		g.Put("/user_center/profile", new(apis.UserProfile))
 		g.Put("/user_center/change_password", new(apis.UserChangePassword))
+		g.Post("/user_center/set_avatar", new(apis.UploadAvatarImage))
 	})
 }

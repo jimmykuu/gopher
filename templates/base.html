@@ -31,11 +31,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.39.2/codemirror.css"></link>
     <link rel="stylesheet" href="{{ staticfile "css/style.css" }}">
     <script type="text/babel" src="{{ staticfile "js/components.js" }}"></script>
-    <style type="text/css">
-      body, .ui.items>.item>.content>.header {
-        font-family: "Microsoft Yahei";
-      }
-    </style>
     <script type="text/javascript">
       function signout() {
         Cookies.remove('user');
@@ -87,11 +82,11 @@
               </a>
 
               <div class="navbar-dropdown">
-                <a class="navbar-item" href="/user_center/profile">
-                  用户信息
+                <a class="navbar-item" href="/member/{{ .user.Username }}">
+                  我的主页
                 </a>
-                <a class="navbar-item" href="/user_center/favorites">
-                  我的收藏
+                <a class="navbar-item" href="/user_center">
+                  个人资料设置
                 </a>
                 <a class="navbar-item" href="/user_center/change_password">
                   修改密码

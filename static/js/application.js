@@ -17,6 +17,16 @@ function post(url, body) {
   return fetch(url, opts).then(getJson);
 }
 
+function postForm(url, data) {
+  const opts = {
+    body: data,
+    headers: getHeaders(),
+    method: 'POST'
+  };
+
+  return fetch(url, opts).then(getJson);
+}
+
 function get(url) {
   const opts = {
     headers: getHeaders(),

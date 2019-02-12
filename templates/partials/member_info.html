@@ -43,4 +43,10 @@
       </ul>
     </div>
   </div>
+
+  {{ if eq .member.Username .user.Username }}
+    <footer class="card-footer">
+      <a href="/user_center" class="card-footer-item">编辑</a>
+    </footer>
+  {{ end }}
 </div>

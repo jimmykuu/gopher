@@ -15,34 +15,38 @@
 
       this.state = {
         loading: true,
-        username: '',
-        email: '',
-        bio: ''
+        location: '',
+        website: '',
+		tagline: '',
+		github: '',
+		weibo: ''
       }
     }
 
     componentDidMount() {
       get('/api/user_center/user_info').then((data) => {
         this.setState({
-          username: data.username,
-          email: data.email,
-          bio: data.bio
+          location: data.location,
+          website: data.website,
+          tagline: data.tagline,
+          github: data.github,
+          weibo: data.weibo
         })
       });
     }
 
     render() {
-      const {username, email, bio} = this.state;
+      const {location, website, tagline, github, weibo} = this.state;
 
       return (<form>
         <div className="field is-horizontal">
           <div className="field-label is-normal">
-            <label className="label">用户名</label>
+            <label className="label">所在地</label>
           </div>
           <div className="field-body">
             <div className="field">
               <div className="control">
-                <input className="input" type="text" value={username} disabled />
+                <input className="input" type="text" value={location} />
               </div>
             </div>
           </div>
@@ -50,12 +54,12 @@
 
         <div className="field is-horizontal">
           <div className="field-label is-normal">
-            <label className="label">Email</label>
+            <label className="label">个人网站</label>
           </div>
           <div className="field-body">
             <div className="field">
               <div className="control">
-                <input className="input" type="email" value={email} />
+                <input className="input" type="text" value={website} />
               </div>
             </div>
           </div>
@@ -63,12 +67,40 @@
 
         <div className="field is-horizontal">
           <div className="field-label is-normal">
-            <label className="label">个人简介</label>
+            <label className="label">签名</label>
           </div>
           <div className="field-body">
             <div className="field">
               <div className="control">
-                <textarea className="textarea">{bio}</textarea>
+                <input className="input" type="text" value={tagline} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr />
+
+        <div className="field is-horizontal">
+          <div className="field-label is-normal">
+            <label className="label">Github 用户名</label>
+          </div>
+          <div className="field-body">
+            <div className="field">
+              <div className="control">
+                <input className="input" type="text" value={github} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="field is-horizontal">
+          <div className="field-label is-normal">
+            <label className="label">新浪微博</label>
+          </div>
+          <div className="field-body">
+            <div className="field">
+              <div className="control">
+                <input className="input" type="text" value={weibo} />
               </div>
             </div>
           </div>
@@ -86,7 +118,7 @@
               </div>
             </div>
           </div>
-        </div>
+      </div>
       </form>);
     }
   }

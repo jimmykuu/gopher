@@ -1,0 +1,44 @@
+<aside class="menu">
+  <ul class="menu-list">
+    <li>
+      <a
+        {{ if eq .sub_active "user_info" }}
+          class="is-active"
+          href="javascript:;"
+        {{ else }}
+          href="/user_center"
+        {{ end }}
+      >基本信息</a>
+    </li>
+    <li>
+      <a
+        {{ if eq .sub_active "user_profile" }}
+          class="is-active"
+          href="javascript:;"
+        {{ else }}
+          href="/user_center/profile"
+        {{ end }}
+      >详细资料</a>
+    </li>
+    <li>
+      <a
+        {{ if eq .sub_active "change_avatar" }}
+          class="is-active"
+          href="javascript:;"
+        {{ else }}
+          href="/user_center/avatar"
+        {{ end }}
+      >修改头像</a>
+    </li>
+    <li>
+      <a
+        {{ if eq .sub_active "change_password" }}
+          class="is-active"
+          href="javascript:;"
+        {{ else }}
+          href="/user_center/change_password"
+        {{ end }}
+      >修改密码</a>
+    </li>
+  </ul>
+</aside>

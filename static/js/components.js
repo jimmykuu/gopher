@@ -24,9 +24,6 @@ class MarkdownEditor extends React.Component {
       language: 'zh_CN',
       hooks: {
         addImageBlobHook: function(file, callback, source) {
-          console.log('addImageBlobHook');
-          console.log(file);
-
           let formData = new FormData();
           formData.append('image', file);
           let xhr = new XMLHttpRequest();

@@ -3,15 +3,49 @@ package apis
 import (
 	"strings"
 
-	"github.com/jimmykuu/gopher/models"
-	"github.com/jimmykuu/gopher/utils"
 	"github.com/pborman/uuid"
 	"github.com/tango-contrib/binding"
 	"gopkg.in/mgo.v2/bson"
+
+	"github.com/jimmykuu/gopher/models"
+	"github.com/jimmykuu/gopher/utils"
 )
 
-// UserCenter 用户中心
-type UserCenter struct {
+// UserInfo 用户信息
+type UserInfo struct {
+	Base
+	binding.Binder
+}
+
+// Get /api/user_center/user_info
+func (a *UserInfo) Get() interface{} {
+	if !a.IsLogin {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "未登录，不能获取用户信息",
+		}
+	}
+
+	return map[string]interface{}{
+		"status":   1,
+		"username": a.User.Username,
+		"email":    a.User.Email,
+		"avatars": []string{
+			a.User.AvatarImgSrc(128),
+			a.User.AvatarImgSrc(64),
+			a.User.AvatarImgSrc(32),
+		},
+		"website":  a.User.Website,
+		"location": a.User.Location,
+		"tagline":  a.User.Tagline,
+		"bio":      a.User.Bio,
+		"github":   a.User.GitHubUsername,
+		"weibo":    a.User.Weibo,
+	}
+}
+
+// UserProfile 用户中心
+type UserProfile struct {
 	Base
 	binding.Binder
 }
@@ -25,11 +59,6 @@ type ProfileForm struct {
 	Bio            string `json:"bio"`
 	GithubUsername string `json:"github_username"`
 	Weibo          string `json:"weibo"`
-}
-
-// UserProfile 用户信息
-type UserProfile struct {
-	UserCenter
 }
 
 // Put /api/user_center/profile 编辑个人信息
@@ -62,7 +91,8 @@ func (a *UserProfile) Put() interface{} {
 
 // UserChangePassword 修改用户密码
 type UserChangePassword struct {
-	UserCenter
+	Base
+	binding.Binder
 }
 
 // ChangePasswordForm 用户密码表单
@@ -125,4 +155,15 @@ func (a *UserChangePassword) Put() interface{} {
 		"status":  1,
 		"message": "密码修改成功",
 	}
+}
+
+// UploadAvatarImage 上传头像图片
+type UploadAvatarImage struct {
+	Base
+	binding.Binder
+}
+
+// Get /api/user_center/upload_avatar
+func (a *UploadAvatarImage) Post() interface{} {
+	return uploadImage(a.Req(), []string{"avatar"}, 500*1024)
 }

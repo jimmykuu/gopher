@@ -12,23 +12,41 @@ type UserCenter struct {
 // Get /user_center
 func (a *UserCenter) Get() error {
 	return a.Render("user_center/index.html", renders.T{
-		"active": "profile",
+		"sub_active": "user_info",
 	})
 }
 
-// UserChangePassword 用户修改密码
-type UserChangePassword struct {
-	UserCenter
+type UserProfile struct {
+	AuthRenderBase
+}
+
+// Get /user_center/profile
+func (a *UserProfile) Get() error {
+	return a.Render("user_center/profile.html", renders.T{
+		"sub_active": "user_profile",
+	})
+}
+
+// ChangeAvatar 修改头像
+type ChangeAvatar struct {
+	AuthRenderBase
+}
+
+// Get /user_center/avatar
+func (a *ChangeAvatar) Get() error {
+	return a.Render("user_center/avatar.html", renders.T{
+		"sub_active": "change_avatar",
+	})
+}
+
+// ChangePassword 用户修改密码
+type ChangePassword struct {
+	AuthRenderBase
 }
 
 // Get /user_center/change_password
-func (a *UserChangePassword) Get() error {
-	return a.Render("user_center/index.html", renders.T{
-		"active": "changePassword",
+func (a *ChangePassword) Get() error {
+	return a.Render("user_center/change_password.html", renders.T{
+		"sub_active": "change_password",
 	})
-}
-
-// UserFavorite 用户修改密码
-type UserFavorite struct {
-	UserCenter
 }
