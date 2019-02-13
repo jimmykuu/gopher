@@ -164,7 +164,7 @@ type UploadAvatarImage struct {
 	binding.Binder
 }
 
-// Get /api/user_center/upload_avatar
+// Post gets /api/user_center/upload_avatar
 func (a *UploadAvatarImage) Post() interface{} {
 	filename, err := saveImage(a.Req(), []string{"avatar"}, 500*1024)
 	if err != nil {
