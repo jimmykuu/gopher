@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -21,7 +20,18 @@ type UploadImage struct {
 
 // Post /upload/image
 func (a *UploadImage) Post() interface{} {
-	filename, err := saveImage(a.Req(), []string{"upload", "image"}, -1)
+	file, header, err := a.Req().FormFile("image")
+	if err != nil {
+		return map[string]interface{}{
+			"status":  0,
+			"message": fmt.Sprintf("图片上传失败（%s）", err.Error()),
+		}
+	}
+	defer file.Close()
+
+	fileType := header.Header["Content-Type"][0]
+
+	filename, err := saveImage(file, fileType, []string{"upload", "image"}, -1)
 	if err != nil {
 		return map[string]interface{}{
 			"status":  0,
@@ -42,31 +52,22 @@ type Sizer interface {
 // uploadImage 上传图片，保存图片到指定位置，并返回图片 URL 地址
 // maxSize: byte 如果是 -1，不检查图片大小
 // 返回：文件名
-func saveImage(r *http.Request, folders []string, maxSize int64) (string, error) {
-	file, header, err := r.FormFile("image")
-	if err != nil {
-		return "", err
-	}
-
-	fileSize := file.(Sizer).Size()
-
+func saveImage(source io.Reader, fileType string, folders []string, maxSize int64) (string, error) {
 	if maxSize > 0 {
+		fileSize := source.(Sizer).Size()
+
 		if fileSize > maxSize {
 			return "", errors.New(fmt.Sprintf("图片尺寸大于 %dK，请选择 %dK 以内的图片上传", maxSize/1024, maxSize/1024))
 		}
 	}
 
-	defer file.Close()
-
 	// 检查是否是 jpg/png/gif 格式
-	uploadFileType := header.Header["Content-Type"][0]
-
 	filenameExtension := ""
-	if uploadFileType == "image/jpeg" {
+	if fileType == "image/jpeg" {
 		filenameExtension = ".jpg"
-	} else if uploadFileType == "image/png" {
+	} else if fileType == "image/png" {
 		filenameExtension = ".png"
-	} else if uploadFileType == "image/gif" {
+	} else if fileType == "image/gif" {
 		filenameExtension = ".gif"
 	}
 
@@ -82,12 +83,7 @@ func saveImage(r *http.Request, folders []string, maxSize int64) (string, error)
 		return "", err
 	}
 
-	io.Copy(toFile, file)
+	io.Copy(toFile, source)
 
 	return filename, nil
-
-	// return "", map[string]interface{}{
-	// 	"status":    1,
-	// 	"image_url": fmt.Sprintf("https://is.golangtc.com/upload/%s/%s", strings.Join(folders, "/"), filename),
-	// }
 }

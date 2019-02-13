@@ -1,7 +1,10 @@
 package apis
 
 import (
+	"crypto/md5"
 	"fmt"
+	"io"
+	"net/http"
 	"strings"
 
 	"github.com/pborman/uuid"
@@ -167,7 +170,18 @@ type UploadAvatarImage struct {
 
 // Post /api/user_center/upload_avatar
 func (a *UploadAvatarImage) Post() interface{} {
-	filename, err := saveImage(a.Req(), []string{"avatar"}, 500*1024)
+	file, header, err := a.Req().FormFile("image")
+	if err != nil {
+		return map[string]interface{}{
+			"status":  0,
+			"message": fmt.Sprintf("图片上传失败（%s）", err.Error()),
+		}
+	}
+	defer file.Close()
+
+	fileType := header.Header["Content-Type"][0]
+
+	filename, err := saveImage(file, fileType, []string{"avatar"}, 500*1024)
 	if err != nil {
 		return map[string]interface{}{
 			"status":  0,
@@ -235,6 +249,49 @@ func (a *SetAvatar) Put() interface{} {
 	c.Update(bson.M{"_id": a.User.Id_}, bson.M{"$set": bson.M{"avatar": form.Avatar}})
 
 	a.User.Avatar = form.Avatar
+
+	return map[string]interface{}{
+		"status": 1,
+		"avatars": []string{
+			a.User.AvatarImgSrc(128),
+			a.User.AvatarImgSrc(64),
+			a.User.AvatarImgSrc(32),
+		},
+	}
+}
+
+// FromGravatar 从 Gravatar 获取头像
+type FromGravatar struct {
+	Base
+	binding.Binder
+}
+
+// Get /api/user_center/from_gravatar
+func (a *FromGravatar) Get() interface{} {
+	h := md5.New()
+	io.WriteString(h, a.User.Email)
+	url := fmt.Sprintf("http://www.gravatar.com/avatar/%x?s=%d", h.Sum(nil), 256)
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return map[string]interface{}{
+			"status":  0,
+			"message": fmt.Sprintf("获取头像失败（%s）", err.Error()),
+		}
+	}
+	defer resp.Body.Close()
+
+	fileType := resp.Header["Content-Type"][0]
+
+	filename, err := saveImage(resp.Body, fileType, []string{"avatar"}, -1)
+	if err != nil {
+		panic(err)
+	}
+
+	c := a.DB.C(models.USERS)
+	c.Update(bson.M{"_id": a.User.Id_}, bson.M{"$set": bson.M{"avatar": filename}})
+
+	a.User.Avatar = filename
 
 	return map[string]interface{}{
 		"status": 1,

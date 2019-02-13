@@ -89,12 +89,25 @@
       put('/api/user_center/set_avatar', {
         avatar: this.state.avatar
       }).then((data) => {
-        this.setState({avatars: data.avatars});
+        if (data.status) {
+          this.setState({avatars: data.avatars});
+        } else {
+          alert(data.message);
+        }
+      });
+    }
+
+    handleFromGravatar = (e) => {
+      get('/api/user_center/from_gravatar').then((data) => {
+        if (data.status) {
+          this.setState({avatars: data.avatars});
+        } else {
+          alert(data.message);
+        }
       });
     }
 
     handleChooseAvatarChange = (e) => {
-      console.log(e.target.value);
       this.setState({avatar: e.target.value});
     }
 
@@ -193,6 +206,22 @@
         </form>);
       } else {
         gravatarClass = 'is-active';
+
+        form = (<div>
+          <div className="field is-horizontal">
+            <div className="field-label">
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <div className="control">
+                  <button className="button is-primary" onClick={this.handleFromGravatar}>
+                    从 Gravatar 获取
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>);
       }
 
       return (<div>
