@@ -27,7 +27,9 @@
       this.state = {
         loading: true,
         currentTab: 'upload',
-        avatars: []
+        avatar: '',
+        avatars: [],
+        defaultAvatars: []
       }
     }
 
@@ -35,19 +37,26 @@
       get('/api/user_center/user_info').then((data) => {
         this.setState({
           loading: false,
+          avatar: data.avatar,
           avatars: data.avatars
         })
       });
     }
 
-    setTab = (tab) => {
-      this.setState({currentTab: tab});
+    setDefaultTab = () => {
+      if (!this.state.defaultAvatars.length) {
+        get('/api/user_center/default_avatars').then((data) => {
+          this.setState({
+            defaultAvatars: data.default_avatars,
+          })
+        });
+      }
+
+      this.setState({currentTab: 'default'});
     }
 
     handleUploadSubmit = (e) => {
       e.preventDefault();
-
-      console.log('submit');
 
       if (!document.forms["upload"].image.files.length) {
         alert("请选择图片");
@@ -58,7 +67,7 @@
       let formData = new FormData();
       formData.append('image', file);
 
-      postForm("/api/user_center/set_avatar", formData).then((data) => {
+      postForm("/api/user_center/upload_avatar", formData).then((data) => {
         if (data.status) {
           this.setState({avatars: data.avatars});
         } else {
@@ -67,8 +76,30 @@
       });
     }
 
+    handleChooseAvatarSubmit = (e) => {
+      e.preventDefault();
+
+      const {avatar} = this.state;
+
+      if (!avatar)  {
+        alert('请选择头像');
+        return;
+      }
+
+      put('/api/user_center/set_avatar', {
+        avatar: this.state.avatar
+      }).then((data) => {
+        this.setState({avatars: data.avatars});
+      });
+    }
+
+    handleChooseAvatarChange = (e) => {
+      console.log(e.target.value);
+      this.setState({avatar: e.target.value});
+    }
+
     render() {
-      const {currentTab, avatars} = this.state;
+      const {currentTab, avatar, avatars} = this.state;
       let images = [];
       avatars.map((src, index) => {
         images.push(<li><img src={src} /></li>)
@@ -82,7 +113,8 @@
 
       if (currentTab == 'upload') {
         uploadClass = 'is-active';
-        form = <form onSubmit={this.handleUploadSubmit} name="upload">
+
+        form = (<form onSubmit={this.handleUploadSubmit} name="upload">
           <div className="field is-horizontal">
             <div className="field-label is-normal">
               <label className="label">选择图片</label>
@@ -112,9 +144,53 @@
               </div>
             </div>
           </div>
-        </form>
+        </form>);
       } else if (currentTab == 'default') {
         defalutClass = 'is-active';
+
+        let defaultImages = [];
+        this.state.defaultAvatars.map((filename) => {
+          let src = "https://is.golangtc.com/avatar/" + filename + "?width=32&height=32&mode=fill";
+          let checked = avatar == filename;
+          defaultImages.push(<label className="radio">
+            <input
+              type="radio"
+              name="default_avatar"
+              value={filename}
+              defaultChecked={checked}
+              onChange={this.handleChooseAvatarChange} />
+            <img src={src} />
+          </label>);
+        });
+
+        form = (<form onSubmit={this.handleChooseAvatarSubmit}>
+          <div className="field is-horizontal">
+            <div className="field-label">
+              选择头像
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <div className="control">
+                  {defaultImages}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="field is-horizontal">
+            <div className="field-label">
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <div className="control">
+                  <button className="button is-primary">
+                    确认
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>);
       } else {
         gravatarClass = 'is-active';
       }
@@ -131,7 +207,7 @@
               <a onClick={ () => this.setState({currentTab: 'upload'}) }>上传头像</a>
             </li>
             <li className={defalutClass}>
-              <a onClick={ () => this.setState({currentTab: 'default'}) }>选择默认头像</a>
+              <a onClick={this.setDefaultTab}>选择默认头像</a>
             </li>
             <li className={gravatarClass}>
               <a onClick={ () => this.setState({currentTab: 'gavatar'}) }>从 Gravatar 获取</a>

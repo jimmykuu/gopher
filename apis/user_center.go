@@ -31,6 +31,7 @@ func (a *UserInfo) Get() interface{} {
 		"status":   1,
 		"username": a.User.Username,
 		"email":    a.User.Email,
+		"avatar":   a.User.Avatar,
 		"avatars": []string{
 			a.User.AvatarImgSrc(128),
 			a.User.AvatarImgSrc(64),
@@ -164,7 +165,7 @@ type UploadAvatarImage struct {
 	binding.Binder
 }
 
-// Get /api/user_center/upload_avatar
+// Post /api/user_center/upload_avatar
 func (a *UploadAvatarImage) Post() interface{} {
 	filename, err := saveImage(a.Req(), []string{"avatar"}, 500*1024)
 	if err != nil {
@@ -180,6 +181,60 @@ func (a *UploadAvatarImage) Post() interface{} {
 	}})
 
 	a.User.Avatar = filename
+
+	return map[string]interface{}{
+		"status": 1,
+		"avatars": []string{
+			a.User.AvatarImgSrc(128),
+			a.User.AvatarImgSrc(64),
+			a.User.AvatarImgSrc(32),
+		},
+	}
+}
+
+// DefaultAvatars 默认头像
+type DefaultAvatars struct {
+	Base
+	binding.Binder
+}
+
+// Get /api/user_center/default_avatars
+func (a *DefaultAvatars) Get() interface{} {
+	var defaultAvatars = []string{
+		"gopher_aqua.jpg",
+		"gopher_boy.jpg",
+		"gopher_brown.jpg",
+		"gopher_gentlemen.jpg",
+		"gopher_girl.jpg",
+		"gopher_strawberry_bg.jpg",
+		"gopher_strawberry.jpg",
+		"gopher_teal.jpg",
+	}
+
+	return map[string]interface{}{
+		"status":          1,
+		"default_avatars": defaultAvatars,
+	}
+}
+
+// SetAvatar 设置头像
+type SetAvatar struct {
+	Base
+	binding.Binder
+}
+
+// Put /api/user_center/set_avatar
+func (a *SetAvatar) Put() interface{} {
+	var form struct {
+		Avatar string `json:"avatar"`
+	}
+
+	a.ReadJSON(&form)
+
+	c := a.DB.C(models.USERS)
+	c.Update(bson.M{"_id": a.User.Id_}, bson.M{"$set": bson.M{"avatar": form.Avatar}})
+
+	a.User.Avatar = form.Avatar
 
 	return map[string]interface{}{
 		"status": 1,

@@ -35,6 +35,7 @@ type ChangeAvatar struct {
 // Get /user_center/avatar
 func (a *ChangeAvatar) Get() error {
 	return a.Render("user_center/avatar.html", renders.T{
+		"title":      "修改头像",
 		"sub_active": "change_avatar",
 	})
 }
