@@ -72,7 +72,29 @@
       {{ end }}
     </div>
     <hr>
-    <div id="form"></div>
+    <article class="media comment" id="comment-5c5e411b42f4453620000004">
+      <figure class="media-left">
+        {{ if .user }}
+          <img src="{{ .user.AvatarImgSrc 32 }}">
+        {{ else }}
+          <img src="https://is.golangtc.com/static/img/avatar.png?width=32&height=32&mode=fill">
+        {{ end }}
+      </figure>
+      <div class="media-content">
+        <div class="content">
+          {{ if .user }}
+            <div id="form"></div>
+          {{ else }}
+            <div class="notification is-centered box">
+              <a class="button is-primary is-rounded is-medium" href="/signin?next=/t/{{ .topic.Id_.Hex }}">
+                <strong>登录</strong>
+              </a>
+              <span style="line-height: 3em; margin-left: 1em;">后发表评论</span>
+            </div>
+          {{ end }}
+        </div>
+      </div>
+    </article>
   </div>
   <div class="column is-3">
     {{ template "partials/ads.html" . }}
@@ -82,7 +104,6 @@
   const topicId = "{{ .topic.Id_.Hex }}"; // 模板传入
 
   function deleteTopic(topicId) {
-    return;
     if (confirm('确认删除该主题吗？')) {
       delete_('/api/topic/' + topicId).then((data) => {
         if (data.status) {
@@ -151,7 +172,6 @@
 
       return (<form onSubmit={this.handleSubmit}>
         <div className="field">
-          <label className="label">回复</label>
           <div className="control">
             <MarkdownEditor markdown={this.state.markdown} onChange={this.handleMarkdownChange}></MarkdownEditor>
           </div>
@@ -166,7 +186,9 @@
     }
   }
 
-  ReactDOM.render(<NewCommentForm />, document.getElementById('form'));
+  {{ if .user }}
+    ReactDOM.render(<NewCommentForm />, document.getElementById('form'));
+  {{ end }}
 
   function deleteComment(commentId) {
     if (confirm('确认删除该评论吗？')) {

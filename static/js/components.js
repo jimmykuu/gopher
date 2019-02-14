@@ -20,7 +20,7 @@ class MarkdownEditor extends React.Component {
       initialEditType: 'markdown',
       initialValue: this.props.markdown,
       previewStyle: 'vertical',
-      height: '300px',
+      height: '400px',
       language: 'zh_CN',
       hooks: {
         addImageBlobHook: function(file, callback, source) {
