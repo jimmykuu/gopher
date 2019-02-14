@@ -48,6 +48,7 @@ type ChangePassword struct {
 // Get /user_center/change_password
 func (a *ChangePassword) Get() error {
 	return a.Render("user_center/change_password.html", renders.T{
+		"title":      "修改密码",
 		"sub_active": "change_password",
 	})
 }

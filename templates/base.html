@@ -9,7 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <!-- <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"> -->
-    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
     <!-- <script src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script> -->
     <script src="https://nhnent.github.io/tui.editor/api/latest/lib/to-mark/dist/to-mark.js"></script>
     <script src="https://nhnent.github.io/tui.editor/api/latest/lib/markdown-it/dist/markdown-it.js"></script>
@@ -39,7 +39,7 @@
     </script>
   </head>
   <body>
-    <nav class="navbar has-shadow" role="navigation" aria-label="main navigation">
+    <nav class="navbar has-shadow is-spaced" role="navigation" aria-label="main navigation">
       <div class="container">
         <div class="navbar-brand">
           <a class="navbar-item" href="/">
@@ -55,7 +55,7 @@
 
         <div id="navbarMain" class="navbar-menu">
           <div class="navbar-start">
-            <a class="navbar-item" href="/">
+            <a class="navbar-item is-active" href="/">
               主题
             </a>
             <a class="navbar-item" href="/members">
@@ -137,9 +137,6 @@
         </p>
         <p>
           Version: {{ .version }}, Build version {{ .goVersion }}. {{ .costTime }}.
-        </p>
-        <p>
-          <iframe src="https://ghbtns.com/github-btn.html?user=jimmykuu&repo=gopher&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
         </p>
       </div>
     </footer>

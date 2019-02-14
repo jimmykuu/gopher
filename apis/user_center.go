@@ -94,22 +94,19 @@ func (a *UserProfile) Put() interface{} {
 	}
 }
 
-// UserChangePassword 修改用户密码
-type UserChangePassword struct {
+// ChangePassword 修改用户密码
+type ChangePassword struct {
 	Base
 	binding.Binder
 }
 
-// ChangePasswordForm 用户密码表单
-type ChangePasswordForm struct {
-	OldPassword     string `json:"oldPassword"`
-	NewPassword     string `json:"newPassword"`
-	ConfirmPassword string `json:"confirmPassword"`
-}
-
 // Put /user_center/change_password
-func (a *UserChangePassword) Put() interface{} {
-	var form ChangePasswordForm
+func (a *ChangePassword) Put() interface{} {
+	var form struct {
+		OldPassword     string `json:"oldPassword"`
+		NewPassword     string `json:"newPassword"`
+		ConfirmPassword string `json:"confirmPassword"`
+	}
 	a.ReadJSON(&form)
 
 	if len(form.OldPassword) == 0 {
