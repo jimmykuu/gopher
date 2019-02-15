@@ -8,9 +8,7 @@
     <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-    <!-- <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"> -->
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-    <!-- <script src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script> -->
     <script src="https://nhnent.github.io/tui.editor/api/latest/lib/to-mark/dist/to-mark.js"></script>
     <script src="https://nhnent.github.io/tui.editor/api/latest/lib/markdown-it/dist/markdown-it.js"></script>
     <script src="https://nhnent.github.io/tui.editor/api/latest/lib/codemirror/lib/codemirror.js"></script>
@@ -18,7 +16,6 @@
     <script src="https://nhnent.github.io/tui.editor/api/latest/lib/squire-rte/build/squire-raw.js"></script>
     <script src="https://nhnent.github.io/tui.editor/api/latest/lib/highlightjs/highlight.pack.js"></script>
     <script src="https://nhnent.github.io/tui.editor/api/latest/dist/tui-editor-Editor.js"></script>
-    <!-- <script src="{{ staticfile "tui-editor/tui-editor-Editor.js" }}"></script> -->
     <script src="{{ staticfile "js/gt.js" }}"></script>
     <script src="{{ staticfile "js/fetch.js" }}"></script>
     <script src="{{ staticfile "js/application.js" }}"></script>
@@ -26,8 +23,8 @@
     <script src="{{ staticfile "js/react-dom.min.js" }}"></script>
     <script src="{{ staticfile "js/babel.min.js" }}"></script>
     <script src="{{ staticfile "js/js.cookie.js" }}"></script>
-    <link rel="stylesheet" href="{{ staticfile "tui-editor/tui-editor.css" }}"></link>
-    <link rel="stylesheet" href="{{ staticfile "tui-editor/tui-editor-contents.css" }}"></link>
+    <link rel="stylesheet" href="https://nhnent.github.io/tui.editor/api/latest/dist/tui-editor.css"></link>
+    <link rel="stylesheet" href="https://nhnent.github.io/tui.editor/api/latest/dist/tui-editor-contents.css"></link>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.39.2/codemirror.css"></link>
     <link rel="stylesheet" href="{{ staticfile "css/style.css" }}">
     <script type="text/babel" src="{{ staticfile "js/components.js" }}"></script>
@@ -126,14 +123,23 @@
     </div>
 
     <footer class="footer">
+      <hr>
       <div class="content has-text-centered">
+        <p>
+          <a href="/about">关于</a>
+          &middot;
+          <a href="/link">友链</a>
+          &middot;
+          <a href="https://github.com/jimmykuu/gopher" target="_blank">Github</a>
+
+        </p>
         <p>
           &copy; 2012-2019 Golang China
         </p>
         <p>
           Build by <a href="https://github.com/jimmykuu/gopher" target="_blank">Gopher</a>,
           Powered by <a href="https://github.com/lunny/tango"  target="_blank">Tango{{ .tangoVersion }}</a>,
-          Based on <a href="https://bulma.io/"  target="_blank">Bulma</a>.
+          Based on <a href="https://bulma.io/" target="_blank">Bulma</a>.
         </p>
         <p>
           Version: {{ .version }}, Build version {{ .goVersion }}. {{ .costTime }}.

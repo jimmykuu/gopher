@@ -1,0 +1,109 @@
+html {
+    font-size: 13px;
+}
+
+body {
+    background-color: #fbfbfb;
+}
+
+.main {
+    padding: 2em 0 3em 0;
+}
+
+.media-left img {
+    border-radius: 50%;
+}
+
+article.post {
+    margin: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #E6EAEE;
+}
+
+article.post:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+#toolbar {
+    float: right;
+}
+
+.metadata {
+    margin-bottom: 2em;
+    font-weight: 400;
+    color: #cccccc;
+}
+
+.metadata span {
+    margin-right: 1em;
+}
+
+.topic .title {
+    font-size: 1.5em;
+}
+
+.tui-editor-defaultUI .CodeMirror-line {
+    margin-bottom: 0 !important;
+}
+
+.users {
+    display: -webkit-flex;
+    display: flex;
+    flex-flow: wrap;
+}
+
+.user {
+    width: 60px;
+    height: 80px;
+    margin: 8px 20px;
+    padding: 6px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-align: center;
+}
+
+#search {
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.segment {
+    margin-bottom: 10px;
+}
+
+.ad a {
+    display: block;
+}
+
+.status span {
+    width: 70px;
+    text-align: right;
+    margin-right: 1em;
+}
+
+.member-info ul {
+    list-style: none;
+    margin-left: 0;
+}
+
+.member-info li {
+    overflow: hidden;
+}
+
+.member-info .card-content {
+    padding: 1.5em 0.5em;
+}
+
+ul.status li {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.notification.is-centered {
+    text-align: center;
+}
+
+.media-left img {
+    border: 1px solid #ddd;
+}

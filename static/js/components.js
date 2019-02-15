@@ -26,18 +26,11 @@ class MarkdownEditor extends React.Component {
         addImageBlobHook: function(file, callback, source) {
           let formData = new FormData();
           formData.append('image', file);
-          let xhr = new XMLHttpRequest();
-          xhr.open("POST", "/api/upload/image", true);
-          xhr.setRequestHeader("Authorization", 'Bearer ' + window.localStorage.getItem('token'));
-
-          xhr.addEventListener('load', () => {
-            const resp = JSON.parse(xhr.responseText);
-            if (resp.status) {
-              callback(resp.image_url, '');
+          postForm("/api/upload/image", formData).then((data) => {
+            if (data.status) {
+              callback(data.image_url, '');
             }
           });
-
-          xhr.send(formData);
           return false;
         }
       },
