@@ -137,6 +137,7 @@
       e.preventDefault();
       this.setState({submiting: true});
       const { markdown, html } = this.state;
+
       post('/api/comments', {
         content_id: topicId,
         markdown: markdown,
@@ -147,27 +148,30 @@
         } else {
           alert(data.message);
           this.setState({
-            submiting: fasle
+            submiting: false
           });
         }
       });
     }
 
     render() {
-      let submitButton = <button
-        type="submit"
-        className="button is-link"
-        disabled={this.state.submiting}>
-          提交
-      </button>;
+      let submitButton;
 
       if (this.state.submiting) {
-        submitButton = (<a className="button is-info" disabled>
+        submitButton = (<button className="button is-success is-rounded is-medium" disabled>
           <span className="icon">
             <i className="fas fa-spinner fa-spin"></i>
           </span>
           <span>正在提交 ...</span>
-        </a>);
+        </button>);
+      } else {
+        const disabled = !this.state.html
+        submitButton = <button
+          type="submit"
+          className="button is-success is-rounded is-medium"
+          disabled={disabled}>
+          提&nbsp;&nbsp;&nbsp;&nbsp;交
+        </button>;
       }
 
       return (<form onSubmit={this.handleSubmit}>
@@ -177,7 +181,7 @@
           </div>
         </div>
 
-        <div className="field is-grouped">
+        <div className="field is-grouped is-right">
           <div className="control">
             {submitButton}
           </div>
@@ -241,9 +245,11 @@
       e.preventDefault();
       this.setState({submiting: true});
 
+      const {markdown, html} = this.state;
+
       put("/api/comments/" + this.props.commentId, {
-        markdown: this.state.markdown,
-        html: this.state.html
+        markdown: markdown,
+        html: html
       }).then((data) => {
         if (data.status) {
           ReactDOM.unmountComponentAtNode(document.getElementById('comment-content-' + this.props.commentId));
@@ -272,36 +278,39 @@
           </span>
         </div>);
       } else {
-        let submitButton = <button
-          type="submit"
-          className="button is-link"
-          disabled={this.state.submiting}>
-            提交
-        </button>;
+        let submitButton;
 
         if (this.state.submiting) {
-          submitButton = (<a className="button is-info" disabled>
+          submitButton = (<button className="button is-info" disabled>
             <span className="icon">
               <i className="fas fa-spinner fa-spin"></i>
             </span>
             <span>正在提交 ...</span>
-          </a>);
+          </button>);
+        } else {
+          const disabled = !this.state.html;
+          submitButton = <button
+            type="submit"
+            className="button is-success is-rounded"
+            disabled={disabled}>
+              提&nbsp;&nbsp;&nbsp;&nbsp;交
+          </button>;
         }
 
         form = (<form onSubmit={this.handleSubmit}>
           <div className="field">
             <div className="control">
-              <MarkdownEditor markdown={this.state.markdown} onChange={this.handleMarkdownChange} />
+              <MarkdownEditor markdown={this.state.markdown} onChange={this.handleMarkdownChange} height="200px" />
             </div>
           </div>
-          <div className="field is-grouped">
+          <div className="field is-grouped is-right">
             <p className="control">
-              {submitButton}
-            </p>
-            <p className="control">
-              <a className="button is-light" onClick={this.onCancel}>
+              <a className="button is-white" onClick={this.onCancel}>
                   取消
               </a>
+            </p>
+            <p className="control">
+              {submitButton}
             </p>
           </div>
         </form>);

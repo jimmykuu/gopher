@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"time"
 
+	"github.com/asaskevich/govalidator"
 	"github.com/tango-contrib/binding"
 	"gopkg.in/mgo.v2/bson"
 
@@ -70,12 +71,20 @@ func (a *Comment) Post() interface{} {
 	}
 
 	var form struct {
-		ContentID string `json:"content_id"`
-		Markdown  string `json:"markdown"`
-		HTML      string `json:"html"`
+		ContentID string `json:"content_id" valid:"required,ascii"`
+		Markdown  string `json:"markdown" valid:"required"`
+		HTML      string `json:"html" valid:"required"`
 	}
 
 	a.ReadJSON(&form)
+
+	result, err := govalidator.ValidateStruct(form)
+	if !result {
+		return map[string]interface{}{
+			"status":  0,
+			"message": err.Error(),
+		}
+	}
 
 	if !bson.IsObjectIdHex(form.ContentID) {
 		return map[string]interface{}{
@@ -88,7 +97,7 @@ func (a *Comment) Post() interface{} {
 
 	var temp map[string]interface{}
 	c := a.DB.C(models.CONTENTS)
-	err := c.Find(bson.M{"_id": contentID}).One(&temp)
+	err = c.Find(bson.M{"_id": contentID}).One(&temp)
 	if err != nil {
 		return map[string]interface{}{
 			"status":  0,

@@ -14,13 +14,18 @@ class MarkdownEditor extends React.Component {
   }
 
   componentDidMount() {
-    let that = this;
+    let height = '400px';
+
+    if (this.props.height) {
+      height = this.props.height;
+    }
+
     let editor = new tui.Editor({
       el: document.querySelector('#editSection'),
       initialEditType: 'markdown',
       initialValue: this.props.markdown,
       previewStyle: 'vertical',
-      height: '400px',
+      height: height,
       language: 'zh_CN',
       hooks: {
         addImageBlobHook: function(file, callback, source) {

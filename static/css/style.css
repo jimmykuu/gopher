@@ -107,3 +107,7 @@ ul.status li {
 .media-left img {
     border: 1px solid #ddd;
 }
+
+.field.is-grouped.is-right {
+    justify-content: flex-end;
+}
