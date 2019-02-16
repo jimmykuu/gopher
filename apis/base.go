@@ -41,31 +41,28 @@ func (b *Base) Before() {
 
 	if err == nil && parsedToken.Valid {
 		claims_, _ := parsedToken.Claims.(jwt.MapClaims)
-		userId, _ := claims_["user_id"].(string)
-		println(">>>>", userId)
+		userID, _ := claims_["user_id"].(string)
 
-		if !bson.IsObjectIdHex(userId) {
-			fmt.Println("非法的用户 ID：", userId)
+		if !bson.IsObjectIdHex(userID) {
+			fmt.Println("非法的用户 ID：", userID)
 			return
 		}
 
 		var user models.User
 		var c = b.DB.C(models.USERS)
-		err := c.Find(bson.M{"_id": bson.ObjectIdHex(userId)}).One(&user)
+		err := c.Find(bson.M{"_id": bson.ObjectIdHex(userID)}).One(&user)
 
 		if err != nil {
-			fmt.Println("没有找到用户：", userId)
+			fmt.Println("没有找到用户：", userID)
 			return
 		}
 
 		b.User = user
 		b.IsLogin = true
 	}
-	println("before")
 }
 
 func (b *Base) After() {
-	println("after")
 	b.session.Close()
 }
 

@@ -15,17 +15,21 @@
 
       this.state = {
         loading: true,
+        submiting: false,
+
         location: '',
         website: '',
-		tagline: '',
-		github: '',
-		weibo: ''
+		    tagline: '',
+		    github: '',
+		    weibo: ''
       }
     }
 
     componentDidMount() {
       get('/api/user_center/user_info').then((data) => {
         this.setState({
+          loading: false,
+
           location: data.location,
           website: data.website,
           tagline: data.tagline,
@@ -35,91 +39,130 @@
       });
     }
 
-    render() {
+    handleSubmit = (e) => {
+      e.preventDefault();
+
       const {location, website, tagline, github, weibo} = this.state;
 
-      return (<form>
-        <div className="field is-horizontal">
-          <div className="field-label is-normal">
-            <label className="label">所在地</label>
-          </div>
-          <div className="field-body">
-            <div className="field">
-              <div className="control">
-                <input className="input" type="text" value={location} />
+      this.setState({submiting: true});
+
+      put('/api/user_center/profile', {
+        location: location,
+        website: website,
+        tagline: tagline,
+        github: github,
+        weibo: weibo
+      }).then((data) => {
+        alert(data.message);
+        this.setState({submiting: false});
+      });
+    }
+
+    render() {
+      const {loading, location, website, tagline, github, weibo} = this.state;
+
+      let form;
+
+      if (loading) {
+        form = <Loading />;
+      } else {
+        form = (<form onSubmit={this.handleSubmit}>
+          <div className="field is-horizontal">
+            <div className="field-label is-normal">
+              <label className="label">所在地</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <div className="control">
+                  <input className="input" type="text" value={location} onChange={ (e) => this.setState({location: e.target.value})} />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="field is-horizontal">
-          <div className="field-label is-normal">
-            <label className="label">个人网站</label>
-          </div>
-          <div className="field-body">
-            <div className="field">
-              <div className="control">
-                <input className="input" type="text" value={website} />
+          <div className="field is-horizontal">
+            <div className="field-label is-normal">
+              <label className="label">个人网站</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <div className="control">
+                  <input className="input" type="text" value={website} onChange={ (e) => this.setState({website: e.target.value})} />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="field is-horizontal">
-          <div className="field-label is-normal">
-            <label className="label">签名</label>
-          </div>
-          <div className="field-body">
-            <div className="field">
-              <div className="control">
-                <input className="input" type="text" value={tagline} />
+          <div className="field is-horizontal">
+            <div className="field-label is-normal">
+              <label className="label">签名</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <div className="control">
+                  <input className="input" type="text" value={tagline} onChange={ (e) => this.setState({tagline: e.target.value})} />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <hr />
+          <hr />
 
-        <div className="field is-horizontal">
-          <div className="field-label is-normal">
-            <label className="label">Github 用户名</label>
-          </div>
-          <div className="field-body">
-            <div className="field">
-              <div className="control">
-                <input className="input" type="text" value={github} />
+          <div className="field is-horizontal">
+            <div className="field-label is-normal">
+              <label className="label">Github 用户名</label>
+            </div>
+            <div className="field-body">
+              <div clasName="field is-expanded">
+                <div className="field has-addons">
+                  <p className="control">
+                    <a className="button is-static">
+                      https://github.com/
+                    </a>
+                  </p>
+                  <div className="control is-expanded">
+                    <input className="input" type="text" value={github} onChange={ (e) => this.setState({github: e.target.value})} />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="field is-horizontal">
-          <div className="field-label is-normal">
-            <label className="label">新浪微博</label>
-          </div>
-          <div className="field-body">
-            <div className="field">
-              <div className="control">
-                <input className="input" type="text" value={weibo} />
+          <div className="field is-horizontal">
+            <div className="field-label is-normal">
+              <label className="label">新浪微博</label>
+            </div>
+            <div className="field-body">
+              <div clasName="field is-expanded">
+                <div className="field has-addons">
+                  <p className="control">
+                    <a className="button is-static">
+                      https://weibo.com/
+                    </a>
+                  </p>
+                  <div className="control is-expanded">
+                    <input className="input" type="text" value={weibo} onChange={ (e) => this.setState({weibo: e.target.value})} />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="field is-horizontal">
-          <div className="field-label">
-          </div>
-          <div className="field-body">
-            <div className="field">
-              <div className="control">
-                <button className="button is-primary">
-                  提交修改
-                </button>
+          <div className="field is-horizontal">
+            <div className="field-label">
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <div className="control">
+                  <SubmitButton isSubmiting={this.state.submiting} />
+                </div>
               </div>
             </div>
           </div>
-      </div>
-      </form>);
+        </form>);
+      }
+
+      return form;
     }
   }
 

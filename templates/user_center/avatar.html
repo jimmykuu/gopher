@@ -112,11 +112,20 @@
     }
 
     render() {
-      const {currentTab, avatar, avatars} = this.state;
+      const {loading, currentTab, avatar, avatars} = this.state;
       let images = [];
       avatars.map((src, index) => {
         images.push(<li><img src={src} /></li>)
       })
+
+      let currentAvatar;
+      if (loading) {
+        currentAvatar = <Loading />;
+      } else {
+        currentAvatar = (<ul className="avatars">
+          {images}
+        </ul>);
+      }
 
       let uploadClass = '';
       let defalutClass = '';
@@ -226,9 +235,7 @@
 
       return (<div>
         <h1 className="subtitle">当前头像</h1>
-        <ul className="avatars">
-          {images}
-        </ul>
+        {currentAvatar}
         <hr />
         <div className="tabs is-boxed">
           <ul>

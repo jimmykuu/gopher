@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"time"
 
+	"github.com/asaskevich/govalidator"
 	"github.com/tango-contrib/binding"
 	"gopkg.in/mgo.v2/bson"
 
@@ -108,8 +109,8 @@ func (a *Topic) Delete() interface{} {
 
 // TopicForm 主题表单，新建和编辑共用
 type TopicForm struct {
-	Title    string `json:"title"`
-	NodeID   string `json:"node_id"`
+	Title    string `json:"title" valid:"required"`
+	NodeID   string `json:"node_id" valid:"required,ascii"`
 	Markdown string `json:"markdown"`
 	HTML     string `json:"html"`
 }
@@ -126,7 +127,13 @@ func (a *Topic) Post() interface{} {
 	var form TopicForm
 	a.ReadJSON(&form)
 
-	// TODO form 校验
+	result, err := govalidator.ValidateStruct(form)
+	if !result {
+		return map[string]interface{}{
+			"status":  0,
+			"message": err.Error(),
+		}
+	}
 
 	var c = a.DB.C(models.CONTENTS)
 
@@ -136,7 +143,7 @@ func (a *Topic) Post() interface{} {
 
 	// 查找最新的一篇帖子，限制发帖间隔
 	var latestTopic models.Topic
-	err := c.Find(bson.M{"content.createdby": a.User.Id_}).Sort("-content.createdat").Limit(1).One(&latestTopic)
+	err = c.Find(bson.M{"content.createdby": a.User.Id_}).Sort("-content.createdat").Limit(1).One(&latestTopic)
 	if err == nil {
 		if !latestTopic.Content.CreatedAt.Add(time.Minute * 30).Before(now) {
 			// 半小时内只能发一帖
@@ -219,7 +226,13 @@ func (a *Topic) Put() interface{} {
 	var form TopicForm
 	a.ReadJSON(&form)
 
-	// TODO form 校验
+	result, err := govalidator.ValidateStruct(form)
+	if !result {
+		return map[string]interface{}{
+			"status":  0,
+			"message": err.Error(),
+		}
+	}
 
 	var newNodeID = bson.ObjectIdHex(form.NodeID)
 

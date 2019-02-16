@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/asaskevich/govalidator"
 	"github.com/pborman/uuid"
 	"github.com/tango-contrib/binding"
 	"gopkg.in/mgo.v2/bson"
@@ -49,35 +50,78 @@ func (a *UserInfo) Get() interface{} {
 	}
 }
 
-// UserProfile 用户中心
+// BasicInfo 用户基本信息
+type BasicInfo struct {
+	Base
+	binding.Binder
+}
+
+// Put /api/user_center/basic_info
+func (a *BasicInfo) Put() interface{} {
+	var form struct {
+		Email string `json:"email" valid:"required,email"`
+		Bio   string `json:"bio"`
+	}
+
+	a.ReadJSON(&form)
+
+	result, err := govalidator.ValidateStruct(form)
+	if !result {
+		return map[string]interface{}{
+			"status":  0,
+			"message": err.Error(),
+		}
+	}
+
+	c := a.DB.C(models.USERS)
+	err = c.Update(bson.M{"_id": a.User.Id_}, bson.M{"$set": bson.M{
+		"email": form.Email,
+		"bio":   form.Bio,
+	}})
+
+	if err != nil {
+		return map[string]interface{}{
+			"status":  0,
+			"message": err.Error(),
+		}
+	}
+
+	return map[string]interface{}{
+		"status":  1,
+		"message": "修改成功",
+	}
+}
+
+// UserProfile 用户详细信息
 type UserProfile struct {
 	Base
 	binding.Binder
 }
 
-// ProfileForm 个人信息表单
-type ProfileForm struct {
-	Email          string `json:"email"`
-	Website        string `json:"website"`
-	Location       string `json:"location"`
-	Tagline        string `json:"tagline"`
-	Bio            string `json:"bio"`
-	GithubUsername string `json:"github_username"`
-	Weibo          string `json:"weibo"`
-}
-
 // Put /api/user_center/profile 编辑个人信息
 func (a *UserProfile) Put() interface{} {
-	var form ProfileForm
+	var form struct {
+		Location       string `json:"location"`
+		Website        string `json:"website" valid:"url,optional"`
+		Tagline        string `json:"tagline"`
+		GithubUsername string `json:"github"`
+		Weibo          string `json:"weibo"`
+	}
 	a.ReadJSON(&form)
 
+	result, err := govalidator.ValidateStruct(form)
+	if !result {
+		return map[string]interface{}{
+			"status":  0,
+			"message": err.Error(),
+		}
+	}
+
 	c := a.DB.C(models.USERS)
-	err := c.Update(bson.M{"_id": a.User.Id_}, bson.M{"$set": bson.M{
-		"email":          form.Email,
-		"website":        form.Website,
+	err = c.Update(bson.M{"_id": a.User.Id_}, bson.M{"$set": bson.M{
 		"location":       form.Location,
+		"website":        form.Website,
 		"tagline":        form.Tagline,
-		"bio":            form.Bio,
 		"githubusername": form.GithubUsername,
 		"weibo":          form.Weibo,
 	}})
@@ -85,12 +129,13 @@ func (a *UserProfile) Put() interface{} {
 	if err != nil {
 		return map[string]interface{}{
 			"status":  0,
-			"message": "保存个人信息出错",
+			"message": err.Error(),
 		}
 	}
 
 	return map[string]interface{}{
-		"status": 1,
+		"status":  1,
+		"message": "修改成功",
 	}
 }
 
@@ -103,23 +148,17 @@ type ChangePassword struct {
 // Put /user_center/change_password
 func (a *ChangePassword) Put() interface{} {
 	var form struct {
-		OldPassword     string `json:"oldPassword"`
-		NewPassword     string `json:"newPassword"`
-		ConfirmPassword string `json:"confirmPassword"`
+		OldPassword     string `json:"oldPassword" valid:"required,ascii"`
+		NewPassword     string `json:"newPassword" valid:"required,ascii"`
+		ConfirmPassword string `json:"confirmPassword" valid:"required,ascii"`
 	}
 	a.ReadJSON(&form)
 
-	if len(form.OldPassword) == 0 {
+	result, err := govalidator.ValidateStruct(form)
+	if !result {
 		return map[string]interface{}{
 			"status":  0,
-			"message": "原密码不能为空",
-		}
-	}
-
-	if len(form.NewPassword) == 0 {
-		return map[string]interface{}{
-			"status":  0,
-			"message": "新密码不能为空",
+			"message": err.Error(),
 		}
 	}
 
@@ -141,7 +180,7 @@ func (a *ChangePassword) Put() interface{} {
 
 	salt := strings.Replace(uuid.NewUUID().String(), "-", "", -1)
 	password := utils.EncryptPassword(form.NewPassword, salt, models.PublicSalt)
-	err := c.Update(bson.M{"_id": a.User.Id_}, bson.M{"$set": bson.M{
+	err = c.Update(bson.M{"_id": a.User.Id_}, bson.M{"$set": bson.M{
 		"password": password,
 		"salt":     salt,
 	}})
@@ -149,7 +188,7 @@ func (a *ChangePassword) Put() interface{} {
 	if err != nil {
 		return map[string]interface{}{
 			"status":  0,
-			"message": "密码修改失败",
+			"message": fmt.Sprintf("密码修改失败（%s）", err.Error()),
 		}
 	}
 

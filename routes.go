@@ -57,6 +57,7 @@ func setRoutes(t *tango.Tango) {
 
 		g.Get("/user_center/default_avatars", new(apis.DefaultAvatars))
 		g.Get("/user_center/user_info", new(apis.UserInfo))
+		g.Put("/user_center/basic_info", new(apis.BasicInfo))
 		g.Put("/user_center/profile", new(apis.UserProfile))
 		g.Put("/user_center/change_password", new(apis.ChangePassword))
 		g.Post("/user_center/upload_avatar", new(apis.UploadAvatarImage))

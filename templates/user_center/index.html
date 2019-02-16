@@ -15,6 +15,7 @@
 
       this.state = {
         loading: true,
+        submiting: false,
         username: '',
         email: '',
         bio: ''
@@ -24,6 +25,7 @@
     componentDidMount() {
       get('/api/user_center/user_info').then((data) => {
         this.setState({
+          loading: false,
           username: data.username,
           email: data.email,
           bio: data.bio
@@ -31,63 +33,94 @@
       });
     }
 
+    handleEmailChange = (e) => {
+      this.setState({email: e.target.value.trim()});
+    }
+
+    handleBioChange = (e) => {
+      this.setState({bio: e.target.value});
+    }
+
+    handleSubmit = (e) => {
+      e.preventDefault();
+
+      const {email, bio} = this.state;
+
+      this.setState({submiting: true});
+
+      put('/api/user_center/basic_info', {
+        "email": email,
+        "bio": bio
+      }).then((data) => {
+        alert(data.message);
+        this.setState({submiting: false});
+      });
+    }
+
     render() {
-      const {username, email, bio} = this.state;
+      const {loading, username, email, bio} = this.state;
 
-      return (<form>
-        <div className="field is-horizontal">
-          <div className="field-label is-normal">
-            <label className="label">用户名</label>
-          </div>
-          <div className="field-body">
-            <div className="field">
-              <div className="control">
-                <input className="input" type="text" value={username} disabled />
+      const disabled = !email;
+
+      let form;
+      if (loading) {
+        form = <Loading />
+      } else {
+        form = (<form onSubmit={this.handleSubmit}>
+          <div className="field is-horizontal">
+            <div className="field-label is-normal">
+              <label className="label">用户名</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <div className="control">
+                  <input className="input is-static" type="text" value={username} />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="field is-horizontal">
-          <div className="field-label is-normal">
-            <label className="label">Email</label>
-          </div>
-          <div className="field-body">
-            <div className="field">
-              <div className="control">
-                <input className="input" type="email" value={email} />
+          <div className="field is-horizontal">
+            <div className="field-label is-normal">
+              <label className="label">Email</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <div className="control">
+                  <input className="input" type="email" onChange={this.handleEmailChange} value={email} />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="field is-horizontal">
-          <div className="field-label is-normal">
-            <label className="label">个人简介</label>
-          </div>
-          <div className="field-body">
-            <div className="field">
-              <div className="control">
-                <textarea className="textarea">{bio}</textarea>
+          <div className="field is-horizontal">
+            <div className="field-label is-normal">
+              <label className="label">个人简介</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <div className="control">
+                  <textarea className="textarea" onChange={this.handleBioChange}>{bio}</textarea>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="field is-horizontal">
-          <div className="field-label">
-          </div>
-          <div className="field-body">
-            <div className="field">
-              <div className="control">
-                <button className="button is-primary">
-                  提交修改
-                </button>
+          <div className="field is-horizontal">
+            <div className="field-label">
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <div className="control">
+                  <SubmitButton isSubmiting={this.state.submiting} disabled={disabled} />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </form>);
+        </form>);
+      }
+
+      return form;
     }
   }
 

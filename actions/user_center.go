@@ -12,6 +12,7 @@ type UserCenter struct {
 // Get /user_center
 func (a *UserCenter) Get() error {
 	return a.Render("user_center/index.html", renders.T{
+		"title":      "基本资料",
 		"sub_active": "user_info",
 	})
 }
@@ -23,6 +24,7 @@ type UserProfile struct {
 // Get /user_center/profile
 func (a *UserProfile) Get() error {
 	return a.Render("user_center/profile.html", renders.T{
+		"title":      "详细资料",
 		"sub_active": "user_profile",
 	})
 }

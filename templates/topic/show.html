@@ -155,24 +155,7 @@
     }
 
     render() {
-      let submitButton;
-
-      if (this.state.submiting) {
-        submitButton = (<button className="button is-success is-rounded is-medium" disabled>
-          <span className="icon">
-            <i className="fas fa-spinner fa-spin"></i>
-          </span>
-          <span>正在提交 ...</span>
-        </button>);
-      } else {
-        const disabled = !this.state.html
-        submitButton = <button
-          type="submit"
-          className="button is-success is-rounded is-medium"
-          disabled={disabled}>
-          提&nbsp;&nbsp;&nbsp;&nbsp;交
-        </button>;
-      }
+      const disabled = !this.state.html;
 
       return (<form onSubmit={this.handleSubmit}>
         <div className="field">
@@ -183,7 +166,7 @@
 
         <div className="field is-grouped is-right">
           <div className="control">
-            {submitButton}
+            <SubmitButton size="is-medium" isSubmiting={this.state.submiting} disabled={disabled} />
           </div>
         </div>
       </form>);
@@ -272,30 +255,9 @@
     render() {
       let form;
       if (this.state.loading) {
-        form = (<div className="notification">
-          <span className="icon">
-            <i className="fas fa-spinner fa-spin"></i>
-          </span>
-        </div>);
+        form = <Loading />
       } else {
-        let submitButton;
-
-        if (this.state.submiting) {
-          submitButton = (<button className="button is-info" disabled>
-            <span className="icon">
-              <i className="fas fa-spinner fa-spin"></i>
-            </span>
-            <span>正在提交 ...</span>
-          </button>);
-        } else {
-          const disabled = !this.state.html;
-          submitButton = <button
-            type="submit"
-            className="button is-success is-rounded"
-            disabled={disabled}>
-              提&nbsp;&nbsp;&nbsp;&nbsp;交
-          </button>;
-        }
+        const disabled = !this.state.html;
 
         form = (<form onSubmit={this.handleSubmit}>
           <div className="field">
@@ -310,7 +272,7 @@
               </a>
             </p>
             <p className="control">
-              {submitButton}
+              <SubmitButton isSubmiting={this.state.submiting} disabled={disabled} />
             </p>
           </div>
         </form>);

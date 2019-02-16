@@ -145,3 +145,51 @@ class Toolbar extends React.Component {
     </div>);
   }
 }
+
+class SubmitButton extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const {size, disabled, isSubmiting} = this.props;
+
+    let className = "button is-success is-rounded";
+    if (size) {
+      className += ' ' + size;
+    }
+
+    let submitButton;
+
+    if (isSubmiting) {
+      submitButton = (<button className={className} disabled>
+        <span className="icon">
+          <i className="fas fa-spinner fa-spin"></i>
+        </span>
+        <span>正在提交 ...</span>
+      </button>);
+    } else {
+      submitButton = <button
+        type="submit"
+        className={className}
+        disabled={disabled}>
+        提&nbsp;&nbsp;&nbsp;&nbsp;交
+      </button>;
+    }
+
+    return submitButton;
+  }
+}
+
+class Loading extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (<div className="notification loading">
+      <img src="/static/img/loading.gif" />
+      <p>正在加载...</p>
+    </div>);
+  }
+}

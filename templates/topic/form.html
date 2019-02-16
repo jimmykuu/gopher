@@ -43,6 +43,18 @@
 
     handleSubmit = (e) => {
       e.preventDefault();
+
+      const {nodeId, title, markdown, html} = this.state;
+      if (!nodeId) {
+        alert('请选择节点');
+        return
+      }
+
+      if (!title.trim()) {
+        alert('请输入标题');
+        return
+      }
+
       this.setState({submiting: true});
 
       let url;
@@ -66,7 +78,7 @@
         } else {
           alert(data.message);
           this.setState({
-            submiting: fasle
+            submiting: false
           });
         }
       });
@@ -96,77 +108,73 @@
     }
 
     render() {
-      let markdownEditor;
+      let form;
 
       if (this.state.loading) {
-        markdownEditor = (<div className="notification">
-          <span className="icon">
-            <i className="fas fa-spinner fa-spin"></i>
-          </span>
-        </div>);
+        form = <Loading />;
       } else {
-        markdownEditor = <MarkdownEditor markdown={this.state.markdown} onChange={this.handleMarkdownChange}></MarkdownEditor>;
-      }
-
-      return (<form onSubmit={this.handleSubmit}>
-        <div className="field is-horizontal">
-          <div className="field-label is-normal">
-            <label className="label">节点</label>
-          </div>
-          <div className="field-body">
-            <div className="field is-narrow">
-              <div className="control">
-                <div className="select is-fullwidth">
-                  <select value={this.state.nodeId} onChange={this.handleNodeChange}>
-                    <option value="">请选择节点</option>
-                    {this.state.nodes.map(node =>
-                      <option value={node.id}>{node.name}</option>
-                    )}
-                  </select>
+        form = (<form onSubmit={this.handleSubmit}>
+          <div className="field is-horizontal">
+            <div className="field-label is-normal">
+              <label className="label">节点</label>
+            </div>
+            <div className="field-body">
+              <div className="field is-narrow">
+                <div className="control">
+                  <div className="select is-fullwidth">
+                    <select value={this.state.nodeId} onChange={this.handleNodeChange}>
+                      <option value="">请选择节点</option>
+                      {this.state.nodes.map(node =>
+                        <option value={node.id}>{node.name}</option>
+                      )}
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="field is-horizontal">
-          <div className="field-label is-normal">
-            <label className="label">标题</label>
-          </div>
-          <div className="field-body">
-            <div className="field">
-              <div className="control">
-                <input className="input" type="text" placeholder="请输入标题" value={this.state.title} onChange={this.handleTitleChange} />
+          <div className="field is-horizontal">
+            <div className="field-label is-normal">
+              <label className="label">标题</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <div className="control">
+                  <input className="input" type="text" placeholder="请输入标题" value={this.state.title} onChange={this.handleTitleChange} />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="field is-horizontal">
-          <div className="field-label is-normal">
-            <label className="label">内容</label>
-          </div>
-          <div className="field-body">
-            <div className="field">
-              <div className="control">
-                {markdownEditor}
+          <div className="field is-horizontal">
+            <div className="field-label is-normal">
+              <label className="label">内容</label>
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <div className="control">
+                  <MarkdownEditor markdown={this.state.markdown} onChange={this.handleMarkdownChange} />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="field is-horizontal">
-          <div className="field-label">
-          </div>
-          <div className="field-body">
-            <div className="field">
-              <div className="control">
-                <button className="button is-primary" type="submit">提交</button>
+          <div className="field is-horizontal">
+            <div className="field-label">
+            </div>
+            <div className="field-body">
+              <div className="field">
+                <div className="control">
+                  <SubmitButton isSubmiting={this.state.submiting} />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </form>);
+        </form>);
+      }
+
+      return form;
     }
   }
 
