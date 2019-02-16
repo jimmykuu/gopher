@@ -1,6 +1,8 @@
 package actions
 
 import (
+	"fmt"
+
 	"github.com/tango-contrib/renders"
 	"gopkg.in/mgo.v2/bson"
 
@@ -15,6 +17,7 @@ type Announcement struct {
 // Get /:slug
 func (a *Announcement) Get() error {
 	slug := a.Param("slug")
+	fmt.Println(">>>>", slug)
 	var announcement Announcement
 	c := a.DB.C(models.CONTENTS)
 

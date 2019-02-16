@@ -27,7 +27,7 @@ func setRoutes(t *tango.Tango) {
 	t.Get("/members", new(actions.LatestUsers))
 	t.Get("/members/all", new(actions.AllUsers))
 
-	t.Get("/:slug", new(actions.Announcement))
+	t.Get("/link", new(actions.Link))
 
 	t.Get("/user_center", new(actions.UserCenter))
 	t.Get("/user_center/profile", new(actions.UserProfile))
@@ -64,4 +64,6 @@ func setRoutes(t *tango.Tango) {
 		g.Put("/user_center/set_avatar", new(apis.SetAvatar))
 		g.Get("/user_center/from_gravatar", new(apis.FromGravatar))
 	})
+
+	t.Get("/:slug", new(actions.Announcement))
 }

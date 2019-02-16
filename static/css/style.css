@@ -1,9 +1,13 @@
 html {
-    font-size: 13px;
+    font-size: 14px;
 }
 
 body {
     background-color: #fbfbfb;
+}
+
+.navbar-item img {
+    max-height: 2.2em;
 }
 
 .main {
