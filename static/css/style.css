@@ -16,6 +16,7 @@ body {
 
 .media-left img {
     border-radius: 50%;
+    border: 1px solid #ddd;
 }
 
 article.post {
@@ -108,14 +109,15 @@ ul.status li {
     text-align: center;
 }
 
-.media-left img {
-    border: 1px solid #ddd;
-}
-
 .field.is-grouped.is-right {
     justify-content: flex-end;
 }
 
 .notification.loading {
     text-align: center;
+}
+
+.content pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
