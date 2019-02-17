@@ -2,6 +2,7 @@ package conf
 
 import (
 	"encoding/json"
+	"html/template"
 	"os"
 	"runtime"
 
@@ -33,10 +34,11 @@ type ConfigStruct struct {
 }
 
 var (
-	Config       ConfigStruct
-	GoVersion    = runtime.Version()
-	TangoVersion = tango.Version()
-	Version      string
+	Config        ConfigStruct
+	GoVersion     = runtime.Version()
+	TangoVersion  = tango.Version()
+	Version       string
+	AnalyticsCode template.HTML // 网站统计分析代码
 )
 
 func InitConfig(configFile string) error {

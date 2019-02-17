@@ -28,7 +28,7 @@ func init() {
 		os.Exit(1)
 	}
 
-	analyticsCode = getDefaultCode(conf.Config.AnalyticsFile)
+	conf.AnalyticsCode = getDefaultCode(conf.Config.AnalyticsFile)
 
 	if conf.Config.DB == "" {
 		fmt.Println("数据库地址还没有配置,请到config.json内配置db字段.")

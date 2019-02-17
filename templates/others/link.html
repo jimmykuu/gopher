@@ -1,0 +1,10 @@
+{{ template "base.html" . }}
+{{ define "body" }}
+<h1 class="title">友情链接</h1>
+<hr>
+<div class="buttons">
+  {{range .links}}
+	<a class="button" href="{{.URL}}" target="_blank" title="{{.Description}}">{{.Name}}</a>
+  {{end}}
+</div>
+{{ end }}
