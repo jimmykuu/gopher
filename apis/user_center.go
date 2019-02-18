@@ -217,7 +217,7 @@ func (a *UploadAvatarImage) Post() interface{} {
 
 	fileType := header.Header["Content-Type"][0]
 
-	filename, err := saveImage(file, fileType, []string{"avatar"}, 500*1024)
+	filename, err := saveImage(file, fileType, "", []string{"avatar"}, 500*1024)
 	if err != nil {
 		return map[string]interface{}{
 			"status":  0,
@@ -319,7 +319,7 @@ func (a *FromGravatar) Get() interface{} {
 
 	fileType := resp.Header["Content-Type"][0]
 
-	filename, err := saveImage(resp.Body, fileType, []string{"avatar"}, -1)
+	filename, err := saveImage(resp.Body, fileType, "", []string{"avatar"}, -1)
 	if err != nil {
 		panic(err)
 	}

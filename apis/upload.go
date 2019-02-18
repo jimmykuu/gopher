@@ -31,7 +31,7 @@ func (a *UploadImage) Post() interface{} {
 
 	fileType := header.Header["Content-Type"][0]
 
-	filename, err := saveImage(file, fileType, []string{"upload", "image"}, -1)
+	filename, err := saveImage(file, fileType, "", []string{"upload", "image"}, -1)
 	if err != nil {
 		return map[string]interface{}{
 			"status":  0,
@@ -50,9 +50,10 @@ type Sizer interface {
 }
 
 // uploadImage 上传图片，保存图片到指定位置，并返回图片 URL 地址
+// filename: 如果为空，使用 uuid 作为文件名
 // maxSize: byte 如果是 -1，不检查图片大小
 // 返回：文件名
-func saveImage(source io.Reader, fileType string, folders []string, maxSize int64) (string, error) {
+func saveImage(source io.Reader, fileType, filename string, folders []string, maxSize int64) (string, error) {
 	if maxSize > 0 {
 		fileSize := source.(Sizer).Size()
 
@@ -76,8 +77,10 @@ func saveImage(source io.Reader, fileType string, folders []string, maxSize int6
 	}
 
 	imageFolder := filepath.Join(folders...)
-	// 文件名：32位uuid+后缀组成
-	filename := strings.Replace(uuid.NewUUID().String(), "-", "", -1) + filenameExtension
+	if filename == "" {
+		// 文件名：32位uuid+后缀组成
+		filename = strings.Replace(uuid.NewUUID().String(), "-", "", -1) + filenameExtension
+	}
 	toFile, err := os.Create(filepath.Join(conf.Config.ImagePath, imageFolder, filename))
 	if err != nil {
 		return "", err

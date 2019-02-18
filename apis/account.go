@@ -1,6 +1,8 @@
 package apis
 
 import (
+	"fmt"
+	"net/http"
 	"net/url"
 	"strings"
 	"time"
@@ -166,7 +168,7 @@ func (a *Signup) Post() interface{} {
 		Id_:          id,
 		Username:     form.Username,
 		Password:     utils.EncryptPassword(form.Password, salt, models.PublicSalt),
-		Avatar:       "", // defaultAvatars[rand.Intn(len(defaultAvatars))],
+		Avatar:       "",
 		Salt:         salt,
 		Email:        form.Email,
 		ValidateCode: validateCode,
@@ -182,6 +184,16 @@ func (a *Signup) Post() interface{} {
 			"messages": err.Error(),
 		}
 	}
+
+	// 从 http://identicon.relucks.org 下载头像作为用户的默认头像
+	go func() {
+		res, err := http.Get(fmt.Sprintf("http://identicon.relucks.org/%s?size=400", form.Username))
+		if err == nil {
+			defer res.Body.Close()
+			saveImage(res.Body, "image/png", form.Username+".png", []string{"avatar"}, -1)
+		}
+
+	}()
 
 	c2.Update(nil, bson.M{"$inc": bson.M{"userindex": 1, "usercount": 1}})
 
