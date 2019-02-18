@@ -101,13 +101,12 @@
   <div class="hero-body">
     <div class="container has-text-centered">
       <div class="column is-4 is-offset-4">
-        <h3 class="title has-text-grey">登录</h3>
+        <h3 class="title has-text-grey">注册</h3>
           <div class="box">
             <div id="form"></div>
           </div>
           <p class="has-text-grey">
-            <a href="/signup">注册</a> &nbsp;·&nbsp;
-            <a href="/forgot_password">忘记密码</a>
+            <a href="/signin">登录</a>
           </p>
       </div>
     </div>
@@ -123,64 +122,63 @@
         email: '',
         password: '',
         submiting: false,
-        errors: [],
         waiting: true
       };
-    }
-
-    handleUsernameChange = (e) => {
-      this.setState({username: e.target.value});
-    }
-
-    handlePasswordChange = (e) => {
-      this.setState({password: e.target.value});
     }
 
     handleSubmit = (e) => {
       e.preventDefault();
 
+      const {username, email, password} = this.state;
+
       if (this.state.submiting) {
         return;
       }
 
-      if (!this.state.email) {
-        this.setState({errors: ["请输入邮箱地址"]});
-        return;
-      }
-
-      if (!this.state.username) {
+      if (!username) {
           this.setState({errors: ["请输入用户名"]});
-          return;
+          return
       }
 
-      if (!this.state.password) {
+      if (!email) {
+        this.setState({errors: ["请输入邮箱地址"]});
+        return
+      }
+
+      if (!password) {
         this.setState({errors: ["请输入密码"]});
-        return;
+        return
       }
 
       let result = window.gt.getValidate();
 
       if (!result) {
         alert('请先完成验证！');
-        return;
+        return
       }
 
       this.setState({submiting: true});
 
-      post('/api/signin', {
-        username: this.state.username,
-        password: this.state.password,
+      post('/api/signup', {
+        username: username,
+        email: email,
+        password: password,
         geetest_challenge: result.geetest_challenge,
         geetest_validate: result.geetest_validate,
         geetest_seccode: result.geetest_seccode
       }).then((data) => {
-        if (data.status === 0) {
-          this.setState({errors: data.messages, submiting: false});
-        } else {
+        if (data.status) {
           window.localStorage.setItem('token', data.token);
           Cookies.set('user', data.cookie.user, { expores: 365 });
 
-          window.location.href = next;
+          if (next) {
+            window.location.href = next;
+          } else {
+            window.location.href = '/';
+          }
+        } else {
+          this.setState({submiting: false});
+          alert(data.message);
         }
       });
     }
@@ -234,7 +232,7 @@
         <form onSubmit={this.handleSubmit}>
           <div className="field">
             <div className="control has-icons-left">
-              <input className="input is-medium" type="text" placeholder="用户名" autofocus="" onChange={this.handleUsernameChange} />
+              <input className="input is-medium" type="text" placeholder="用户名" onChange={ (e) => this.setState({username: e.target.value}) } />
               <span className="icon is-small is-left">
                 <i className="fas fa-user"></i>
               </span>
@@ -243,7 +241,7 @@
 
           <div className="field">
             <div className="control has-icons-left">
-              <input className="input is-medium" type="email" placeholder="邮箱" autofocus="" onChange={this.handleEmailChange} />
+              <input className="input is-medium" type="email" placeholder="邮箱" onChange={ (e) => this.setState({email: e.target.value}) } />
               <span className="icon is-small is-left">
                 <i className="fas fa-envelope"></i>
               </span>
@@ -252,7 +250,7 @@
 
           <div className="field">
             <div className="control has-icons-left">
-              <input className="input is-medium" type="password" placeholder="密码" onChange={this.handlePasswordChange} />
+              <input className="input is-medium" type="password" placeholder="密码" onChange={ (e) => this.setState({password: e.target.value}) } />
               <span className="icon is-small is-left">
                 <i className="fas fa-lock"></i>
               </span>
@@ -265,23 +263,7 @@
             </div>
           </div>
 
-          <button className="button is-block is-info is-medium is-fullwidth" type="submit">登录</button>
-
-          <div className="ui stacked segment">
-            {this.state.errors.length > 0 ?
-              <div className="ui error message">
-                <ul className="list">
-                  {
-                    this.state.errors.map(function (item) {
-                      return <li>{item}</li>
-                    })
-                  }
-                </ul>
-              </div>
-            :
-              ''
-            }
-          </div>
+          <button className="button is-block is-info is-medium is-fullwidth" type="submit">注册</button>
         </form>
       );
     }

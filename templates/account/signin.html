@@ -122,7 +122,6 @@
         username: '',
         password: '',
         submiting: false,
-        errors: [],
         waiting: true
       };
     }
@@ -138,43 +137,50 @@
     handleSubmit = (e) => {
       e.preventDefault();
 
+      const {username, password} = this.state;
+
       if (this.state.submiting) {
         return;
       }
 
-      if (!this.state.username) {
-        this.setState({errors: ["请输入用户名或邮箱"]});
-        return;
+      if (!username) {
+        alert("请输入用户名或邮箱");
+        return
       }
 
       if (!this.state.password) {
-        this.setState({errors: ["请输入密码"]});
-        return;
+        alert("请输入密码");
+        return
       }
 
       let result = window.gt.getValidate();
 
       if (!result) {
         alert('请先完成验证！');
-        return;
+        return
       }
 
       this.setState({submiting: true});
 
       post('/api/signin', {
-        username: this.state.username,
-        password: this.state.password,
+        username: username,
+        password: password,
         geetest_challenge: result.geetest_challenge,
         geetest_validate: result.geetest_validate,
         geetest_seccode: result.geetest_seccode
       }).then((data) => {
-        if (data.status === 0) {
-          this.setState({errors: data.messages, submiting: false});
-        } else {
+        if (data.status) {
           window.localStorage.setItem('token', data.token);
           Cookies.set('user', data.cookie.user, { expores: 365 });
 
-          window.location.href = next;
+          if (next) {
+            window.location.href = next;
+          } else {
+            window.location.href = '/';
+          }
+        } else {
+          this.setState({submiting: false});
+          alert(data.message);
         }
       });
     }
@@ -251,22 +257,6 @@
           </div>
 
           <button className="button is-block is-info is-medium is-fullwidth" type="submit">登录</button>
-
-          <div className="ui stacked segment">
-            {this.state.errors.length > 0 ?
-              <div className="ui error message">
-                <ul className="list">
-                  {
-                    this.state.errors.map(function (item) {
-                      return <li>{item}</li>
-                    })
-                  }
-                </ul>
-              </div>
-            :
-              ''
-            }
-          </div>
         </form>
       );
     }

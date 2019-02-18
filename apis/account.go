@@ -1,7 +1,6 @@
 package apis
 
 import (
-	"fmt"
 	"net/url"
 	"strings"
 	"time"
@@ -43,10 +42,9 @@ func (a *Signin) Post() interface{} {
 	result, err := govalidator.ValidateStruct(form)
 
 	if !result {
-		var errors = strings.Split(err.Error(), ";")
 		return map[string]interface{}{
-			"status":   0,
-			"messages": errors[:len(errors)-1],
+			"status":  0,
+			"message": err.Error(),
 		}
 	}
 
@@ -56,7 +54,7 @@ func (a *Signin) Post() interface{} {
 	if success == 0 {
 		return map[string]interface{}{
 			"status":  0,
-			"message": []string{"验证码错误"},
+			"message": "验证码错误",
 		}
 	}
 
@@ -70,17 +68,16 @@ func (a *Signin) Post() interface{} {
 	}
 
 	if err != nil {
-		fmt.Println(err.Error())
 		return map[string]interface{}{
-			"status":   0,
-			"messages": []string{"该用户不存在"},
+			"status":  0,
+			"message": "该用户不存在",
 		}
 	}
 
 	if !user.CheckPassword(form.Password) {
 		return map[string]interface{}{
-			"status":   0,
-			"messages": []string{"密码和用户名/邮箱不匹配"},
+			"status":  0,
+			"message": "密码和用户名/邮箱不匹配",
 		}
 	}
 
@@ -125,10 +122,9 @@ func (a *Signup) Post() interface{} {
 	result, err := govalidator.ValidateStruct(form)
 
 	if !result {
-		var errors = strings.Split(err.Error(), ";")
 		return map[string]interface{}{
-			"status":   0,
-			"messages": errors[:len(errors)-1],
+			"status":  0,
+			"message": err.Error(),
 		}
 	}
 
@@ -143,8 +139,8 @@ func (a *Signup) Post() interface{} {
 	err = c.Find(bson.M{"username": form.Username}).One(&user)
 	if err == nil {
 		return map[string]interface{}{
-			"status":   0,
-			"messages": []string{"该用户名已经被注册"},
+			"status":  0,
+			"message": "该用户名已经被注册",
 		}
 	}
 
@@ -153,8 +149,8 @@ func (a *Signup) Post() interface{} {
 
 	if err == nil {
 		return map[string]interface{}{
-			"status":   0,
-			"messages": []string{"该电子邮件地址已经被注册"},
+			"status":  0,
+			"message": "该电子邮件地址已经被注册",
 		}
 	}
 
@@ -183,7 +179,7 @@ func (a *Signup) Post() interface{} {
 	if err != nil {
 		return map[string]interface{}{
 			"status":   0,
-			"messages": []string{err.Error()},
+			"messages": err.Error(),
 		}
 	}
 

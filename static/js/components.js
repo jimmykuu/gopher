@@ -188,7 +188,7 @@ class Loading extends React.Component {
 
   render() {
     return (<div className="notification loading">
-      <img src="/static/img/loading.gif" />
+      <img src="/static/img/loading.gif?1" />
       <p>正在加载...</p>
     </div>);
   }
