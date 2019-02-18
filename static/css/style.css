@@ -19,15 +19,9 @@ body {
     border: 1px solid #ddd;
 }
 
-article.post {
-    margin: 1rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #E6EAEE;
-}
-
-article.post:last-child {
-    padding-bottom: 0;
-    border-bottom: none;
+.image.is-40x40 {
+    width: 40px;
+    height: 40px;
 }
 
 #toolbar {
@@ -37,7 +31,7 @@ article.post:last-child {
 .metadata {
     margin-bottom: 2em;
     font-weight: 400;
-    color: #cccccc;
+    color: #969696;
 }
 
 .metadata span {
@@ -120,4 +114,33 @@ ul.status li {
 .content pre {
     white-space: pre-wrap;
     word-wrap: break-word;
+}
+
+.post .media-left {
+    margin-left: 0;
+    margin-right: 1rem;
+    margin-bottom: 0 !important;
+}
+
+.post .title {
+    font-size: 1.2em;
+    margin-bottom: 0.5em;
+}
+
+.post .title a {
+    color: #333333;
+}
+
+.post .metadata {
+    margin-bottom: 0;
+}
+
+.metadata a {
+    color: #b4b4b4;
+    text-decoration: underline;
+}
+
+.metadata a.button {
+    color: #363636;
+    text-decoration: none;
 }

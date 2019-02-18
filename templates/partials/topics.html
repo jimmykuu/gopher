@@ -1,18 +1,19 @@
 <div class="box content">
 {{ range .topics }}
-{{ $creater := .Creater $.db }}
-{{ $node := .Node $.db }}
-<article class="post">
-  <h4><a href="/t/{{ .Id_.Hex }}">{{ truncate .Title 40 "..." }}</a></h4>
-  <div class="media">
-    <div class="media-left">
-      <p class="image is-32x32">
-        <a href="/member/{{ $creater.Username }}"><img src="{{ $creater.AvatarImgSrc 32 }}"></a>
+  {{ $creater := .Creater $.db }}
+  {{ $node := .Node $.db }}
+  <article class="media post">
+    <figure class="media-left">
+      <p class="image is-40x40">
+        <a href="/member/{{ $creater.Username }}"><img src="{{ $creater.AvatarImgSrc 40 }}"></a>
       </p>
-    </div>
+    </figure>
     <div class="media-content">
       <div class="content">
-        <p>
+        <div class="title">
+          <a href="/t/{{ .Id_.Hex }}"><strong>{{ truncate .Title 40 "..." }}</strong></a>
+        </div>
+        <div class="metadata">
           <a href="/member/{{ $creater.Username }}">{{ $creater.Username }}</a>
           {{ if .CommentCount }}
             {{ $latestReplier := .LatestReplier $.db }}
@@ -27,7 +28,7 @@
           {{ end }}
           &nbsp;
           <a class="tag" href="/go/{{$node.Id}}">{{ $node.Name }}</a>
-        </p>
+        </div>
       </div>
     </div>
     {{ if .CommentCount }}
@@ -35,7 +36,6 @@
       <span class="has-text-grey-light"><i class="fa fa-comments"></i> {{ .CommentCount }}</span>
     </div>
     {{ end }}
-  </div>
-</article>
+  </article>
 {{ end }}
 </div>
