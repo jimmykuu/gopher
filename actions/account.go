@@ -68,12 +68,8 @@ type AccountIndex struct {
 // Get /member/:username
 func (a *AccountIndex) Get() error {
 	username := a.Param("username")
-	session, DB := models.GetSessionAndDB()
-	defer session.Close()
-	c := DB.C(models.USERS)
-
+	c := a.DB.C(models.USERS)
 	user := models.User{}
-
 	err := c.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
@@ -109,10 +105,7 @@ func (a *AccountComments) Get() error {
 	}
 
 	username := a.Param("username")
-	session, DB := models.GetSessionAndDB()
-	defer session.Close()
-	c := DB.C(models.USERS)
-
+	c := a.DB.C(models.USERS)
 	user := models.User{}
 
 	err := c.Find(bson.M{"username": username}).One(&user)
@@ -124,7 +117,7 @@ func (a *AccountComments) Get() error {
 
 	var comments []models.Comment
 
-	c = DB.C(models.COMMENTS)
+	c = a.DB.C(models.COMMENTS)
 
 	pagination := NewPagination(c.Find(bson.M{"createdby": user.Id_, "type": models.TypeTopic}).Sort("-createdat"), PerPage)
 
@@ -148,12 +141,8 @@ type AccountCollections struct {
 // Get /member/:username/collections
 func (a *AccountCollections) Get() error {
 	username := a.Param("username")
-	session, DB := models.GetSessionAndDB()
-	defer session.Close()
-	c := DB.C(models.USERS)
-
+	c := a.DB.C(models.USERS)
 	user := models.User{}
-
 	err := c.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
@@ -177,8 +166,6 @@ func (a *AccountCollections) Get() error {
 	if err != nil {
 		return err
 	}
-
-	fmt.Println(pagination.Pages())
 
 	return a.Render("account/collections.html", renders.T{
 		"member":     user,
@@ -240,5 +227,52 @@ func (a *ListUsers) Get() error {
 		"pagination": pagination,
 		"page":       page,
 		"url":        "/members/all",
+	})
+}
+
+// ForgotPassword 忘记密码
+type ForgotPassword struct {
+	RenderBase
+}
+
+// Get /forgot_password
+func (a *ForgotPassword) Get() error {
+	g := geetest.New(conf.Config.GtCaptchaId, conf.Config.GtPrivateKey)
+	p := url.Values{
+		"client": {"web"},
+	}
+
+	resp := g.PreProcess(p)
+
+	return a.Render("account/forgot_password.html", renders.T{
+		"title":       "忘记密码",
+		"gt":          resp["gt"],
+		"challenge":   resp["challenge"],
+		"success":     resp["success"],
+		"new_captcha": resp["new_captcha"],
+	})
+}
+
+// ResetPassword 重设密码
+type ResetPassword struct {
+	RenderBase
+}
+
+// Get /reset/:code
+func (a *ResetPassword) Get() error {
+	code := a.Param("code")
+	println(">>>>", code)
+	var user models.User
+	c := a.DB.C(models.USERS)
+	err := c.Find(bson.M{"resetcode": code}).One(&user)
+	if err != nil {
+		a.NotFound("错误的重设代码")
+		return nil
+	}
+
+	return a.Render("account/reset_password.html", renders.T{
+		"title":          "重设密码",
+		"code":           code,
+		"reset_username": user.Username,
 	})
 }

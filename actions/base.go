@@ -48,12 +48,9 @@ func (b *RenderBase) Before() {
 		return
 	}
 
-	session, DB := models.GetSessionAndDB()
-	defer session.Close()
-
 	user := models.User{}
 
-	c := DB.C(models.USERS)
+	c := b.DB.C(models.USERS)
 
 	// 检查用户名
 	err = c.Find(bson.M{"_id": bson.ObjectIdHex(string(userID2))}).One(&user)

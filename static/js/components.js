@@ -152,11 +152,19 @@ class SubmitButton extends React.Component {
   }
 
   render() {
-    const {size, disabled, isSubmiting} = this.props;
+    const {size, disabled, isSubmiting, isRounded, isFullwidth} = this.props;
 
-    let className = "button is-success is-rounded";
+    let className = "button is-success";
     if (size) {
       className += ' ' + size;
+    }
+
+    if (isRounded) {
+      className += ' is-rounded';
+    }
+
+    if (isFullwidth) {
+      className += ' is-fullwidth';
     }
 
     let submitButton;

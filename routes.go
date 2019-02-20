@@ -11,6 +11,8 @@ import (
 func setRoutes(t *tango.Tango) {
 	t.Get("/signin", new(actions.Signin))
 	t.Get("/signup", new(actions.Signup))
+	t.Get("/forgot_password", new(actions.ForgotPassword))
+	t.Get("/reset/:code", new(actions.ResetPassword))
 
 	t.Get("/topic/new", new(actions.NewTopic))
 	t.Get("/t/:topicID/edit", new(actions.EditTopic))
@@ -38,6 +40,8 @@ func setRoutes(t *tango.Tango) {
 		g.Use(middlewares.ApiAuthHandler())
 		g.Post("/signin", new(apis.Signin))
 		g.Post("/signup", new(apis.Signup))
+		g.Post("/forgot_password", new(apis.ForgotPassword))
+		g.Post("/reset_password", new(apis.ResetPassword))
 
 		g.Get("/nodes", new(apis.NodeList))
 		g.Post("/topics", new(apis.Topic))

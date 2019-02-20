@@ -1,102 +1,5 @@
 {{ template "base.html" . }}
 {{ define "body" }}
-<style type="text/css">
-  .column {
-    max-width: 450px;
-  }
-
-  #text {
-    height: 42px;
-    width: 298px;
-    text-align: center;
-    border-radius: 2px;
-    background-color: #F3F3F3;
-    color: #BBBBBB;
-    font-size: 14px;
-    letter-spacing: 0.1px;
-    line-height: 42px;
-  }
-
-  #wait {
-    height: 42px;
-    width: 298px;
-    text-align: center;
-    border-radius: 2px;
-    background-color: #F3F3F3;
-  }
-
-  .loading {
-    margin: auto;
-    width: 70px;
-    height: 20px;
-  }
-
-  .loading-dot {
-    float: left;
-    width: 8px;
-    height: 8px;
-    margin: 18px 4px;
-    background: #ccc;
-
-    -webkit-border-radius: 50%;
-    -moz-border-radius: 50%;
-    border-radius: 50%;
-
-    opacity: 0;
-
-    -webkit-box-shadow: 0 0 2px black;
-    -moz-box-shadow: 0 0 2px black;
-    -ms-box-shadow: 0 0 2px black;
-    -o-box-shadow: 0 0 2px black;
-    box-shadow: 0 0 2px black;
-
-    -webkit-animation: loadingFade 1s infinite;
-    -moz-animation: loadingFade 1s infinite;
-    animation: loadingFade 1s infinite;
-  }
-
-  .loading-dot:nth-child(1) {
-    -webkit-animation-delay: 0s;
-    -moz-animation-delay: 0s;
-    animation-delay: 0s;
-  }
-
-  .loading-dot:nth-child(2) {
-    -webkit-animation-delay: 0.1s;
-    -moz-animation-delay: 0.1s;
-    animation-delay: 0.1s;
-  }
-
-  .loading-dot:nth-child(3) {
-    -webkit-animation-delay: 0.2s;
-    -moz-animation-delay: 0.2s;
-    animation-delay: 0.2s;
-  }
-
-  .loading-dot:nth-child(4) {
-    -webkit-animation-delay: 0.3s;
-    -moz-animation-delay: 0.3s;
-    animation-delay: 0.3s;
-  }
-
-  @-webkit-keyframes loadingFade {
-    0% { opacity: 0; }
-    50% { opacity: 0.8; }
-    100% { opacity: 0; }
-  }
-
-  @-moz-keyframes loadingFade {
-    0% { opacity: 0; }
-    50% { opacity: 0.8; }
-    100% { opacity: 0; }
-  }
-
-  @keyframes loadingFade {
-    0% { opacity: 0; }
-    50% { opacity: 0.8; }
-    100% { opacity: 0; }
-  }
-</style>
 <section class="hero">
   <div class="hero-body">
     <div class="container has-text-centered">
@@ -121,8 +24,8 @@
         username: '',
         email: '',
         password: '',
-        submiting: false,
-        waiting: true
+        loading: true,
+        submiting: false
       };
     }
 
@@ -185,7 +88,7 @@
 
     handlerGeetest = (captchaObj) => {
       captchaObj.appendTo('#captcha');
-      this.setState({waiting: false});
+      this.setState({loading: false});
       window.gt = captchaObj;
     };
 
@@ -209,23 +112,11 @@
     }
 
     render() {
-      const { username, password, email, waiting } = this.state;
+      const { username, password, email, loading } = this.state;
 
-      let waitingDiv = "";
-      if (waiting) {
-        waitingDiv = <div>
-          <div id="text">
-            行为验证™ 安全组件加载中
-          </div>
-          <div id="wait">
-            <div className="loading">
-              <div className="loading-dot"></div>
-              <div className="loading-dot"></div>
-              <div className="loading-dot"></div>
-              <div className="loading-dot"></div>
-            </div>
-          </div>
-        </div>;
+      let waitingDiv;
+      if (loading) {
+        waitingDiv = <Loading />
       }
 
       return (
@@ -263,7 +154,7 @@
             </div>
           </div>
 
-          <button className="button is-block is-info is-medium is-fullwidth" type="submit">注册</button>
+          <SubmitButton isFullwidh={true} size="is-medium" isFullwidth={true} isSubmiting={this.state.submiting} />
         </form>
       );
     }
