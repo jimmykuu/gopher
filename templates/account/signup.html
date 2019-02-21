@@ -63,7 +63,7 @@
       this.setState({submiting: true});
 
       post('/api/signup', {
-        username: username,
+        username: username.trim(),
         email: email,
         password: password,
         geetest_challenge: result.geetest_challenge,

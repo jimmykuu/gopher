@@ -65,9 +65,9 @@ func (a *Signin) Post() interface{} {
 	user := models.User{}
 
 	if strings.Contains(form.Username, "@") {
-		err = c.Find(bson.M{"email": form.Username}).One(&user)
+		err = c.Find(bson.M{"email": bson.M{"$regex": form.Username, "$options": "i"}}).One(&user)
 	} else {
-		err = c.Find(bson.M{"username": form.Username}).One(&user)
+		err = c.Find(bson.M{"username": bson.M{"$regex": form.Username, "$options": "i"}}).One(&user)
 	}
 
 	if err != nil {
@@ -131,12 +131,19 @@ func (a *Signup) Post() interface{} {
 		}
 	}
 
+	if strings.Contains(form.Username, " ") {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "用户名中不能有空格",
+		}
+	}
+
 	c := a.DB.C(models.USERS)
 
-	user := models.User{}
+	var user models.User
 
 	// 检查用户名
-	err = c.Find(bson.M{"username": form.Username}).One(&user)
+	err = c.Find(bson.M{"username": bson.M{"$regex": form.Username, "$options": "i"}}).One(&user)
 	if err == nil {
 		return map[string]interface{}{
 			"status":  0,
@@ -145,7 +152,7 @@ func (a *Signup) Post() interface{} {
 	}
 
 	// 检查邮箱
-	err = c.Find(bson.M{"email": form.Email}).One(&user)
+	err = c.Find(bson.M{"email": bson.M{"$regex": form.Email, "$options": "i"}}).One(&user)
 
 	if err == nil {
 		return map[string]interface{}{
@@ -274,8 +281,8 @@ func (a *ForgotPassword) Post() interface{} {
 	var user models.User
 	c := a.DB.C(models.USERS)
 	err = c.Find(bson.M{"$or": []bson.M{
-		bson.M{"username": form.UsernameOrEmail},
-		bson.M{"email": form.UsernameOrEmail}}}).One(&user)
+		bson.M{"username": bson.M{"$regex": form.UsernameOrEmail, "$options": "i"}},
+		bson.M{"email": bson.M{"$regex": form.UsernameOrEmail, "$options": "i"}}}}).One(&user)
 
 	if err != nil {
 		return map[string]interface{}{
