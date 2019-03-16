@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"errors"
 	"fmt"
 	"net/url"
 
@@ -73,8 +74,7 @@ func (a *AccountIndex) Get() error {
 	err := c.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
-		a.NotFound("会员未找到")
-		return nil
+		return errors.New("会员未找到")
 	}
 
 	topics, pagination, err := GetTopics(a, a.DB, bson.M{"content.type": models.TypeTopic, "content.createdby": user.Id_})
@@ -111,8 +111,7 @@ func (a *AccountComments) Get() error {
 	err := c.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
-		a.NotFound("会员未找到")
-		return nil
+		return errors.New("会员未找到")
 	}
 
 	var comments []models.Comment
@@ -126,6 +125,7 @@ func (a *AccountComments) Get() error {
 	query.All(&comments)
 
 	return a.Render("account/comments.html", renders.T{
+		"title":      fmt.Sprintf("%s 的评论", username),
 		"member":     user,
 		"pagination": pagination,
 		"comments":   comments,
@@ -146,8 +146,7 @@ func (a *AccountCollections) Get() error {
 	err := c.Find(bson.M{"username": username}).One(&user)
 
 	if err != nil {
-		a.NotFound("会员未找到")
-		return nil
+		return errors.New("会员未找到")
 	}
 
 	var topicIDs = []bson.ObjectId{}
@@ -168,11 +167,45 @@ func (a *AccountCollections) Get() error {
 	}
 
 	return a.Render("account/collections.html", renders.T{
+		"title":      fmt.Sprintf("%s 的收藏", username),
 		"member":     user,
 		"pagination": pagination,
 		"topics":     topics,
 		"url":        fmt.Sprintf("/member/%s/collections", username),
 	})
+}
+
+// AccountBlock 用户禁言
+type AccountBlock struct {
+	RenderBase
+}
+
+// Get /member/:username/block
+func (a *AccountBlock) Get() error {
+	if !a.User.IsSuperuser {
+		return errors.New("没有该权限")
+	}
+
+	username := a.Param("username")
+	c := a.DB.C(models.USERS)
+	user := models.User{}
+	err := c.Find(bson.M{"username": username}).One(&user)
+
+	if err != nil {
+		return errors.New("会员未找到")
+	}
+
+	c.Update(bson.M{"username": username}, bson.M{"$set": bson.M{"is_blocked": true}})
+
+	var nexts = a.FormStrings("next")
+	var next = fmt.Sprintf("/member/%s", username)
+	if len(nexts) > 0 {
+		next = nexts[0]
+	}
+
+	a.Redirect(next)
+
+	return nil
 }
 
 // ListUsers 会员列表

@@ -44,9 +44,21 @@
     </div>
   </div>
 
-  {{ if eq .member.Username .user.Username }}
-    <footer class="card-footer">
-      <a href="/user_center" class="card-footer-item">编辑</a>
-    </footer>
+  {{ if .user }}
+    {{ if eq .member.Username .user.Username }}
+      <footer class="card-footer">
+        <a href="/user_center" class="card-footer-item">编辑</a>
+      </footer>
+    {{ end }}
+
+    {{ if .user.IsSuperuser }}
+      <footer class="card-footer">
+        {{ if .member.IsBlocked }}
+          <span class="card-footer-item">已禁言</span>
+        {{ else }}
+          <a href="/member/{{ .member.Username }}/block?next={{ .url }}" class="card-footer-item">禁言</a>
+        {{ end }}
+      </footer>
+    {{ end }}
   {{ end }}
 </div>
