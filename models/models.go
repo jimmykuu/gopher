@@ -270,23 +270,19 @@ func (c *Content) CanEdit(username string, db *mgo.Database) bool {
 		return false
 	}
 
-	if user.IsSuperuser {
-		return true
-	}
-
-	return c.CreatedBy == user.Id_
+	return user.IsSuperuser || c.CreatedBy == user.Id_
 }
 
 // CanDelete 用户是否可删除
 func (c *Content) CanDelete(username string, db *mgo.Database) bool {
 	var user User
-	c_ := db.C("users")
+	c_ := db.C(USERS)
 	err := c_.Find(bson.M{"username": username}).One(&user)
 	if err != nil {
 		return false
 	}
 
-	return user.IsSuperuser
+	return user.IsSuperuser || c.CreatedBy == user.Id_
 }
 
 // Announcement 公告
