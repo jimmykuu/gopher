@@ -74,7 +74,7 @@
       }).then((data) => {
         if (data.status) {
           window.localStorage.setItem('token', data.token);
-          Cookies.set('user', data.cookie.user, { expores: 365 });
+          Cookies.set('user', data.cookie.user, { expires: 365 });
 
           if (next) {
             window.location.href = next;
