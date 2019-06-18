@@ -6,16 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ .title }} - Golang 中国</title>
     <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://nhnent.github.io/tui.editor/api/latest/lib/to-mark/dist/to-mark.js"></script>
-    <script src="https://nhnent.github.io/tui.editor/api/latest/lib/markdown-it/dist/markdown-it.js"></script>
-    <script src="https://nhnent.github.io/tui.editor/api/latest/lib/codemirror/lib/codemirror.js"></script>
-    <script src="https://nhnent.github.io/tui.editor/api/latest/lib/tui-code-snippet/dist/tui-code-snippet.js"></script>
-    <script src="https://nhnent.github.io/tui.editor/api/latest/lib/squire-rte/build/squire-raw.js"></script>
-    <script src="https://nhnent.github.io/tui.editor/api/latest/lib/highlightjs/highlight.pack.js"></script>
-    <script src="https://nhnent.github.io/tui.editor/api/latest/dist/tui-editor-Editor.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"></script>
+    <script src="https://uicdn.toast.com/tui-editor/latest/tui-editor-Editor-full.min.js"></script>
     <script src="{{ staticfile "js/gt.js" }}"></script>
     <script src="{{ staticfile "js/fetch.js" }}"></script>
     <script src="{{ staticfile "js/application.js" }}"></script>
@@ -23,16 +18,20 @@
     <script src="{{ staticfile "js/react-dom.min.js" }}"></script>
     <script src="{{ staticfile "js/babel.min.js" }}"></script>
     <script src="{{ staticfile "js/js.cookie.js" }}"></script>
-    <link rel="stylesheet" href="https://nhnent.github.io/tui.editor/api/latest/dist/tui-editor.css"></link>
-    <link rel="stylesheet" href="https://nhnent.github.io/tui.editor/api/latest/dist/tui-editor-contents.css"></link>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.39.2/codemirror.css"></link>
+    <script src="{{ staticfile "js/highlight.pack.js" }}"></script>
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui-editor/latest/tui-editor.min.css"></link>
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui-editor/latest/tui-editor-contents.min.css"></link>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.min.css"></link>
     <link rel="stylesheet" href="{{ staticfile "css/style.css" }}">
+    <link rel="stylesheet" href="{{ staticfile "js/styles/tomorrow-night-blue.css" }}">
     <script type="text/babel" src="{{ staticfile "js/components.js" }}"></script>
     <script type="text/javascript">
       function signout() {
         Cookies.remove('user');
         window.location.reload("/");
       }
+
+      hljs.initHighlightingOnLoad();
     </script>
   </head>
   <body>

@@ -6,15 +6,46 @@
 <div class="columns">
   <div class="column is-9">
     <article class="media box topic">
-      <div class="media-content">
+      <div class="media-content" style="width: 100%">
         <div class="content">
           <h1 class="title">{{ .topic.Title }}</h1>
-          <div class="metadata">
-            <span><a href="/member/{{$creater.Username}}">{{ $creater.Username }}</a></span>
-            <span><time datetime="{{ formatdatetime .topic.CreatedAt }}" class="date">{{ formattime .topic.CreatedAt }}</time>发布</span>
-            <span>{{ .topic.Hits }}浏览</span>
-            <a class="tag" href="/go/{{$node.Id}}">{{$node.Name}}</a>
-
+          <div class="metadata media">
+            <figure class="media-left" style="margin-left: 0; margin-right: 1em; margin-bottom: 0;">
+              <a class="image is-46x46" href="/member/{{ $creater.Username }}">
+                <img src="{{ $creater.AvatarImgSrc 46 }}">
+              </a>
+            </figure>
+            <div class="media-content">
+              <div class="content">
+                <a href="/member/{{ $creater.Username }}"><strong>{{ $creater.Username }}</strong></a>
+                <br>
+                <div class="meta field is-grouped is-grouped-multiline">
+                  <div class="control">
+                    <div class="tags has-addons">
+                      <span class="tag">发布</span>
+                      <time datetime="{{ formatdatetime .topic.CreatedAt }}" class="tag is-primary">
+                          {{ formattime .topic.CreatedAt }}
+                      </time>
+                    </div>
+                  </div>
+                  <div class="control">
+                    <div class="tags has-addons">
+                      <span class="tag">浏览</span>
+                      <span class="tag is-primary">{{ .topic.Hits }}</span>
+                    </div>
+                  </div>
+                  <div class="control">
+                    <div class="tags has-addons">
+                      <span class="tag">回复</span>
+                      <span class="tag is-primary">{{ len .comments }}</span>
+                    </div>
+                  </div>
+                  <div class="control">
+                    <a class="tag" href="/go/{{$node.Id}}">{{$node.Name}}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
             {{ if $.user }}
               <div id="toolbar"></div>
             {{ end }}

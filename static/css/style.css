@@ -137,10 +137,13 @@ ul.status li {
 
 .metadata a {
     color: #b4b4b4;
-    text-decoration: underline;
 }
 
 .metadata a.button {
     color: #363636;
-    text-decoration: none;
+}
+
+.meta {
+    font-size: 9px !important;
+    margin-top: 0.5em;
 }
