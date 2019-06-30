@@ -29,3 +29,5 @@ key.pem
 
 images
 bin
+gopher
+bindata.go
