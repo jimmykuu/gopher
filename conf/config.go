@@ -6,7 +6,7 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/lunny/tango"
+	"gitea.com/lunny/tango"
 )
 
 type ConfigStruct struct {

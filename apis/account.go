@@ -8,12 +8,12 @@ import (
 	"strings"
 	"time"
 
+	"gitea.com/tango/binding"
 	"github.com/Youngyezi/geetest"
 	"github.com/asaskevich/govalidator"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jimmykuu/webhelpers"
 	"github.com/pborman/uuid"
-	"github.com/tango-contrib/binding"
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/jimmykuu/gopher/conf"

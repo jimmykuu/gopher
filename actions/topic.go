@@ -3,7 +3,7 @@ package actions
 import (
 	"strings"
 
-	"github.com/tango-contrib/renders"
+	"gitea.com/tango/renders"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 

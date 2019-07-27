@@ -4,8 +4,8 @@ import (
 	"html/template"
 	"time"
 
+	"gitea.com/tango/binding"
 	"github.com/asaskevich/govalidator"
-	"github.com/tango-contrib/binding"
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/jimmykuu/gopher/models"

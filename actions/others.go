@@ -1,7 +1,7 @@
 package actions
 
 import (
-	"github.com/tango-contrib/renders"
+	"gitea.com/tango/renders"
 
 	"github.com/jimmykuu/gopher/models"
 )

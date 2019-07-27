@@ -6,7 +6,7 @@ Golang 中国([www.golangtc.com](https://www.golangtc.com))源代码.
 
 ## 重构计划
 
-该分支『2.0』使用 [Tango](https://github.com/lunny/tango) 进行后端重构，前端页面使用 Template 进行渲染（考虑到 SEO），表单渲染使用 React，使用 Fetch 和后端 API 进行交互。
+该分支『2.0』使用 [Tango](https://gitea.com/lunny/tango) 进行后端重构，前端页面使用 Template 进行渲染（考虑到 SEO），表单渲染使用 React，使用 Fetch 和后端 API 进行交互。
 
 社区功能和后台管理功能重构完成后即上线。
 

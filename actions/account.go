@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/url"
 
+	"gitea.com/tango/renders"
 	"github.com/Youngyezi/geetest"
-	"github.com/tango-contrib/renders"
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/jimmykuu/gopher/conf"

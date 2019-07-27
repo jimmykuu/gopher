@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"gitea.com/lunny/tango"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/lunny/tango"
 	"gopkg.in/mgo.v2"
 
 	"github.com/jimmykuu/gopher/models"

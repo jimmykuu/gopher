@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"strings"
 
+	"gitea.com/tango/binding"
 	"github.com/asaskevich/govalidator"
 	"github.com/pborman/uuid"
-	"github.com/tango-contrib/binding"
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/jimmykuu/gopher/models"
