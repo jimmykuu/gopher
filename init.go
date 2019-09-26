@@ -12,17 +12,20 @@ import (
 
 	"github.com/jimmykuu/gopher/conf"
 	"github.com/jimmykuu/gopher/models"
-)
-
-var (
-	analyticsCode template.HTML // 网站统计分析代码
-	shareCode     template.HTML // 分享代码
+	utils1 "github.com/jimmykuu/gopher/utils"
 )
 
 func init() {
 	conf.Version = Version
 
-	err := conf.InitConfig("etc/config.json")
+	// 加载敏感词
+	file, err := os.Open("etc/sensitive_words.txt")
+	if err != nil {
+		panic(err)
+	}
+	conf.DirtyManager = utils1.NewDirtyManager(file)
+
+	err = conf.InitConfig("etc/config.json")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

@@ -5,6 +5,8 @@ go 1.12
 require (
 	github.com/Unknwon/com v0.0.0-20190321035513-0fed4efef755 // indirect
 	github.com/Youngyezi/geetest v0.0.0-20180629105258-e3b16a2be0f4
+	github.com/antlinker/go-cmap v0.0.0-20160407022646-0c5e57012e96 // indirect
+	github.com/antlinker/go-dirtyfilter v1.2.0
 	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/jimmykuu/webhelpers v0.0.0-20160107152426-014fab4e0ee0

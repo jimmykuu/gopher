@@ -9,6 +9,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/jimmykuu/gopher/models"
+	"github.com/jimmykuu/gopher/utils"
 )
 
 // Topic 主题
@@ -135,6 +136,14 @@ func (a *Topic) Post() interface{} {
 		}
 	}
 
+	// 敏感词检查
+	if utils.HasSensitiveWords(form.Title) {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "含有敏感词，禁止发布主题",
+		}
+	}
+
 	var c = a.DB.C(models.CONTENTS)
 
 	id := bson.NewObjectId()
@@ -203,11 +212,30 @@ func (a *Topic) Put() interface{} {
 		}
 	}
 
+	var form TopicForm
+	a.ReadJSON(&form)
+
+	result, err := govalidator.ValidateStruct(form)
+	if !result {
+		return map[string]interface{}{
+			"status":  0,
+			"message": err.Error(),
+		}
+	}
+
+	// 敏感词检查
+	if utils.HasSensitiveWords(form.Title) {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "含有敏感词，禁止发布主题",
+		}
+	}
+
 	c := a.DB.C(models.CONTENTS)
 
 	topic := models.Topic{}
 
-	err := c.Find(bson.M{"_id": bson.ObjectIdHex(topicID), "content.type": models.TypeTopic}).One(&topic)
+	err = c.Find(bson.M{"_id": bson.ObjectIdHex(topicID), "content.type": models.TypeTopic}).One(&topic)
 
 	if err != nil {
 		return map[string]interface{}{
@@ -220,17 +248,6 @@ func (a *Topic) Put() interface{} {
 		return map[string]interface{}{
 			"status":  0,
 			"message": "对不起，你没有权限编辑该主题",
-		}
-	}
-
-	var form TopicForm
-	a.ReadJSON(&form)
-
-	result, err := govalidator.ValidateStruct(form)
-	if !result {
-		return map[string]interface{}{
-			"status":  0,
-			"message": err.Error(),
 		}
 	}
 
