@@ -1,4 +1,4 @@
-package main
+package gopher
 
 import (
 	"gitea.com/lunny/tango"
@@ -8,7 +8,7 @@ import (
 	"github.com/jimmykuu/gopher/middlewares"
 )
 
-func setRoutes(t *tango.Tango) {
+func SetRoutes(t *tango.Tango) {
 	t.Get("/signin", new(actions.Signin))
 	t.Get("/signup", new(actions.Signup))
 	t.Get("/forgot_password", new(actions.ForgotPassword))

@@ -29,17 +29,23 @@ Golang 中国([www.golangtc.com](https://www.golangtc.com))源代码.
 
 ## Install
 
-    $ go get github.com/jimmykuu/gopher
+    $ git clone https://github.com/jimmykuu/gopher.git
+    $ cd gopher
+    $ make
 
+## Run
 
-复制文件 *etc/config.json.default* 并改名为 *etc/config.json* 作为配置文件
+    $ cp etc/config.json.default etc/config.json
+    $ ./bin/gopher
+
+复制文件 _etc/config.json.default_ 并改名为 _etc/config.json_ 作为配置文件
 
 - superusers: 内容为用户名,如果没有管理员,内容为"",如果有多个,用英文逗号隔开
 - analytics_file: 内容为统计分析代码的文件名
-- time_zone_offset: 时差，跟UTC的时间差，单位小时
-- github_login_redirect: 第三方登录失败无法获取cookie跳转地址
+- time_zone_offset: 时差，跟 UTC 的时间差，单位小时
+- github_login_redirect: 第三方登录失败无法获取 cookie 跳转地址
 - github_login_success_redirect: 第三方登录成功后跳转地址
-- cookie_secure: 第三方登录需要使用HTTPS，当设置为false供本地测试使用
+- cookie_secure: 第三方登录需要使用 HTTPS，当设置为 false 供本地测试使用
 - gt_captcha_id: geetest.com 服务的 id
 - gt_private_key: geetest.com 服务的 key
 - go_download_path: 存放下载的 Go 文件目录
@@ -68,8 +74,7 @@ Golang 中国([www.golangtc.com](https://www.golangtc.com))源代码.
         "debug": false
     }
 
-
-**注意**：*etc*，*static*，*templates* 目录需要在可执行文件同一个目录下，可以通过软链或者复制到同一个目录下。
+**注意**：_etc_，_static_，_templates_ 目录需要在可执行文件同一个目录下，可以通过软链或者复制到同一个目录下。
 
 ## Contributors
 

@@ -1,9 +1,10 @@
-package main
+package gopher
 
 import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 
@@ -14,6 +15,8 @@ import (
 	"github.com/jimmykuu/gopher/models"
 	utils1 "github.com/jimmykuu/gopher/utils"
 )
+
+var logger = log.New(os.Stdout, "[gopher]:", log.LstdFlags)
 
 func init() {
 	conf.Version = Version
