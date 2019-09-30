@@ -7,7 +7,7 @@ import (
 	"runtime"
 
 	filter "github.com/antlinker/go-dirtyfilter"
-	"github.com/lunny/tango"
+	"gitea.com/lunny/tango"
 )
 
 type ConfigStruct struct {

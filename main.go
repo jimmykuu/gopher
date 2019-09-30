@@ -11,10 +11,10 @@ import (
 	"strings"
 	"time"
 
+	"gitea.com/lunny/tango"
+	"gitea.com/tango/events"
+	"gitea.com/tango/renders"
 	"github.com/jimmykuu/webhelpers"
-	"github.com/lunny/tango"
-	"github.com/tango-contrib/events"
-	"github.com/tango-contrib/renders"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 

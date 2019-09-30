@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/lunny/tango"
+	"gitea.com/lunny/tango"
 
 	"github.com/jimmykuu/gopher/actions"
 	"github.com/jimmykuu/gopher/apis"

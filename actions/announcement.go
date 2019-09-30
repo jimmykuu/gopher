@@ -3,7 +3,7 @@ package actions
 import (
 	"fmt"
 
-	"github.com/tango-contrib/renders"
+	"gitea.com/tango/renders"
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/jimmykuu/gopher/models"

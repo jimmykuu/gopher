@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lunny/tango"
-	"github.com/tango-contrib/renders"
+	"gitea.com/lunny/tango"
+	"gitea.com/tango/renders"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 

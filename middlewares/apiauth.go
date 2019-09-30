@@ -3,7 +3,7 @@ package middlewares
 import (
 	"fmt"
 
-	"github.com/lunny/tango"
+	"gitea.com/lunny/tango"
 )
 
 // ApiAuthHandler /api 中间件，用于判断用户是否登录

@@ -1,7 +1,7 @@
 package actions
 
 import (
-	"github.com/tango-contrib/renders"
+	"gitea.com/tango/renders"
 )
 
 // UserCenter 显示和修改用户信息
