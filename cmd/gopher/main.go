@@ -17,8 +17,9 @@ func main() {
 		static.Static("./static"),
 		renders.New(renders.Options{
 			Reload:     true,
+			Directory:  "./templates",
+			FileSystem: templates.FileSystem("templates"),
 			Funcs:      gopher.Funcs,
-			FileSystem: templates.FileSystem("./templates"),
 		}))
 
 	gopher.SetRoutes(t)
