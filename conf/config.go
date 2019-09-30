@@ -6,6 +6,7 @@ import (
 	"os"
 	"runtime"
 
+	filter "github.com/antlinker/go-dirtyfilter"
 	"gitea.com/lunny/tango"
 )
 
@@ -39,6 +40,7 @@ var (
 	TangoVersion  = tango.Version()
 	Version       string
 	AnalyticsCode template.HTML // 网站统计分析代码
+	DirtyManager  *filter.DirtyManager
 )
 
 func InitConfig(configFile string) error {

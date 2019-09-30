@@ -8,6 +8,8 @@ require (
 	gitea.com/tango/events v0.0.0-20190424023309-50869003ae59
 	gitea.com/tango/renders v0.0.0-20190606020507-5dfc5b32c70d
 	github.com/Youngyezi/geetest v0.0.0-20180629105258-e3b16a2be0f4
+	github.com/antlinker/go-cmap v0.0.0-20160407022646-0c5e57012e96 // indirect
+	github.com/antlinker/go-dirtyfilter v1.2.0
 	github.com/asaskevich/govalidator v0.0.0-20190424111038-f61b66f89f4a
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/jimmykuu/webhelpers v0.0.0-20160107152426-014fab4e0ee0
