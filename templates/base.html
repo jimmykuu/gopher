@@ -1,163 +1,170 @@
 <!DOCTYPE html>
 <html lang="zh_CN">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ .title }} - Golang 中国</title>
-    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css" rel="stylesheet" type="text/css" />
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
-    <script src="https://uicdn.toast.com/tui-editor/latest/tui-editor-Editor-full.min.js"></script>
-    <script src="{{ staticfile "js/gt.js" }}"></script>
-    <script src="{{ staticfile "js/fetch.js" }}"></script>
-    <script src="{{ staticfile "js/application.js" }}"></script>
-    <script src="{{ staticfile "js/react.min.js" }}"></script>
-    <script src="{{ staticfile "js/react-dom.min.js" }}"></script>
-    <script src="{{ staticfile "js/babel.min.js" }}"></script>
-    <script src="{{ staticfile "js/js.cookie.js" }}"></script>
-    <script src="{{ staticfile "js/highlight.pack.js" }}"></script>
-    <link rel="stylesheet" href="https://uicdn.toast.com/tui-editor/latest/tui-editor.min.css"></link>
-    <link rel="stylesheet" href="https://uicdn.toast.com/tui-editor/latest/tui-editor-contents.min.css"></link>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.min.css"></link>
-    <link rel="stylesheet" href="{{ staticfile "css/style.css" }}">
-    <link rel="stylesheet" href="{{ staticfile "js/styles/tomorrow-night-blue.css" }}">
-    <script type="text/babel" src="{{ staticfile "js/components.js" }}"></script>
-    <script type="text/javascript">
-      function signout() {
-        Cookies.remove('user');
-        window.location.reload("/");
-      }
 
-      hljs.initHighlightingOnLoad();
-    </script>
-  </head>
-  <body>
-    <nav class="navbar has-shadow is-spaced" role="navigation" aria-label="main navigation">
-      <div class="container">
-        <div class="navbar-brand">
-          <a class="navbar-item" href="/">
-            <img src="https://is.golangtc.com/logo/golangtc.png?height=60">
-          </a>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ .title }} - Golang 中国</title>
+  <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
+    integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" />
+  <script src="https://uicdn.toast.com/tui-editor/latest/tui-editor-Editor-full.min.js"></script>
+  <script src="{{ staticfile "js/gt.js" }}"></script>
+  <script src="{{ staticfile "js/fetch.js" }}"></script>
+  <script src="{{ staticfile "js/application.js" }}"></script>
+  <script src="{{ staticfile "js/react.min.js" }}"></script>
+  <script src="{{ staticfile "js/react-dom.min.js" }}"></script>
+  <script src="{{ staticfile "js/babel.min.js" }}"></script>
+  <script src="{{ staticfile "js/js.cookie.js" }}"></script>
+  <script src="{{ staticfile "js/highlight.pack.js" }}"></script>
+  <link rel="stylesheet" href="https://uicdn.toast.com/tui-editor/latest/tui-editor.min.css">
+  </link>
+  <link rel="stylesheet" href="https://uicdn.toast.com/tui-editor/latest/tui-editor-contents.min.css">
+  </link>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.min.css">
+  </link>
+  <link rel="stylesheet" href="{{ staticfile "css/style.css" }}">
+  <link rel="stylesheet" href="{{ staticfile "js/styles/tomorrow-night-blue.css" }}">
+  <script type="text/babel" src="{{ staticfile "js/components.js" }}"></script>
+  <script type="text/javascript">
+    function signout() {
+      Cookies.remove('user');
+      window.location.reload("/");
+    }
 
-          <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarMain">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-          </a>
-        </div>
+    hljs.initHighlightingOnLoad();
+  </script>
+</head>
 
-        <div id="navbarMain" class="navbar-menu">
-          <div class="navbar-start">
-            <a class="navbar-item is-active" href="/">
-              主题
-            </a>
-            <a class="navbar-item" href="/members">
-              会员
-            </a>
-          </div>
-          <div class="navbar-end">
-            <form class="field has-addons" action="/search" method="GET" id="search">
-              <div class="control">
-                <input class="input" name="q" type="text" placeholder="搜索主题...">
-              </div>
-              <div class="control">
-                <button type="submit" class="button">
-                  <span class="icon is-small">
-                    <i class="fas fa-search"></i>
-                  </span>
-                </button>
-              </div>
-            </form>
-          {{ if .user }}
-            <div class="navbar-item has-dropdown is-hoverable">
-              <a class="navbar-link">
-                {{ .user.Username }}
-              </a>
-
-              <div class="navbar-dropdown">
-                <a class="navbar-item" href="/member/{{ .user.Username }}">
-                  我的主页
-                </a>
-                <a class="navbar-item" href="/user_center">
-                  个人资料设置
-                </a>
-                <a class="navbar-item" href="/user_center/change_password">
-                  修改密码
-                </a>
-                <hr class="navbar-divider">
-                <a class="navbar-item" href="javascript: signout();">
-                  登出
-                </a>
-              </div>
-            </div>
-            <div class="navbar-item">
-              <div class="field is-grouped">
-                <p class="control">
-                  <a class="button is-danger is-rounded" href="/topic/new">
-                    <span class="icon">
-                      <i class="fas fa-edit"></i>
-                    </span>
-                    <span>发表主题</span>
-                  </a>
-                </p>
-              </div>
-            </div>
-          </div>
-          {{ else }}
-            <div class="navbar-item">
-              <div class="buttons">
-                <a class="button is-primary" href="/signin">
-                  <strong>登录</strong>
-                </a>
-                <a class="button is-light" href="/signup">
-                  注册
-                </a>
-              </div>
-            </div>
-          {{ end }}
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    {{ $ads := ads "top" .db }}
-    {{ range $ads }}
+<body>
+  <nav class="navbar has-shadow is-spaced" role="navigation" aria-label="main navigation">
     <div class="container">
-      {{ html .Code }}
-    </div>
-    {{ end }}
+      <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+          <img src="https://is.golangtc.com/logo/golangtc.png?height=60">
+        </a>
 
-    <div class="container main">
-      {{ template "body" .}}
-    </div>
-
-    <footer class="footer">
-      <hr>
-      <div class="content has-text-centered">
-        <p>
-          <a href="/about">关于</a>
-          &middot;
-          <a href="/link">友链</a>
-          &middot;
-          <a href="https://github.com/jimmykuu/gopher" target="_blank">Github</a>
-
-        </p>
-        <p>
-          &copy; 2012-2019 Golang China
-        </p>
-        <p>
-          Build by <a href="https://github.com/jimmykuu/gopher" target="_blank">Gopher</a>,
-          Powered by <a href="https://gitea.com/lunny/tango"  target="_blank">Tango{{ .tangoVersion }}</a>,
-          Based on <a href="https://bulma.io/" target="_blank">Bulma</a>.
-        </p>
-        <p>
-          Version: {{ .version }}, Build version {{ .goVersion }}. {{ .costTime }}.
-        </p>
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarMain">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
       </div>
-    </footer>
-    {{ .analyticsCode }}
-  </body>
+
+      <div id="navbarMain" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item is-active" href="/">
+            主题
+          </a>
+          <a class="navbar-item" href="/members">
+            会员
+          </a>
+        </div>
+        <div class="navbar-end">
+          <form class="field has-addons" action="/search" method="GET" id="search">
+            <div class="control">
+              <input class="input" name="q" type="text" placeholder="搜索主题...">
+            </div>
+            <div class="control">
+              <button type="submit" class="button">
+                <span class="icon is-small">
+                  <i class="fas fa-search"></i>
+                </span>
+              </button>
+            </div>
+          </form>
+          {{ if .user }}
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              {{ .user.Username }}
+            </a>
+
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="/member/{{ .user.Username }}">
+                我的主页
+              </a>
+              <a class="navbar-item" href="/user_center">
+                个人资料设置
+              </a>
+              <a class="navbar-item" href="/user_center/change_password">
+                修改密码
+              </a>
+              <hr class="navbar-divider">
+              <a class="navbar-item" href="javascript: signout();">
+                登出
+              </a>
+            </div>
+          </div>
+          <div class="navbar-item">
+            <div class="field is-grouped">
+              <p class="control">
+                <a class="button is-danger is-rounded" href="/topic/new">
+                  <span class="icon">
+                    <i class="fas fa-edit"></i>
+                  </span>
+                  <span>发表主题</span>
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+        {{ else }}
+        <div class="navbar-item">
+          <div class="buttons">
+            <a class="button is-primary" href="/signin">
+              <strong>登录</strong>
+            </a>
+            <a class="button is-light" href="/signup">
+              注册
+            </a>
+          </div>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+    </div>
+  </nav>
+
+  {{ $ads := ads "top" .db }}
+  {{ range $ads }}
+  <div class="container">
+    {{ html .Code }}
+  </div>
+  {{ end }}
+
+  <div class="container main">
+    {{ template "body" .}}
+  </div>
+
+  <footer class="footer">
+    <hr>
+    <div class="content has-text-centered">
+      <p>
+        <a href="/about">关于</a>
+        &middot;
+        <a href="/link">友链</a>
+        &middot;
+        <a href="https://github.com/jimmykuu/gopher" target="_blank">Github</a>
+
+      </p>
+      <p>
+        &copy; 2012-2020 Golang China
+      </p>
+      <p>
+        Build by <a href="https://github.com/jimmykuu/gopher" target="_blank">Gopher</a>,
+        Powered by <a href="https://gitea.com/lunny/tango" target="_blank">Tango{{ .tangoVersion }}</a>,
+        Based on <a href="https://bulma.io/" target="_blank">Bulma</a>.
+      </p>
+      <p>
+        Version: {{ .version }}, Build version {{ .goVersion }}. {{ .costTime }}.
+      </p>
+    </div>
+  </footer>
+  {{ .analyticsCode }}
+</body>
+
 </html>
