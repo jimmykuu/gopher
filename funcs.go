@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"html/template"
 	"io"
-	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -15,6 +13,7 @@ import (
 
 	"github.com/jimmykuu/gopher/conf"
 	"github.com/jimmykuu/gopher/models"
+	"github.com/jimmykuu/gopher/modules/static"
 	"github.com/jimmykuu/webhelpers"
 )
 
@@ -99,10 +98,8 @@ var Funcs = template.FuncMap{
 	},
 	"staticfile": func(path string) string {
 		// 增加静态文件的版本，防止文件变化后浏览器不更新
-		var filepath = filepath.Join("./static", path)
 		var md5Str string
-
-		file, err := os.Open(filepath)
+		file, err := static.PublicFileSystem("./static").Open(path)
 		if err != nil {
 			if conf.Config.Debug {
 				panic(err)
@@ -112,6 +109,8 @@ var Funcs = template.FuncMap{
 
 			md5Str = "nofile"
 		} else {
+			defer file.Close()
+
 			var ok bool
 			if md5Str, ok = staticFiles[path]; !ok {
 				// Debug 状态下，每次都会读取文件的 md5 值，非 Debug状态下，只有第一次读取

@@ -6,20 +6,20 @@ import (
 	"gitea.com/tango/renders"
 
 	"github.com/jimmykuu/gopher"
+	"github.com/jimmykuu/gopher/modules/static"
+	"github.com/jimmykuu/gopher/modules/templates"
 )
 
 func main() {
 	t := tango.Classic()
 	t.Use(
 		events.Events(),
-		tango.Static(tango.StaticOptions{
-			RootPath: "./static",
-			Prefix:   "static",
-		}),
+		static.Static("./static"),
 		renders.New(renders.Options{
-			Reload:    true,
-			Directory: "./templates",
-			Funcs:     gopher.Funcs,
+			Reload:     true,
+			Directory:  "./templates",
+			FileSystem: templates.FileSystem("templates"),
+			Funcs:      gopher.Funcs,
 		}))
 
 	gopher.SetRoutes(t)

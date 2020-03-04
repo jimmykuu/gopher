@@ -1,0 +1,52 @@
+version: '2'
+
+tasks:
+  update:
+    cmds:
+      - GO111MODULE=on go mod tidy
+
+  build:
+    cmds:
+      - GO111MODULE=on go build
+  
+  test:
+    cmds:
+      - go vet ./...
+      - go test
+      - go generate ./modules/...
+      - go vet -tags="bindata" ./...
+      - go test -tags="bindata" 
+
+  run:
+    deps: [build]
+    cmds:
+      - ./gopher
+
+  generate:
+    cmds:
+      - go generate ./modules/...
+  
+  release:
+    deps: [generate]
+    cmds:
+      - go build -tags 'bindata'
+
+  release-linux:
+    deps: [generate]
+    cmds:
+      - GO111MODULE=on GOOS=linux GOARCH=amd64 go build -tags 'bindata' -o gopher-linux-amd64
+
+  release-windows:
+    deps: [generate]
+    cmds:
+      - GOOS=windows GOARCH=amd64 go build -tags 'bindata' -o gopher-windows-amd64.exe
+
+  release-docker:
+    deps: [generate]
+    cmds:
+      - docker build . -t extract
+
+  clean-docker:
+    cmds:
+      - docker ps -a -q -f status=exited | xargs docker rm
+      - docker images --no-trunc=true --filter dangling=true --quiet | xargs docker rmi
