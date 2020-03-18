@@ -5,13 +5,13 @@
     <div class="container has-text-centered">
       <div class="column is-4 is-offset-4">
         <h3 class="title has-text-grey">登录</h3>
-          <div class="box">
-            <div id="form"></div>
-          </div>
-          <p class="has-text-grey">
-            <a href="/signup">注册</a> &nbsp;·&nbsp;
-            <a href="/forgot_password">忘记密码</a>
-          </p>
+        <div class="box">
+          <div id="form"></div>
+        </div>
+        <p class="has-text-grey">
+          <a href="/signup">注册</a> &nbsp;·&nbsp;
+          <a href="/forgot_password">忘记密码</a>
+        </p>
       </div>
     </div>
   </div>
@@ -24,23 +24,48 @@
       this.state = {
         username: '',
         password: '',
+        captchaId: '',
+        captchaValue: '',
+        captchaImgSrc: '',
         loading: true,
         submiting: false
       };
     }
 
     handleUsernameChange = (e) => {
-      this.setState({username: e.target.value});
+      this.setState({ username: e.target.value });
     }
 
     handlePasswordChange = (e) => {
-      this.setState({password: e.target.value});
+      this.setState({ password: e.target.value });
+    }
+
+    handleCaptchaChange = (e) => {
+      this.setState({ captchaValue: e.target.value });
+    }
+
+    changeCaptcha = (e) => {
+      this.setState({
+        loading: true
+      });
+
+      get('/api/captcha').then((data) => {
+        if (data['status']) {
+          this.setState({
+            loading: false,
+            captchaId: data['captcha_id'],
+            captchaImgSrc: data['data']
+          });
+        } else {
+          alert('获取验证码失败');
+        }
+      });
     }
 
     handleSubmit = (e) => {
       e.preventDefault();
 
-      const {username, password} = this.state;
+      const { username, password, captchaId, captchaValue } = this.state;
 
       if (this.state.submiting) {
         return;
@@ -48,29 +73,26 @@
 
       if (!username) {
         alert("请输入用户名或邮箱");
-        return
+        return;
       }
 
-      if (!this.state.password) {
+      if (!password) {
         alert("请输入密码");
-        return
+        return;
       }
 
-      let result = window.gt.getValidate();
-
-      if (!result) {
-        alert('请先完成验证！');
-        return
+      if (!captchaId || !captchaValue) {
+        alert('请输入验证码');
+        return;
       }
 
-      this.setState({submiting: true});
+      this.setState({ submiting: true });
 
       post('/api/signin', {
         username: username,
         password: password,
-        geetest_challenge: result.geetest_challenge,
-        geetest_validate: result.geetest_validate,
-        geetest_seccode: result.geetest_seccode
+        captcha_id: captchaId,
+        captcha_value: captchaValue
       }).then((data) => {
         if (data.status) {
           window.localStorage.setItem('token', data.token);
@@ -82,43 +104,39 @@
             window.location.href = '/';
           }
         } else {
-          this.setState({submiting: false});
+          this.setState({ submiting: false });
           alert(data.message);
         }
       });
     }
 
-    handlerGeetest = (captchaObj) => {
-      captchaObj.appendTo('#captcha');
-      this.setState({loading: false});
-      window.gt = captchaObj;
-    };
-
     componentDidMount() {
-      // 调用 initGeetest 进行初始化
-      // 参数1：配置参数
-      // 参数2：回调，回调的第一个参数验证码对象，之后可以使用它调用相应的接口
-      initGeetest({
-        // 以下 4 个配置参数为必须，不能缺少
-        gt: '{{ .gt }}',
-        challenge: '{{ .challenge }}',
-        offline: !{{ .success }}, // 表示用户后台检测极验服务器是否宕机
-        new_captcha: {{ .new_captcha }}, // 用于宕机时表示是新验证码的宕机
-
-        product: "popup", // 产品形式，包括：float，popup
-        width: "100%",
-        https: true
-
-      // 更多配置参数说明请参见：http://docs.geetest.com/install/client/web-front/
-      }, this.handlerGeetest);
+      get('/api/captcha').then((data) => {
+        this.setState({
+          loading: false,
+          captchaId: data['captcha_id'],
+          captchaImgSrc: data['data']
+        });
+      });
     }
 
     render() {
-      const { username, password, loading } = this.state;
+      const { username, password, loading, captchaImgSrc } = this.state;
 
       let waitingDiv;
       if (loading) {
         waitingDiv = <Loading />;
+      } else {
+        waitingDiv = <div className="field has-addons">
+          <p className="control is-expanded">
+            <input className="input is-medium" type="text" placeholder="验证码" onChange={this.handleCaptchaChange} />
+          </p>
+          <p className="control">
+            <a className="buttton is-static" onClick={this.changeCaptcha}>
+              <img src={captchaImgSrc} />
+            </a>
+          </p>
+        </div>;
       }
 
       return (
@@ -141,11 +159,8 @@
             </div>
           </div>
 
-          <div className="field">
-            <div id="captcha">
-              { waitingDiv }
-            </div>
-          </div>
+          {waitingDiv}
+
           <SubmitButton isFullwidh={true} size="is-medium" isFullwidth={true} isSubmiting={this.state.submiting} />
         </form>
       );

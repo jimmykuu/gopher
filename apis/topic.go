@@ -6,6 +6,7 @@ import (
 
 	"gitea.com/tango/binding"
 	"github.com/asaskevich/govalidator"
+	"github.com/mojocn/base64Captcha"
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/jimmykuu/gopher/models"
@@ -110,10 +111,12 @@ func (a *Topic) Delete() interface{} {
 
 // TopicForm 主题表单，新建和编辑共用
 type TopicForm struct {
-	Title    string `json:"title" valid:"required"`
-	NodeID   string `json:"node_id" valid:"required,ascii"`
-	Markdown string `json:"markdown"`
-	HTML     string `json:"html"`
+	Title        string `json:"title" valid:"required"`
+	NodeID       string `json:"node_id" valid:"required,ascii"`
+	Markdown     string `json:"markdown"`
+	HTML         string `json:"html"`
+	CaptchaID    string `json:"captcha_id" valid:"required,ascii"`
+	CaptchaValue string `json:"captcha_value" valid:"required,ascii"`
 }
 
 // Post /topic/new 新建主题
@@ -133,6 +136,13 @@ func (a *Topic) Post() interface{} {
 		return map[string]interface{}{
 			"status":  0,
 			"message": err.Error(),
+		}
+	}
+
+	if ok := base64Captcha.VerifyCaptcha(form.CaptchaID, form.CaptchaValue); !ok {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "验证码错误",
 		}
 	}
 
@@ -220,6 +230,13 @@ func (a *Topic) Put() interface{} {
 		return map[string]interface{}{
 			"status":  0,
 			"message": err.Error(),
+		}
+	}
+
+	if ok := base64Captcha.VerifyCaptcha(form.CaptchaID, form.CaptchaValue); !ok {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "验证码错误",
 		}
 	}
 

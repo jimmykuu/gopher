@@ -16,8 +16,6 @@
 	"packages_download_path": "/tmp",
 	"public_salt": "nXweu8Jq44FgEfgM1Pv4xH51",
 	"cookie_secure": false,
-    "gt_captcha_id": "geetest captcha id",
-    "gt_private_key": "geetest private key",
 	"image_path": "your/image/path",
 	"debug": false
 }

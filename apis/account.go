@@ -4,15 +4,14 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
-	"net/url"
 	"strings"
 	"time"
 
 	"gitea.com/tango/binding"
-	"github.com/Youngyezi/geetest"
 	"github.com/asaskevich/govalidator"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jimmykuu/webhelpers"
+	"github.com/mojocn/base64Captcha"
 	"github.com/pborman/uuid"
 	"gopkg.in/mgo.v2/bson"
 
@@ -30,11 +29,10 @@ type Signin struct {
 // Post /api/signin 提交登录
 func (a *Signin) Post() interface{} {
 	var form struct {
-		Username         string `json:"username" valid:"required,ascii"`
-		Password         string `json:"password" valid:"required,ascii"`
-		GeetestChallenge string `json:"geetest_challenge" valid:"required,ascii"`
-		GeetestValidate  string `json:"geetest_validate" valid:"required,ascii"`
-		GeetestCeccode   string `json:"geetest_seccode" valid:"required,ascii"`
+		Username     string `json:"username" valid:"required,ascii"`
+		Password     string `json:"password" valid:"required,ascii"`
+		CaptchaID    string `json:"captcha_id" valid:"required,ascii"`
+		CaptchaValue string `json:"captcha_value" valid:"required,ascii"`
 	}
 
 	a.ReadJSON(&form)
@@ -48,13 +46,7 @@ func (a *Signin) Post() interface{} {
 		}
 	}
 
-	p := url.Values{
-		"client": {"web"},
-	}
-	g := geetest.New(conf.Config.GtCaptchaId, conf.Config.GtPrivateKey)
-	success := g.SuccessValidate(form.GeetestChallenge, form.GeetestValidate, form.GeetestCeccode, p)
-
-	if success == 0 {
+	if ok := base64Captcha.VerifyCaptcha(form.CaptchaID, form.CaptchaValue); !ok {
 		return map[string]interface{}{
 			"status":  0,
 			"message": "验证码错误",
@@ -112,12 +104,11 @@ type Signup struct {
 // Post /api/signup 提交注册
 func (a *Signup) Post() interface{} {
 	var form struct {
-		Username         string `json:"username" valid:"required,ascii"`
-		Password         string `json:"password" valid:"required,ascii"`
-		Email            string `json:"email" valid:"required,email"`
-		GeetestChallenge string `json:"geetest_challenge" valid:"required,ascii"`
-		GeetestValidate  string `json:"geetest_validate" valid:"required,ascii"`
-		GeetestCeccode   string `json:"geetest_seccode" valid:"required,ascii"`
+		Username     string `json:"username" valid:"required,ascii"`
+		Password     string `json:"password" valid:"required,ascii"`
+		Email        string `json:"email" valid:"required,email"`
+		CaptchaID    string `json:"captcha_id" valid:"required,ascii"`
+		CaptchaValue string `json:"captcha_value" valid:"required,ascii"`
 	}
 
 	a.ReadJSON(&form)
@@ -128,6 +119,13 @@ func (a *Signup) Post() interface{} {
 		return map[string]interface{}{
 			"status":  0,
 			"message": err.Error(),
+		}
+	}
+
+	if ok := base64Captcha.VerifyCaptcha(form.CaptchaID, form.CaptchaValue); !ok {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "验证码错误",
 		}
 	}
 
@@ -242,10 +240,9 @@ type ForgotPassword struct {
 // Post /api/forgot_password
 func (a *ForgotPassword) Post() interface{} {
 	var form struct {
-		UsernameOrEmail  string `json:"username_or_email" valid:"required,ascii"`
-		GeetestChallenge string `json:"geetest_challenge" valid:"required,ascii"`
-		GeetestValidate  string `json:"geetest_validate" valid:"required,ascii"`
-		GeetestCeccode   string `json:"geetest_seccode" valid:"required,ascii"`
+		UsernameOrEmail string `json:"username_or_email" valid:"required,ascii"`
+		CaptchaID       string `json:"captcha_id" valid:"required,ascii"`
+		CaptchaValue    string `json:"captcha_value" valid:"required,ascii"`
 	}
 
 	err := a.ReadJSON(&form)
@@ -256,25 +253,19 @@ func (a *ForgotPassword) Post() interface{} {
 		}
 	}
 
+	if ok := base64Captcha.VerifyCaptcha(form.CaptchaID, form.CaptchaValue); !ok {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "验证码错误",
+		}
+	}
+
 	result, err := govalidator.ValidateStruct(form)
 
 	if !result {
 		return map[string]interface{}{
 			"status":  0,
 			"message": err.Error(),
-		}
-	}
-
-	p := url.Values{
-		"client": {"web"},
-	}
-	g := geetest.New(conf.Config.GtCaptchaId, conf.Config.GtPrivateKey)
-	success := g.SuccessValidate(form.GeetestChallenge, form.GeetestValidate, form.GeetestCeccode, p)
-
-	if success == 0 {
-		return map[string]interface{}{
-			"status":  0,
-			"message": "验证码错误",
 		}
 	}
 

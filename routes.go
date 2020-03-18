@@ -37,10 +37,12 @@ func SetRoutes(t *tango.Tango) {
 	t.Get("/user_center/avatar", new(actions.ChangeAvatar))
 	t.Get("/user_center/change_password", new(actions.ChangePassword))
 
+	t.Post("/api/signin", new(apis.Signin))
+	t.Post("/api/signup", new(apis.Signup))
+	t.Get("/api/captcha", new(apis.Captcha))
+
 	t.Group("/api", func(g *tango.Group) {
 		g.Use(middlewares.ApiAuthHandler())
-		g.Post("/signin", new(apis.Signin))
-		g.Post("/signup", new(apis.Signup))
 		g.Post("/forgot_password", new(apis.ForgotPassword))
 		g.Post("/reset_password", new(apis.ResetPassword))
 

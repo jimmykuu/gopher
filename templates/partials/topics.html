@@ -1,5 +1,5 @@
 <div class="box content">
-{{ range .topics }}
+  {{ range .topics }}
   {{ $creater := .Creater $.db }}
   {{ $node := .Node $.db }}
   <article class="media post">
@@ -16,19 +16,37 @@
         <div class="metadata">
           <a href="/member/{{ $creater.Username }}">{{ $creater.Username }}</a>
           {{ if .CommentCount }}
-            {{ $latestReplier := .LatestReplier $.db }}
-            {{ if $latestReplier}}
-              <time datetime="{{ .LatestRepliedAt }}" title="{{ formatdatetime .LatestRepliedAt }}">{{ formattime .LatestRepliedAt }}</time> •
-              最后回复来自 <a href="/member/{{ $latestReplier.Username }}">{{ $latestReplier.Username }}</a>
-            {{ else }}
-              <time datetime="{{ formatdatetime .CreatedAt }}" title="{{ formatdatetime .CreatedAt }}">{{ formattime .CreatedAt }}</time>
-            {{ end }}
+          {{ $latestReplier := .LatestReplier $.db }}
+          {{ if $latestReplier}}
+          <time datetime="{{ .LatestRepliedAt }}"
+            title="{{ formatdatetime .LatestRepliedAt }}">{{ formattime .LatestRepliedAt }}</time> •
+          最后回复来自 <a href="/member/{{ $latestReplier.Username }}">{{ $latestReplier.Username }}</a>
           {{ else }}
-            <time datetime="{{ formatdatetime .CreatedAt }}" title="{{ formatdatetime .CreatedAt }}">{{ formattime .CreatedAt }}</time>
+          <time datetime="{{ formatdatetime .CreatedAt }}"
+            title="{{ formatdatetime .CreatedAt }}">{{ formattime .CreatedAt }}</time>
+          {{ end }}
+          {{ else }}
+          <time datetime="{{ formatdatetime .CreatedAt }}"
+            title="{{ formatdatetime .CreatedAt }}">{{ formattime .CreatedAt }}</time>
           {{ end }}
           &nbsp;
           <a class="tag" href="/go/{{$node.Id}}">{{ $node.Name }}</a>
         </div>
+
+        {{ if $.username }}
+        {{ if .CanDelete $.username $.db }}
+        <nav class="level is-mobile">
+          <div class="level-left">
+            <a class="level-item" id="edit-comment-{{ .Id_.Hex }}" href="javascript:editComment('{{ .Id_.Hex }}');">
+              <span class="icon is-small"><i class="fas fa-edit"></i></span>
+            </a>
+            <a class="level-item" href="javascript:deleteComment('{{ .Id_.Hex }}');">
+              <span class="icon is-small"><i class="fas fa-times"></i></span>
+            </a>
+          </div>
+        </nav>
+        {{ end }}
+        {{ end }}
       </div>
     </div>
     {{ if .CommentCount }}
@@ -37,5 +55,5 @@
     </div>
     {{ end }}
   </article>
-{{ end }}
+  {{ end }}
 </div>

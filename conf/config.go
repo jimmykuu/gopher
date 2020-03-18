@@ -6,8 +6,8 @@ import (
 	"os"
 	"runtime"
 
-	filter "github.com/antlinker/go-dirtyfilter"
 	"gitea.com/lunny/tango"
+	filter "github.com/antlinker/go-dirtyfilter"
 )
 
 type ConfigStruct struct {
@@ -27,9 +27,6 @@ type ConfigStruct struct {
 	StaticFileVersion int    `json:"static_file_version"`
 	PublicSalt        string `json:"public_salt"`
 	CookieSecure      bool   `json:"cookie_secure"`
-	DeferPanicApiKey  string `json:"deferpanic_api_key"`
-	GtCaptchaId       string `json:"gt_captcha_id"`
-	GtPrivateKey      string `json:"gt_private_key"`
 	ImagePath         string `json:"image_path"`
 	Debug             bool   `json:"debug"`
 }

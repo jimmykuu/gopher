@@ -18,7 +18,11 @@
         nodeId: '',
         title: '',
         markdown: '',
-        html: ''
+        html: '',
+        captchaLoading: true,
+        captchaId: '',
+        captchaValue: '',
+        captchaImgSrc: ''
       }
     }
 
@@ -41,21 +45,48 @@
       });
     }
 
+    handleCaptchaChange = (e) => {
+      this.setState({ captchaValue: e.target.value });
+    }
+
+    changeCaptcha = (e) => {
+      this.setState({
+        captchaLoading: true
+      });
+
+      get('/api/captcha').then((data) => {
+        if (data['status']) {
+          this.setState({
+            captchaLoading: false,
+            captchaId: data['captcha_id'],
+            captchaImgSrc: data['data']
+          });
+        } else {
+          alert('获取验证码失败');
+        }
+      });
+    }
+
     handleSubmit = (e) => {
       e.preventDefault();
 
-      const {nodeId, title, markdown, html} = this.state;
+      const { nodeId, title, markdown, html, captchaId, captchaValue } = this.state;
       if (!nodeId) {
         alert('请选择节点');
-        return
+        return;
       }
 
       if (!title.trim()) {
         alert('请输入标题');
-        return
+        return;
       }
 
-      this.setState({submiting: true});
+      if (!captchaId || !captchaValue) {
+        alert('请输入验证码');
+        return;
+      }
+
+      this.setState({ submiting: true });
 
       let url;
       let method;
@@ -71,7 +102,9 @@
         title: this.state.title,
         node_id: this.state.nodeId,
         markdown: this.state.markdown,
-        html: this.state.html
+        html: this.state.html,
+        captcha_id: captchaId,
+        captcha_value: captchaValue
       }).then((data) => {
         if (data.status) {
           window.location.href = "/t/" + data.topic_id;
@@ -92,7 +125,7 @@
             nodes: data
           });
         } else {
-          this.setState({nodes: data});
+          this.setState({ nodes: data });
 
           // 获取主题
           get('/api/topics/' + topicID).then((data) => {
@@ -105,14 +138,36 @@
           });
         }
       });
+
+      get('/api/captcha').then((data) => {
+        if (data['status']) {
+          this.setState({
+            captchaLoading: false,
+            captchaId: data['captcha_id'],
+            captchaImgSrc: data['data']
+          });
+        } else {
+          alert('获取验证码失败');
+        }
+      });
     }
 
     render() {
       let form;
 
-      if (this.state.loading) {
+      const { loading, captchaLoading, nodeId, title, markdown, captchaImgSrc } = this.state;
+
+      if (loading) {
         form = <Loading />;
       } else {
+        let captcha;
+        if (captchaLoading) {
+          captcha = <a className="button is-static is-loading" />;
+        } else {
+          captcha = <a className="buttton is-static" onClick={this.changeCaptcha}>
+            <img src={captchaImgSrc} />
+          </a>;
+        }
         form = (<form onSubmit={this.handleSubmit}>
           <div className="field is-horizontal">
             <div className="field-label is-normal">
@@ -122,7 +177,7 @@
               <div className="field is-narrow">
                 <div className="control">
                   <div className="select is-fullwidth">
-                    <select value={this.state.nodeId} onChange={this.handleNodeChange}>
+                    <select value={nodeId} onChange={this.handleNodeChange}>
                       <option value="">请选择节点</option>
                       {this.state.nodes.map(node =>
                         <option value={node.id}>{node.name}</option>
@@ -141,7 +196,7 @@
             <div className="field-body">
               <div className="field">
                 <div className="control">
-                  <input className="input" type="text" placeholder="请输入标题" value={this.state.title} onChange={this.handleTitleChange} />
+                  <input className="input" type="text" placeholder="请输入标题" value={title} onChange={this.handleTitleChange} />
                 </div>
               </div>
             </div>
@@ -154,7 +209,23 @@
             <div className="field-body">
               <div className="field">
                 <div className="control">
-                  <MarkdownEditor markdown={this.state.markdown} onChange={this.handleMarkdownChange} />
+                  <MarkdownEditor markdown={markdown} onChange={this.handleMarkdownChange} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="field is-horizontal">
+            <div className="field-label is-normal">
+              <label className="label">验证码</label>
+            </div>
+            <div className="field-body">
+              <div className="field is-grouped">
+                <div className="control">
+                  <input className="input" type="text" placeholder="请输入验证码" onChange={this.handleCaptchaChange} />
+                </div>
+                <div className="control">
+                  {captcha}
                 </div>
               </div>
             </div>

@@ -3,13 +3,10 @@ package actions
 import (
 	"errors"
 	"fmt"
-	"net/url"
 
 	"gitea.com/tango/renders"
-	"github.com/Youngyezi/geetest"
 	"gopkg.in/mgo.v2/bson"
 
-	"github.com/jimmykuu/gopher/conf"
 	"github.com/jimmykuu/gopher/models"
 )
 
@@ -20,21 +17,10 @@ type Signin struct {
 
 // Get /signin 登录页面
 func (a *Signin) Get() error {
-	g := geetest.New(conf.Config.GtCaptchaId, conf.Config.GtPrivateKey)
-	p := url.Values{
-		"client": {"web"},
-	}
-
-	resp := g.PreProcess(p)
-
 	var next = a.Form("next", "/")
 	return a.Render("account/signin.html", renders.T{
-		"title":       "登录",
-		"next":        next,
-		"gt":          resp["gt"],
-		"challenge":   resp["challenge"],
-		"success":     resp["success"],
-		"new_captcha": resp["new_captcha"],
+		"title": "登录",
+		"next":  next,
 	})
 }
 
@@ -45,19 +31,8 @@ type Signup struct {
 
 // Get /signup 注册页面
 func (a *Signup) Get() error {
-	g := geetest.New(conf.Config.GtCaptchaId, conf.Config.GtPrivateKey)
-	p := url.Values{
-		"client": {"web"},
-	}
-
-	resp := g.PreProcess(p)
-
 	return a.Render("account/signup.html", renders.T{
-		"title":       "注册",
-		"gt":          resp["gt"],
-		"challenge":   resp["challenge"],
-		"success":     resp["success"],
-		"new_captcha": resp["new_captcha"],
+		"title": "注册",
 	})
 }
 
@@ -270,19 +245,8 @@ type ForgotPassword struct {
 
 // Get /forgot_password
 func (a *ForgotPassword) Get() error {
-	g := geetest.New(conf.Config.GtCaptchaId, conf.Config.GtPrivateKey)
-	p := url.Values{
-		"client": {"web"},
-	}
-
-	resp := g.PreProcess(p)
-
 	return a.Render("account/forgot_password.html", renders.T{
-		"title":       "忘记密码",
-		"gt":          resp["gt"],
-		"challenge":   resp["challenge"],
-		"success":     resp["success"],
-		"new_captcha": resp["new_captcha"],
+		"title": "忘记密码",
 	})
 }
 
@@ -294,7 +258,6 @@ type ResetPassword struct {
 // Get /reset/:code
 func (a *ResetPassword) Get() error {
 	code := a.Param("code")
-	println(">>>>", code)
 	var user models.User
 	c := a.DB.C(models.USERS)
 	err := c.Find(bson.M{"resetcode": code}).One(&user)
