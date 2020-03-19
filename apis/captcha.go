@@ -15,7 +15,7 @@ type Captcha struct {
 func (c *Captcha) Get() interface{} {
 	var config = base64Captcha.ConfigCharacter{
 		Height:             60,
-		Width:              240,
+		Width:              150,
 		Mode:               base64Captcha.CaptchaModeNumberAlphabet,
 		IsUseSimpleFont:    true,
 		ComplexOfNoiseText: 2,

@@ -123,19 +123,32 @@
     render() {
       const { username, password, loading, captchaImgSrc } = this.state;
 
-      let waitingDiv;
+      let buttonStyle = { padding: 0 };
+      let imgStyle = { height: '100%' };
+
+      let captchaField;
       if (loading) {
-        waitingDiv = <Loading />;
+        captchaField = <div className="field">
+          <div class="control has-icons-left is-loading">
+            <input className="input is-medium" type="text" placeholder="验证码" />
+            <span className="icon is-small is-left">
+              <i className="fas fa-check"></i>
+            </span>
+          </div>
+        </div>;
       } else {
-        waitingDiv = <div className="field has-addons">
-          <p className="control is-expanded">
+        captchaField = <div className="field has-addons">
+          <div className="control has-icons-left">
             <input className="input is-medium" type="text" placeholder="验证码" onChange={this.handleCaptchaChange} />
-          </p>
-          <p className="control">
-            <a className="buttton is-static" onClick={this.changeCaptcha}>
-              <img src={captchaImgSrc} />
+            <span className="icon is-small is-left">
+              <i className="fas fa-check"></i>
+            </span>
+          </div>
+          <div className="control">
+            <a className="button is-medium" style={buttonStyle} onClick={this.changeCaptcha} title='看不清楚？点击更换验证码'>
+              <img src={captchaImgSrc} style={imgStyle} />
             </a>
-          </p>
+          </div>
         </div>;
       }
 
@@ -159,10 +172,10 @@
             </div>
           </div>
 
-          {waitingDiv}
+          {captchaField}
 
           <SubmitButton isFullwidh={true} size="is-medium" isFullwidth={true} isSubmiting={this.state.submiting} />
-        </form>
+        </form >
       );
     }
   }
