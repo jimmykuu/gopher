@@ -109,10 +109,11 @@
         if (data.status) {
           window.location.href = "/t/" + data.topic_id;
         } else {
+          this.setState({ submiting: false });
           alert(data.message);
-          this.setState({
-            submiting: false
-          });
+          if (!data['status']) {
+            this.changeCaptcha();
+          }
         }
       });
     }
@@ -165,16 +166,16 @@
 
         let captchaField;
         if (captchaLoading) {
-          captchaField = <div className="field">
-            <div class="control has-icons-left is-loading">
-              <input className="input is-medium" type="text" placeholder="验证码" />
-              <span className="icon is-small is-left">
-                <i className="fas fa-check"></i>
-              </span>
+          captchaField = <div className="field is-grouped">
+            <div className="control">
+              <input className="input" type="text" placeholder="请输入验证码" />
+            </div>
+            <div className="control">
+              <a className="button is-static is-loading"></a>
             </div>
           </div>;
         } else {
-          captchaField = <div className="field has-addons">
+          captchaField = <div className="field is-grouped">
             <div className="control">
               <input className="input" type="text" placeholder="请输入验证码" onChange={this.handleCaptchaChange} />
             </div>

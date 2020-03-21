@@ -116,6 +116,9 @@
         } else {
           this.setState({ submiting: false });
           alert(data.message);
+          if (!data['status']) {
+            this.changeCaptcha();
+          }
         }
       });
     }
@@ -138,17 +141,20 @@
 
       let captchaField;
       if (loading) {
-        captchaField = <div className="field">
-          <div class="control has-icons-left is-loading">
+        captchaField = <div className="field is-grouped">
+          <div className="control is-expanded is-medium has-icons-left">
             <input className="input is-medium" type="text" placeholder="验证码" />
             <span className="icon is-small is-left">
               <i className="fas fa-check"></i>
             </span>
           </div>
+          <div className="control">
+            <a className="button is-medium is-static is-loading"></a>
+          </div>
         </div>;
       } else {
-        captchaField = <div className="field has-addons">
-          <div className="control has-icons-left">
+        captchaField = <div className="field is-grouped">
+          <div className="control is-expanded has-icons-left">
             <input className="input is-medium" type="text" placeholder="验证码" onChange={this.handleCaptchaChange} />
             <span className="icon is-small is-left">
               <i className="fas fa-check"></i>
