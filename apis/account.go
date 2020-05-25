@@ -175,7 +175,7 @@ func (a *Signup) Post() interface{} {
 		Salt:         salt,
 		Email:        form.Email,
 		ValidateCode: validateCode,
-		IsActive:     true,
+		IsActive:     false,
 		JoinedAt:     time.Now(),
 		Index:        index,
 	}

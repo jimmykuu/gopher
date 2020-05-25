@@ -121,6 +121,13 @@ type TopicForm struct {
 
 // Post /topic/new 新建主题
 func (a *Topic) Post() interface{} {
+	if !a.User.IsActive {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "最近被垃圾帖杠上了，新用户默认未激活，管理员激活后才能发帖",
+		}
+	}
+
 	if a.User.IsBlocked {
 		return map[string]interface{}{
 			"status":  0,
