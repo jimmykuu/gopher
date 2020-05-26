@@ -2,7 +2,7 @@
 <div class="card member-info">
   <div class="card-image">
     <figure class="image">
-      <img src="{{ $member.AvatarImgSrc 512 }}" style="height: auto;">
+      <img src="{{ $member.AvatarImgSrc 512 }}" style="height: auto;" />
     </figure>
   </div>
   <div class="card-content">
@@ -14,51 +14,69 @@
     </div>
 
     <div class="content">
-      第 {{ .member.Index }} 号会员 / <time datetime="{{ .member.JoinedAt }}">{{ .member.JoinedAt.Format "2006-01-02" }}</time>
+      第 {{ .member.Index }} 号会员 /
+      <time datetime="{{ .member.JoinedAt }}"
+        >{{ .member.JoinedAt.Format "2006-01-02" }}</time
+      >
       <ul>
         {{ if .member.Location }}
-          <li>
-            <span class="icon"><i class="fas fa-map-marker"></i></span>
-            <a href="/members/city/{{ .member.Location }}">{{ .member.Location }}</a>
-          </li>
-        {{ end}}
-        {{ if .member.Website }}
+        <li>
+          <span class="icon"><i class="fas fa-map-marker"></i></span>
+          <a href="/members/city/{{ .member.Location }}"
+            >{{ .member.Location }}</a
+          >
+        </li>
+        {{ end}} {{ if .member.Website }}
         <li>
           <span class="icon"><i class="fas fa-globe"></i></span>
-          <a href="{{url .member.Website }}" target="_blank">{{ .member.Website }}</a>
+          <a href="{{url .member.Website }}" target="_blank"
+            >{{ .member.Website }}</a
+          >
         </li>
-        {{ end}}
-        {{ if .member.Weibo }}
+        {{ end}} {{ if .member.Weibo }}
         <li>
           <span class="icon"><i class="fab fa-weibo"></i></span>
-          <a href="http://weibo.com/{{ .member.Weibo }}" target="_blank">http://weibo.com/{{ .member.Weibo }}</a>
+          <a href="http://weibo.com/{{ .member.Weibo }}" target="_blank"
+            >http://weibo.com/{{ .member.Weibo }}</a
+          >
         </li>
-        {{ end}}
-        {{ if .member.GitHubUsername }}
+        {{ end}} {{ if .member.GitHubUsername }}
         <li>
           <span class="icon"><i class="fab fa-github"></i></span>
-          <a href="https://github.com/{{ .member.GitHubUsername }}" target="_blank">https://github.com/{{ .member.GitHubUsername }}</a>
+          <a
+            href="https://github.com/{{ .member.GitHubUsername }}"
+            target="_blank"
+            >https://github.com/{{ .member.GitHubUsername }}</a
+          >
         </li>
         {{ end }}
       </ul>
     </div>
   </div>
 
-  {{ if .user }}
-    {{ if eq .member.Username .user.Username }}
-      <footer class="card-footer">
-        <a href="/user_center" class="card-footer-item">编辑</a>
-      </footer>
+  {{ if .user }} {{ if eq .member.Username .user.Username }}
+  <footer class="card-footer">
+    <a href="/user_center" class="card-footer-item">编辑</a>
+  </footer>
+  {{ end }} {{ if .user.IsSuperuser }}
+  <footer class="card-footer">
+    {{ if .member.IsActive }}
+    <span class="card-footer-item">已激活</span>
+    {{ else }}
+    <a
+      href="/member/{{ .member.Username }}/activate?next={{ .url }}"
+      class="card-footer-item"
+      >激活</a
+    >
+    {{ end }} {{ if .member.IsBlocked }}
+    <span class="card-footer-item">已禁言</span>
+    {{ else }}
+    <a
+      href="/member/{{ .member.Username }}/block?next={{ .url }}"
+      class="card-footer-item"
+      >禁言</a
+    >
     {{ end }}
-
-    {{ if .user.IsSuperuser }}
-      <footer class="card-footer">
-        {{ if .member.IsBlocked }}
-          <span class="card-footer-item">已禁言</span>
-        {{ else }}
-          <a href="/member/{{ .member.Username }}/block?next={{ .url }}" class="card-footer-item">禁言</a>
-        {{ end }}
-      </footer>
-    {{ end }}
-  {{ end }}
+  </footer>
+  {{ end }} {{ end }}
 </div>

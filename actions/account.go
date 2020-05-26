@@ -150,6 +150,39 @@ func (a *AccountCollections) Get() error {
 	})
 }
 
+// AccountActivate 激活用户
+type AccountActivate struct {
+	RenderBase
+}
+
+// Get /member/:username/activate
+func (a *AccountActivate) Get() error {
+	if !a.User.IsSuperuser {
+		return errors.New("没有该权限")
+	}
+
+	username := a.Param("username")
+	c := a.DB.C(models.USERS)
+	user := models.User{}
+	err := c.Find(bson.M{"username": username}).One(&user)
+
+	if err != nil {
+		return errors.New("会员未找到")
+	}
+
+	c.Update(bson.M{"username": username}, bson.M{"$set": bson.M{"isactive": true}})
+
+	var nexts = a.FormStrings("next")
+	var next = fmt.Sprintf("/member/%s", username)
+	if len(nexts) > 0 {
+		next = nexts[0]
+	}
+
+	a.Redirect(next)
+
+	return nil
+}
+
 // AccountBlock 用户禁言
 type AccountBlock struct {
 	RenderBase

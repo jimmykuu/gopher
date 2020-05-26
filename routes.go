@@ -26,6 +26,7 @@ func SetRoutes(t *tango.Tango) {
 	t.Get("/member/:username", new(actions.AccountIndex))
 	t.Get("/member/:username/comments", new(actions.AccountComments))
 	t.Get("/member/:username/collections", new(actions.AccountCollections))
+	t.Get("/member/:username/activate", new(actions.AccountActivate))
 	t.Get("/member/:username/block", new(actions.AccountBlock))
 	t.Get("/members", new(actions.LatestUsers))
 	t.Get("/members/all", new(actions.AllUsers))
