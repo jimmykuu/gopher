@@ -63,10 +63,17 @@ func (a *Comment) Post() interface{} {
 		}
 	}
 
+	if !a.User.IsActive {
+		return map[string]interface{}{
+			"status":  0,
+			"message": "新用户默认未激活，管理员激活后才能评论",
+		}
+	}
+
 	if a.User.IsBlocked {
 		return map[string]interface{}{
 			"status":  0,
-			"message": "当前账户被禁言，不能发表回复",
+			"message": "当前账户被禁言，不能发表评论",
 		}
 	}
 

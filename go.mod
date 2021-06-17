@@ -3,7 +3,7 @@ module github.com/jimmykuu/gopher
 go 1.12
 
 require (
-	gitea.com/lunny/tango v0.6.2
+	gitea.com/lunny/tango v0.6.5
 	gitea.com/tango/binding v0.0.0-20190606022902-f7676e2641fd
 	gitea.com/tango/events v0.0.0-20190424023309-50869003ae59
 	gitea.com/tango/renders v0.0.0-20190606020507-5dfc5b32c70d
